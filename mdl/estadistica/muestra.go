@@ -166,7 +166,7 @@ func (e *Estructura) ActualizarFamiliar() (jSon []byte, err error) {
 		if familiar.Persona.DatoBasico.Sexo != "M" {
 			familiar.Parentesco = "MD"
 		}
-		familiar.AplicarReglas()
+		familiar.AplicarReglasBeneficio()
 		familiar.DocumentoPadre = cedula
 		fmt.Println(familiar)
 		Familiares = append(Familiares, familiar)
