@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gesaodin/bdse/sys/seguridad"
+	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
 )
 
 type Traza struct {

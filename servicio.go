@@ -19,8 +19,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/gesaodin/bdse/mdl/estadistica"
-	"github.com/gesaodin/bdse/sys"
+	"github.com/gesaodin/tunel-ipsfa/mdl/estadistica"
+	"github.com/gesaodin/tunel-ipsfa/sys"
 )
 
 func init() {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gesaodin/bdse/sys"
-	"github.com/gesaodin/bdse/util"
+	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
 type Usuario struct {

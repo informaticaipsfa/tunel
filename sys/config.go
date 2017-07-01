@@ -6,7 +6,7 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
-	"github.com/gesaodin/bdse/util"
+	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
 type config struct{}

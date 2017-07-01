@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/gesaodin/bdse/mdl/usuario"
+	"github.com/gesaodin/tunel-ipsfa/mdl/usuario"
 	"github.com/gorilla/mux"
 )
 

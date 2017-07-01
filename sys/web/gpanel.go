@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gesaodin/bdse/sys/seguridad"
+	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
 )
 
 const (

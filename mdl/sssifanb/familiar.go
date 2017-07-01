@@ -1,6 +1,6 @@
 package sssifanb
 
-import "github.com/gesaodin/bdse/util"
+import "github.com/gesaodin/tunel-ipsfa/util"
 
 type Familiar struct {
 	ID             int

@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/gesaodin/bdse/mdl/sssifanb"
-	"github.com/gesaodin/bdse/sys"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/gesaodin/tunel-ipsfa/sys"
 )
 
 type Priorizador struct {
