@@ -21,17 +21,17 @@ import (
 )
 
 const (
-	Root                 string = "0xRO" //Todos los privilegios del sistema
-	Consulta             string = "0xCO"
-	Administrador        string = "0xAD"
-	AdministradorDeGrupo string = "0xAA"
-	Invitado             string = "0xIN"
-	Produccion           string = "0xPR"
-	Desarrollador        string = "0xDE"
-	Pasante              string = "0xPA"
-	Operador             string = "0xOP"
-	Prueba               string = "0xPR"
-	Hack                 string = "0xHA"
+	ROOT               string = "0xRO" //Todos los privilegios del sistema
+	CONSULTA           string = "0xCO"
+	ADMINISTRADOR      string = "0xAD"
+	ADMINISTRADORGRUPO string = "0xAA"
+	INVITADO           string = "0xIN"
+	PRODUCCION         string = "0xPR"
+	DESARROLLADOR      string = "0xDE"
+	PASANTE            string = "0xPA"
+	OPERADOR           string = "0xOP"
+	TEST               string = "0xPR"
+	HACK               string = "0xHA"
 )
 
 type MetodoSeguro struct {
@@ -61,27 +61,26 @@ type Perfil struct {
 }
 
 type Rol struct {
-	Id          string `json:"id"`
+	ID          string `json:"id"`
 	Descripcion string `json:"descripcion"`
 }
 
 // Usuarios del Sistema
-type Usuario struct {
-	Id           int         `json:"id"`
+type SUsuario struct {
+	ID           int         `json:"id"`
 	Nombre       string      `json:"nombre"`
 	Correo       string      `json:"correo,omitempty"`
 	Clave        string      `json:"clave,omitempty"`
 	Token        string      `json:"token,omitempty"`
 	Perfil       interface{} `json:"perfil,omitempty"`
-	Rol          string      `json:"rol,omitempty"`
 	FirmaDigital interface{} `json:"firma,omitempty"`
-	//Rol          interface{} `json:"rol,omitempty"`
+	Rol          `json:"rol,omitempty"`
 }
 
 // La firma permite identificar una maquina y persona autorizada por el sistema
 type FirmaDigital struct {
-	Id           int
-	Usuario      Usuario
+	Id int
+	SUsuario
 	DireccionMac string
 	DireccionIP  string
 	Tiempo       time.Time
@@ -96,11 +95,11 @@ func (f *FirmaDigital) Registrar() bool {
 	return true
 }
 
-func (u *Usuario) Salvar(us Usuario) {
+func (u *SUsuario) Salvar(us SUsuario) {
 
 }
 
-func (u *Usuario) Consultar(usuario string, clave string) (v bool) {
+func (u *SUsuario) Consultar(usuario string, clave string) (v bool) {
 
 	data := []byte(usuario + clave)
 	b := md5.Sum(data)
@@ -120,10 +119,10 @@ func (u *Usuario) Consultar(usuario string, clave string) (v bool) {
 		var nomb, ncom, corr, fech, esta, rol sql.NullString
 
 		row.Scan(&oid, &nomb, &ncom, &corr, &fech, &esta, &rol)
-		u.Id = oid
+		u.ID = oid
 		u.Nombre = util.ValidarNullString(nomb)
 		u.Correo = util.ValidarNullString(corr)
-		u.Rol = util.ValidarNullString(rol)
+		//u.Rol = util.ValidarNullString(rol)
 		v = true
 	}
 

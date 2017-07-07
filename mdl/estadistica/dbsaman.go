@@ -62,7 +62,7 @@ func historialReembolso() {
 func reduccion() string {
 	return `SELECT
 			cedula_saman AS cedulas, cedula_pace AS cedulap,np,
-			tipnip,nombreprimero,nombresegundo,apellidoprimero,apellidosegundo,
+			tipnip,nombreprimero,nombresegundo,apellidoprimero,apellidosegundo,fechanacimiento,
 			sexocod,edocivilcod,
 			perscategcod, perssituaccod,persclasecod,
 			fchingcomponente,fchultimoascenso,fchegreso,
@@ -74,7 +74,7 @@ func reduccion() string {
 						SELECT * FROM analisis.reducciones WHERE militar > 0 ORDER BY militar DESC ) AS A
 					) AS TBL JOIN (
 						SELECT p.codnip,p.nropersona,
-							p.tipnip,p.nombreprimero,nombresegundo,apellidoprimero,apellidosegundo,
+							p.tipnip,p.nombreprimero,nombresegundo,apellidoprimero,apellidosegundo,fechanacimiento,
 							p.sexocod,p.edocivilcod,
 							perscategcod, perssituaccod,persclasecod,
 							fchingcomponente,fchultimoascenso,fchegreso,
@@ -85,23 +85,43 @@ func reduccion() string {
 						JOIN personas AS p ON pm.nropersona=p.nropersona
 						JOIN ipsfa_componentes AS icom ON pm.componentecod=icom.componentecod
 						JOIN ipsfa_grados AS igra ON pm.gradocod=igra.gradocod AND pm.componentecod=igra.componentecod
-					) AS B ON B.nropersona = TBL.np WHERE B.perssituaccod = 'ACT' --limit 1000`
+					) AS B ON B.nropersona = TBL.np -- WHERE B.perssituaccod = 'ACT' --limit 1000`
 }
 
-//obtenerFamiliares
-func obtenerFamiliares() string {
+//obtenerHistorialFamiliares
+func obtenerHistorialFamiliares() string {
 	return `SELECT
 						AR.cedula_saman,
 						p.codnip,pr.nropersonarel,pr.persrelstipcod,p.tipnip,
 						p.nombreprimero,p.nombresegundo,
-						p.apellidoprimero,p.apellidosegundo,p.sexocod,p.edocivilcod,fechanacimiento,
+						p.apellidoprimero,p.apellidosegundo,
+						p.fechanacimiento,p.sexocod,p.edocivilcod,
 						pm.nropersona AS militar
 					FROM
 						analisis.reducciones as AR
 					JOIN pers_relaciones pr ON AR.np=pr.nropersona
 					JOIN personas p ON pr.nropersonarel=p.nropersona
 					LEFT JOIN pers_dat_militares AS pm ON pm.nropersona=pr.nropersonarel
-					WHERE pr.nropersona=79227 ORDER BY AR.cedula_saman  -- LIMIT 100`
-	//WHERE pr.nropersona= ` + id
+					 ORDER BY AR.cedula_saman --LIMIT 100`
+	//WHERE pr.nropersona IN (1393199,79227)
+
+}
+
+//obtenerHistorialMilitar
+func obtenerHistorialMilitar() string {
+	return `SELECT
+						ipg.componentecod, ipg.gradocod, ipg.perscategcod,
+						ipg.perssituaccod, ipg.gradofchobten, ipg.gradoresuelto,
+						ipg.persclasecod,
+						ipg.gradonroenresuelto,ipg.gradofchrecipsfa,
+						ipg.auditfechacambio,ipg.audithoracambio,
+						ipg.auditfechacreacion,ipg.audithoracreacion,ipg.razonhistcod
+					FROM
+						analisis.reducciones as AR
+					JOIN personas p ON AR.np=p.nropersona
+					JOIN ipsfa_grado_x_pers ipg ON ipg.nropersona = AR.np
+					ORDER BY AR.cedula_saman;
+`
+	//WHERE p.nropersona IN (1393199,79227)
 
 }

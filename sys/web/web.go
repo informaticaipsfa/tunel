@@ -26,15 +26,19 @@ func CargarModulosWeb() {
 	var api api.Persona
 	Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", api.Consultar).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Insertar).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Actualizar).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Insertar).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Eliminar).Methods("DELETE")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Opciones).Methods("OPTIONS")
 
 }
 
 func CargarModulosSeguridad() {
 	var wUsuario api.WUsuario
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crud/{id}", wUsuario.Consultar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Login).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
+
 }
 
 //Principal Página inicial del sistema o bienvenida

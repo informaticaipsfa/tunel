@@ -10,3 +10,9 @@ func Cabecera(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, X-Requested-With")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
+
+func CabeceraRechazada(w http.ResponseWriter, estatus int, m string) {
+	w.WriteHeader(estatus)
+	msj := []byte(m)
+	w.Write(msj)
+}

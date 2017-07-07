@@ -26,7 +26,7 @@ func (p *Persona) Consultar(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
-}"cedula": "20178906",
+}
 
 //Actualizar Datos Generales
 func (p *Persona) Actualizar(w http.ResponseWriter, r *http.Request) {
@@ -53,10 +53,22 @@ func (p *Persona) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//Insertar Persona
 func (p *Persona) Insertar(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	fmt.Println("POST...")
+	fmt.Fprintf(w, "Saludos")
+}
+
+//Eliminar Persona
+func (p *Persona) Eliminar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (p *Persona) Eliminar(w http.ResponseWriter, r *http.Request) {
+//Opciones Persona
+func (p *Persona) Opciones(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	fmt.Println("OPTIONS...")
+	//fmt.Fprintf(w, "Saludos")
 
 }

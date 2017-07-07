@@ -3,28 +3,34 @@ package sssifanb
 import "github.com/gesaodin/tunel-ipsfa/util"
 
 type Familiar struct {
-	ID             int
-	Persona        Persona
-	Parentesco     string //0:Mama, 1:papa, 2: Esposa  3: hijo
-	EsMilitar      bool
-	Condicion      int //Sano o Condicion especial
-	Estudia        int
-	Benficio       bool //
-	Documento      int
-	DocumentoPadre string
+	ID         int     `json:"id" bson:"id"`
+	Persona    Persona `json:"Persona" bson:"persona"`
+	Parentesco string  `json:"Parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
+	EsMilitar  bool    `json:"esmilitar" bson:"esmilitar"`
+	Condicion  int     `json:"condicion" bson:"condicion"` //Sano o Condicion especial
+	Estudia    int     `json:"estudia" bson:"estudia"`
+	Benficio   bool    `json:"beneficio" bson:"beneficio"` //
+	Documento  int     `json:"documento" bson:"documento"`
+	Adoptado   bool    `json:"adoptado" bson:"adoptado"`
+	//DocumentoPadre string
 }
 
-//AplicarReglas OJO SEGUROS HORIZONTES
+//AplicarReglasBeneficio OJO SEGUROS HORIZONTES
 func (f *Familiar) AplicarReglasBeneficio() {
-	f.Benficio = false
-	if f.Condicion == 1 {
-		f.Benficio = true
-	} else {
-		if util.CalcularEdad("2001-01-01") < 18 {
+	if f.Parentesco == "HJ" {
+		f.Benficio = false
+		edad := util.CalcularEdad(f.Persona.DatoBasico.FechaNacimiento)
+		if f.Condicion == 1 {
 			f.Benficio = true
-		} else if f.Estudia == 1 && util.CalcularEdad("2001-01-01") < 27 {
-			f.Benficio = true
+		} else {
+			if edad < 18 {
+				f.Benficio = true
+			} else if f.Estudia == 1 && edad < 27 {
+				f.Benficio = true
+			}
 		}
+	} else { // ESPOSA Y PADRES
+		f.Benficio = true
 	}
 
 }

@@ -3,7 +3,7 @@ package seguridad
 import jwt "github.com/dgrijalva/jwt-go"
 
 type Reclamaciones struct {
-	Usuario
-	Rol string
+	SUsuario SUsuario
+	Rol
 	jwt.StandardClaims
 }

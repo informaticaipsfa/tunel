@@ -1,10 +1,13 @@
 package sssifanb
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/util"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -20,10 +23,10 @@ type Militar struct {
 	ID                     int        `json:"id,omitempty" bson:"id"`
 	TipoDato               int        `json:"tipodato,omitempty" bson:"tipodato"`
 	Persona                Persona    `json:"Persona,omitempty" bson:"persona"`
-	Categoria              int        `json:"Categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Categoria              string     `json:"Categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
 	Situacion              string     `json:"Situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
 	Clase                  int        `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
-	FechaIngresoComponente time.Time  `json:"fingreso,omitempty" bson:"fing"`
+	FechaIngresoComponente time.Time  `json:"fingreso,omitempty" bson:"fingreso"`
 	FechaAscenso           time.Time  `json:"fascenso,omitempty" bson:"fascenso"`
 	AnoReconocido          string     `json:"areconocido,omitempty" bson:"areconocido"`
 	MesReconocido          string     `json:"mreconocido,omitempty" bson:"mreconocido"`
@@ -34,21 +37,41 @@ type Militar struct {
 	Componente             Componente `json:"Componente,omitempty" bson:"componente"`
 	Grado                  Grado      `json:"Grado,omitempty" bson:"grado"` //grado
 	TIM                    Carnet     `json:"Tim,omitempty" bson:"tim"`     //Tarjeta de Identificacion Militar
-	Familiar               []Familiar `json:"Familiar,omitempty" bson:"familiar"`
+	Familiar               []Familiar `json:"Familiar" bson:"familiar"`
+	AppSaman               bool
+	AppPace                bool
+	AppNomina              bool
+}
+
+type HistorialMilitar struct {
+	Categoria              string     `json:"Categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Situacion              string     `json:"Situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
+	Clase                  int        `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	FechaIngresoComponente time.Time  `json:"fingreso,omitempty" bson:"fingreso"`
+	FechaAscenso           time.Time  `json:"fascenso,omitempty" bson:"fascenso"`
+	AnoReconocido          string     `json:"areconocido,omitempty" bson:"areconocido"`
+	MesReconocido          string     `json:"mreconocido,omitempty" bson:"mreconocido"`
+	DiaReconocido          string     `json:"dreconocido,omitempty" bson:"dreconocido"`
+	NumeroResuelto         string     `json:"nresuelto,omitempty" bson:"nresuelto"`
+	Posicion               int        `json:"posicion,omitempty" bson:"posicion"`
+	DescripcionHistorica   string     `json:"dhistorica,omitempty" bson:"dhistorica"` //codigo
+	Componente             Componente `json:"Componente,omitempty" bson:"componente"`
+	Grado                  Grado      `json:"Grado,omitempty" bson:"grado"` //grado
+	TIM                    Carnet     `json:"Tim,omitempty" bson:"tim"`     //Tarjeta de Identificacion Militar
 }
 
 type Componente struct {
-	ID          int
-	Nombre      string
-	Descripcion string
-	Abreviatura string
+	ID          int    `json:"id" bson:"id"`
+	Nombre      string `json:"nombre" bson:"nombre"`
+	Descripcion string `json:"descripcion" bson:"descripcion"`
+	Abreviatura string `json:"abreviatura" bson:"abreviatura"`
 }
 
 type Grado struct {
-	ID          int
-	Nombre      string
-	Descripcion string
-	Abreviatura string
+	ID          int    `json:"id" bson:"id"`
+	Nombre      string `json:"nombre" bson:"nombre"`
+	Descripcion string `json:"descripcion" bson:"descripcion"`
+	Abreviatura string `json:"abreviatura" bson:"abreviatura"`
 }
 
 //
@@ -58,8 +81,8 @@ func (m *Militar) Listar() {
 
 //Mensaje del sistema
 type Mensaje struct {
-	Mensaje string `json:"msj,omitempty"`
-	Tipo    int    `json:"tipo,omitempty"`
+	Mensaje string `json:"msj"`
+	Tipo    int    `json:"tipo"`
 	Pgsql   string `json:"pgsql,omitempty"`
 }
 
@@ -67,27 +90,52 @@ type Mensaje struct {
 func (m *Militar) Consultar() (jSon []byte, err error) {
 	var msj Mensaje
 	var lst []Militar
-	s := `SELECT codnip,nropersona,nombreprimero FROM personas WHERE codnip='` + m.Persona.DatoBasico.Cedula + `'`
+	var estatus bool
+	s := `SELECT codnip,tipnip, nropersona,nombreprimero, nombresegundo,apellidoprimero,apellidosegundo,sexocod
+	FROM personas
+	WHERE codnip='` + m.Persona.DatoBasico.Cedula + `' AND tipnip != 'P'`
 	sq, err := sys.PostgreSQLSAMAN.Query(s)
 	if err != nil {
 		msj.Mensaje = "Error: Consulta ya existe."
 		msj.Tipo = 2
 		msj.Pgsql = err.Error()
-		jSon, err = json.Marshal(m)
-		//fmt.Println(err.Error())
+		jSon, err = json.Marshal(msj)
+		fmt.Println(err.Error())
 		return
 	}
+	estatus = true
 	for sq.Next() {
 		var m Militar
-		var cedula, nombre string
+		var cedula, tipnip string
+		var nombp, nombs, apellp, apells, sexo sql.NullString
 		var numero int
-		sq.Scan(&cedula, &numero, &nombre)
+
+		sq.Scan(&cedula, &tipnip, &numero, &nombp, &nombs, &apellp, &apells, &sexo)
 		m.Persona.DatoBasico.Cedula = cedula
 		m.Persona.DatoBasico.NumeroPersona = numero
-		m.Persona.DatoBasico.NombrePrimero = nombre
+		m.Persona.DatoBasico.NombrePrimero = util.ValidarNullString(nombp)
+		m.Persona.DatoBasico.NombreSegundo = util.ValidarNullString(nombs)
+		m.Persona.DatoBasico.ApellidoPrimero = util.ValidarNullString(apellp)
+		m.Persona.DatoBasico.ApellidoSegundo = util.ValidarNullString(apells)
+		m.Persona.DatoBasico.Nacionalidad = tipnip
+		m.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
+		if m.Persona.DatoBasico.NombrePrimero != "null" {
+			estatus = false
+		} else {
+			estatus = true
+		}
+
 		lst = append(lst, m)
+
 	}
-	jSon, err = json.Marshal(lst)
+	if estatus == true {
+		msj.Mensaje = "Afiliado no existe."
+		msj.Tipo = 0
+		jSon, err = json.Marshal(msj)
+	} else {
+		jSon, err = json.Marshal(lst)
+	}
+
 	return
 
 }
@@ -99,6 +147,8 @@ func (m *Militar) Actualizar() (jSon []byte, err error) {
 
 	s := `UPDATE personas SET nombreprimero='` +
 		m.Persona.DatoBasico.NombrePrimero +
+		`', nombresegundo='` +
+		m.Persona.DatoBasico.NombreSegundo +
 		`' WHERE codnip='` + m.Persona.DatoBasico.Cedula + `'`
 	_, err = sys.PostgreSQLSAMAN.Exec(s)
 	if err != nil {
@@ -116,10 +166,13 @@ func (m *Militar) Actualizar() (jSon []byte, err error) {
 }
 
 //ActualizarMGO Actualizar
-func (m *Militar) ActualizarMGO(persona map[string]interface{}) (err error) {
-	c := sys.MGOSession.DB("ipsfa_test").C("persona")
-	err = c.Update(bson.M{"cedula": persona["cedula"]}, bson.M{"$set": persona})
-
+func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (err error) {
+	c := sys.MGOSession.DB("ipsfa_test").C("militar")
+	err = c.Update(bson.M{"persona.datobasico.cedula": oid}, bson.M{"$set": familiar})
+	if err != nil {
+		fmt.Println("Cedula: " + oid + " -> " + err.Error())
+		return
+	}
 	return
 }
 

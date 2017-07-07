@@ -12,9 +12,9 @@ import (
 
 //Constantes Generales
 const (
-	Encriptamiento             = "md5"
-	ActivarLimiteDeConexion    = true
-	DesactivarLimiteDeConexion = false
+	ENCRIPTAMIENTO             = "md5"
+	ACTIVARLIMITECONEXIONES    = true
+	DESACTIVARLIMITECONEXIONES = false
 )
 
 //Variables de Seguridad
@@ -35,12 +35,13 @@ func init() {
 }
 
 //GenerarJWT Json Web Token
-func GenerarJWT(u Usuario) string {
+func GenerarJWT(u SUsuario) string {
+	rol := Rol{ID: "01", Descripcion: "Development"}
 	peticion := Reclamaciones{
-		Usuario: u,
-		Rol:     "Development",
+		SUsuario: u,
+		Rol:      rol,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Hour * 1).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
 			Issuer:    "Conexion Bus Empresarial",
 		},
 	}
