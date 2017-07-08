@@ -7,10 +7,9 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
-	"github.com/gesaodin/tunel-ipsfa/mdl/usuario"
+
 	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
 	"github.com/gesaodin/tunel-ipsfa/util"
-	"github.com/gorilla/mux"
 )
 
 type WUsuario struct {
@@ -18,18 +17,18 @@ type WUsuario struct {
 
 //Consultar
 func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
-	Cabecera(w, r)
-	var usr usuario.Usuario
-	var variable = mux.Vars(r)
-	usr.Cedula = variable["id"]
-	j, _ := usr.Consultar()
-	w.WriteHeader(http.StatusOK)
-	w.Write(j)
+	// Cabecera(w, r)
+	// var usr seguridad.Usuario
+	// var variable = mux.Vars(r)
+	// usr.ID = variable["id"]
+	// ok := usr.Consultar()
+	// w.WriteHeader(http.StatusOK)
+	// w.Write(j)
 }
 
 //Login conexion para solicitud de token
 func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
-	var usuario seguridad.SUsuario
+	var usuario seguridad.Usuario
 
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
@@ -57,13 +56,9 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 //ValidarToken Validacion de usuario
 func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 	var mensaje util.Mensajes
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		fmt.Println("Conexion establecida desde: ", r.Header.Get("Origin"))
-
+		Cabecera(w, r)
 		token, e := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &seguridad.Reclamaciones{}, func(token *jwt.Token) (interface{}, error) {
-
 			return seguridad.LlavePublica, nil
 		})
 
@@ -73,8 +68,6 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 				vErr := e.(*jwt.ValidationError)
 				switch vErr.Errors {
 				case jwt.ValidationErrorExpired:
-
-					Cabecera(w, r)
 					w.WriteHeader(http.StatusUnauthorized)
 					mensaje.Tipo = 2
 					mensaje.Msj = "El token ha expirado"
@@ -82,7 +75,6 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 					w.Write(j)
 					return
 				case jwt.ValidationErrorSignatureInvalid:
-					Cabecera(w, r)
 					w.WriteHeader(http.StatusForbidden)
 					mensaje.Tipo = 3
 					mensaje.Msj = "La firma del token no coincide"
@@ -90,7 +82,6 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 					w.Write(j)
 					return
 				default:
-					Cabecera(w, r)
 					w.WriteHeader(http.StatusForbidden)
 					mensaje.Tipo = 4
 					mensaje.Msj = "Acceso denegado"
@@ -99,19 +90,19 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 					return
 				}
 			default:
-				fmt.Fprintln(w, "El token no es valido")
+				w.WriteHeader(http.StatusForbidden)
+				mensaje.Tipo = 5
+				mensaje.Msj = "El token no es valido"
+				j, _ := json.Marshal(mensaje)
+				w.Write(j)
 				return
 			}
 		}
 
 		if token.Valid {
-			// session.Values["ok"] = true
-			// session.Values["name"] = ""
-			// session.Save(r, w)
-
 			fn(w, r)
 		} else {
-			CabeceraRechazada(w, http.StatusForbidden, "El token no es valido")
+			CabeceraRechazada(w, http.StatusForbidden, "Err. token no es valido")
 			return
 		}
 	})

@@ -7,21 +7,10 @@
 // privilegios. La gestión de derechos de usuarios se implementa a través de RBAC.
 package seguridad
 
-import (
-	"crypto/md5"
-	"database/sql"
-	"encoding/hex"
-	"fmt"
-	"time"
-
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/util"
-
-	"gopkg.in/mgo.v2/bson"
-)
+import "time"
 
 const (
-	ROOT               string = "0xRO" //Todos los privilegios del sistema
+	ROOT               string = "0xRO"
 	CONSULTA           string = "0xCO"
 	ADMINISTRADOR      string = "0xAD"
 	ADMINISTRADORGRUPO string = "0xAA"
@@ -47,17 +36,18 @@ type MetodoSeguro struct {
 
 // Privilegio
 type Privilegio struct {
-	Id          bson.ObjectId `json:"id" bson:"_id"`
-	Controlador string        `json:"controlador"`
-	Metodo      string        `json:"metodo"`
-	Accion      string        `json:"accion"`
+	Nombre      string `json:"nombre"`
+	Descripcion string `json:"descripcion"`
+	Controlador string `json:"controlador"`
+	Metodo      string `json:"metodo"`
+	Accion      string `json:"accion"`
 }
 
 // Perfil
 type Perfil struct {
-	Id          string        `json:"id, omitempty"`
-	Descripcion string        `json:"descripcion,omitempty"`
-	Privilegios []interface{} `json:"privilegios,omitempty"`
+	ID          string       `json:"id, omitempty"`
+	Descripcion string       `json:"descripcion,omitempty"`
+	Privilegios []Privilegio `json:"Privilegios,omitempty"`
 }
 
 type Rol struct {
@@ -66,28 +56,26 @@ type Rol struct {
 }
 
 // Usuarios del Sistema
-type SUsuario struct {
-	ID           int         `json:"id"`
-	Nombre       string      `json:"nombre"`
-	Correo       string      `json:"correo,omitempty"`
-	Clave        string      `json:"clave,omitempty"`
-	Token        string      `json:"token,omitempty"`
-	Perfil       interface{} `json:"perfil,omitempty"`
-	FirmaDigital interface{} `json:"firma,omitempty"`
-	Rol          `json:"rol,omitempty"`
+type Usuario struct {
+	ID           int          `json:"id"`
+	Nombre       string       `json:"nombre"`
+	Correo       string       `json:"correo,omitempty"`
+	Clave        string       `json:"clave,omitempty"`
+	Sucursal     string       `json:"sucursal,omitempty" bson:"sucursal"`
+	Sistema      string       `json:"sistema,omitempty" bson:"sistema"`
+	Token        string       `json:"token,omitempty"`
+	Perfil       Perfil       `json:"Perfil,omitempty"`
+	FirmaDigital FirmaDigital `json:"FirmaDigital,omitempty"`
+	IP           string       `json:"ip,omitempty" bson:"ip"`
+	Rol          `json:"Rol,omitempty"`
 }
 
-// La firma permite identificar una maquina y persona autorizada por el sistema
+//FirmaDigital permite identificar una maquina y persona autorizada por el sistema
 type FirmaDigital struct {
-	Id int
-	SUsuario
+	ID           int
 	DireccionMac string
 	DireccionIP  string
 	Tiempo       time.Time
-}
-
-type RespuestaToken struct {
-	Token string `json:"token"`
 }
 
 func (f *FirmaDigital) Registrar() bool {
@@ -95,36 +83,34 @@ func (f *FirmaDigital) Registrar() bool {
 	return true
 }
 
-func (u *SUsuario) Salvar(us SUsuario) {
+//Salvar Metodo para crear usuarios del sistema
+func (u *Usuario) Salvar() {
+	var usr Usuario
+	var privilegio Privilegio
+	var lst []Privilegio
+
+	usr.ID = 0
+	usr.Nombre = "Super Usuario"
+
+	usr.Rol.ID = ROOT
+	usr.Perfil.ID = ROOT
+	usr.Perfil.Descripcion = "Super Usuario"
+
+	privilegio.Nombre = "Salvar"
+	privilegio.Descripcion = "Crear Usuario"
+	privilegio.Accion = "Insert()" // ES6 Metodos
+	lst = append(lst, privilegio)
+
+	privilegio.Nombre = "Modificar"
+	privilegio.Descripcion = "Modificar Usuario"
+	privilegio.Accion = "Update()"
+	lst = append(lst, privilegio)
+	usr.Perfil.Privilegios = lst
 
 }
 
-func (u *SUsuario) Consultar(usuario string, clave string) (v bool) {
-
-	data := []byte(usuario + clave)
-	b := md5.Sum(data)
-	v = false
-	var encry string = hex.EncodeToString(b[:])
-	sC := "SELECT oid, nomb, ncom, corr, fech,esta,rol FROM usuario WHERE toke = '" + encry + "';"
-
-	row, e := sys.PostgreSQLSAMAN.Query(sC)
-	if e != nil {
-		fmt.Println(e.Error())
-		return
-	}
-	defer row.Close()
-
-	for row.Next() {
-		var oid int
-		var nomb, ncom, corr, fech, esta, rol sql.NullString
-
-		row.Scan(&oid, &nomb, &ncom, &corr, &fech, &esta, &rol)
-		u.ID = oid
-		u.Nombre = util.ValidarNullString(nomb)
-		u.Correo = util.ValidarNullString(corr)
-		//u.Rol = util.ValidarNullString(rol)
-		v = true
-	}
+//Consultar el sistema de usuarios
+func (u *Usuario) Consultar() (v bool) {
 
 	return
 }

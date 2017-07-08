@@ -1,7 +1,9 @@
 package util
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"fmt"
 	"log"
 	"time"
@@ -63,6 +65,14 @@ func CalcularEdad(fechaNacimiento time.Time) (Edad int) {
 	}
 
 	return
+}
+
+func GenerarHash256(password []byte) (encry string) {
+	h := sha256.New()
+	h.Write(password)
+	encry = hex.EncodeToString(h.Sum(nil))
+	return
+
 }
 
 func Error(e error) {
