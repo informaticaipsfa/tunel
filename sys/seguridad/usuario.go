@@ -7,10 +7,17 @@
 // privilegios. La gestión de derechos de usuarios se implementa a través de RBAC.
 package seguridad
 
-import "time"
+import (
+	"time"
+
+	"gopkg.in/mgo.v2/bson"
+
+	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/util"
+)
 
 const (
-	ROOT               string = "0xRO"
+	ROOT               string = "0xRO" //Todos los privilegios del sistema
 	CONSULTA           string = "0xCO"
 	ADMINISTRADOR      string = "0xAD"
 	ADMINISTRADORGRUPO string = "0xAA"
@@ -21,6 +28,11 @@ const (
 	OPERADOR           string = "0xOP"
 	TEST               string = "0xPR"
 	HACK               string = "0xHA"
+	PROOT              string = "Root"
+	PPRESIDENTE        string = "Presidente"
+	PADMIN             string = "Administrador"
+	PGERENTE           string = "Gerente"
+	PJEFE              string = "Jefe"
 )
 
 type MetodoSeguro struct {
@@ -36,46 +48,47 @@ type MetodoSeguro struct {
 
 // Privilegio
 type Privilegio struct {
-	Nombre      string `json:"nombre"`
+	Metodo      string `json:"nombre"`
 	Descripcion string `json:"descripcion"`
-	Controlador string `json:"controlador"`
-	Metodo      string `json:"metodo"`
 	Accion      string `json:"accion"`
 }
 
 // Perfil
 type Perfil struct {
-	ID          string       `json:"id, omitempty"`
+	ID          string       `json:"id,omitempty"`
 	Descripcion string       `json:"descripcion,omitempty"`
 	Privilegios []Privilegio `json:"Privilegios,omitempty"`
 }
 
 type Rol struct {
 	ID          string `json:"id"`
-	Descripcion string `json:"descripcion"`
+	Descripcion string `json:"descripcion" bson:"descipcion"`
 }
 
 // Usuarios del Sistema
 type Usuario struct {
-	ID           int          `json:"id"`
-	Nombre       string       `json:"nombre"`
-	Correo       string       `json:"correo,omitempty"`
-	Clave        string       `json:"clave,omitempty"`
-	Sucursal     string       `json:"sucursal,omitempty" bson:"sucursal"`
-	Sistema      string       `json:"sistema,omitempty" bson:"sistema"`
-	Token        string       `json:"token,omitempty"`
-	Perfil       Perfil       `json:"Perfil,omitempty"`
-	FirmaDigital FirmaDigital `json:"FirmaDigital,omitempty"`
-	IP           string       `json:"ip,omitempty" bson:"ip"`
-	Rol          `json:"Rol,omitempty"`
+	Id           bson.ObjectId `json:"id" bson:"_id"`
+	Nombre       string        `json:"nombre"`
+	Login        string        `json:"login"`
+	Correo       string        `json:"correo,omitempty"`
+	Clave        string        `json:"clave,omitempty"`
+	Sucursal     string        `json:"sucursal,omitempty" bson:"sucursal"`
+	Sistema      string        `json:"sistema,omitempty" bson:"sistema"`
+	Rol          Rol           `json:"Roles,omitempty"`
+	Token        string        `json:"token,omitempty"`
+	Perfil       Perfil        `json:"Perfil,omitempty"`
+	FirmaDigital FirmaDigital  `json:"FirmaDigital,omitempty"`
 }
 
-//FirmaDigital permite identificar una maquina y persona autorizada por el sistema
+//FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
 type FirmaDigital struct {
-	ID           int
 	DireccionMac string
 	DireccionIP  string
 	Tiempo       time.Time
+}
+
+type RespuestaToken struct {
+	Token string `json:"token"`
 }
 
 func (f *FirmaDigital) Registrar() bool {
@@ -84,28 +97,36 @@ func (f *FirmaDigital) Registrar() bool {
 }
 
 //Salvar Metodo para crear usuarios del sistema
-func (u *Usuario) Salvar() {
-	var usr Usuario
+func (usr *Usuario) Salvar() error {
+
 	var privilegio Privilegio
 	var lst []Privilegio
 
-	usr.ID = 0
-	usr.Nombre = "Super Usuario"
+	usr.Id = bson.NewObjectId()
+	usr.Nombre = "Root"
+	usr.Login = "root"
+	usr.Sucursal = "Principal"
+	usr.Clave = util.GenerarHash256([]byte(usr.Login))
 
 	usr.Rol.ID = ROOT
+	usr.Rol.Descripcion = "Super Usuario"
 	usr.Perfil.ID = ROOT
 	usr.Perfil.Descripcion = "Super Usuario"
 
-	privilegio.Nombre = "Salvar"
+	privilegio.Metodo = "afiliacion.salvar"
 	privilegio.Descripcion = "Crear Usuario"
 	privilegio.Accion = "Insert()" // ES6 Metodos
 	lst = append(lst, privilegio)
 
-	privilegio.Nombre = "Modificar"
+	privilegio.Metodo = "afiliacion.modificar"
 	privilegio.Descripcion = "Modificar Usuario"
 	privilegio.Accion = "Update()"
 	lst = append(lst, privilegio)
 	usr.Perfil.Privilegios = lst
+
+	var mongo sys.Mongo
+
+	return mongo.Salvar(usr, "usuario")
 
 }
 

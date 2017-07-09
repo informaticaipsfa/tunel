@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
@@ -12,10 +14,41 @@ import (
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
-type WUsuario struct {
+type WUsuario struct{}
+
+//Crear Usuario del sistema
+func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
+	var usuario seguridad.Usuario
+	var m util.Mensajes
+	Cabecera(w, r)
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	usuario.FirmaDigital.DireccionIP = ip[0]
+	usuario.FirmaDigital.Tiempo = time.Now()
+
+	if ip[0] == "192.168.6.45" {
+		e := usuario.Salvar()
+		if e != nil {
+			w.WriteHeader(http.StatusForbidden)
+			m.Msj = e.Error()
+			m.Tipo = 1
+		} else {
+			w.WriteHeader(http.StatusOK)
+			m.Msj = "Usuario creado"
+			m.Tipo = 0
+		}
+	} else {
+		w.WriteHeader(http.StatusUnauthorized)
+		m.Msj = "El equipo donde no esta autorizado"
+		m.Tipo = 2
+	}
+
+	m.Fecha = time.Now()
+	j, _ := json.Marshal(m)
+	w.Write(j)
 }
 
-//Consultar
+//Consultar ID
 func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
 	// Cabecera(w, r)
 	// var usr seguridad.Usuario
@@ -37,7 +70,6 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	if usuario.Nombre == "carlos" && usuario.Clave == "za63qj2p" {
 		usuario.Nombre = "Carlos"
 		usuario.Clave = ""
-		usuario.ID = 0
 		token := seguridad.GenerarJWT(usuario)
 		result := seguridad.RespuestaToken{Token: token}
 		j, e := json.Marshal(result)

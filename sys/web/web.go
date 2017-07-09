@@ -39,6 +39,8 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Login).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
 
+	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crear", wUsuario.Crear).Methods("POST")
+
 }
 
 //Principal Página inicial del sistema o bienvenida

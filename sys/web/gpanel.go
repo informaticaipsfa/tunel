@@ -36,7 +36,7 @@ type GPanel struct {
 	Pagina         string
 	TituloDePagina string
 	TextoError     string
-	Usuario        seguridad.SUsuario
+	Usuario        seguridad.Usuario
 	Config         Pagina
 }
 
