@@ -17,7 +17,7 @@ func (p *Persona) Consultar(w http.ResponseWriter, r *http.Request) {
 	var dataJSON sssifanb.Militar
 	var cedula = mux.Vars(r)
 	dataJSON.Persona.DatoBasico.Cedula = cedula["id"]
-
+	fmt.Println(dataJSON.Persona.DatoBasico.Cedula)
 	j, e := dataJSON.Consultar()
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)

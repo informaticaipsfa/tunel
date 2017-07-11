@@ -86,8 +86,23 @@ type Mensaje struct {
 	Pgsql   string `json:"pgsql,omitempty"`
 }
 
-//Consultar Militar
+//ConsultarMGO una persona mediante el metodo de MongoDB
 func (m *Militar) Consultar() (jSon []byte, err error) {
+	var militar Militar
+	var msj Mensaje
+	c := sys.MGOSession.DB("ipsfa_test").C("militar")
+	err = c.Find(bson.M{"persona.datobasico.cedula": m.Persona.DatoBasico.Cedula}).One(&militar)
+	if militar.Persona.DatoBasico.Cedula == "" {
+		msj.Tipo = 0
+		jSon, err = json.Marshal(msj)
+	} else {
+		jSon, err = json.Marshal(militar)
+	}
+	return
+}
+
+//Consultar Militar
+func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
 	var msj Mensaje
 	var lst []Militar
 	var estatus bool

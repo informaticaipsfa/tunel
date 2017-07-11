@@ -5,7 +5,7 @@ import "github.com/gesaodin/tunel-ipsfa/util"
 type Familiar struct {
 	ID         int     `json:"id" bson:"id"`
 	Persona    Persona `json:"Persona" bson:"persona"`
-	Parentesco string  `json:"Parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
+	Parentesco string  `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
 	EsMilitar  bool    `json:"esmilitar" bson:"esmilitar"`
 	Condicion  int     `json:"condicion" bson:"condicion"` //Sano o Condicion especial
 	Estudia    int     `json:"estudia" bson:"estudia"`
