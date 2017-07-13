@@ -78,8 +78,11 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 			fmt.Println(err.Error())
 		}
 		cedulapace = util.ValidarNullString(cedulap)
+
+		militar.ID = cedulas
 		militar.TipoDato = 0
 		militar.Situacion = situ
+		militar.Clase = clas
 		militar.Categoria = util.ValidarNullString(cate)
 		militar.Persona.DatoBasico.Cedula = cedulas
 		militar.Persona.DatoBasico.NumeroPersona = nro
@@ -91,40 +94,38 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
 		militar.Persona.DatoBasico.EstadoCivil = util.ValidarNullString(edoc)
 		//militar.Persona.DatoBasico.FechaNacimiento = strings.Replace(util.ValidarNullString(fnac), "/", "-", -1)
-
+		layOut := "2006-01-02"
 		fechanacimiento := util.ValidarNullString(fnac)
 		if fechanacimiento != "null" {
 			dateString := strings.Replace(fechanacimiento, "/", "-", -1)
-			layOut := "2006-01-02"
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
-				militar.Persona.DatoBasico.FechaNacimiento = dateStamp.Local()
+				militar.Persona.DatoBasico.FechaNacimiento = dateStamp
 			}
+
 		}
 
 		fechaingreso := util.ValidarNullString(fing)
 		if fechaingreso != "null" {
 			dateString := strings.Replace(fechaingreso, "/", "-", -1)
-			layOut := "2006-01-02"
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
-				militar.FechaIngresoComponente = dateStamp.Local()
+				militar.FechaIngresoComponente = dateStamp
 			}
 		}
 
 		fechaultimo := util.ValidarNullString(fult)
 		if fechaultimo != "null" {
 			dateString := strings.Replace(fechaultimo, "/", "-", -1)
-			layOut := "2006-01-02"
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
-				militar.FechaAscenso = dateStamp.Local()
+				militar.FechaAscenso = dateStamp
 			}
 		}
 
-		//militar.FechaIngresoComponente =
 		militar.Grado.Nombre = util.ValidarNullString(gid)
 		militar.Grado.Descripcion = gdes
+		militar.Grado.Abreviatura = gcod
 		militar.Componente.Abreviatura = ccod
 		militar.Componente.Nombre = cnom
 		militar.AppNomina = false
@@ -132,9 +133,8 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.AppPace = true
 		if cedulapace == "null" {
 			militar.AppPace = false
-			fmt.Println(cedulas, cedulapace, nro, util.ValidarNullString(nombp), situ, fing, gnom)
+			fmt.Println(cedulas, cedulapace, nro, util.ValidarNullString(nombp), situ, fnac, "->", militar.Persona.DatoBasico.FechaNacimiento, fing, gnom)
 		}
-
 		militar.SalvarMGO("militar")
 		jSon, err = json.Marshal(militar)
 	}
@@ -228,13 +228,13 @@ func (e *Estructura) CargarFamiliar() (jSon []byte, err error) {
 		if util.ValidarNullString(nmil) != "null" {
 			familiar.EsMilitar = true
 		}
+		layOut := "2006-01-02"
 		fecha = util.ValidarNullString(fech)
 		if fecha != "null" {
 			dateString := strings.Replace(fecha, "/", "-", -1)
-			layOut := "2006-01-02"
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
-				familiar.Persona.DatoBasico.FechaNacimiento = dateStamp.Local()
+				familiar.Persona.DatoBasico.FechaNacimiento = dateStamp
 			}
 		}
 

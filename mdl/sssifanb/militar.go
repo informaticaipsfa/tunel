@@ -20,12 +20,12 @@ type Militar struct {
 	// Direccion              []Direccion `json:"Direccion,omitempty" bson:"direccion"`
 	// Telefono               []Telefono  `json:"Telefono,omitempty" bson:"telefono"`a
 	// Correo                 Correo      `json:"Correo,omitempty" bson:"correo"`
-	ID                     int        `json:"id,omitempty" bson:"id"`
+	ID                     string     `json:"id,omitempty" bson:"id"`
 	TipoDato               int        `json:"tipodato,omitempty" bson:"tipodato"`
 	Persona                Persona    `json:"Persona,omitempty" bson:"persona"`
 	Categoria              string     `json:"Categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
 	Situacion              string     `json:"Situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
-	Clase                  int        `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	Clase                  string     `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
 	FechaIngresoComponente time.Time  `json:"fingreso,omitempty" bson:"fingreso"`
 	FechaAscenso           time.Time  `json:"fascenso,omitempty" bson:"fascenso"`
 	AnoReconocido          string     `json:"areconocido,omitempty" bson:"areconocido"`
@@ -38,15 +38,16 @@ type Militar struct {
 	Grado                  Grado      `json:"Grado,omitempty" bson:"grado"` //grado
 	TIM                    Carnet     `json:"Tim,omitempty" bson:"tim"`     //Tarjeta de Identificacion Militar
 	Familiar               []Familiar `json:"Familiar" bson:"familiar"`
-	AppSaman               bool
-	AppPace                bool
-	AppNomina              bool
+	AppSaman               bool       `json:"appsaman" bson:"appsaman"`
+	AppPace                bool       `json:"apppace" bson:"apppace"`
+	AppNomina              bool       `json:"appnomina" bson:"appnomina"`
+	TiempoSevicio          int        `json:"tiemposervicio,omitempty" bson:"tiemposervicio,omitempty"`
 }
 
 type HistorialMilitar struct {
 	Categoria              string     `json:"Categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
 	Situacion              string     `json:"Situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
-	Clase                  int        `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	Clase                  string     `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
 	FechaIngresoComponente time.Time  `json:"fingreso,omitempty" bson:"fingreso"`
 	FechaAscenso           time.Time  `json:"fascenso,omitempty" bson:"fascenso"`
 	AnoReconocido          string     `json:"areconocido,omitempty" bson:"areconocido"`
@@ -61,14 +62,12 @@ type HistorialMilitar struct {
 }
 
 type Componente struct {
-	ID          int    `json:"id" bson:"id"`
 	Nombre      string `json:"nombre" bson:"nombre"`
 	Descripcion string `json:"descripcion" bson:"descripcion"`
 	Abreviatura string `json:"abreviatura" bson:"abreviatura"`
 }
 
 type Grado struct {
-	ID          int    `json:"id" bson:"id"`
 	Nombre      string `json:"nombre" bson:"nombre"`
 	Descripcion string `json:"descripcion" bson:"descripcion"`
 	Abreviatura string `json:"abreviatura" bson:"abreviatura"`
@@ -201,7 +200,7 @@ func (m *Militar) SalvarMGO(colecion string) (err error) {
 		err = c.Insert(m)
 	}
 
-	//fmt.Println(p)
+	//fmt.Println(err)
 
 	return
 }

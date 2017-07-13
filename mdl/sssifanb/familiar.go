@@ -12,14 +12,17 @@ type Familiar struct {
 	Benficio   bool    `json:"beneficio" bson:"beneficio"` //
 	Documento  int     `json:"documento" bson:"documento"`
 	Adoptado   bool    `json:"adoptado" bson:"adoptado"`
+	// EstatusAfiliacion string `json:"estatus" bson:"adoptado"`
+	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
 	//DocumentoPadre string
 }
 
 //AplicarReglasBeneficio OJO SEGUROS HORIZONTES
 func (f *Familiar) AplicarReglasBeneficio() {
+	edad := util.CalcularEdad(f.Persona.DatoBasico.FechaNacimiento)
 	if f.Parentesco == "HJ" {
 		f.Benficio = false
-		edad := util.CalcularEdad(f.Persona.DatoBasico.FechaNacimiento)
+
 		if f.Condicion == 1 {
 			f.Benficio = true
 		} else {
@@ -36,5 +39,9 @@ func (f *Familiar) AplicarReglasBeneficio() {
 }
 
 func (f *Familiar) AplicarReglasParentesco() {
+
+}
+
+func (f *Familiar) ConvertirFechaHumano() {
 
 }

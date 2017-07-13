@@ -85,7 +85,7 @@ func reduccion() string {
 						JOIN personas AS p ON pm.nropersona=p.nropersona
 						JOIN ipsfa_componentes AS icom ON pm.componentecod=icom.componentecod
 						JOIN ipsfa_grados AS igra ON pm.gradocod=igra.gradocod AND pm.componentecod=igra.componentecod
-					) AS B ON B.nropersona = TBL.np -- WHERE B.perssituaccod = 'ACT' --limit 1000`
+					) AS B ON B.nropersona = TBL.np -- limit 1000 -- WHERE cedula_saman='16872776' --  WHERE B.perssituaccod = 'ACT' --`
 }
 
 //obtenerHistorialFamiliares
