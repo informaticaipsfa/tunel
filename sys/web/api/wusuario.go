@@ -67,7 +67,7 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
 
-	if usuario.Nombre == "carlos" && usuario.Clave == "za63qj2p" {
+	if usuario.Nombre == "Carlos" && usuario.Clave == "123" {
 		usuario.Nombre = "Carlos"
 		usuario.Clave = ""
 		token := seguridad.GenerarJWT(usuario)

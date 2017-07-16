@@ -68,7 +68,9 @@ func reduccion() string {
 			fchingcomponente,fchultimoascenso,fchegreso,
 			annoreconocido,mesreconocido,diareconocido,
 			componentecod,componentenombre,componentesiglas,
-			gradocod,gradocodrangoid,gradonombrecorto,gradonombrelargo
+			gradocod,gradocodrangoid,gradonombrecorto,gradonombrelargo,
+			gradop,componentep,tipcuentacod,instfinancod,nrocuenta,nrohijos,
+			anio_reconocido,mes_reconocido,dia_reconocido,f_retiro,n_hijos,numero_cuenta
 	 FROM (
 						SELECT DISTINCT ON (A.cedula_saman) cedula_saman, cedula_pace, np FROM (
 						SELECT * FROM analisis.reducciones WHERE militar > 0 ORDER BY militar DESC ) AS A
@@ -76,16 +78,22 @@ func reduccion() string {
 						SELECT p.codnip,p.nropersona,
 							p.tipnip,p.nombreprimero,nombresegundo,apellidoprimero,apellidosegundo,fechanacimiento,
 							p.sexocod,p.edocivilcod,
-							perscategcod, perssituaccod,persclasecod,
-							fchingcomponente,fchultimoascenso,fchegreso,
-							annoreconocido,mesreconocido,diareconocido,
+							pm.perscategcod, pm.perssituaccod,pm.persclasecod,
+							pm.fchingcomponente,pm.fchultimoascenso,pension.fchegreso,
+							pm.annoreconocido,pm.mesreconocido,pm.diareconocido,
 							icom.componentecod,icom.componentenombre,icom.componentesiglas,
-							igra.gradocod,igra.gradocodrangoid,igra.gradonombrecorto,igra.gradonombrelargo
+							igra.gradocod,igra.gradocodrangoid,igra.gradonombrecorto,igra.gradonombrelargo,
+							pension.gradocod AS gradop, pension.componentecod AS componentep,
+							pension.tipcuentacod, pension.instfinancod, pension.nrocuenta, pension.nrohijos,
+							bnf.anio_reconocido, bnf.mes_reconocido,bnf.dia_reconocido, bnf.f_retiro, bnf.n_hijos,
+							bnf.numero_cuenta
 						FROM pers_dat_militares AS pm
+						LEFT JOIN pension ON pension.nropersona=pm.nropersona
 						JOIN personas AS p ON pm.nropersona=p.nropersona
+						LEFT JOIN beneficiario AS bnf ON p.codnip=bnf.cedula
 						JOIN ipsfa_componentes AS icom ON pm.componentecod=icom.componentecod
 						JOIN ipsfa_grados AS igra ON pm.gradocod=igra.gradocod AND pm.componentecod=igra.componentecod
-					) AS B ON B.nropersona = TBL.np -- limit 1000 -- WHERE cedula_saman='16872776' --  WHERE B.perssituaccod = 'ACT' --`
+					) AS B ON B.nropersona = TBL.np  -- limit 1000 -- WHERE cedula_saman='16872776' --  WHERE B.perssituaccod = 'ACT' --`
 }
 
 //obtenerHistorialFamiliares
@@ -109,19 +117,18 @@ func obtenerHistorialFamiliares() string {
 
 //obtenerHistorialMilitar
 func obtenerHistorialMilitar() string {
-	return `SELECT
-						ipg.componentecod, ipg.gradocod, ipg.perscategcod,
-						ipg.perssituaccod, ipg.gradofchobten, ipg.gradoresuelto,
-						ipg.persclasecod,
-						ipg.gradonroenresuelto,ipg.gradofchrecipsfa,
-						ipg.auditfechacambio,ipg.audithoracambio,
-						ipg.auditfechacreacion,ipg.audithoracreacion,ipg.razonhistcod
-					FROM
-						analisis.reducciones as AR
-					JOIN personas p ON AR.np=p.nropersona
-					JOIN ipsfa_grado_x_pers ipg ON ipg.nropersona = AR.np
-					ORDER BY AR.cedula_saman;
-`
+	return `
+			SELECT
+				cedula_saman, ipg.componentecod, ipg.gradocod, ipg.perscategcod,
+				ipg.persclasecod, ipg.perssituaccod, ipg.gradofchobten, ipg.gradoresuelto,
+				ipg.gradonroenresuelto,ipg.gradofchrecipsfa,
+				ipg.auditfechacambio,ipg.audithoracambio,
+				ipg.auditfechacreacion,ipg.audithoracreacion,ipg.razonhistcod
+				FROM
+				analisis.reducciones as AR
+				JOIN personas p ON AR.np=p.nropersona
+				JOIN ipsfa_grado_x_pers ipg ON ipg.nropersona = AR.np
+			ORDER BY AR.cedula_saman,p.nropersona, gradofchrecipsfa`
 	//WHERE p.nropersona IN (1393199,79227)
 
 }
