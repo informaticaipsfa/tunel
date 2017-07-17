@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/sys"
@@ -43,7 +44,7 @@ type Militar struct {
 	AppSaman               bool               `json:"appsaman" bson:"appsaman"`
 	AppPace                bool               `json:"apppace" bson:"apppace"`
 	AppNomina              bool               `json:"appnomina" bson:"appnomina"`
-	TiempoSevicio          int                `json:"tiemposervicio,omitempty" bson:"tiemposervicio,omitempty"`
+	TiempoSevicio          string             `json:"tiemposervicio,omitempty" bson:"tiemposervicio,omitempty"`
 	Pension                Pension            `json:"Pension,omitempty" bson:"pension"`
 	Fideicomiso            Fideicomiso        `json:"Fideicomiso,omitempty" bson:"fideicomiso"`
 	Anomalia               Anomalia           `json:"Anomalia,omitempty" bson:"anomalia"`
@@ -59,8 +60,8 @@ type Anomalia struct {
 type HistorialMilitar struct {
 	Componente     string    `json:"componente,omitempty" bson:"componente"`
 	Grado          string    `json:"grado,omitempty" bson:"grado"`         //grado
-	Categoria      string    `json:"Categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
-	Situacion      string    `json:"Situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
+	Categoria      string    `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Situacion      string    `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
 	Clase          string    `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
 	FechaResuelto  time.Time `json:"fresuelto,omitempty" bson:"fresuelto"`
 	GradoResuelto  string    `json:"gradoresuelto,omitempty" bson:"gradoresuelto"`
@@ -114,47 +115,47 @@ type Mensaje struct {
 	Pgsql   string `json:"pgsql,omitempty"`
 }
 
+//AplicarReglas Reglas Generales
+func (m *Militar) AplicarReglas() {
+	m.Conversion()
+	m.ConversionGrado()
+	a, mes, d := util.CalcularTiempo(m.FechaIngresoComponente)
+
+	m.TiempoSevicio = strconv.Itoa(a) + " A, " + mes.String() + " M, " + strconv.Itoa(d) + " D"
+}
+
+//Conversion de Grados
 func (m *Militar) Conversion() {
-	if m.Grado.Abreviatura == "1ER TTE" {
-		m.Grado.Descripcion = "PRIMER TENIENTE"
-	}
-
-	switch m.Categoria {
-	case "EFE":
-		m.Categoria = "EFECTIVO"
-	case "ASI":
-		m.Categoria = "ASIMILADO"
-	}
-
-	if m.Situacion == "RCP" {
-		m.Categoria = "RESERVA ACTIVA"
-	}
 
 }
 
+//ConversionGrado Grados
 func (m *Militar) ConversionGrado() {
 	if m.Situacion == "RCP" {
 
 	}
 }
 
-//ConsultarMGO una persona mediante el metodo de MongoDB
+//Consultar una persona mediante el metodo de MongoDB
 func (m *Militar) Consultar() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
 	c := sys.MGOSession.DB("ipsfa_test").C("militar")
-	err = c.Find(bson.M{"persona.datobasico.cedula": m.Persona.DatoBasico.Cedula}).One(&militar)
+	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
 	if militar.Persona.DatoBasico.Cedula == "" {
 		msj.Tipo = 0
 		jSon, err = json.Marshal(msj)
 	} else {
-		militar.Conversion()
+		militar.Persona.DatoBasico.FechaNacimiento = militar.Persona.DatoBasico.FechaNacimiento.UTC()
+		militar.FechaIngresoComponente = militar.FechaIngresoComponente.UTC()
+		militar.FechaAscenso = militar.FechaAscenso.UTC()
+		militar.AplicarReglas()
 		jSon, err = json.Marshal(militar)
 	}
 	return
 }
 
-//Consultar Militar
+//ConsultarSAMAN Militar
 func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
 	var msj Mensaje
 	var lst []Militar
@@ -236,7 +237,18 @@ func (m *Militar) Actualizar() (jSon []byte, err error) {
 //ActualizarMGO Actualizar
 func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (err error) {
 	c := sys.MGOSession.DB("ipsfa_test").C("militar")
-	err = c.Update(bson.M{"persona.datobasico.cedula": oid}, bson.M{"$set": familiar})
+	err = c.Update(bson.M{"id": oid}, bson.M{"$set": familiar})
+	if err != nil {
+		fmt.Println("Cedula: " + oid + " -> " + err.Error())
+		return
+	}
+	return
+}
+
+//ActualizarMGO Actualizar
+func (m *Militar) ActualizarMGOObjeto(oid string, Obj interface{}) (err error) {
+	c := sys.MGOSession.DB("ipsfa_test").C("militar")
+	err = c.Update(bson.M{"id": oid}, bson.M{"$set": Obj})
 	if err != nil {
 		fmt.Println("Cedula: " + oid + " -> " + err.Error())
 		return

@@ -112,7 +112,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 			dateString := strings.Replace(fechanacimiento, "/", "-", -1)
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
-				militar.Persona.DatoBasico.FechaNacimiento = dateStamp
+				militar.Persona.DatoBasico.FechaNacimiento = dateStamp.UTC()
 			}
 
 		}
@@ -122,7 +122,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 			dateString := strings.Replace(fechaingreso, "/", "-", -1)
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
-				militar.FechaIngresoComponente = dateStamp
+				militar.FechaIngresoComponente = dateStamp.UTC()
 			}
 		}
 
@@ -131,7 +131,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 			dateString := strings.Replace(fechaultimo, "/", "-", -1)
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
-				militar.FechaAscenso = dateStamp
+				militar.FechaAscenso = dateStamp.UTC()
 			}
 		}
 
@@ -144,7 +144,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
 				militar.AppNomina = true
-				militar.FechaRetiro = dateStamp
+				militar.FechaRetiro = dateStamp.UTC()
 			}
 		}
 
@@ -357,6 +357,34 @@ func (e *Estructura) CargarFamiliar() (jSon []byte, err error) {
 	return
 }
 
+func (e *Estructura) CargarCtaBancaria() (jSon []byte, err error) {
+	var msj Mensaje
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerCuentaBancaria())
+	if err != nil {
+
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+
+	for sq.Next() {
+		var cedula string
+		var cuenta, tipo, institucion sql.NullString
+		sq.Scan(&cedula, &cuenta, &tipo, &institucion)
+		var Militar sssifanb.Militar
+		var Historial sssifanb.DatoFinanciero
+
+		Historial.Cuenta = util.ValidarNullString(cuenta)
+		Historial.Institucion = util.ValidarNullString(institucion)
+		Historial.TipoCuenta = util.ValidarNullString(tipo)
+
+		fm := make(map[string]interface{})
+		fm["persona.datofinanciero"] = Historial
+		Militar.ActualizarMGO(cedula, fm)
+		fmt.Println(cedula)
+	}
+	return
+}
 func errorG(sSQL string) {
 	_, err := sys.PostgreSQLSAMAN.Exec(sSQL)
 	if err != nil {

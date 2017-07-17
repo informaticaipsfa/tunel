@@ -50,13 +50,15 @@ func main() {
 	// es.Reduccion()
 
 	//var priorizador estadistica.Priorizador00
-	// var migrado estadistica.Estructura
+	//var migrado estadistica.Estructura
 	// var familiares estadistica.Estructura
 
 	//go priorizador.Capturador()
-	// migrado.Migracion()
-	// migrado.CargarFamiliar()
+	//migrado.Migracion()
+	//migrado.CargarMilitar()
+	//migrado.CargarFamiliar()
 	// familiares.ActualizarFamiliar()
+	//migrado.CargarCtaBancaria()
 
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()

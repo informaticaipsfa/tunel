@@ -132,3 +132,15 @@ func obtenerHistorialMilitar() string {
 	//WHERE p.nropersona IN (1393199,79227)
 
 }
+
+func obtenerCuentaBancaria() string {
+	return `
+		SELECT
+			AR.cedula_saman, nrocuenta, tipcuentacod, instfinancod
+		FROM
+		analisis.reducciones as AR
+		JOIN (SELECT DISTINCT nropersona, nrocuenta, tipcuentacod, instfinancod FROM pers_cta_bancarias where usocuentacod='PRI') AS cta
+		ON AR.np=cta.nropersona
+		--WHERE AR.cedula_saman='16872776'
+		`
+}

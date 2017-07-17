@@ -19,7 +19,7 @@ type Familiar struct {
 
 //AplicarReglasBeneficio OJO SEGUROS HORIZONTES
 func (f *Familiar) AplicarReglasBeneficio() {
-	edad := util.CalcularEdad(f.Persona.DatoBasico.FechaNacimiento)
+	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
 	if f.Parentesco == "HJ" {
 		f.Benficio = false
 

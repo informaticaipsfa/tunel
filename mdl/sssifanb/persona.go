@@ -9,9 +9,11 @@ type Persona struct {
 	Telefono        []Telefono       `json:"Telefono,omitempty" bson:"telefono"`
 	Direccion       []Direccion      `json:"Direccion,omitempty" bson:"direccion"`
 	HistoriaMedica  []HistoriaMedica `json:"HistoriaMedica,omitempty" bson:"historiamedica"`
+	DatoFinanciero  DatoFinanciero   `json:"DatoFinanciero,omitempty" bson:"datofinanciero"`
 	URLFoto         string           `json:"foto,omitempty" bson:"foto"`
 	URLHuella       string           `json:"huella,omitempty" bson:"huella"`
 	URLFirma        string           `json:"firma,omitempty" bson:"firma"`
 	URLCedula       string           `json:"urlcedula,omitempty" bson:"urlcedula"`
+
 	// Militar         Militar          `json:"Militar,omitempty" bson:"militar"`
 }

@@ -47,21 +47,22 @@ func Fatal(e error) {
 	}
 }
 
-//CalcularEdad Calculos
-func CalcularEdad(fechaNacimiento time.Time) (Edad int) {
+//CalcularTiempo Calculos
+func CalcularTiempo(fechaNacimiento time.Time) (Ano int, Mes time.Month, Dia int) {
 	fechaActual := time.Now()
 	AnnoA, MesA, DiaA := fechaActual.Date()
-
 	AnoN, MesN, DiaM := fechaNacimiento.Date()
 
-	Edad = AnnoA - AnoN
-	Mes := MesA - MesN
-	Dia := DiaA - DiaM
+	Ano = AnnoA - AnoN
+	Mes = MesA - MesN
+	Dia = DiaA - DiaM
 	if Dia < 0 {
+		Dia = 0
 		Mes++
 	}
 	if Mes < 0 {
-		Edad++
+		Mes = 0
+		Ano++
 	}
 
 	return
