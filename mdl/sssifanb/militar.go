@@ -121,7 +121,7 @@ func (m *Militar) AplicarReglas() {
 	m.ConversionGrado()
 	a, mes, d := util.CalcularTiempo(m.FechaIngresoComponente)
 
-	m.TiempoSevicio = strconv.Itoa(a) + " A, " + mes.String() + " M, " + strconv.Itoa(d) + " D"
+	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
 }
 
 //Conversion de Grados
