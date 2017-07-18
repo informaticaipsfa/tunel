@@ -144,3 +144,13 @@ func obtenerCuentaBancaria() string {
 		--WHERE AR.cedula_saman='16872776'
 		`
 }
+
+func obtenerEstados() string { //MySQL
+	return `SELECT estado, iso_31662, ciudad,capital FROM estados JOIN ciudades ON estados.id_estado=ciudades.id_estado`
+}
+func obtenerMunicipios() string { //MySQL
+	return `SELECT estado, municipio FROM estados JOIN municipios ON estados.id_estado=municipios.id_estado`
+}
+func obtenerParroquia() string { //MySQL
+	return `SELECT * FROM estados JOIN municipios ON estados.id_estado=municipios.id_estado`
+}

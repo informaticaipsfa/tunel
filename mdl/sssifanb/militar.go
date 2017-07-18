@@ -120,7 +120,6 @@ func (m *Militar) AplicarReglas() {
 	m.Conversion()
 	m.ConversionGrado()
 	a, mes, d := util.CalcularTiempo(m.FechaIngresoComponente)
-
 	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
 }
 
@@ -149,6 +148,7 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 		militar.Persona.DatoBasico.FechaNacimiento = militar.Persona.DatoBasico.FechaNacimiento.UTC()
 		militar.FechaIngresoComponente = militar.FechaIngresoComponente.UTC()
 		militar.FechaAscenso = militar.FechaAscenso.UTC()
+
 		militar.AplicarReglas()
 		jSon, err = json.Marshal(militar)
 	}
