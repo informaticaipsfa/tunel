@@ -51,10 +51,11 @@ func main() {
 	// es.Reduccion()
 
 	//var priorizador estadistica.Priorizador00
-	var migrado estadistica.Estructura
 	// var familiares estadistica.Estructura
-	migrado.CargarComponenteGrado()
-
+	var migrado estadistica.Estructura
+	migrado.CargarEstados()
+	migrado.CargarMunicipio()
+	// migrado.CargarComponenteGrado()
 	//go priorizador.Capturador()
 	//migrado.Migracion()
 	//migrado.CargarMilitar()
@@ -62,16 +63,16 @@ func main() {
 	// familiares.ActualizarFamiliar()
 	//migrado.CargarCtaBancaria()
 
-	// fmt.Println("Inciando la carga del sistema")
-	// web.Cargar()
-	// srv := &http.Server{
-	// 	Handler:      context.ClearHandler(web.Enrutador),
-	// 	Addr:         ":" + sys.PUERTO,
-	// 	WriteTimeout: 15 * time.Second,
-	// 	ReadTimeout:  15 * time.Second,
-	// }
-	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
-	// go srv.ListenAndServe()
+	fmt.Println("Inciando la carga del sistema")
+	web.Cargar()
+	srv := &http.Server{
+		Handler:      context.ClearHandler(web.Enrutador),
+		Addr:         ":" + sys.PUERTO,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
+	go srv.ListenAndServe()
 	//
 	//https://dominio.com/* Protocolo de capa de seguridad
 	server := &http.Server{

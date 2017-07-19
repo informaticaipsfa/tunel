@@ -23,14 +23,19 @@ func Cargar() {
 
 //CargarModulosWeb Cargador de modulos web
 func CargarModulosWeb() {
-	var api api.Persona
-	Enrutador.HandleFunc("/", Principal)
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", api.Consultar).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Actualizar).Methods("PUT")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Insertar).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Eliminar).Methods("DELETE")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", api.Opciones).Methods("OPTIONS")
+	var per api.Persona
+	var comp api.APIComponente
+	var esta api.APIEstado
 
+	Enrutador.HandleFunc("/", Principal)
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", per.Consultar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", per.Actualizar).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", per.Insertar).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", per.Eliminar).Methods("DELETE")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", per.Opciones).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", comp.Consultar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/estado", esta.Consultar).Methods("GET")
 }
 
 func CargarModulosSeguridad() {

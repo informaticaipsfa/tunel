@@ -145,7 +145,7 @@ func obtenerCuentaBancaria() string {
 		`
 }
 
-func obtenerComponenteGrado() string{
+func obtenerComponenteGrado() string {
 	return `
 		SELECT c.componentecod, componentenombre, componentesiglas, gradocod,gradocodrangoid,gradonombrecorto,
 		gradonombrelargo
@@ -155,11 +155,9 @@ func obtenerComponenteGrado() string{
 }
 
 func obtenerEstados() string { //MySQL
-	return `SELECT estado, iso_31662, ciudad,capital FROM estados JOIN ciudades ON estados.id_estado=ciudades.id_estado`
+	return `SELECT estado, iso_31662, ciudad,capital FROM analisis.estados JOIN analisis.ciudades ON estados.id_estado=ciudades.id_estado`
 }
-func obtenerMunicipios() string { //MySQL
-	return `SELECT estado, municipio FROM estados JOIN municipios ON estados.id_estado=municipios.id_estado`
-}
-func obtenerParroquia() string { //MySQL
-	return `SELECT * FROM estados JOIN municipios ON estados.id_estado=municipios.id_estado`
+func obtenerMunicipiosParroquia() string { //MySQL
+	return `SELECT estado, municipio, parroquia FROM analisis.estados JOIN analisis.municipios ON estados.id_estado=municipios.id_estado
+JOIN  analisis.parroquias ON analisis.municipios.id_municipio= analisis.parroquias.id_municipio`
 }

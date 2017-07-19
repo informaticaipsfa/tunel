@@ -1,17 +1,22 @@
 package sssifanb
 
-import "github.com/gesaodin/tunel-ipsfa/util"
+import (
+	"time"
+
+	"github.com/gesaodin/tunel-ipsfa/util"
+)
 
 type Familiar struct {
-	ID         int     `json:"id" bson:"id"`
-	Persona    Persona `json:"Persona" bson:"persona"`
-	Parentesco string  `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
-	EsMilitar  bool    `json:"esmilitar" bson:"esmilitar"`
-	Condicion  int     `json:"condicion" bson:"condicion"` //Sano o Condicion especial
-	Estudia    int     `json:"estudia" bson:"estudia"`
-	Benficio   bool    `json:"beneficio" bson:"beneficio"` //
-	Documento  int     `json:"documento" bson:"documento"`
-	Adoptado   bool    `json:"adoptado" bson:"adoptado"`
+	ID              int       `json:"id" bson:"id"`
+	Persona         Persona   `json:"Persona" bson:"persona"`
+	FechaAfiliacion time.Time `json:"fechaafiliacion" bson:"fechaafiliacion"`
+	Parentesco      string    `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
+	EsMilitar       bool      `json:"esmilitar" bson:"esmilitar"`
+	Condicion       int       `json:"condicion" bson:"condicion"` //Sano o Condicion especial
+	Estudia         int       `json:"estudia" bson:"estudia"`
+	Benficio        bool      `json:"beneficio" bson:"beneficio"` //
+	Documento       int       `json:"documento" bson:"documento"`
+	Adoptado        bool      `json:"adoptado" bson:"adoptado"`
 	// EstatusAfiliacion string `json:"estatus" bson:"adoptado"`
 	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
 	//DocumentoPadre string

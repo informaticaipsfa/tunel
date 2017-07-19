@@ -9,8 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Persona struct {
-}
+type Persona struct{}
 
 func (p *Persona) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)

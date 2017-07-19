@@ -8,8 +8,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
@@ -386,7 +387,6 @@ func (e *Estructura) CargarCtaBancaria() (jSon []byte, err error) {
 	return
 }
 
-
 //CargarMilitar Historial militar
 func (e *Estructura) CargarComponenteGrado() (jSon []byte, err error) {
 	var msj Mensaje
@@ -405,9 +405,9 @@ func (e *Estructura) CargarComponenteGrado() (jSon []byte, err error) {
 	for sq.Next() {
 		//c.componentecod, componentenombre, componentesiglas, gradocod,gradocodrangoid,gradonombrecorto,
 		//gradonombrelargo
-		var ccod,cnom, csig, gcod,gran,gnom,gdes string
+		var ccod, cnom, csig, gcod, gran, gnom, gdes string
 		var grado fanb.Grado
-		err = sq.Scan(&ccod,&cnom,&csig,&gcod,&gran,&gnom,&gdes)
+		err = sq.Scan(&ccod, &cnom, &csig, &gcod, &gran, &gnom, &gdes)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
@@ -439,6 +439,109 @@ func (e *Estructura) CargarComponenteGrado() (jSon []byte, err error) {
 	componente.Grado = lstGrado
 	componente.SalvarMGO("componente")
 	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+	return
+}
+
+//CargarMilitar Historial militar
+func (e *Estructura) CargarEstados() (jSon []byte, err error) {
+	var msj Mensaje
+	var codigo string
+
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerEstados())
+	if err != nil {
+
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+	var lstCiudad []fanb.Ciudad
+	var estado fanb.Estado
+	for sq.Next() {
+
+		var cod, iso, ciud string
+		var capi int
+		var ciudad fanb.Ciudad
+		err = sq.Scan(&cod, &iso, &ciud, &capi)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		if i == 0 {
+			codigo = iso
+			estado.Codigo = iso
+			estado.Nombre = cod
+		}
+		if codigo != cod {
+			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+			estado.Ciudad = lstCiudad
+			estado.SalvarMGO("estado")
+			estado.Codigo = iso
+			estado.Nombre = codigo
+			lstCiudad = nil
+			codigo = iso
+
+		}
+
+		ciudad.Capital = capi
+		ciudad.Nombre = ciud
+		lstCiudad = append(lstCiudad, ciudad)
+		i++
+	}
+	estado.Ciudad = lstCiudad
+	estado.SalvarMGO("estado")
+	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+	return
+}
+
+//CargarMilitar Historial militar
+func (e *Estructura) CargarMunicipio() (jSon []byte, err error) {
+	var msj Mensaje
+	var codigo string
+
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerMunicipiosParroquia())
+	if err != nil {
+
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+	var Municipio fanb.Municipio
+	var lstParroquia []string
+	var estado fanb.Estado
+	for sq.Next() {
+		var cod, mun, parr string
+
+		err = sq.Scan(&cod, &mun, &parr)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		if i == 0 {
+			codigo = mun
+			estado.Nombre = cod
+		}
+		if codigo != mun {
+			Municipio.Nombre = codigo
+			Municipio.Parroquia = lstParroquia
+			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+			fm := make(map[string]interface{})
+			fm["municipio"] = Municipio
+			estado.ActualizarMGO(estado.Nombre, fm)
+			estado.Nombre = cod
+			lstParroquia = nil
+			codigo = mun
+		}
+		lstParroquia = append(lstParroquia, parr)
+		i++
+	}
+	Municipio.Nombre = codigo
+	Municipio.Parroquia = lstParroquia
+	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+	fm := make(map[string]interface{})
+	fm["municipio"] = Municipio
+	estado.ActualizarMGO(codigo, fm)
 	return
 }
 
