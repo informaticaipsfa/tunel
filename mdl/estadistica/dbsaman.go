@@ -145,6 +145,15 @@ func obtenerCuentaBancaria() string {
 		`
 }
 
+func obtenerComponenteGrado() string{
+	return `
+		SELECT c.componentecod, componentenombre, componentesiglas, gradocod,gradocodrangoid,gradonombrecorto,
+		gradonombrelargo
+		FROM ipsfa_grados AS g JOIN ipsfa_componentes AS c ON g.componentecod=c.componentecod
+		ORDER BY c.componentepriorpt,g.gradocodrangoid
+	`
+}
+
 func obtenerEstados() string { //MySQL
 	return `SELECT estado, iso_31662, ciudad,capital FROM estados JOIN ciudades ON estados.id_estado=ciudades.id_estado`
 }

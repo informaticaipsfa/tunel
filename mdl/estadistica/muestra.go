@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
@@ -385,6 +385,63 @@ func (e *Estructura) CargarCtaBancaria() (jSon []byte, err error) {
 	}
 	return
 }
+
+
+//CargarMilitar Historial militar
+func (e *Estructura) CargarComponenteGrado() (jSon []byte, err error) {
+	var msj Mensaje
+	var codigo string
+
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerComponenteGrado())
+	if err != nil {
+
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+	var lstGrado []fanb.Grado
+	var componente fanb.Componente
+	for sq.Next() {
+		//c.componentecod, componentenombre, componentesiglas, gradocod,gradocodrangoid,gradonombrecorto,
+		//gradonombrelargo
+		var ccod,cnom, csig, gcod,gran,gnom,gdes string
+		var grado fanb.Grado
+		err = sq.Scan(&ccod,&cnom,&csig,&gcod,&gran,&gnom,&gdes)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		if i == 0 {
+			codigo = ccod
+			componente.Codigo = codigo
+			componente.Nombre = cnom
+			componente.Siglas = csig
+		}
+		if codigo != ccod {
+			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+			componente.Grado = lstGrado
+			componente.SalvarMGO("componente")
+			lstGrado = nil
+			codigo = ccod
+			componente.Codigo = codigo
+			componente.Nombre = cnom
+			componente.Siglas = csig
+		}
+
+		grado.Codigo = gcod
+		grado.Rango = gran
+		grado.Nombre = gnom
+		grado.Descripcion = gdes
+		lstGrado = append(lstGrado, grado)
+		i++
+	}
+	componente.Grado = lstGrado
+	componente.SalvarMGO("componente")
+	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+	return
+}
+
 func errorG(sSQL string) {
 	_, err := sys.PostgreSQLSAMAN.Exec(sSQL)
 	if err != nil {
