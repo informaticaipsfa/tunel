@@ -101,6 +101,8 @@ type Fideicomiso struct {
 	MesReconocido    int    `json:"mreconocido,omitempty" bson:"mreconocido"`
 	DiaReconocido    int    `json:"dreconocido,omitempty" bson:"dreconocido"`
 	CuentaBancaria   string `json:"cuentabancaria" bson:"cuentabancaria"`
+	EstatusNoAscenso int    `json:"estatusnoascenso,omitempty" bson:"estatusnoascenso"`
+	EstatusProfesion int    `json:"estatusprofesion,omitempty" bson:"estatusprofesion"`
 }
 
 //Listar sistemas
@@ -121,6 +123,11 @@ func (m *Militar) AplicarReglas() {
 	m.ConversionGrado()
 	a, mes, d := util.CalcularTiempo(m.FechaIngresoComponente)
 	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
+}
+
+func (m *Militar) NumeroHijos() int {
+	// hm = m.HistorialMilitar
+	return 1
 }
 
 //Conversion de Grados

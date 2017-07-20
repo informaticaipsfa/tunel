@@ -19,3 +19,11 @@ type DatoBasico struct {
 func (d *DatoBasico) AplicarReglas() {
 
 }
+
+func (d *DatoBasico) ConcatenarNombre() string {
+	return d.NombrePrimero + " " + d.NombreSegundo
+}
+
+func (d *DatoBasico) ConcatenarApellido() string {
+	return d.ApellidoPrimero + " " + d.ApellidoSegundo
+}
