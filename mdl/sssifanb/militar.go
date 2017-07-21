@@ -269,7 +269,7 @@ func (m *Militar) SalvarMGO(colecion string) (err error) {
 		c := sys.MGOSession.DB("ipsfa_test").C(colecion)
 		err = c.Insert(m)
 	} else {
-		c := sys.MGOSession.DB("ipsfa_test").C("persona")
+		c := sys.MGOSession.DB("ipsfa_test").C("militar")
 		err = c.Insert(m)
 	}
 

@@ -9,9 +9,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-type Persona struct{}
+type Militar struct{}
 
-func (p *Persona) Consultar(w http.ResponseWriter, r *http.Request) {
+//Consultar Militares
+func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var dataJSON sssifanb.Militar
 	var cedula = mux.Vars(r)
@@ -28,7 +29,7 @@ func (p *Persona) Consultar(w http.ResponseWriter, r *http.Request) {
 }
 
 //Actualizar Datos Generales
-func (p *Persona) Actualizar(w http.ResponseWriter, r *http.Request) {
+func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 	Cabecera(w, r)
 	var dataJSON sssifanb.Militar
@@ -47,20 +48,42 @@ func (p *Persona) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//Insertar Persona
-func (p *Persona) Insertar(w http.ResponseWriter, r *http.Request) {
+//Insertar Militar
+func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var militar sssifanb.Militar
 	fmt.Println("POST...")
-	fmt.Fprintf(w, "Saludos")
+	err := json.NewDecoder(r.Body).Decode(&militar)
+	M.Tipo = 1
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println("Estoy en un error ", err.Error())
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	}
+	e := militar.SalvarMGO("militares")
+	if e != nil {
+		M.Mensaje = e.Error()
+		M.Tipo = 0
+		return
+	}
+	j, e := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(j)
+	// fmt.Fprintf(w, "Saludos")
 }
 
-//Eliminar Persona
-func (p *Persona) Eliminar(w http.ResponseWriter, r *http.Request) {
+//Eliminar Militar
+func (p *Militar) Eliminar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//Opciones Persona
-func (p *Persona) Opciones(w http.ResponseWriter, r *http.Request) {
+//Opciones Militar
+func (p *Militar) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	fmt.Println("OPTIONS...")
 	//fmt.Fprintf(w, "Saludos")

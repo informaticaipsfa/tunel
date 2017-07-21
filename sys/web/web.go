@@ -23,7 +23,7 @@ func Cargar() {
 
 //CargarModulosWeb Cargador de modulos web
 func CargarModulosWeb() {
-	var per api.Persona
+	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
 
