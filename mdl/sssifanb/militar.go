@@ -269,8 +269,23 @@ func (m *Militar) SalvarMGO(colecion string) (err error) {
 		c := sys.MGOSession.DB("ipsfa_test").C(colecion)
 		err = c.Insert(m)
 	} else {
-		c := sys.MGOSession.DB("ipsfa_test").C("militar")
+		c := sys.MGOSession.DB("ipsfa_test").C("persona")
 		err = c.Insert(m)
+	}
+
+	//fmt.Println(err)
+
+	return
+}
+
+//SalvarMGO Guardar
+func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
+	if colecion != "" {
+		c := sys.MGOSession.DB("ipsfa_test").C(colecion)
+		err = c.Insert(objeto)
+	} else {
+		c := sys.MGOSession.DB("ipsfa_test").C("militar")
+		err = c.Insert(objeto)
 	}
 
 	//fmt.Println(err)

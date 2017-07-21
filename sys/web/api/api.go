@@ -53,8 +53,9 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var militar sssifanb.Militar
+	var objeto interface{}
 	fmt.Println("POST...")
-	err := json.NewDecoder(r.Body).Decode(&militar)
+	err := json.NewDecoder(r.Body).Decode(&objeto)
 	M.Tipo = 1
 	if err != nil {
 		fmt.Println(err.Error())
@@ -64,6 +65,7 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		return
 	}
+	//e := militar.SalvarMGOI("militares", objeto)
 	e := militar.SalvarMGO("militares")
 	if e != nil {
 		M.Mensaje = e.Error()

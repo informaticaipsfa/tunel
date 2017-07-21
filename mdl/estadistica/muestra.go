@@ -469,7 +469,7 @@ func (e *Estructura) CargarEstados() (jSon []byte, err error) {
 		}
 		if i == 0 {
 			codigo = iso
-			estado.Codigo = iso
+
 			estado.Nombre = cod
 		}
 		if codigo != cod {
