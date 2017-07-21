@@ -182,9 +182,9 @@ func ActualizarPace(militar sssifanb.Militar) string {
 
 		n_hijos = ` + strconv.Itoa(militar.NumeroHijos()) + `,
 
-	  anio_reconocido = ` + strconv.Itoa(militar.AnoReconocido()) + ` ,
-	  mes_reconocido = ` + strconv.Itoa(militar.MesReconocido()) + `,
-	 	dia_reconocido = ` + strconv.Itoa(militar.DiaReconocido()) + `,
+	  anio_reconocido = ` + strconv.Itoa(militar.AnoReconocido) + ` ,
+	  mes_reconocido = ` + strconv.Itoa(militar.MesReconocido) + `,
+	 	dia_reconocido = ` + strconv.Itoa(militar.DiaReconocido) + `,
 
   	st_no_ascenso = ` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
 	 	st_profesion = ` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
@@ -197,5 +197,81 @@ func ActualizarPace(militar sssifanb.Militar) string {
 	  WHERE cedula = '` + militar.Persona.DatoBasico.Cedula + `';`
 
 	//echo $sActualizar;
+
+}
+
+func InsertarPace(militar sssifanb.Militar) string {
+	// \'' . $this->fecha_ingreso . '\',
+	// \'' . $this->fecha_ultimo_ascenso . '\',
+	// \'' . $this->fecha_ingreso_sistema . '\',
+	// \'' . $this->fecha_retiro . '\',
+	// \'' . $this->fecha_retiro_efectiva . '\',
+	// \'' . $this->fecha_creacion . '\',
+	// \'' . $this->fecha_ultima_modificacion . '\',
+	// \'' . $this->fecha_reincorporacion . '\'
+
+	return `INSERT INTO hist_beneficiario (
+			status_id,
+			componente_id,
+			grado_id,
+			cedula,
+			nombres,
+			apellidos,
+			tiempo_servicio,
+			fecha_ingreso,
+			edo_civil,
+			n_hijos,
+			f_ult_ascenso,
+			anio_reconocido,
+			mes_reconocido,
+			dia_reconocido,
+			f_ingreso_sistema,
+			f_retiro,
+			f_retiro_efectiva,
+			st_no_ascenso,
+			numero_cuenta,
+			st_profesion,
+			sexo,
+			f_creacion,
+			usr_creacion,
+			f_ult_modificacion,
+			usr_modificacion,
+			observ_ult_modificacion,
+			motivo_paralizacion,
+			f_reincorporacion
+		) VALUES ';
+
+		$sInsertar .= '(
+			\'' . $this->estatus_activo . '\',
+			` + militar.Fideicomiso.ComponenteCodigo + `,
+			` + militar.Fideicomiso.GradoCodigo + `,
+			'` + militar.Persona.DatoBasico.Cedula + `',
+			'` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
+			'` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
+			'` + militar.TiempoSevicio + `',
+
+			'` + militar.Persona.DatoBasico.EstadoCivil + `'',
+			` + strconv.Itoa(militar.NumeroHijos()) + `,
+
+			` + strconv.Itoa(militar.AnoReconocido) + ` ,
+		  ` + strconv.Itoa(militar.MesReconocido) + `,
+		 	` + strconv.Itoa(militar.DiaReconocido) + `,
+
+
+
+			` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
+			'` + militar.Fideicomiso.CuentaBancaria + `',
+			` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
+			'` + militar.Persona.DatoBasico.Sexo + `',
+
+			'tunel-ipsfa',
+
+		 	'tunel-ipsfa',
+		 	'INSERCION POR TUNELES',
+			'` + militar.Fideicomiso.MotivoParalizacion + `',
+
+		)';`
+
+	//echo $sInsertar;
 
 }
