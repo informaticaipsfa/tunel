@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
@@ -526,7 +528,8 @@ func (e *Estructura) CargarMunicipio() (jSon []byte, err error) {
 			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
 			fm := make(map[string]interface{})
 			fm["municipio"] = lstMunicipio
-			estado.ActualizarMGO(codigo, fm)
+			donde := bson.M{"nombre": codigo}
+			estado.ActualizarMGO(donde, fm)
 			lstMunicipio = nil
 			codigo = cod
 		}
@@ -537,7 +540,8 @@ func (e *Estructura) CargarMunicipio() (jSon []byte, err error) {
 	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
 	fm := make(map[string]interface{})
 	fm["municipio"] = lstMunicipio
-	estado.ActualizarMGO(codigo, fm)
+	donde := bson.M{"nombre": codigo}
+	estado.ActualizarMGO(donde, fm)
 	return
 }
 
@@ -554,37 +558,40 @@ func (e *Estructura) CargarParroquia() (jSon []byte, err error) {
 		jSon, err = json.Marshal(msj)
 	}
 	i := 0
-	var lstMunicipio []fanb.Municipio
+	var lstParroquia []string
 	var estado fanb.Estado
 	for sq.Next() {
-		var cod, mun string
-		var Mun fanb.Municipio
-		err = sq.Scan(&cod, &mun)
+		var cod, mun, parr string
+		err = sq.Scan(&cod, &mun, &parr)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
 		}
+		parr = strings.ToUpper(parr)
 		cod = strings.ToUpper(cod)
 		mun = strings.ToUpper(mun)
 		if i == 0 {
-			codigo = cod
+			codigo = mun
+			estado.Nombre = cod
 		}
-		if codigo != cod {
-			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+		if codigo != mun {
+			fmt.Println("{\"nombre\":\"" + estado.Nombre + "\", \"municipio.nombre\":\"" + codigo + "\"}")
 			fm := make(map[string]interface{})
-			fm["municipio"] = lstMunicipio
-			estado.ActualizarMGO(codigo, fm)
-			lstMunicipio = nil
-			codigo = cod
+			fm["municipio.$.parroquia"] = lstParroquia
+			donde := bson.M{"nombre": estado.Nombre, "municipio.nombre": codigo}
+			estado.ActualizarMGO(donde, fm)
+			lstParroquia = nil
+			codigo = mun
+			estado.Nombre = cod
 		}
-		Mun.Nombre = mun
-		lstMunicipio = append(lstMunicipio, Mun)
+		lstParroquia = append(lstParroquia, parr)
 		i++
 	}
 	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
 	fm := make(map[string]interface{})
-	fm["municipio"] = lstMunicipio
-	estado.ActualizarMGO(codigo, fm)
+	fm["municipio.$.parroquia"] = lstParroquia
+	donde := bson.M{"nombre": estado.Nombre, "municipio.nombre": codigo}
+	estado.ActualizarMGO(donde, fm)
 	return
 }
 

@@ -31,7 +31,7 @@ func (e *Estado) SalvarMGO(colecion string) (err error) {
 		c := sys.MGOSession.DB("ipsfa_test").C(colecion)
 		err = c.Insert(e)
 	} else {
-		c := sys.MGOSession.DB("ipsfa_test").C("componente")
+		c := sys.MGOSession.DB("ipsfa_test").C("estado")
 		err = c.Insert(e)
 	}
 	return
@@ -69,11 +69,12 @@ func (e *Estado) Consultar(estado string) (jSon []byte, err error) {
 }
 
 //ActualizarMGO Actualizar
-func (e *Estado) ActualizarMGO(oid string, estado map[string]interface{}) (err error) {
+func (e *Estado) ActualizarMGO(donde bson.M, estado map[string]interface{}) (err error) {
 	c := sys.MGOSession.DB("ipsfa_test").C(ESTADO)
-	err = c.Update(bson.M{"nombre": oid}, bson.M{"$set": estado})
+	err = c.Update(donde, bson.M{"$set": estado})
+
 	if err != nil {
-		fmt.Println("ESTADO: " + oid + " -> " + err.Error())
+		fmt.Println("Actualizar: -> " + err.Error())
 		return
 	}
 	return

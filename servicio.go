@@ -19,7 +19,6 @@ package main
 import (
 	"fmt"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/estadistica"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 )
 
@@ -47,9 +46,10 @@ func main() {
 
 	//var priorizador estadistica.Priorizador00
 	// var familiares estadistica.Estructura
-	var migrado estadistica.Estructura
-	migrado.CargarEstados()
-	migrado.CargarMunicipio()
+	// var migrado estadistica.Estructura
+	// migrado.CargarEstados()
+	// migrado.CargarMunicipio()
+	// migrado.CargarParroquia()
 	// migrado.CargarComponenteGrado()
 	//go priorizador.Capturador()
 	//migrado.Migracion()
