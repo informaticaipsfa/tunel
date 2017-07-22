@@ -163,11 +163,16 @@ func obtenerComponenteGrado() string {
 func obtenerEstados() string { //MySQL
 	return `SELECT estado, iso_31662, ciudad,capital FROM analisis.estados JOIN analisis.ciudades ON estados.id_estado=ciudades.id_estado`
 }
-func obtenerMunicipiosParroquia() string { //MySQL
-	return `SELECT estado, municipio, parroquia FROM analisis.estados JOIN analisis.municipios ON estados.id_estado=municipios.id_estado
-JOIN  analisis.parroquias ON analisis.municipios.id_municipio= analisis.parroquias.id_municipio`
+func obtenerMunicipios() string { //MySQL
+	return `SELECT estado, municipio FROM analisis.estados JOIN analisis.municipios ON estados.id_estado=municipios.id_estado
+ORDER BY estado,municipio`
 }
 
+func obtenerMunicipiosParroquia() string { //MySQL
+	return `SELECT estado, municipio, parroquia FROM analisis.estados JOIN analisis.municipios ON estados.id_estado=municipios.id_estado
+			JOIN  analisis.parroquias ON analisis.municipios.id_municipio= analisis.parroquias.id_municipio
+			ORDER BY estado,municipio,parroquia`
+}
 func ActualizarPace(militar sssifanb.Militar) string {
 	// fecha_ingreso = ' . $this->fecha_ingreso .  '',
 	// f_ult_ascenso = ' . $this->fecha_ultimo_ascenso .  '',

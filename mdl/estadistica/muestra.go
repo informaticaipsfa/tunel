@@ -469,22 +469,22 @@ func (e *Estructura) CargarEstados() (jSon []byte, err error) {
 		}
 		if i == 0 {
 			codigo = iso
-
-			estado.Nombre = cod
+			estado.Nombre = strings.ToUpper(cod)
 		}
-		if codigo != cod {
+		if codigo != iso {
 			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
 			estado.Ciudad = lstCiudad
+			estado.Codigo = codigo
+
 			estado.SalvarMGO("estado")
-			estado.Codigo = iso
-			estado.Nombre = codigo
 			lstCiudad = nil
+			estado.Nombre = strings.ToUpper(cod)
 			codigo = iso
 
 		}
 
 		ciudad.Capital = capi
-		ciudad.Nombre = ciud
+		ciudad.Nombre = strings.ToUpper(ciud)
 		lstCiudad = append(lstCiudad, ciudad)
 		i++
 	}
@@ -499,6 +499,53 @@ func (e *Estructura) CargarMunicipio() (jSon []byte, err error) {
 	var msj Mensaje
 	var codigo string
 
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerMunicipios())
+	if err != nil {
+
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+	var lstMunicipio []fanb.Municipio
+	var estado fanb.Estado
+	for sq.Next() {
+		var cod, mun string
+		var Mun fanb.Municipio
+		err = sq.Scan(&cod, &mun)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		cod = strings.ToUpper(cod)
+		mun = strings.ToUpper(mun)
+		if i == 0 {
+			codigo = cod
+		}
+		if codigo != cod {
+			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+			fm := make(map[string]interface{})
+			fm["municipio"] = lstMunicipio
+			estado.ActualizarMGO(codigo, fm)
+			lstMunicipio = nil
+			codigo = cod
+		}
+		Mun.Nombre = mun
+		lstMunicipio = append(lstMunicipio, Mun)
+		i++
+	}
+	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
+	fm := make(map[string]interface{})
+	fm["municipio"] = lstMunicipio
+	estado.ActualizarMGO(codigo, fm)
+	return
+}
+
+//CargarParroquia Historial militar
+func (e *Estructura) CargarParroquia() (jSon []byte, err error) {
+	var msj Mensaje
+	var codigo string
+
 	sq, err := sys.PostgreSQLSAMAN.Query(obtenerMunicipiosParroquia())
 	if err != nil {
 
@@ -507,40 +554,36 @@ func (e *Estructura) CargarMunicipio() (jSon []byte, err error) {
 		jSon, err = json.Marshal(msj)
 	}
 	i := 0
-	var Municipio fanb.Municipio
-	var lstParroquia []string
+	var lstMunicipio []fanb.Municipio
 	var estado fanb.Estado
 	for sq.Next() {
-		var cod, mun, parr string
-
-		err = sq.Scan(&cod, &mun, &parr)
+		var cod, mun string
+		var Mun fanb.Municipio
+		err = sq.Scan(&cod, &mun)
 		if err != nil {
 			fmt.Println(err.Error())
 			return
 		}
+		cod = strings.ToUpper(cod)
+		mun = strings.ToUpper(mun)
 		if i == 0 {
-			codigo = mun
-			estado.Nombre = cod
+			codigo = cod
 		}
-		if codigo != mun {
-			Municipio.Nombre = codigo
-			Municipio.Parroquia = lstParroquia
+		if codigo != cod {
 			fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
 			fm := make(map[string]interface{})
-			fm["municipio"] = Municipio
-			estado.ActualizarMGO(estado.Nombre, fm)
-			estado.Nombre = cod
-			lstParroquia = nil
-			codigo = mun
+			fm["municipio"] = lstMunicipio
+			estado.ActualizarMGO(codigo, fm)
+			lstMunicipio = nil
+			codigo = cod
 		}
-		lstParroquia = append(lstParroquia, parr)
+		Mun.Nombre = mun
+		lstMunicipio = append(lstMunicipio, Mun)
 		i++
 	}
-	Municipio.Nombre = codigo
-	Municipio.Parroquia = lstParroquia
 	fmt.Println("# " + strconv.Itoa(i) + " ID_: " + codigo)
 	fm := make(map[string]interface{})
-	fm["municipio"] = Municipio
+	fm["municipio"] = lstMunicipio
 	estado.ActualizarMGO(codigo, fm)
 	return
 }
