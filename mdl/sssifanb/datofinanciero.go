@@ -1,7 +1,7 @@
 package sssifanb
 
 type DatoFinanciero struct {
-	TipoCuenta  string `json:"tipocuenta" bson:"tipocuenta"`
+	Tipo        string `json:"tipo" bson:"tipo"`
 	Institucion string `json:"institucion" bson:"institucion"`
 	Cuenta      string `json:"cuenta" bson:"cuenta"`
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
+//Familiar Busquedas
 type Familiar struct {
 	ID              int       `json:"id" bson:"id"`
 	Persona         Persona   `json:"Persona" bson:"persona"`
@@ -43,10 +44,12 @@ func (f *Familiar) AplicarReglasBeneficio() {
 
 }
 
+//AplicarReglasParentesco Reglas
 func (f *Familiar) AplicarReglasParentesco() {
 
 }
 
+//ConvertirFechaHumano Validacion
 func (f *Familiar) ConvertirFechaHumano() {
 
 }

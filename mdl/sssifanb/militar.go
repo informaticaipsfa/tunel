@@ -147,7 +147,7 @@ func (m *Militar) ConversionGrado() {
 func (m *Militar) Consultar() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
-	c := sys.MGOSession.DB("ipsfa_test").C("militar")
+	c := sys.MGOSession.DB("ipsfa_test").C("militares")
 	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
 	if militar.Persona.DatoBasico.Cedula == "" {
 		msj.Tipo = 0
@@ -222,30 +222,32 @@ func (m *Militar) Actualizar() (jSon []byte, err error) {
 	var msj Mensaje
 	m.TipoDato = 0
 
-	s := `UPDATE personas SET nombreprimero='` +
-		m.Persona.DatoBasico.NombrePrimero +
-		`', nombresegundo='` +
-		m.Persona.DatoBasico.NombreSegundo +
-		`' WHERE codnip='` + m.Persona.DatoBasico.Cedula + `'`
-	_, err = sys.PostgreSQLSAMAN.Exec(s)
-	if err != nil {
-		msj.Mensaje = "Error: Consulta ya existe."
-		msj.Tipo = 2
-		msj.Pgsql = err.Error()
-		jSon, err = json.Marshal(msj)
-		return
-	}
+	// s := `UPDATE personas SET nombreprimero='` +
+	// 	m.Persona.DatoBasico.NombrePrimero +
+	// 	`', nombresegundo='` +
+	// 	m.Persona.DatoBasico.NombreSegundo +
+	// 	`' WHERE codnip='` + m.Persona.DatoBasico.Cedula + `'`
+	// _, err = sys.PostgreSQLSAMAN.Exec(s)
+	// if err != nil {
+	// 	msj.Mensaje = "Error: Consulta ya existe."
+	// 	msj.Tipo = 2
+	// 	msj.Pgsql = err.Error()
+	// 	jSon, err = json.Marshal(msj)
+	// 	return
+	// }
 	msj.Mensaje = "Su data ha sido actualizada."
 	msj.Tipo = 2
 	jSon, err = json.Marshal(msj)
-	m.SalvarMGO("")
+	m.MGOActualizar()
 	return
 }
 
 //ActualizarMGO Actualizar
 func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (err error) {
+
 	c := sys.MGOSession.DB("ipsfa_test").C("militar")
 	err = c.Update(bson.M{"id": oid}, bson.M{"$set": familiar})
+
 	if err != nil {
 		fmt.Println("Cedula: " + oid + " -> " + err.Error())
 		return
@@ -253,14 +255,37 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 	return
 }
 
-//ActualizarMGO Actualizar
-func (m *Militar) ActualizarMGOObjeto(oid string, Obj interface{}) (err error) {
-	c := sys.MGOSession.DB("ipsfa_test").C("militar")
-	err = c.Update(bson.M{"id": oid}, bson.M{"$set": Obj})
+//MGOActualizar Actualizando en MONGO
+func (m *Militar) MGOActualizar() (err error) {
+	var mOriginal Militar
+	mOriginal, _ = consultarMongo(m.ID)
+	mOriginal.Persona = m.Persona
+	mOriginal.Grado = m.Grado
+	mOriginal.Componente = m.Componente
+	mOriginal.Categoria = m.Categoria
+	mOriginal.Clase = m.Clase
+	mOriginal.Situacion = m.Situacion
+	mOriginal.FechaIngresoComponente = m.FechaIngresoComponente
+
+	//
+	c := sys.MGOSession.DB("ipsfa_test").C("militares")
+	err = c.Update(bson.M{"id": mOriginal.ID}, &mOriginal)
 	if err != nil {
-		fmt.Println("Cedula: " + oid + " -> " + err.Error())
+		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
+	return
+}
+
+//consultarMongo una persona mediante el metodo de MongoDB
+func consultarMongo(cedula string) (m Militar, err error) {
+	c := sys.MGOSession.DB("ipsfa_test").C("militares")
+	err = c.Find(bson.M{"id": cedula}).One(&m)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
 	return
 }
 
@@ -279,7 +304,7 @@ func (m *Militar) SalvarMGO(colecion string) (err error) {
 	return
 }
 
-//SalvarMGO Guardar
+//SalvarMGOI Guardar
 func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 	if colecion != "" {
 		c := sys.MGOSession.DB("ipsfa_test").C(colecion)

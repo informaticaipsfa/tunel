@@ -42,6 +42,7 @@ func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
+
 	j, _ := dataJSON.Actualizar()
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
@@ -53,9 +54,9 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var militar sssifanb.Militar
-	var objeto interface{}
+
 	fmt.Println("POST...")
-	err := json.NewDecoder(r.Body).Decode(&objeto)
+	err := json.NewDecoder(r.Body).Decode(&militar)
 	M.Tipo = 1
 	if err != nil {
 		fmt.Println(err.Error())

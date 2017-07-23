@@ -1,7 +1,8 @@
 package sssifanb
 
+//Correo Direcciones electronicas
 type Correo struct {
-	CorreoPrincipal     string
-	CorreoAlternativo   string
-	CorreoInstitucional string
+	Principal     string `json:"principal,omitempty" bson:"principal"`
+	Alternativo   string `json:"alternativo,omitempty" bson:"alternativo"`
+	Institucional string `json:"institucional,omitempty" bson:"institucional"`
 }
