@@ -34,6 +34,7 @@ type Militar struct {
 	MesReconocido          int                `json:"mreconocido,omitempty" bson:"mreconocido"`
 	DiaReconocido          int                `json:"dreconocido,omitempty" bson:"dreconocido"`
 	NumeroResuelto         string             `json:"nresuelto,omitempty" bson:"nresuelto"`
+	FechaResuelto          time.Time          `json:"fresuelto,omitempty" bson:"fresuelto"`
 	Posicion               int                `json:"posicion,omitempty" bson:"posicion"`
 	DescripcionHistorica   string             `json:"dhistorica,omitempty" bson:"dhistorica"` //codigo
 	Componente             Componente         `json:"Componente,omitempty" bson:"componente"`
@@ -266,6 +267,10 @@ func (m *Militar) MGOActualizar() (err error) {
 	mOriginal.Clase = m.Clase
 	mOriginal.Situacion = m.Situacion
 	mOriginal.FechaIngresoComponente = m.FechaIngresoComponente
+	mOriginal.FechaResuelto = m.FechaResuelto
+	fmt.Println(mOriginal.NumeroResuelto)
+	mOriginal.Posicion = m.Posicion
+	mOriginal.NumeroResuelto = m.NumeroResuelto
 
 	//
 	c := sys.MGOSession.DB("ipsfa_test").C("militares")
