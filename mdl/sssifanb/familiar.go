@@ -1,8 +1,12 @@
 package sssifanb
 
 import (
+	"fmt"
 	"time"
 
+	"gopkg.in/mgo.v2/bson"
+
+	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
@@ -51,5 +55,21 @@ func (f *Familiar) AplicarReglasParentesco() {
 
 //ConvertirFechaHumano Validacion
 func (f *Familiar) ConvertirFechaHumano() {
+
+}
+
+//IncluirFamiliar Agregar
+func (f *Familiar) IncluirFamiliar(cedmilitar string) (err error) {
+	c := sys.MGOSession.DB(BASEDEDATOS).C(COLECCION)
+	err = c.Update(bson.M{"id": cedmilitar}, bson.M{"$push": f})
+
+	if err != nil {
+		fmt.Println(" " + err.Error())
+		return
+	}
+	return
+}
+
+func (f *Familiar) ContarFamiliar() {
 
 }
