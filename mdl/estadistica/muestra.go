@@ -97,8 +97,8 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.Persona.DatoBasico.Cedula = cedulas
 		militar.Persona.DatoBasico.NumeroPersona = nro
 		militar.Persona.DatoBasico.Nacionalidad = nac
-		militar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp)) + strings.ToUpper(util.ValidarNullString(nombs))
-		militar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apellp)) + strings.ToUpper(util.ValidarNullString(apells))
+		militar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp)) + " " + strings.ToUpper(util.ValidarNullString(nombs))
+		militar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apellp)) + " " + strings.ToUpper(util.ValidarNullString(apells))
 		militar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
 		militar.Persona.DatoBasico.EstadoCivil = util.ValidarNullString(edoc)
 		if util.ValidarNullString(grp) != VNULL {
@@ -321,8 +321,8 @@ func (e *Estructura) CargarFamiliar() (jSon []byte, err error) {
 		familiar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
 		familiar.Persona.DatoBasico.Nacionalidad = util.ValidarNullString(nac)
 
-		familiar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp)) + strings.ToUpper(util.ValidarNullString(nombs))
-		familiar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apelp)) + strings.ToUpper(util.ValidarNullString(apels))
+		familiar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp)) + " " + strings.ToUpper(util.ValidarNullString(nombs))
+		familiar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apelp)) + " " + strings.ToUpper(util.ValidarNullString(apels))
 		if util.ValidarNullString(nmil) != VNULL {
 			familiar.EsMilitar = true
 		}
