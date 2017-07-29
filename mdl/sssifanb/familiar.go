@@ -22,9 +22,9 @@ type Familiar struct {
 	Benficio        bool      `json:"beneficio" bson:"beneficio"` //
 	Documento       int       `json:"documento" bson:"documento"`
 	Adoptado        bool      `json:"adoptado" bson:"adoptado"`
+	DocumentoPadre  string    `json:"documentopadre" bson:"documentopadre"`
 	// EstatusAfiliacion string `json:"estatus" bson:"adoptado"`
 	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
-	//DocumentoPadre string
 }
 
 //AplicarReglasBeneficio OJO SEGUROS HORIZONTES
@@ -70,6 +70,7 @@ func (f *Familiar) IncluirFamiliar(cedmilitar string) (err error) {
 	return
 }
 
+//ContarFamiliar Contando Familiares
 func (f *Familiar) ContarFamiliar() {
 
 }

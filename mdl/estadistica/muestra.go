@@ -17,6 +17,9 @@ import (
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
+//VNULL Validar
+const VNULL string = "null"
+
 //Estructura Generacion de Grupos de Datos
 type Estructura struct {
 	Cedula       string  `json:"cedula,omitempty"` //Identificador
@@ -94,47 +97,45 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.Persona.DatoBasico.Cedula = cedulas
 		militar.Persona.DatoBasico.NumeroPersona = nro
 		militar.Persona.DatoBasico.Nacionalidad = nac
-		militar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp))
-		militar.Persona.DatoBasico.NombreSegundo = strings.ToUpper(util.ValidarNullString(nombs))
-		militar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apellp))
-		militar.Persona.DatoBasico.ApellidoSegundo = strings.ToUpper(util.ValidarNullString(apells))
+		militar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp)) + strings.ToUpper(util.ValidarNullString(nombs))
+		militar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apellp)) + strings.ToUpper(util.ValidarNullString(apells))
 		militar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
 		militar.Persona.DatoBasico.EstadoCivil = util.ValidarNullString(edoc)
-		if util.ValidarNullString(grp) != "null" {
+		if util.ValidarNullString(grp) != VNULL {
 			militar.Pension.GradoCodigo = util.ValidarNullString(grp)
 			militar.Pension.ComponenteCodigo = util.ValidarNullString(cmp)
 			militar.Pension.DatoFinanciero.Cuenta = util.ValidarNullString(cuenta)
-			militar.Pension.DatoFinanciero.TipoCuenta = util.ValidarNullString(tipc)
+			militar.Pension.DatoFinanciero.Tipo = util.ValidarNullString(tipc)
 			militar.Pension.DatoFinanciero.Institucion = util.ValidarNullString(inst)
 			militar.Pension.NumeroHijos, _ = strconv.Atoi(util.ValidarNullString(nrohp))
 		}
 
 		layOut := "2006-01-02"
 		fechanacimiento := util.ValidarNullString(fnac)
-		if fechanacimiento != "null" {
+		if fechanacimiento != VNULL {
 			dateString := strings.Replace(fechanacimiento, "/", "-", -1)
-			dateStamp, err := time.Parse(layOut, dateString)
-			if err == nil {
-				militar.Persona.DatoBasico.FechaNacimiento = dateStamp.UTC()
+			dateStamp, er := time.Parse(layOut, dateString)
+			if er == nil {
+				militar.Persona.DatoBasico.FechaNacimiento = dateStamp
 			}
 
 		}
 
 		fechaingreso := util.ValidarNullString(fing)
-		if fechaingreso != "null" {
+		if fechaingreso != VNULL {
 			dateString := strings.Replace(fechaingreso, "/", "-", -1)
-			dateStamp, err := time.Parse(layOut, dateString)
-			if err == nil {
-				militar.FechaIngresoComponente = dateStamp.UTC()
+			dateStamp, er := time.Parse(layOut, dateString)
+			if er == nil {
+				militar.FechaIngresoComponente = dateStamp
 			}
 		}
 
 		fechaultimo := util.ValidarNullString(fult)
-		if fechaultimo != "null" {
+		if fechaultimo != VNULL {
 			dateString := strings.Replace(fechaultimo, "/", "-", -1)
-			dateStamp, err := time.Parse(layOut, dateString)
-			if err == nil {
-				militar.FechaAscenso = dateStamp.UTC()
+			dateStamp, er := time.Parse(layOut, dateString)
+			if er == nil {
+				militar.FechaAscenso = dateStamp
 			}
 		}
 
@@ -142,12 +143,12 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.AppSaman = true
 		militar.AppPace = true
 		fecharetiro := util.ValidarNullString(fegr)
-		if fechaultimo != "null" {
+		if fechaultimo != VNULL {
 			dateString := strings.Replace(fecharetiro, "/", "-", -1)
-			dateStamp, err := time.Parse(layOut, dateString)
-			if err == nil {
+			dateStamp, er := time.Parse(layOut, dateString)
+			if er == nil {
 				militar.AppNomina = true
-				militar.FechaRetiro = dateStamp.UTC()
+				militar.FechaRetiro = dateStamp
 			}
 		}
 
@@ -162,7 +163,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.MesReconocido, _ = strconv.Atoi(util.ValidarNullString(mesr))
 		militar.DiaReconocido, _ = strconv.Atoi(util.ValidarNullString(diar))
 
-		if cedulapace == "null" {
+		if cedulapace == VNULL {
 			militar.AppPace = false
 			fmt.Println(cedulas, cedulapace, nro, util.ValidarNullString(nombp), situ, fnac, "->", militar.Persona.DatoBasico.FechaNacimiento, fing, gnom)
 		} else {
@@ -307,7 +308,6 @@ func (e *Estructura) CargarFamiliar() (jSon []byte, err error) {
 		if cedula != cedulaAux {
 			fmt.Println("OTRO --- " + cedula)
 			var Militar sssifanb.Militar
-
 			fm := make(map[string]interface{})
 			fm["familiar"] = Familiares
 			Militar.ActualizarMGO(cedula, fm)
@@ -321,16 +321,14 @@ func (e *Estructura) CargarFamiliar() (jSon []byte, err error) {
 		familiar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
 		familiar.Persona.DatoBasico.Nacionalidad = util.ValidarNullString(nac)
 
-		familiar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp))
-		familiar.Persona.DatoBasico.NombreSegundo = strings.ToUpper(util.ValidarNullString(nombs))
-		familiar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apelp))
-		familiar.Persona.DatoBasico.ApellidoSegundo = strings.ToUpper(util.ValidarNullString(apels))
-		if util.ValidarNullString(nmil) != "null" {
+		familiar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp)) + strings.ToUpper(util.ValidarNullString(nombs))
+		familiar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apelp)) + strings.ToUpper(util.ValidarNullString(apels))
+		if util.ValidarNullString(nmil) != VNULL {
 			familiar.EsMilitar = true
 		}
 		layOut := "2006-01-02"
 		fecha = util.ValidarNullString(fech)
-		if fecha != "null" {
+		if fecha != VNULL {
 			dateString := strings.Replace(fecha, "/", "-", -1)
 			dateStamp, err := time.Parse(layOut, dateString)
 			if err == nil {
@@ -360,6 +358,7 @@ func (e *Estructura) CargarFamiliar() (jSon []byte, err error) {
 	return
 }
 
+//CargarCtaBancaria Cuenta
 func (e *Estructura) CargarCtaBancaria() (jSon []byte, err error) {
 	var msj Mensaje
 	sq, err := sys.PostgreSQLSAMAN.Query(obtenerCuentaBancaria())
@@ -379,7 +378,7 @@ func (e *Estructura) CargarCtaBancaria() (jSon []byte, err error) {
 
 		Historial.Cuenta = util.ValidarNullString(cuenta)
 		Historial.Institucion = util.ValidarNullString(institucion)
-		Historial.TipoCuenta = util.ValidarNullString(tipo)
+		Historial.Tipo = util.ValidarNullString(tipo)
 
 		fm := make(map[string]interface{})
 		fm["persona.datofinanciero"] = Historial
@@ -389,7 +388,7 @@ func (e *Estructura) CargarCtaBancaria() (jSon []byte, err error) {
 	return
 }
 
-//CargarMilitar Historial militar
+//CargarComponenteGrado Historial militar
 func (e *Estructura) CargarComponenteGrado() (jSon []byte, err error) {
 	var msj Mensaje
 	var codigo string
@@ -444,7 +443,7 @@ func (e *Estructura) CargarComponenteGrado() (jSon []byte, err error) {
 	return
 }
 
-//CargarMilitar Historial militar
+//CargarEstados Historial militar
 func (e *Estructura) CargarEstados() (jSon []byte, err error) {
 	var msj Mensaje
 	var codigo string
@@ -496,7 +495,7 @@ func (e *Estructura) CargarEstados() (jSon []byte, err error) {
 	return
 }
 
-//CargarMilitar Historial militar
+//CargarMunicipio Historial militar
 func (e *Estructura) CargarMunicipio() (jSon []byte, err error) {
 	var msj Mensaje
 	var codigo string
