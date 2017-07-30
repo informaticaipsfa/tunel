@@ -114,12 +114,16 @@ func (m *Militar) AplicarReglas() {
 
 func (m *Militar) NumeroHijos() int {
 	// hm = m.HistorialMilitar
+
 	return 1
 }
 
 //Conversion de Grados
 func (m *Militar) Conversion() {
-
+	switch m.Categoria {
+	case "ASI":
+		m.Clase = "ASI"
+	}
 }
 
 //ConversionGrado Grados
@@ -139,9 +143,9 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 		msj.Tipo = 0
 		jSon, err = json.Marshal(msj)
 	} else {
-		militar.Persona.DatoBasico.FechaNacimiento = militar.Persona.DatoBasico.FechaNacimiento.UTC()
-		militar.FechaIngresoComponente = militar.FechaIngresoComponente.UTC()
-		militar.FechaAscenso = militar.FechaAscenso.UTC()
+		// militar.Persona.DatoBasico.FechaNacimiento = militar.Persona.DatoBasico.FechaNacimiento.UTC()
+		// militar.FechaIngresoComponente = militar.FechaIngresoComponente.UTC()
+		// militar.FechaAscenso = militar.FechaAscenso.UTC()
 
 		militar.AplicarReglas()
 		jSon, err = json.Marshal(militar)
@@ -235,7 +239,7 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 	err = c.Update(bson.M{"id": oid}, bson.M{"$set": familiar})
 
 	if err != nil {
-		fmt.Println("Cedula: " + oid + " -> " + err.Error())
+		fmt.Println("Error: " + oid + " -> " + err.Error())
 		return
 	}
 	return

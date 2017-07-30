@@ -76,7 +76,11 @@ func reduccion() string {
 			componentecod,componentenombre,componentesiglas,
 			gradocod,gradocodrangoid,gradonombrecorto,gradonombrelargo,
 			gradop,componentep,tipcuentacod,instfinancod,nrocuenta,nrohijos,
-			anio_reconocido,mes_reconocido,dia_reconocido,f_retiro,n_hijos,numero_cuenta
+			anio_reconocido,mes_reconocido,dia_reconocido,f_retiro,n_hijos,numero_cuenta,
+			pensioncategoria, pensionsituacion, pensionclase,
+			annototservicio,mestotservicio, diatotservicio,
+			pensionasignada,porcprestmonto,pensionpromocion,pensionascenso,
+			componente_id, grado_id
 	 FROM (
 						SELECT DISTINCT ON (A.cedula_saman) cedula_saman, cedula_pace, np FROM (
 						SELECT * FROM analisis.reducciones WHERE militar > 0 ORDER BY militar DESC ) AS A
@@ -92,13 +96,21 @@ func reduccion() string {
 							pension.gradocod AS gradop, pension.componentecod AS componentep,
 							pension.tipcuentacod, pension.instfinancod, pension.nrocuenta, pension.nrohijos,
 							bnf.anio_reconocido, bnf.mes_reconocido,bnf.dia_reconocido, bnf.f_retiro, bnf.n_hijos,
-							bnf.numero_cuenta
+							bnf.numero_cuenta,
+							pension.perscategcod AS pensioncategoria, pension.perssituaccod AS pensionsituacion,
+							pension.persclasecod AS pensionclase,
+							pension.annototservicio, pension.mestotservicio, pension.diatotservicio,
+							pension.pensionasignada,porcprestmonto,
+							pension.fchpromocion AS pensionpromocion, pension.fchultimoascenso AS pensionascenso,
+							bnf.componente_id, bnf.grado_id
 						FROM pers_dat_militares AS pm
 						LEFT JOIN pension ON pension.nropersona=pm.nropersona
 						JOIN personas AS p ON pm.nropersona=p.nropersona
 						LEFT JOIN beneficiario AS bnf ON p.codnip=bnf.cedula
 						JOIN ipsfa_componentes AS icom ON pm.componentecod=icom.componentecod
 						JOIN ipsfa_grados AS igra ON pm.gradocod=igra.gradocod AND pm.componentecod=igra.componentecod
+						LEFT JOIN (SELECT DISTINCT ON (nropersona) nropersona,porcprestmonto FROM pension_calc) AS porc
+							ON porc.nropersona=pension.nropersona
 					) AS B ON B.nropersona = TBL.np  -- limit 1000 -- WHERE cedula_saman='16872776' --  WHERE B.perssituaccod = 'ACT' --`
 }
 
@@ -141,14 +153,14 @@ func obtenerHistorialMilitar() string {
 
 func obtenerCuentaBancaria() string {
 	return `
-		SELECT
-			AR.cedula_saman, nrocuenta, tipcuentacod, instfinancod
+			SELECT
+			AR.cedula_saman, nrocuenta, tipcuentacod, instfinancod, usocuentacod
 		FROM
 		analisis.reducciones as AR
-		JOIN (SELECT DISTINCT nropersona, nrocuenta, tipcuentacod, instfinancod FROM pers_cta_bancarias where usocuentacod='PRI') AS cta
-		ON AR.np=cta.nropersona
-		--WHERE AR.cedula_saman='16872776'
+		JOIN pers_cta_bancarias  AS cta
+		ON AR.np=cta.nropersona ORDER BY AR.cedula_saman DESC
 		`
+
 }
 
 func obtenerComponenteGrado() string {
@@ -206,6 +218,7 @@ func ActualizarPace(militar sssifanb.Militar) string {
 }
 
 func InsertarPace(militar sssifanb.Militar) string {
+	return ""
 	// \'' . $this->fecha_ingreso . '\',
 	// \'' . $this->fecha_ultimo_ascenso . '\',
 	// \'' . $this->fecha_ingreso_sistema . '\',
@@ -215,67 +228,67 @@ func InsertarPace(militar sssifanb.Militar) string {
 	// \'' . $this->fecha_ultima_modificacion . '\',
 	// \'' . $this->fecha_reincorporacion . '\'
 
-	return `INSERT INTO hist_beneficiario (
-			status_id,
-			componente_id,
-			grado_id,
-			cedula,
-			nombres,
-			apellidos,
-			tiempo_servicio,
-			fecha_ingreso,
-			edo_civil,
-			n_hijos,
-			f_ult_ascenso,
-			anio_reconocido,
-			mes_reconocido,
-			dia_reconocido,
-			f_ingreso_sistema,
-			f_retiro,
-			f_retiro_efectiva,
-			st_no_ascenso,
-			numero_cuenta,
-			st_profesion,
-			sexo,
-			f_creacion,
-			usr_creacion,
-			f_ult_modificacion,
-			usr_modificacion,
-			observ_ult_modificacion,
-			motivo_paralizacion,
-			f_reincorporacion
-		) VALUES ';
-
-		$sInsertar .= '(
-			\'' . $this->estatus_activo . '\',
-			` + militar.Fideicomiso.ComponenteCodigo + `,
-			` + militar.Fideicomiso.GradoCodigo + `,
-			'` + militar.Persona.DatoBasico.Cedula + `',
-			'` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
-			'` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
-			'` + militar.TiempoSevicio + `',
-
-			'` + militar.Persona.DatoBasico.EstadoCivil + `'',
-			` + strconv.Itoa(militar.NumeroHijos()) + `,
-
-			` + strconv.Itoa(militar.AnoReconocido) + ` ,
-		  ` + strconv.Itoa(militar.MesReconocido) + `,
-		 	` + strconv.Itoa(militar.DiaReconocido) + `,
-
-
-
-			` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
-			'` + militar.Fideicomiso.CuentaBancaria + `',
-			` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
-			'` + militar.Persona.DatoBasico.Sexo + `',
-
-			'tunel-ipsfa',
-
-		 	'tunel-ipsfa',
-		 	'INSERCION POR TUNELES',
-			'` + militar.Fideicomiso.MotivoParalizacion + `',
-
-		)';`
+	// return `INSERT INTO hist_beneficiario (
+	// 		status_id,
+	// 		componente_id,
+	// 		grado_id,
+	// 		cedula,
+	// 		nombres,
+	// 		apellidos,
+	// 		tiempo_servicio,
+	// 		fecha_ingreso,
+	// 		edo_civil,
+	// 		n_hijos,
+	// 		f_ult_ascenso,
+	// 		anio_reconocido,
+	// 		mes_reconocido,
+	// 		dia_reconocido,
+	// 		f_ingreso_sistema,
+	// 		f_retiro,
+	// 		f_retiro_efectiva,
+	// 		st_no_ascenso,
+	// 		numero_cuenta,
+	// 		st_profesion,
+	// 		sexo,
+	// 		f_creacion,
+	// 		usr_creacion,
+	// 		f_ult_modificacion,
+	// 		usr_modificacion,
+	// 		observ_ult_modificacion,
+	// 		motivo_paralizacion,
+	// 		f_reincorporacion
+	// 	) VALUES ';
+	//
+	// 	$sInsertar .= '(
+	// 		\'' . $this->estatus_activo . '\',
+	// 		` + militar.Fideicomiso.ComponenteCodigo + `,
+	// 		` + militar.Fideicomiso.GradoCodigo + `,
+	// 		'` + militar.Persona.DatoBasico.Cedula + `',
+	// 		'` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
+	// 		'` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
+	// 		'` + militar.TiempoSevicio + `',
+	//
+	// 		'` + militar.Persona.DatoBasico.EstadoCivil + `'',
+	// 		` + strconv.Itoa(militar.NumeroHijos()) + `,
+	//
+	// 		` + strconv.Itoa(militar.AnoReconocido) + ` ,
+	// 	  ` + strconv.Itoa(militar.MesReconocido) + `,
+	// 	 	` + strconv.Itoa(militar.DiaReconocido) + `,
+	//
+	//
+	//
+	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
+	// 		'` + militar.Fideicomiso.CuentaBancaria + `',
+	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
+	// 		'` + militar.Persona.DatoBasico.Sexo + `',
+	//
+	// 		'tunel-ipsfa',
+	//
+	// 	 	'tunel-ipsfa',
+	// 	 	'INSERCION POR TUNELES',
+	// 		'` + militar.Fideicomiso.MotivoParalizacion + `',
+	//
+	// 	)';`
 
 	//echo $sInsertar;
 

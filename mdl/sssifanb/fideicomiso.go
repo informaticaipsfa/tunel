@@ -1,8 +1,8 @@
 package sssifanb
 
 type Fideicomiso struct {
-	GradoCodigo        string `json:"grado" bson:"grado"`
-	ComponenteCodigo   string `json:"Componente" bson:"componente"`
+	GradoCodigo        int    `json:"grado" bson:"grado"`
+	ComponenteCodigo   int    `json:"Componente" bson:"componente"`
 	NumeroHijos        int    `json:"numerohijos" bson:"numerohijos"`
 	AnoReconocido      int    `json:"areconocido,omitempty" bson:"areconocido"`
 	MesReconocido      int    `json:"mreconocido,omitempty" bson:"mreconocido"`
