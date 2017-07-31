@@ -1,6 +1,12 @@
 package sssifanb
 
-import "time"
+import (
+	"strconv"
+	"time"
+
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+	"github.com/gesaodin/tunel-ipsfa/util"
+)
 
 //Carnet Tarjeta de Identificacion Militar
 type Carnet struct {
@@ -24,4 +30,11 @@ func (c *Carnet) AplicarReglas() {
 	//Generar serial
 	//Generar CodigoComponente
 
+}
+
+//GenerarSerial Seriales de Carnet
+func (c *Carnet) GenerarSerial() string {
+	var Semillero fanb.Semillero
+	i, _ := Semillero.Maximo()
+	return util.CompletarCeros(strconv.Itoa(i), 0, 8)
 }

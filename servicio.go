@@ -19,7 +19,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/estadistica"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 )
 
@@ -41,13 +41,25 @@ func init() {
 }
 
 func main() {
+
+	var Militar sssifanb.Militar
+	Militar.ConsultarMGO("10107698")
+	fmt.Println(Militar.Familiar[1].Benficio)
+	Militar.Familiar[1].AplicarReglasBeneficio()
+	// j, _ := Militar.GenerarCarnet()
+	// fmt.Printf("%s \n", j)
+
+	// var Semillero fanb.Semillero
+	// i, _ := Semillero.Maximo()
+	// fmt.Println(util.CompletarCeros(strconv.Itoa(i), 1, 10))
+
 	// var es estadistica.Estructura
 	//
 	// es.Reduccion()
 
 	//var priorizador estadistica.Priorizador00
 	// var familiares estadistica.Estructura
-	var migrado estadistica.Estructura
+	//var migrado estadistica.Estructura
 	// migrado.CargarEstados()
 	// migrado.CargarMunicipio()
 	// migrado.CargarParroquia()
@@ -56,8 +68,8 @@ func main() {
 	//migrado.Migracion()
 	//migrado.CargarCtaBancaria()
 	// migrado.CargarMilitar()
-	// migrado.CargarPensiones()
-	migrado.CargarFamiliar()
+	//migrado.CargarPensiones()
+	// migrado.CargarFamiliar()
 	// familiares.ActualizarFamiliar()
 
 	// fmt.Println("Inciando la carga del sistema")
