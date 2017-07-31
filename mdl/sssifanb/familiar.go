@@ -2,6 +2,7 @@ package sssifanb
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -72,5 +73,25 @@ func (f *Familiar) IncluirFamiliar(cedmilitar string) (err error) {
 
 //ContarFamiliar Contando Familiares
 func (f *Familiar) ContarFamiliar() {
+
+}
+
+//AplicarReglasCarnetPadres
+func (f *Familiar) AplicarReglasCarnetPadres(fechaActual time.Time, fechavencimiento time.Time) {
+	fechaActual = time.Now()
+	AnnoA, MesA, DiaA := fechaActual.Date()
+
+	if f.Parentesco == "PD" {
+
+		AnnoA += 10
+		layout := "2006-01-02"
+		AnnoAs := strconv.Itoa(AnnoA)
+		MesAs := strconv.Itoa((int(MesA))
+		DiaAs := strconv.Itoa(DiaA)
+		fechaven := AnnoAs + "-" + MesAs + "-" + DiaAs
+		fechaVencimiento = time.Parse(layout, fechaven)
+
+		return
+	}
 
 }
