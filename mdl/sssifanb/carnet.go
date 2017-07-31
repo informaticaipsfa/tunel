@@ -23,6 +23,7 @@ type Carnet struct {
 	URLSimbolo              string     `json:"simbolo,omitempty" bson:"simbolo"`
 	URLFirmaMinistro        string     `json:"fministro,omitempty" bson:"fministro"`
 	URLFirmaPresidenteIPSFA string     `json:"fpresidente,omitempty" bson:"fpresidente"`
+	Estatus                 int        `json:"estatus,omitempty" bson:"estatus"`
 }
 
 //AplicarReglas Basicas
