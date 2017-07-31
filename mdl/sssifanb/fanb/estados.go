@@ -8,6 +8,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+//Estado Sitio
 type Estado struct {
 	Nombre    string      `json:"nombre" bson:"nombre"`
 	Codigo    string      `json:"codigo" bson:"codigo"`
@@ -15,11 +16,13 @@ type Estado struct {
 	Municipio []Municipio `json:"Municipio" bson:"municipio"`
 }
 
+//Ciudad Sitio
 type Ciudad struct {
 	Capital int    `json:"codigo" bson:"capital"`
 	Nombre  string `json:"nombre" bson:"nombre"`
 }
 
+//Municipio Sitio
 type Municipio struct {
 	Nombre    string   `json:"nombre" bson:"nombre"`
 	Parroquia []string `json:"Parroquia" bson:"parroquia"`
@@ -37,7 +40,7 @@ func (e *Estado) SalvarMGO(colecion string) (err error) {
 	return
 }
 
-//Consultar una persona mediante el metodo de MongoDB
+//ConsultarEstado una persona mediante el metodo de MongoDB
 func (e *Estado) ConsultarEstado() (jSon []byte, err error) {
 	var msj Mensaje
 	var lst []interface{}

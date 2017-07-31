@@ -153,6 +153,35 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 	return
 }
 
+//GenerarCarnet Generacion de Carnet
+func (m *Militar) GenerarCarnet() (jSon []byte, err error) {
+	var TIM Carnet
+	var mes, dia string
+	fecha := time.Now()
+	a, me, d := fecha.Date()
+	a += 7
+	mes = strconv.Itoa(int(me))
+	if int(me) < 10 {
+		mes = "0" + strconv.Itoa(int(me))
+	}
+	dia = strconv.Itoa(d)
+	if d < 10 {
+		dia = "0" + strconv.Itoa(d)
+	}
+	fvenc := strconv.Itoa(a) + "-" + mes + "-" + dia
+	fechavece, _ := time.Parse("2006-01-02", fvenc)
+
+	TIM.Serial = m.TIM.GenerarSerial()
+	TIM.FechaCreacion = fecha
+	TIM.FechaVencimiento = fechavece
+	TIM.CodigoComponente = m.Componente.Abreviatura
+	TIM.Grado.Abreviatura = m.Grado.Abreviatura
+	TIM.Responsable = m.ID
+	TIM.Tipo = 0
+	jSon, err = json.Marshal(TIM)
+	return
+}
+
 //ConsultarSAMAN Militar
 func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
 	var msj Mensaje
@@ -314,8 +343,8 @@ func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 
 //ConsultarMGO una persona mediante el metodo de MongoDB
 func (m *Militar) ConsultarMGO(cedula string) (err error) {
-	c := sys.MGOSession.DB(BASEDEDATOS).C("persona")
-	err = c.Find(bson.M{"cedula": cedula}).One(&m)
+	c := sys.MGOSession.DB(BASEDEDATOS).C("militar")
+	err = c.Find(bson.M{"id": cedula}).One(&m)
 	return
 }
 
