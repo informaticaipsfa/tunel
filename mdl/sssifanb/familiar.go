@@ -2,6 +2,7 @@ package sssifanb
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -58,21 +59,29 @@ func (f *Familiar) ConvertirFechaHumano() {
 
 }
 
-func (f *Familiar) AplicarReglasCarnetHijos() {
-
+func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVencimientoCarnet time.Time) {
+	fechaActual = time.Now()
+	Anio, Mes, Dia := fechaActual.Date()
 	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
+	layOut := "2006-01-02"
 
 	switch {
 	case edad < 15:
-		f.AnoVigencia = 5
+		Anio += 5
 	case edad >= 15 && edad <= 18:
-		f.AnoVigencia = 3
+		Anio += 3
 	case edad > 18 && edad <= 27:
-		f.AnoVigencia = 2
-	case edad > 18 && discap == 1:
-		f.AnoVigencia = 5
-
+		Anio += 2
+	case edad > 18 && f.Condicion == 1:
+		Anio += 5
 	}
+	AnioS := strconv.Itoa(Anio)
+	MesS := strconv.Itoa(int(Mes))
+	DiaS := strconv.Itoa(Dia)
+
+	fecha := AnioS + "-" + MesS + "-" + DiaS
+	fechaVencimientoCarnet, _ = time.Parse(layOut, fecha)
+	return
 }
 
 //IncluirFamiliar Agregar
