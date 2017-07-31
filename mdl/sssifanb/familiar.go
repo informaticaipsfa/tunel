@@ -102,7 +102,7 @@ func (f *Familiar) ContarFamiliar() {
 }
 
 //AplicarReglasCarnetPadres
-func (f *Familiar) AplicarReglasCarnetPadres(fechaActual time.Time, fechavencimiento time.Time) {
+/*func (f *Familiar) AplicarReglasCarnetPadres(fechaActual time.Time, fechaVencimiento time.Time) {
 	fechaActual = time.Now()
 	AnnoA, MesA, DiaA := fechaActual.Date()
 
@@ -111,12 +111,12 @@ func (f *Familiar) AplicarReglasCarnetPadres(fechaActual time.Time, fechavencimi
 		AnnoA += 10
 		layout := "2006-01-02"
 		AnnoAs := strconv.Itoa(AnnoA)
-		MesAs := strconv.Itoa((int(MesA))
+		MesAs := strconv.Itoa(int(MesA))
 		DiaAs := strconv.Itoa(DiaA)
 		fechaven := AnnoAs + "-" + MesAs + "-" + DiaAs
-		fechaVencimiento = time.Parse(layout, fechaven)
+		fechaVencimiento, _ := time.Parse(layout, fechaven)
 
 		return
 	}
 
-}
+}*/
