@@ -63,7 +63,16 @@ func DiasDelMes(fecha time.Time) int {
 
 //CompletarCeros llenar con ceros antes y despues de una cadena
 func CompletarCeros(cadena string, orientacion int, cantidad int) string {
-	return "000"
+	var result string
+	for i := 0; i < cantidad; i++ {
+		result += "0"
+	}
+	if orientacion == 0 {
+		result += cadena
+	} else {
+		result = cadena + result
+	}
+	return result
 }
 
 func Fatal(e error) {
@@ -81,13 +90,13 @@ func CalcularTiempo(fechaNacimiento time.Time) (Ano int, Mes time.Month, Dia int
 	Ano = AnnoA - AnoN
 	Mes = MesA - MesN
 	Dia = DiaA - DiaM
+
 	if Dia < 0 {
 		Dia = 0
 		Mes++
 	}
-	if Mes < 0 {
-		Mes = 0
-		Ano++
+	if Mes <= 0 {
+		Ano--
 	}
 
 	return

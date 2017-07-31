@@ -664,9 +664,9 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 	for sq.Next() {
 		var cedulaAux string
 		var vigente, direc, finsc sql.NullString
-		var sueldob, ptransporte, pdescenc, pannoserv float64
-		var pnoascenso, ppnoascenso, pespecial, pprofesional, ppprof, subtotal, pprestacion, pasignada float64
-		var bonovac, bonovacaguinaldo float64
+		var sueldob, ptransporte, pdescenc, pannoserv sql.NullFloat64
+		var pnoascenso, ppnoascenso, pespecial, pprofesional, ppprof, subtotal, pprestacion, pasignada sql.NullFloat64
+		var bonovac, bonovacaguinaldo sql.NullFloat64
 
 		var historialpension sssifanb.HistorialPensionSueldo
 		err = sq.Scan(&cedulaAux, &vigente, &direc, &finsc, &sueldob, &ptransporte, &pdescenc, &pannoserv,
@@ -685,7 +685,7 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 			var Militar sssifanb.Militar
 
 			fm := make(map[string]interface{})
-			fm["pension"] = Historial
+			fm["pension.historialsueldo"] = Historial
 			Militar.ActualizarMGO(cedula, fm)
 			miliares++
 			cedula = cedulaAux
@@ -693,17 +693,17 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 		}
 		var prima sssifanb.Prima
 		historialpension.Directiva = util.ValidarNullString(direc)
-		historialpension.Sueldo = sueldob
-		historialpension.PensionAsignada = pasignada
-		prima.Descendencia = pdescenc
-		prima.Especial = pespecial
-		prima.NoAscenso = pnoascenso
-		prima.PorcentajeNoAscenso = ppnoascenso
-		prima.SubTotal = subtotal
-		prima.Transporte = ptransporte
+		historialpension.Sueldo = util.ValidarNullFloat64(sueldob)
+		historialpension.PensionAsignada = util.ValidarNullFloat64(pasignada)
+		prima.Descendencia = util.ValidarNullFloat64(pdescenc)
+		prima.Especial = util.ValidarNullFloat64(pespecial)
+		prima.NoAscenso = util.ValidarNullFloat64(pnoascenso)
+		prima.PorcentajeNoAscenso = util.ValidarNullFloat64(ppnoascenso)
+		prima.SubTotal = util.ValidarNullFloat64(subtotal)
+		prima.Transporte = util.ValidarNullFloat64(ptransporte)
 		historialpension.Prima = prima
-		historialpension.BonoVacacional = bonovac
-		historialpension.BonoAguinaldo = bonovacaguinaldo
+		historialpension.BonoVacacional = util.ValidarNullFloat64(bonovac)
+		historialpension.BonoAguinaldo = util.ValidarNullFloat64(bonovacaguinaldo)
 
 		Historial = append(Historial, historialpension)
 		i++
