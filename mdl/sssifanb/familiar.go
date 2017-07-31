@@ -50,3 +50,20 @@ func (f *Familiar) AplicarReglasParentesco() {
 func (f *Familiar) ConvertirFechaHumano() {
 
 }
+
+func (f *Familiar) AplicarReglasCarnetHijos() {
+
+	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
+
+	switch {
+	  case edad < 15:
+			f.AnoVigencia = 5
+		case edad >= 15 && edad =< 18:
+			f.AnoVigencia = 3
+		case edad >18 && edad =< 27:
+			f.AnoVigencia = 2
+		case edad >18 && discap = 1:
+			f.AnoVigencia = 5
+
+	}
+}
