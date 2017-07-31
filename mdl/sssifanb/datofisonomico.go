@@ -1,5 +1,6 @@
 package sssifanb
 
+//DatoFisionomico Controles
 type DatoFisionomico struct {
 	GrupoSanguineo string  `json:"gruposanguineo" bson:"gruposanguineo"`
 	ColorPiel      string  `json:"colorpiel" bson:"colorpiel"`

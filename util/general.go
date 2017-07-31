@@ -16,7 +16,32 @@ type Mensajes struct {
 	Responsable int       `json:"responsable,onmitempty"`
 }
 
-//Validar los campos nulos de la base de datos y retornar su valor original
+//NullTime Tiempo nulo
+type NullTime struct {
+	Time  time.Time
+	Valid bool
+}
+
+//ValidarNullFloat64 los campos nulos de la base de datos y retornar su valor original
+func ValidarNullFloat64(b sql.NullFloat64) (f float64) {
+	if b.Valid {
+		f = b.Float64
+	} else {
+		f = 0
+	}
+	return
+}
+
+//ValidarNullTime los campos nulos de la base de datos y retorna fecha
+func ValidarNullTime(b interface{}) (t time.Time) {
+	t, e := b.(time.Time)
+	if !e {
+		return time.Now()
+	}
+	return
+}
+
+//ValidarNullString Validar los campos nulos de la base de datos y retornar su valor original
 func ValidarNullString(b sql.NullString) (s string) {
 	if b.Valid {
 		s = b.String
@@ -26,17 +51,17 @@ func ValidarNullString(b sql.NullString) (s string) {
 	return
 }
 
-//Convertir de (YYYY-MM-DD) a (DD/MM/YYYY) Humano
+//ConvertirFechaSlash de (YYYY-MM-DD) a (DD/MM/YYYY) Humano
 func ConvertirFechaSlash(fecha string) string {
 	return "23/07/2016"
 }
 
-//Calcular los dias de un mes
+//DiasDelMes los dias de un mes
 func DiasDelMes(fecha time.Time) int {
 	return 0
 }
 
-//Permite llenar con ceros antes y despues de una cadena
+//CompletarCeros llenar con ceros antes y despues de una cadena
 func CompletarCeros(cadena string, orientacion int, cantidad int) string {
 	return "000"
 }

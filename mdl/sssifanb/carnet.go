@@ -2,7 +2,7 @@ package sssifanb
 
 import "time"
 
-//Tarjeta de Identificacion Militar
+//Carnet Tarjeta de Identificacion Militar
 type Carnet struct {
 	ID                      int        `json:"id,omitempty" bson:"id"`
 	Tipo                    int        `json:"tipo,omitempty" bson:"tipo"` // 0: Militar 1: Empleado 2: Familiares
@@ -19,7 +19,7 @@ type Carnet struct {
 	URLFirmaPresidenteIPSFA string     `json:"fpresidente,omitempty" bson:"fpresidente"`
 }
 
-//TIM
+//AplicarReglas Basicas
 func (c *Carnet) AplicarReglas() {
 	//Generar serial
 	//Generar CodigoComponente
