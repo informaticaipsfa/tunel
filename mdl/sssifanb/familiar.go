@@ -1,6 +1,7 @@
 package sssifanb
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -101,14 +102,24 @@ func (f *Familiar) ContarFamiliar() {
 
 }
 
+<<<<<<< HEAD
 //AplicarReglasCarnetPadres
 /*func (f *Familiar) AplicarReglasCarnetPadres(fechaActual time.Time, fechaVencimiento time.Time) {
 	fechaActual = time.Now()
+=======
+//AplicarReglasCarnetPadres Reglas
+func (f *Familiar) AplicarReglasCarnetPadres() (jSon []byte, err error) {
+	var TIM Carnet
+	var mes, dia string
+	var fechaVencimiento time.Time
+	fechaActual := time.Now()
+>>>>>>> cafa7826ce165f29209c2909f2cc0a85ac54ecfe
 	AnnoA, MesA, DiaA := fechaActual.Date()
+	layout := "2006-01-02"
 
 	if f.Parentesco == "PD" {
-
 		AnnoA += 10
+<<<<<<< HEAD
 		layout := "2006-01-02"
 		AnnoAs := strconv.Itoa(AnnoA)
 		MesAs := strconv.Itoa(int(MesA))
@@ -120,3 +131,29 @@ func (f *Familiar) ContarFamiliar() {
 	}
 
 }*/
+=======
+		mes = strconv.Itoa(int(MesA))
+		if int(MesA) < 10 {
+			mes = "0" + strconv.Itoa(int(MesA))
+		}
+		dia = strconv.Itoa(DiaA)
+		if DiaA < 10 {
+			dia = "0" + strconv.Itoa(DiaA)
+		}
+		fvenc := strconv.Itoa(AnnoA) + "-" + mes + "-" + dia
+		fechaVencimiento, _ = time.Parse(layout, fvenc)
+	}
+
+	TIM.Serial = TIM.GenerarSerial()
+	TIM.FechaCreacion = fechaActual
+	TIM.FechaVencimiento = fechaVencimiento
+	// TIM.CodigoComponente = m.Componente.Abreviatura
+	// TIM.Grado.Abreviatura = m.Grado.Abreviatura
+	TIM.Responsable = f.Persona.DatoBasico.Cedula
+	TIM.Tipo = 1
+	TIM.Estatus = 0
+	jSon, err = json.Marshal(TIM)
+	return
+
+}
+>>>>>>> cafa7826ce165f29209c2909f2cc0a85ac54ecfe

@@ -178,6 +178,7 @@ func (m *Militar) GenerarCarnet() (jSon []byte, err error) {
 	TIM.Grado.Abreviatura = m.Grado.Abreviatura
 	TIM.Responsable = m.ID
 	TIM.Tipo = 0
+	TIM.Estatus = 0
 	jSon, err = json.Marshal(TIM)
 	return
 }

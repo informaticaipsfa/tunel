@@ -44,8 +44,9 @@ func main() {
 
 	var Militar sssifanb.Militar
 	Militar.ConsultarMGO("10107698")
-	fmt.Println(Militar.Familiar[1].Benficio)
-	Militar.Familiar[1].AplicarReglasBeneficio()
+	fmt.Println(Militar.Familiar[1].Persona.DatoBasico.NombrePrimero)
+	j, _ := Militar.Familiar[0].AplicarReglasCarnetPadres()
+	fmt.Printf("%s\n", j)
 	// j, _ := Militar.GenerarCarnet()
 	// fmt.Printf("%s \n", j)
 
