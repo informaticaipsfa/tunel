@@ -16,14 +16,17 @@ type DatoBasico struct {
 	EstadoCivil     string    `json:"estadocivil,omitempty" bson:"estadocivil"`
 }
 
+//AplicarReglas Politicas
 func (d *DatoBasico) AplicarReglas() {
 
 }
 
+//ConcatenarNombre Unir nombres
 func (d *DatoBasico) ConcatenarNombre() string {
 	return d.NombrePrimero + " " + d.NombreSegundo
 }
 
+//ConcatenarApellido Nombre y Apellidos
 func (d *DatoBasico) ConcatenarApellido() string {
 	return d.ApellidoPrimero + " " + d.ApellidoSegundo
 }

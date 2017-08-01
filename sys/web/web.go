@@ -36,6 +36,10 @@ func CargarModulosWeb() {
 
 	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", comp.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/estado", esta.Consultar).Methods("GET")
+
+	Enrutador.HandleFunc("/ipsfa/api/familiar/crud/{id}", per.Consultar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", per.Actualizar).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", per.Insertar).Methods("POST")
 }
 
 func CargarModulosSeguridad() {
