@@ -1,6 +1,7 @@
 package sssifanb
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
@@ -59,6 +60,47 @@ func (f *Familiar) ConvertirFechaHumano() {
 
 }
 
+//Actualizar Vida Militar
+func (f *Familiar) Actualizar() (jSon []byte, err error) {
+	var msj Mensaje
+	//f.TipoDato = 0
+
+	// s := `UPDATE personas SET nombreprimero='` +
+	// 	m.Persona.DatoBasico.NombrePrimero +
+	// 	`', nombresegundo='` +
+	// 	m.Persona.DatoBasico.NombreSegundo +
+	// 	`' WHERE codnip='` + m.Persona.DatoBasico.Cedula + `'`
+	// _, err = sys.PostgreSQLSAMAN.Exec(s)
+	// if err != nil {
+	// 	msj.Mensaje = "Error: Consulta ya existe."
+	// 	msj.Tipo = 2
+	// 	msj.Pgsql = err.Error()
+	// 	jSon, err = json.Marshal(msj)
+	// 	return
+	// }
+	msj.Mensaje = "Su data ha sido actualizada."
+	msj.Tipo = 2
+	jSon, err = json.Marshal(msj)
+	f.MGOActualizar()
+	return
+}
+
+//MGOActualizar Actualizando en MONGO
+func (f *Familiar) MGOActualizar() (err error) {
+	var mOriginal Familiar
+	//mOriginal, _ = consultarMongo(m.ID)
+
+	//
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	err = c.Update(bson.M{"id": mOriginal.ID}, &mOriginal)
+	if err != nil {
+		fmt.Println("Cedula: " + f.Persona.DatoBasico.Cedula + " -> " + err.Error())
+		return
+	}
+	return
+}
+
+//AplicarReglasCarnetHijos Reglas
 func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVencimientoCarnet time.Time) {
 	fechaActual = time.Now()
 	Anio, Mes, Dia := fechaActual.Date()
@@ -86,7 +128,7 @@ func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVenci
 
 //IncluirFamiliar Agregar
 func (f *Familiar) IncluirFamiliar(cedmilitar string) (err error) {
-	c := sys.MGOSession.DB(BASEDEDATOS).C(COLECCION)
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	err = c.Update(bson.M{"id": cedmilitar}, bson.M{"$push": f})
 
 	if err != nil {
@@ -98,5 +140,41 @@ func (f *Familiar) IncluirFamiliar(cedmilitar string) (err error) {
 
 //ContarFamiliar Contando Familiares
 func (f *Familiar) ContarFamiliar() {
+
+}
+
+//AplicarReglasCarnetPadres Reglas
+func (f *Familiar) AplicarReglasCarnetPadres() (jSon []byte, err error) {
+	var TIM Carnet
+	var mes, dia string
+	var fechaVencimiento time.Time
+	fechaActual := time.Now()
+	AnnoA, MesA, DiaA := fechaActual.Date()
+	layout := "2006-01-02"
+
+	if f.Parentesco == "PD" {
+		AnnoA += 10
+		mes = strconv.Itoa(int(MesA))
+		if int(MesA) < 10 {
+			mes = "0" + strconv.Itoa(int(MesA))
+		}
+		dia = strconv.Itoa(DiaA)
+		if DiaA < 10 {
+			dia = "0" + strconv.Itoa(DiaA)
+		}
+		fvenc := strconv.Itoa(AnnoA) + "-" + mes + "-" + dia
+		fechaVencimiento, _ = time.Parse(layout, fvenc)
+	}
+
+	TIM.Serial = TIM.GenerarSerial()
+	TIM.FechaCreacion = fechaActual
+	TIM.FechaVencimiento = fechaVencimiento
+	// TIM.CodigoComponente = m.Componente.Abreviatura
+	// TIM.Grado.Abreviatura = m.Grado.Abreviatura
+	TIM.Responsable = f.Persona.DatoBasico.Cedula
+	TIM.Tipo = 1
+	TIM.Estatus = 0
+	jSon, err = json.Marshal(TIM)
+	return
 
 }

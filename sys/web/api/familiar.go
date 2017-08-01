@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//Familiar Familiares
 type Familiar struct{}
 
 //Consultar Militares

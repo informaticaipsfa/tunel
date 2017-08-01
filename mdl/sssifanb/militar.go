@@ -13,12 +13,10 @@ import (
 )
 
 const (
-	MILITAR      int    = 0
-	FAMILIAR     int    = 1
-	PROVEEDOR    int    = 2
-	BENEFICIARIO        = 3
-	BASEDEDATOS  string = "ipsfa_test"
-	COLECCION    string = "militar"
+	MILITAR      int = 0
+	FAMILIAR     int = 1
+	PROVEEDOR    int = 2
+	BENEFICIARIO int = 3
 )
 
 type Militar struct {
@@ -137,7 +135,7 @@ func (m *Militar) ConversionGrado() {
 func (m *Militar) Consultar() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
-	c := sys.MGOSession.DB(BASEDEDATOS).C(COLECCION)
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
 	if militar.Persona.DatoBasico.Cedula == "" {
 		msj.Tipo = 0
@@ -265,7 +263,7 @@ func (m *Militar) Actualizar() (jSon []byte, err error) {
 //ActualizarMGO Actualizar
 func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (err error) {
 
-	c := sys.MGOSession.DB(BASEDEDATOS).C(COLECCION)
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	err = c.Update(bson.M{"id": oid}, bson.M{"$set": familiar})
 
 	if err != nil {
@@ -291,7 +289,7 @@ func (m *Militar) MGOActualizar() (err error) {
 	mOriginal.NumeroResuelto = m.NumeroResuelto
 
 	//
-	c := sys.MGOSession.DB(BASEDEDATOS).C(COLECCION)
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	err = c.Update(bson.M{"id": mOriginal.ID}, &mOriginal)
 	if err != nil {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
@@ -302,7 +300,7 @@ func (m *Militar) MGOActualizar() (err error) {
 
 //consultarMongo una persona mediante el metodo de MongoDB
 func consultarMongo(cedula string) (m Militar, err error) {
-	c := sys.MGOSession.DB(BASEDEDATOS).C(COLECCION)
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	err = c.Find(bson.M{"id": cedula}).One(&m)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -312,28 +310,13 @@ func consultarMongo(cedula string) (m Militar, err error) {
 	return
 }
 
-//SalvarMGO Guardar
-func (m *Militar) SalvarMGO(colecion string) (err error) {
-	if colecion != "" {
-		c := sys.MGOSession.DB(BASEDEDATOS).C(colecion)
-		err = c.Insert(m)
-	} else {
-		c := sys.MGOSession.DB(BASEDEDATOS).C("persona")
-		err = c.Insert(m)
-	}
-
-	//fmt.Println(err)
-
-	return
-}
-
 //SalvarMGOI Guardar
 func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 	if colecion != "" {
-		c := sys.MGOSession.DB(BASEDEDATOS).C(colecion)
+		c := sys.MGOSession.DB(CBASE).C(colecion)
 		err = c.Insert(objeto)
 	} else {
-		c := sys.MGOSession.DB(BASEDEDATOS).C(COLECCION)
+		c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 		err = c.Insert(objeto)
 	}
 
@@ -344,14 +327,14 @@ func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 
 //ConsultarMGO una persona mediante el metodo de MongoDB
 func (m *Militar) ConsultarMGO(cedula string) (err error) {
-	c := sys.MGOSession.DB(BASEDEDATOS).C("militar")
+	c := sys.MGOSession.DB(CBASE).C("militar")
 	err = c.Find(bson.M{"id": cedula}).One(&m)
 	return
 }
 
 //ListarMGO Listado General
 func (m *Militar) ListarMGO(cedula string) (lst []Militar, err error) {
-	c := sys.MGOSession.DB(BASEDEDATOS).C("persona")
+	c := sys.MGOSession.DB(CBASE).C("persona")
 	err = c.Find(bson.M{}).All(&lst)
 	return
 }
