@@ -293,3 +293,87 @@ func InsertarPace(militar sssifanb.Militar) string {
 	//echo $sInsertar;
 
 }
+
+func InsertarSAMAN(militar sssifanb.Militar) string {
+	return `insert into public.personas (
+	_version_hb,
+	tipnip,
+	codnip,
+	tipnit,
+	nronit,
+	nombreprimero,
+	nombresegundo,
+	apellidoprimero,
+	apellidosegundo,
+	apellidocasada,
+	prefijo,
+	sufijo,
+	nombrecompletoupp,
+  nombrecompleto,
+  nombrecorto,
+  apodo,
+	imprimeapodo,
+	nombrepersjuridica,
+	siglaspersjuridica,
+	nacionalidadcod,
+	sexocod,
+	edocivilcod,
+	idiomanativocod,
+	ocupactivcod,
+	localidadcodnac,
+	tratamientocod,
+	fechanacimiento,
+	fechadefuncion,
+	email1,
+	email2,
+	paginaweb,
+	contacto,
+	capital,
+	auditestatregistro,
+	auditrazonoper,
+	auditfechaanulac,
+	auditfechacambio,
+	audithoracambio,
+	auditfechacreacion,
+	audithoracreacion,
+	auditcodusuario,
+	auditcodsupervisor,
+	campousuariochar_1,
+	campousuariochar_2,
+	campousuariochar_3,
+	campousuariochar_4,
+	campousuariochar_5,
+	campousuarionum_1,
+	campousuarionum_2,
+	campousuarionum_3,
+	campousuarionum_4,
+	campousuarionum_5,
+	ciaopr,
+	nropersona
+	) values ';
+
+	$sInsertar .= '(
+		    \'' . $this->estatus_activo . '\',
+				` + militar.Persona.tipnip + `,
+				` + militar.preguntar.codnip + `,
+				` + militar.preguntar.tipnit + `,
+				` + militar.preguntar.nronit + `,
+				` + militar.Fideicomiso.codnip + `,
+				` + militar.persona.DatosBasico.NombrePrimero + `,
+				` + militar.persona.DatosBasico.NombreSegundo + `,
+				` + militar.persona.DatosBasico.ApellidoPrimero + `,
+				` + militar.persona.DatosBasico.ApellidoSegundo + `,
+
+		 $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38, $39, $40, $41, $42, $43, $44, $45, $46, $47, $48, $49, $50, $51, $52, $53, $54)
+	`
+
+
+	$sInsertar .= '(
+	// 		\'' . $this->estatus_activo . '\',
+	// 		` + militar.Fideicomiso.ComponenteCodigo + `,
+	// 		` + militar.Fideicomiso.GradoCodigo + `,
+	// 		'` + militar.Persona.DatoBasico.Cedula + `',
+	// 		'` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
+	// 		'` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
+	// 		'` + militar.TiempoSevicio + `',
+}
