@@ -31,7 +31,7 @@ type Carnet struct {
 	URLFirmaPresidenteIPSFA string     `json:"fpresidente,omitempty" bson:"fpresidente"`
 	Estatus                 int        `json:"estatus,omitempty" bson:"estatus"`
 	IP                      string     `json:"ip" bson:"ip"`
-	Motivo      						string     `json:"motivo" bson:"motivo"`
+	Motivo                  string     `json:"motivo" bson:"motivo"`
 }
 
 //AplicarReglas Basicas
@@ -57,6 +57,15 @@ func (tim *Carnet) Salvar() (err error) {
 	militar.TIM.Motivo = tim.Motivo
 	c := sys.MGOSession.DB(CBASE).C(CTIM)
 	err = c.Insert(militar.TIM)
+	return
+}
+
+func (tim *Carnet) Actualizar(estatus int) (err error) {
+	carnet := make(map[string]interface{})
+	c := sys.MGOSession.DB(CBASE).C(CTIM)
+
+	carnet["estatus"] = estatus
+	err = c.Update(bson.M{"serial": tim.Serial}, bson.M{"$set": carnet})
 	return
 }
 

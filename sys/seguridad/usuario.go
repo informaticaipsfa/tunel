@@ -33,6 +33,8 @@ const (
 	PADMIN             string = "Administrador"
 	PGERENTE           string = "Gerente"
 	PJEFE              string = "Jefe"
+	GAFILIACION        string = "Afiliacion"
+	ANALISTA           string = "Analista"
 )
 
 type MetodoSeguro struct {
@@ -55,19 +57,18 @@ type Privilegio struct {
 
 // Perfil
 type Perfil struct {
-	ID          string       `json:"id,omitempty"`
 	Descripcion string       `json:"descripcion,omitempty"`
 	Privilegios []Privilegio `json:"Privilegios,omitempty"`
 }
 
 type Rol struct {
-	ID          string `json:"id"`
 	Descripcion string `json:"descripcion" bson:"descipcion"`
 }
 
 // Usuarios del Sistema
 type Usuario struct {
 	Id           bson.ObjectId `json:"id" bson:"_id"`
+	Cedula       string        `json:"cedula"`
 	Nombre       string        `json:"nombre"`
 	Login        string        `json:"login"`
 	Correo       string        `json:"correo,omitempty"`
@@ -99,35 +100,53 @@ func (f *FirmaDigital) Registrar() bool {
 //Salvar Metodo para crear usuarios del sistema
 func (usr *Usuario) Salvar() error {
 
-	var privilegio Privilegio
-	var lst []Privilegio
-
-	usr.Id = bson.NewObjectId()
-	usr.Nombre = "Root"
-	usr.Login = "root"
-	usr.Sucursal = "Principal"
-	usr.Clave = util.GenerarHash256([]byte(usr.Login))
-
-	usr.Rol.ID = ROOT
-	usr.Rol.Descripcion = "Super Usuario"
-	usr.Perfil.ID = ROOT
-	usr.Perfil.Descripcion = "Super Usuario"
-
-	privilegio.Metodo = "afiliacion.salvar"
-	privilegio.Descripcion = "Crear Usuario"
-	privilegio.Accion = "Insert()" // ES6 Metodos
-	lst = append(lst, privilegio)
-
-	privilegio.Metodo = "afiliacion.modificar"
-	privilegio.Descripcion = "Modificar Usuario"
-	privilegio.Accion = "Update()"
-	lst = append(lst, privilegio)
-	usr.Perfil.Privilegios = lst
+	// var privilegio Privilegio
+	// var lst []Privilegio
+	//
+	// usr.Id = bson.NewObjectId()
+	// usr.Nombre = "Root"
+	// usr.Login = "root"
+	// usr.Sucursal = "Principal"
+	// usr.Clave = util.GenerarHash256([]byte(usr.Login))
+	//
+	// usr.Rol.ID = ROOT
+	// usr.Rol.Descripcion = "Super Usuario"
+	// usr.Perfil.ID = ROOT
+	// usr.Perfil.Descripcion = "Super Usuario"
+	//
+	// privilegio.Metodo = "afiliacion.salvar"
+	// privilegio.Descripcion = "Crear Usuario"
+	// privilegio.Accion = "Insert()" // ES6 Metodos
+	// lst = append(lst, privilegio)
+	//
+	// privilegio.Metodo = "afiliacion.modificar"
+	// privilegio.Descripcion = "Modificar Usuario"
+	// privilegio.Accion = "Update()"
+	// lst = append(lst, privilegio)
+	// usr.Perfil.Privilegios = lst
 
 	var mongo sys.Mongo
 
 	return mongo.Salvar(usr, "usuario")
 
+}
+
+//Validar Usuarios
+func (u *Usuario) Validar(login string, clave string) (err error) {
+	u.Nombre = ""
+	c := sys.MGOSession.DB("ipsfa_test").C("usuario")
+	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false, "firmadigital": false}).One(&u)
+	return
+}
+
+//Validar Usuarios
+func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err error) {
+	u.Nombre = ""
+	c := sys.MGOSession.DB("ipsfa_test").C("usuario")
+	actualizar := make(map[string]interface{})
+	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
+	err = c.Update(bson.M{"login": login, "clave": clave}, bson.M{"$set": actualizar})
+	return
 }
 
 //Consultar el sistema de usuarios

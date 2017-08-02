@@ -69,7 +69,8 @@ func main() {
 
 	//var priorizador estadistica.Priorizador00
 	// var familiares estadistica.Estructura
-	//var migrado estadistica.Estructura
+	// var migrado estadistica.Estructura
+	// migrado.CrearUsuarios()
 	// migrado.CargarEstados()
 	// migrado.CargarMunicipio()
 	// migrado.CargarParroquia()

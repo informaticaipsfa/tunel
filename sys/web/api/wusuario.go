@@ -22,11 +22,11 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	var m util.Mensajes
 	Cabecera(w, r)
 	ip := strings.Split(r.RemoteAddr, ":")
-
 	usuario.FirmaDigital.DireccionIP = ip[0]
 	usuario.FirmaDigital.Tiempo = time.Now()
 
 	if ip[0] == "192.168.6.45" {
+
 		e := usuario.Salvar()
 		if e != nil {
 			w.WriteHeader(http.StatusForbidden)
@@ -66,9 +66,13 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
+	fmt.Println(usuario.Nombre)
 
-	if usuario.Nombre == "presidente" && usuario.Clave == "5910545" {
-		usuario.Nombre = "Carlos"
+	usuario.Validar(usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
+
+	fmt.Println(usuario.Nombre)
+	if usuario.Nombre != "" {
+		//usuario.Nombre = "Carlos"
 		usuario.Clave = ""
 		token := seguridad.GenerarJWT(usuario)
 		result := seguridad.RespuestaToken{Token: token}
@@ -78,24 +82,41 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(j)
 	} else {
-
-		if usuario.Nombre == "usuario" && usuario.Clave == "123" {
-			usuario.Nombre = "Carlos"
-			usuario.Clave = ""
-			token := seguridad.GenerarJWT(usuario)
-			result := seguridad.RespuestaToken{Token: token}
-			j, e := json.Marshal(result)
-			util.Error(e)
-
-			w.WriteHeader(http.StatusOK)
-			w.Write(j)
-		} else {
-			w.Header().Set("Content-Type", "application/text")
-			fmt.Println("Error en la conexion del usuario")
-			w.WriteHeader(http.StatusForbidden)
-			fmt.Fprintln(w, "Usuario y clave no validas")
-		}
+		w.Header().Set("Content-Type", "application/text")
+		fmt.Println("Error en la conexion del usuario")
+		w.WriteHeader(http.StatusForbidden)
+		fmt.Fprintln(w, "Usuario y clave no validas")
 	}
+
+	// if usuario.Nombre == "presidente" && usuario.Clave == "5910545" {
+	// 	usuario.Nombre = "Carlos"
+	// 	usuario.Clave = ""
+	// 	token := seguridad.GenerarJWT(usuario)
+	// 	result := seguridad.RespuestaToken{Token: token}
+	// 	j, e := json.Marshal(result)
+	// 	util.Error(e)
+	//
+	// 	w.WriteHeader(http.StatusOK)
+	// 	w.Write(j)
+	// } else {
+	//
+	// 	if usuario.Nombre == "usuario" && usuario.Clave == "123" {
+	// 		usuario.Nombre = "Carlos"
+	// 		usuario.Clave = ""
+	// 		token := seguridad.GenerarJWT(usuario)
+	// 		result := seguridad.RespuestaToken{Token: token}
+	// 		j, e := json.Marshal(result)
+	// 		util.Error(e)
+	//
+	// 		w.WriteHeader(http.StatusOK)
+	// 		w.Write(j)
+	// 	} else {
+	// 		w.Header().Set("Content-Type", "application/text")
+	// 		fmt.Println("Error en la conexion del usuario")
+	// 		w.WriteHeader(http.StatusForbidden)
+	// 		fmt.Fprintln(w, "Usuario y clave no validas")
+	// 	}
+	// }
 }
 
 //ValidarToken Validacion de usuario
