@@ -10,10 +10,10 @@ import (
 )
 
 //Familiar Familiares
-type Familiar struct{}
+type WFamiliar struct{}
 
 //Consultar Militares
-func (f *Familiar) Consultar(w http.ResponseWriter, r *http.Request) {
+func (f *WFamiliar) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var dataJSON sssifanb.Militar
 	var cedula = mux.Vars(r)
@@ -30,7 +30,7 @@ func (f *Familiar) Consultar(w http.ResponseWriter, r *http.Request) {
 }
 
 //Actualizar Datos Generales
-func (p *Familiar) Actualizar(w http.ResponseWriter, r *http.Request) {
+func (p *WFamiliar) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 	Cabecera(w, r)
 	var dataJSON sssifanb.Familiar
@@ -51,32 +51,32 @@ func (p *Familiar) Actualizar(w http.ResponseWriter, r *http.Request) {
 }
 
 //Insertar Militar
-func (p *Familiar) Insertar(w http.ResponseWriter, r *http.Request) {
+func (p *WFamiliar) Insertar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
-	var M sssifanb.Mensaje
-	var militar sssifanb.Militar
+	// var M sssifanb.Mensaje
+	// var militar sssifanb.Militar
 
-	fmt.Println("POST...")
-	err := json.NewDecoder(r.Body).Decode(&militar)
-	M.Tipo = 1
-	if err != nil {
-		fmt.Println(err.Error())
-		fmt.Println("Estoy en un error ", err.Error())
-		w.WriteHeader(http.StatusForbidden)
-		j, _ := json.Marshal(M)
-		w.Write(j)
-		return
-	}
-	//e := militar.SalvarMGOI("militares", objeto)
-	e := militar.SalvarMGO("militares")
-	if e != nil {
-		M.Mensaje = e.Error()
-		M.Tipo = 0
-		return
-	}
-	j, e := json.Marshal(M)
-	w.WriteHeader(http.StatusOK)
-
-	w.Write(j)
+	// fmt.Println("POST...")
+	// err := json.NewDecoder(r.Body).Decode(&militar)
+	// M.Tipo = 1
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	fmt.Println("Estoy en un error ", err.Error())
+	// 	w.WriteHeader(http.StatusForbidden)
+	// 	j, _ := json.Marshal(M)
+	// 	w.Write(j)
+	// 	return
+	// }
+	// //e := militar.SalvarMGOI("militares", objeto)
+	// e := militar.SalvarMGO("militares")
+	// if e != nil {
+	// 	M.Mensaje = e.Error()
+	// 	M.Tipo = 0
+	// 	return
+	// }
+	// j, e := json.Marshal(M)
+	// w.WriteHeader(http.StatusOK)
+	//
+	// w.Write(j)
 	// fmt.Fprintf(w, "Saludos")
 }

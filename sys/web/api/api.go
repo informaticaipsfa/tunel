@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+//Militar militares
 type Militar struct{}
 
 //Consultar Militares
@@ -67,7 +68,7 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//e := militar.SalvarMGOI("militares", objeto)
-	e := militar.SalvarMGO("militares")
+	e := militar.SalvarMGO()
 	if e != nil {
 		M.Mensaje = e.Error()
 		M.Tipo = 0

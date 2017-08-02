@@ -20,14 +20,11 @@ type Semillero struct {
 }
 
 //SalvarMGO Guardar
-func (s *Semillero) SalvarMGO(colecion string) (err error) {
-	if colecion != "" {
-		c := sys.MGOSession.DB("ipsfa_test").C(SEMILLERO)
-		err = c.Insert(s)
-	} else {
-		c := sys.MGOSession.DB("ipsfa_test").C(SEMILLERO)
-		err = c.Insert(s)
-	}
+func (s *Semillero) SalvarMGO() (err error) {
+
+	c := sys.MGOSession.DB("ipsfa_test").C(SEMILLERO)
+	err = c.Insert(s)
+
 	return
 }
 
@@ -54,6 +51,8 @@ func (s *Semillero) Maximo() (maximo int, err error) {
 	err = c.Pipe([]bson.M{orden, limite}).One(&s)
 	if err == nil {
 		maximo = s.Codigo + 1
+		s.Codigo = maximo
 	}
+	s.SalvarMGO()
 	return
 }
