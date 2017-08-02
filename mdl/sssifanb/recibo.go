@@ -22,6 +22,7 @@ func (r *Recibo) Salvar() (err error) {
 	var TIM Carnet
 	TIM.ID = r.ID
 	TIM.IP = r.IP
+	TIM.Motivo = r.Motivo
 	TIM.Salvar()
 	c := sys.MGOSession.DB(CBASE).C(CRECIBO)
 	err = c.Insert(r)

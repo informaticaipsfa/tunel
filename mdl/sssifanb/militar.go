@@ -144,8 +144,10 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+
 	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
 	if err != nil {
+		fmt.Println(err.Error())
 		msj.Tipo = 0
 		jSon, err = json.Marshal(msj)
 	} else {

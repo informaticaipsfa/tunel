@@ -19,7 +19,7 @@ type Carnet struct {
 	Tipo                    int        `json:"tipo,omitempty" bson:"tipo"` // 0: Militar 1: Empleado 2: Familiares
 	Nombre                  string     `json:"nombre,omitempty" bson:"nombre"`
 	Apellido                string     `json:"apellido,omitempty" bson:"apellido"`
-	Condicion               int        `json:"condicion,omitempty" bson:"condicion"`
+	Condicion               string     `json:"condicion,omitempty" bson:"condicion"`
 	Serial                  string     `json:"serial,omitempty" bson:"serial"`
 	FechaCreacion           time.Time  `json:"fechacreacion,omitempty" bson:"fechacreacion"`
 	FechaVencimiento        time.Time  `json:"fechavencimiento,omitempty" bson:"fechavencimiento"`
@@ -31,6 +31,7 @@ type Carnet struct {
 	URLFirmaPresidenteIPSFA string     `json:"fpresidente,omitempty" bson:"fpresidente"`
 	Estatus                 int        `json:"estatus,omitempty" bson:"estatus"`
 	IP                      string     `json:"ip" bson:"ip"`
+	Motivo      						string     `json:"motivo" bson:"motivo"`
 }
 
 //AplicarReglas Basicas
@@ -53,6 +54,7 @@ func (tim *Carnet) Salvar() (err error) {
 	militar.ConsultarMGO(tim.ID)
 	militar.TIM, _ = militar.GenerarCarnet()
 	militar.TIM.IP = tim.IP
+	militar.TIM.Motivo = tim.Motivo
 	c := sys.MGOSession.DB(CBASE).C(CTIM)
 	err = c.Insert(militar.TIM)
 	return
