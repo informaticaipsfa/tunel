@@ -48,15 +48,32 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+type Clave struct {
+	Login   string `json:"login"`
+	Clave   string `json:"clave"`
+	Nueva   string `json:"nueva"`
+	Repetir string `json:"repetir"`
+}
+
 //Consultar ID
-func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
-	// Cabecera(w, r)
-	// var usr seguridad.Usuario
-	// var variable = mux.Vars(r)
-	// usr.ID = variable["id"]
-	// ok := usr.Consultar()
-	// w.WriteHeader(http.StatusOK)
-	// w.Write(j)
+func (u *WUsuario) CambiarClave(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M util.Mensajes
+	var usr seguridad.Usuario
+	var datos Clave
+
+	e := json.NewDecoder(r.Body).Decode(&datos)
+	util.Error(e)
+	fmt.Println(datos)
+	ok := usr.CambiarClave(datos.Login, datos.Clave, datos.Nueva)
+	M.Tipo = 1
+	if ok != nil {
+		M.Tipo = 0
+		return
+	}
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 }
 
 //Login conexion para solicitud de token

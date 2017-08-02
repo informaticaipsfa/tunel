@@ -66,11 +66,14 @@ func main() {
 	// var es estadistica.Estructura
 	//
 	// es.Reduccion()
+	// var usuario seguridad.Usuario
+	// usuario.Generico()
 
 	//var priorizador estadistica.Priorizador00
 	// var familiares estadistica.Estructura
 	// var migrado estadistica.Estructura
 	// migrado.CrearUsuarios()
+
 	// migrado.CargarEstados()
 	// migrado.CargarMunicipio()
 	// migrado.CargarParroquia()
@@ -93,7 +96,7 @@ func main() {
 	// }
 	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
 	// srv.ListenAndServe()
-
+	//
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 	srv := &http.Server{

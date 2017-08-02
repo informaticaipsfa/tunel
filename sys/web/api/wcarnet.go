@@ -77,3 +77,23 @@ func (wca *WCarnet) Listar(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
+
+//Listar Militares
+func (wca *WCarnet) Aprobar(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	var Carnet sssifanb.Carnet
+	var nivel = mux.Vars(r)
+	estatus, _ := strconv.Atoi(nivel["estatus"])
+	serial := nivel["serial"]
+	e := Carnet.CambiarEstado(serial, estatus)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+	M.Tipo = 1
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}

@@ -60,12 +60,14 @@ func (tim *Carnet) Salvar() (err error) {
 	return
 }
 
-func (tim *Carnet) Actualizar(estatus int) (err error) {
+func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 	carnet := make(map[string]interface{})
 	c := sys.MGOSession.DB(CBASE).C(CTIM)
 
 	carnet["estatus"] = estatus
-	err = c.Update(bson.M{"serial": tim.Serial}, bson.M{"$set": carnet})
+	fmt.Println(serial, " ", estatus)
+
+	err = c.Update(bson.M{"serial": serial}, bson.M{"$set": carnet})
 	return
 }
 
