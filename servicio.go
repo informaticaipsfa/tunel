@@ -18,9 +18,13 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/sys/web"
+	"github.com/gorilla/context"
 )
 
 func init() {
@@ -42,11 +46,16 @@ func init() {
 
 func main() {
 
-	var Militar sssifanb.Militar
-	Militar.ConsultarMGO("10107698")
-	fmt.Println(Militar.Familiar[1].Persona.DatoBasico.NombrePrimero)
-	j, _ := Militar.Familiar[0].AplicarReglasCarnetPadres()
-	fmt.Printf("%s\n", j)
+	// var Militar sssifanb.Militar
+	// Militar.ConsultarMGO("10107698")
+	// fmt.Println(Militar.Familiar[1].Persona.DatoBasico.NombrePrimero)
+	// j, _ := Militar.Familiar[0].AplicarReglasCarnetPadres()
+	// fmt.Printf("%s\n", j)
+	// var carnet sssifanb.Carnet
+	// j, _ := carnet.Listar(0)
+	// fmt.Println(j)
+	//fmt.Println(seguridad.GetMacAddr())
+
 	// j, _ := Militar.GenerarCarnet()
 	// fmt.Printf("%s \n", j)
 
@@ -57,10 +66,14 @@ func main() {
 	// var es estadistica.Estructura
 	//
 	// es.Reduccion()
+	// var usuario seguridad.Usuario
+	// usuario.Generico()
 
 	//var priorizador estadistica.Priorizador00
 	// var familiares estadistica.Estructura
-	//var migrado estadistica.Estructura
+	// var migrado estadistica.Estructura
+	// migrado.CrearUsuarios()
+
 	// migrado.CargarEstados()
 	// migrado.CargarMunicipio()
 	// migrado.CargarParroquia()
@@ -77,21 +90,32 @@ func main() {
 	// web.Cargar()
 	// srv := &http.Server{
 	// 	Handler:      context.ClearHandler(web.Enrutador),
-	// 	Addr:         ":" + sys.PUERTO,
+	// 	Addr:         ":8090",
 	// 	WriteTimeout: 15 * time.Second,
 	// 	ReadTimeout:  15 * time.Second,
 	// }
 	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
-	// go srv.ListenAndServe()
-	// //
-	// //https://dominio.com/* Protocolo de capa de seguridad
-	// server := &http.Server{
-	// 	Handler:      context.ClearHandler(web.Enrutador),
-	// 	Addr:         ":" + sys.PUERTO_SSL,
-	// 	WriteTimeout: 15 * time.Second,
-	// 	ReadTimeout:  15 * time.Second,
-	// }
-	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
-	// log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
+	// srv.ListenAndServe()
+	//
+	fmt.Println("Inciando la carga del sistema")
+	web.Cargar()
+	srv := &http.Server{
+		Handler:      context.ClearHandler(web.Enrutador),
+		Addr:         ":" + sys.PUERTO,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
+	go srv.ListenAndServe()
+	//
+	//https://dominio.com/* Protocolo de capa de seguridad
+	server := &http.Server{
+		Handler:      context.ClearHandler(web.Enrutador),
+		Addr:         ":" + sys.PUERTO_SSL,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
+	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
 
 }

@@ -14,6 +14,7 @@ import (
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
@@ -211,7 +212,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 			militar.Anomalia.Dia = true
 		}
 
-		militar.SalvarMGO("militar")
+		militar.SalvarMGO()
 		jSon, err = json.Marshal(militar)
 	}
 
@@ -715,5 +716,58 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 	Militar.ActualizarMGO(cedula, fm)
 
 	fmt.Println("CANTIDAD: REGISTROS: ", i, " MILITARES: ", miliares)
+	return
+}
+
+func (e *Estructura) CrearUsuarios() (jSon []byte, err error) {
+	var msj Mensaje
+
+	sq, err := sys.PostgreSQLSAMAN.Query(HistorialUsuario())
+	if err != nil {
+
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 0
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+	for sq.Next() {
+		var usua, cedula string
+		var nombp, nombs, apellp, apellis sql.NullString
+		var Usuario seguridad.Usuario
+		var privilegio seguridad.Privilegio
+		var lst []seguridad.Privilegio
+
+		sq.Scan(&usua, &cedula, &nombp, &nombs, &apellp, &apellis)
+		//
+
+		Usuario.Id = bson.NewObjectId()
+		Usuario.Cedula = cedula
+		nombre := util.ValidarNullString(nombp) + " " + util.ValidarNullString(nombs) +
+			" " + util.ValidarNullString(apellp) + " " + util.ValidarNullString(apellis)
+		Usuario.Nombre = strings.ToUpper(nombre)
+
+		Usuario.Login = usua
+		Usuario.Sucursal = "Principal"
+		Usuario.Clave = util.GenerarHash256([]byte(cedula))
+
+		Usuario.Rol.Descripcion = seguridad.GAFILIACION
+		Usuario.Perfil.Descripcion = seguridad.ANALISTA
+
+		privilegio.Metodo = "afiliacion.salvar"
+		privilegio.Descripcion = "Crear Usuario"
+		privilegio.Accion = "Insert()" // ES6 Metodos
+		lst = append(lst, privilegio)
+
+		privilegio.Metodo = "afiliacion.modificar"
+		privilegio.Descripcion = "Modificar Usuario"
+		privilegio.Accion = "Update()"
+		lst = append(lst, privilegio)
+		Usuario.Perfil.Privilegios = lst
+		Usuario.Salvar()
+		i++
+		fmt.Println("Insertando", i)
+	}
+	msj.Tipo = 1
+	jSon, err = json.Marshal(msj)
 	return
 }

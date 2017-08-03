@@ -47,7 +47,7 @@ func (p *Priorizador) Evaluador() (jSon []byte, err error) {
 		militar.Persona.DatoBasico.Cedula = cedula
 		militar.Persona.DatoBasico.NombrePrimero = nombreprimero
 		militar.Persona.DatoBasico.NombreSegundo = nombresegundo
-		militar.SalvarMGO("testactualizar")
+		militar.SalvarMGO()
 		msj.Mensaje = "OK: Sincronización (SAMAN -> MONGODB: " + militar.Persona.DatoBasico.Cedula + ") "
 		fmt.Println(msj.Mensaje)
 		msj.Tipo = 1

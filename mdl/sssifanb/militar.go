@@ -19,6 +19,7 @@ const (
 	BENEFICIARIO int = 3
 )
 
+//Militar militares
 type Militar struct {
 	//Persona                DatoBasico  `json:"Persona,omitempty" bson:"persona"`
 	// Direccion              []Direccion `json:"Direccion,omitempty" bson:"direccion"`
@@ -52,8 +53,12 @@ type Militar struct {
 	Pension                Pension            `json:"Pension,omitempty" bson:"pension"`
 	Fideicomiso            Fideicomiso        `json:"Fideicomiso,omitempty" bson:"fideicomiso"`
 	Anomalia               Anomalia           `json:"Anomalia,omitempty" bson:"anomalia"`
+	CodigoComponente       string             `json:"codigocomponente,omitempty" bson:"codigocomponente"`
+	NumeroHistoria         string             `json:"numerohistoria,omitempty" bson:"numerohistoria"`
+	EstatusCarnet          int                `json:"estatuscarnet" bson:"estatuscarnet"`
 }
 
+//Anomalia Irregularidades
 type Anomalia struct {
 	Hijo bool `json:"hijo,omitempty" bson:"hijo"`
 	Ano  bool `json:"ano,omitempty" bson:"ano"`
@@ -61,6 +66,7 @@ type Anomalia struct {
 	Dia  bool `json:"dia,omitempty" bson:"dia"`
 }
 
+//HistorialMilitar Historico
 type HistorialMilitar struct {
 	Componente     string    `json:"componente,omitempty" bson:"componente"`
 	Grado          string    `json:"grado,omitempty" bson:"grado"`         //grado
@@ -78,12 +84,14 @@ type HistorialMilitar struct {
 	//TIM                    Carnet    `json:"Tim,omitempty" bson:"tim"`               //Tarjeta de Identificacion Militar
 }
 
+//Componente componente
 type Componente struct {
 	Nombre      string `json:"nombre" bson:"nombre"`
 	Descripcion string `json:"descripcion" bson:"descripcion"`
 	Abreviatura string `json:"abreviatura" bson:"abreviatura"`
 }
 
+//Grado Rango / Jerarquia
 type Grado struct {
 	Nombre      string `json:"nombre" bson:"nombre"`
 	Descripcion string `json:"descripcion" bson:"descripcion"`
@@ -136,25 +144,33 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+
 	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
-	if militar.Persona.DatoBasico.Cedula == "" {
+	if err != nil {
+		fmt.Println(err.Error())
 		msj.Tipo = 0
 		jSon, err = json.Marshal(msj)
 	} else {
-		// militar.Persona.DatoBasico.FechaNacimiento = militar.Persona.DatoBasico.FechaNacimiento.UTC()
-		// militar.FechaIngresoComponente = militar.FechaIngresoComponente.UTC()
-		// militar.FechaAscenso = militar.FechaAscenso.UTC()
+		if militar.Persona.DatoBasico.Cedula == "" {
+			msj.Tipo = 0
+			jSon, err = json.Marshal(msj)
+		} else {
+			// militar.Persona.DatoBasico.FechaNacimiento = militar.Persona.DatoBasico.FechaNacimiento.UTC()
+			// militar.FechaIngresoComponente = militar.FechaIngresoComponente.UTC()
+			// militar.FechaAscenso = militar.FechaAscenso.UTC()
 
-		militar.AplicarReglas()
-		jSon, err = json.Marshal(militar)
+			militar.AplicarReglas()
+			jSon, err = json.Marshal(militar)
+		}
 	}
 	return
 }
 
 //GenerarCarnet Generacion de Carnet
-func (m *Militar) GenerarCarnet() (jSon []byte, err error) {
-	var TIM Carnet
+func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	var mes, dia string
+	carnet := make(map[string]interface{})
+
 	fecha := time.Now()
 	a, me, d := fecha.Date()
 	a += 7
@@ -172,12 +188,19 @@ func (m *Militar) GenerarCarnet() (jSon []byte, err error) {
 	TIM.Serial = m.TIM.GenerarSerial()
 	TIM.FechaCreacion = fecha
 	TIM.FechaVencimiento = fechavece
-	TIM.CodigoComponente = m.Componente.Abreviatura
+	TIM.Nombre = m.Persona.DatoBasico.NombrePrimero
+	TIM.Apellido = m.Persona.DatoBasico.ApellidoPrimero
+	TIM.Componente.Abreviatura = m.Componente.Abreviatura
+	TIM.Componente.Descripcion = m.Componente.Descripcion
 	TIM.Grado.Abreviatura = m.Grado.Abreviatura
-	TIM.Responsable = m.ID
+	TIM.Grado.Descripcion = m.Grado.Descripcion
+	TIM.ID = m.ID
 	TIM.Tipo = 0
 	TIM.Estatus = 0
-	jSon, err = json.Marshal(TIM)
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	carnet["estatuscarnet"] = 1
+	err = c.Update(bson.M{"id": m.ID}, bson.M{"$set": carnet})
+	//jSon, err = json.Marshal(TIM)
 	return
 }
 
@@ -284,9 +307,12 @@ func (m *Militar) MGOActualizar() (err error) {
 	mOriginal.Clase = m.Clase
 	mOriginal.Situacion = m.Situacion
 	mOriginal.FechaIngresoComponente = m.FechaIngresoComponente
+	mOriginal.FechaAscenso = m.FechaAscenso
 	mOriginal.FechaResuelto = m.FechaResuelto
 	mOriginal.Posicion = m.Posicion
 	mOriginal.NumeroResuelto = m.NumeroResuelto
+	mOriginal.CodigoComponente = m.CodigoComponente
+	mOriginal.NumeroHistoria = m.NumeroHistoria
 
 	//
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
@@ -295,6 +321,17 @@ func (m *Militar) MGOActualizar() (err error) {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
+	return
+}
+
+//SalvarMGO Guardar
+func (m *Militar) SalvarMGO() (err error) {
+
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	err = c.Insert(m)
+
+	//fmt.Println(err)
+
 	return
 }
 
@@ -327,7 +364,7 @@ func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 
 //ConsultarMGO una persona mediante el metodo de MongoDB
 func (m *Militar) ConsultarMGO(cedula string) (err error) {
-	c := sys.MGOSession.DB(CBASE).C("militar")
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	err = c.Find(bson.M{"id": cedula}).One(&m)
 	return
 }

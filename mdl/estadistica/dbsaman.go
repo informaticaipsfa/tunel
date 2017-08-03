@@ -291,65 +291,62 @@ func InsertarPace(militar sssifanb.Militar) string {
 	// 	)';`
 
 	//echo $sInsertar;
+//<<<<<<< HEAD
 
-func ActualizarPersona(persona sssifanb.Persona) string {
-	return `UPDATE personas SET
-_version_hb =0,
-tipnip = '`+ persona.DatoBasico.Nacionalidad +`',
-codnip = '` + persona.DatoBasico.Cedula +`',
-tipnit = '', nronit =0,
-nombreprimero = '` + persona.DatoBasico.NombrePrimero + `',
-nombresegundo ='` + persona.DatoBasico.NombreSegundo + `',
-apellidoprimero ='` + persona.DatoBasico.ApellidoPrimero + `',1:31 / 4:10
-apellidosegundo ='` + persona.DatoBasico.ApellidoSegundo + `,
-apellidocasada = '',
- prefijo = '',
- sufijo ='',
-nombrecompletoupp = '`+ persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
-nombrecompleto = '` + persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
-nombrecorto = '',
-apodo = '',
-imprimeapodo = '',
-nombrepersjuridica = '',
-siglaspersjuridica = '',Primero
-nacionalidadcod = '` + persona.DatoBasico.Nacionalidad + `',
-sexocod = '` + persona.DatoBasico.Sexo + `',
-edocivilcod = '` + persona.DatoBasico.estadocivil + `',,
-idiomanativocod = '',
-ocupactivcod = '',
-localidadcodnac = '',
-tratamientocod = '',
-fechanacimiento = '',
-fechadefuncion = '',
-email1 = '` + persona.Correo.Principal + `',
-email2 = '` + persona.Correo.Alternativo + `',,
-paginaweb = '',
-contacto =,'',
-capital =0,
-auditestatregistro = '',
-auditrazonoper = '',
- auditfechaanulac = '',
-auditfechacambio = '',
-audithoracambio = '',
-auditfechacreacion = '',
-audithoracreacion = '',
-auditcodusuario = '',
-auditcodsupervisor = '',
-campousuariochar_1 = '',
-campousuariochar_2 = '',
-campousuariochar_3 = '',
-campousuariochar_4 = '',
-campousuariochar_5 = '',
-campousuarionum_1 = '',
-campousuarionum_2 = '',
-campousuarionum_3 = '',
-campousuarionum_4 = '',
-campousuarionum_5 = ''
-where ciaopr=$53 and nropersona=$54 and _version_hb=$55 `
-
-}
-
-
+//func ActualizarPersona(persona sssifanb.Persona) string {
+	//return `UPDATE personas SET
+//_version_hb =0,
+//tipnip = '`+ persona.DatoBasico.Nacionalidad +`',
+//codnip = '` + persona.DatoBasico.Cedula +`',
+//tipnit = '', nronit =0,
+//nombreprimero = '` + persona.DatoBasico.NombrePrimero + `',
+//nombresegundo ='` + persona.DatoBasico.NombreSegundo + `',
+//apellidoprimero ='` + persona.DatoBasico.ApellidoPrimero + `',1:31 / 4:10
+//apellidosegundo ='` + persona.DatoBasico.ApellidoSegundo + `,
+//apellidocasada = '',
+ //prefijo = '',
+// sufijo ='',
+//nombrecompletoupp = '`+ persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
+//nombrecompleto = '` + persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
+//nombrecorto = '',
+//apodo = '',
+//imprimeapodo = '',
+//nombrepersjuridica = '',
+//siglaspersjuridica = '',Primero
+//nacionalidadcod = '` + persona.DatoBasico.Nacionalidad + `',
+//sexocod = '` + persona.DatoBasico.Sexo + `',
+//edocivilcod = '` + persona.DatoBasico.estadocivil + `',,
+//idiomanativocod = '',
+//ocupactivcod = '',
+//localidadcodnac = '',
+//tratamientocod = '',
+//fechanacimiento = '',
+//fechadefuncion = '',
+//email1 = '` + persona.Correo.Principal + `',
+//email2 = '` + persona.Correo.Alternativo + `',,
+//paginaweb = '',
+//contacto =,'',
+//capital =0,
+//auditestatregistro = '',
+//auditrazonoper = '',
+ //auditfechaanulac = '',
+//auditfechacambio = '',
+//audithoracambio = '',
+//auditfechacreacion = '',
+//audithoracreacion = '',
+//auditcodusuario = '',
+//auditcodsupervisor = '',
+//campousuariochar_1 = '',
+//campousuariochar_2 = '',
+//campousuariochar_3 = '',
+//campousuariochar_4 = '',
+//campousuariochar_5 = '',
+//campousuarionum_1 = '',
+//campousuarionum_2 = '',
+//campousuarionum_3 = '',
+//campousuarionum_4 = '',
+//campousuarionum_5 = ''
+//where ciaopr=$53 and nropersona=$54 and _version_hb=$55 `
 
 }
 
@@ -413,3 +410,64 @@ func InsertarSAMAN(militar sssifanb.Militar) string {
 	) values ';
 
 }
+=======
+}
+
+//func ActualizarPersona(persona sssifanb.Persona) string {
+//return `UPDATE personas SET
+// _version_hb =0,
+// tipnip = '`+ persona.DatoBasico.Nacionalidad +`',
+// codnip = '` + persona.DatoBasico.Cedula +`',
+// tipnit = '', nronit =0,
+// nombreprimero = '` + persona.DatoBasico.NombrePrimero + `',
+//  nombresegundo ='` + persona.DatoBasico.NombreSegundo + `',
+// apellidoprimero ='` + persona.DatoBasico.ApellidoPrimero + `',
+// apellidosegundo ='` + persona.DatoBasico.ApellidoSegundo + `,
+// apellidocasada = '',
+//  prefijo = '',
+//  sufijo ='',
+// nombrecompletoupp = '`+ persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
+// nombrecompleto = '` + persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
+// nombrecorto = '',
+// apodo = '',
+// imprimeapodo = '',
+// nombrepersjuridica = '',
+// siglaspersjuridica = '',
+// nacionalidadcod = '` + persona.DatoBasico.Nacionalidad + `',
+// sexocod = '` + persona.DatoBasico.Sexo + `',
+// edocivilcod = '` + persona.DatoBasico.estadocivil + `',,
+// idiomanativocod = '',
+// ocupactivcod = '',
+// localidadcodnac = '',
+// tratamientocod = '',
+// fechanacimiento = '',
+// fechadefuncion = '',
+// email1 = '` + persona.Correo.Principal + `',
+// email2 = '` + persona.Correo.Alternativo + `',,
+// paginaweb = '',
+// contacto =,'',
+// capital =0,
+// auditestatregistro = '',
+// auditrazonoper = '',
+//  auditfechaanulac = '',
+// auditfechacambio = '',
+// audithoracambio = '',
+// auditfechacreacion = '',
+// audithoracreacion = '',
+// auditcodusuario = '',
+// auditcodsupervisor = '',
+// campousuariochar_1 = '',
+// campousuariochar_2 = '',
+// campousuariochar_3 = '',
+// campousuariochar_4 = '',
+// campousuariochar_5 = '',
+// campousuarionum_1 = '',
+// campousuarionum_2 = '',
+// campousuarionum_3 = '',
+// campousuarionum_4 = '',
+// campousuarionum_5 = ''
+// where ciaopr=$53 and nropersona=$54 and _version_hb=$55 `
+
+}
+}
+>>>>>>> f69d0a8407c814dc6621d700c44a53e880299e94

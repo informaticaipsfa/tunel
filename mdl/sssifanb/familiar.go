@@ -61,7 +61,7 @@ func (f *Familiar) ConvertirFechaHumano() {
 }
 
 //Actualizar Vida Militar
-func (f *Familiar) Actualizar() (jSon []byte, err error) {
+func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 	var msj Mensaje
 	//f.TipoDato = 0
 
@@ -86,17 +86,20 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 }
 
 //MGOActualizar Actualizando en MONGO
-func (f *Familiar) MGOActualizar() (err error) {
-	var mOriginal Familiar
-	//mOriginal, _ = consultarMongo(m.ID)
+func (f *Familiar) Actualizar() (jSon []byte, err error) {
+
+	id := f.Persona.DatoBasico.Cedula
+	familiar := make(map[string]interface{})
 
 	//
+	familiar["familiar.$"] = f
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	err = c.Update(bson.M{"id": mOriginal.ID}, &mOriginal)
+	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
 	if err != nil {
-		fmt.Println("Cedula: " + f.Persona.DatoBasico.Cedula + " -> " + err.Error())
+		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
 	}
+	//fmt.Println(canal)
 	return
 }
 
@@ -127,9 +130,11 @@ func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVenci
 }
 
 //IncluirFamiliar Agregar
-func (f *Familiar) IncluirFamiliar(cedmilitar string) (err error) {
+func (f *Familiar) IncluirFamiliar() (err error) {
+	familiar := make(map[string]interface{})
+	familiar["familiar"] = f
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	err = c.Update(bson.M{"id": cedmilitar}, bson.M{"$push": f})
+	err = c.Update(bson.M{"id": f.DocumentoPadre}, bson.M{"$push": familiar})
 
 	if err != nil {
 		fmt.Println(" " + err.Error())

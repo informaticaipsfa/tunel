@@ -37,7 +37,6 @@ func init() {
 //GenerarJWT Json Web Token
 func GenerarJWT(u Usuario) string {
 	rol := Rol{
-		ID:          "01",
 		Descripcion: "Development",
 	}
 	peticion := Reclamaciones{
