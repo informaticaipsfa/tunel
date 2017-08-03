@@ -307,6 +307,7 @@ func (m *Militar) MGOActualizar() (err error) {
 	mOriginal.Clase = m.Clase
 	mOriginal.Situacion = m.Situacion
 	mOriginal.FechaIngresoComponente = m.FechaIngresoComponente
+	mOriginal.FechaAscenso = m.FechaAscenso
 	mOriginal.FechaResuelto = m.FechaResuelto
 	mOriginal.Posicion = m.Posicion
 	mOriginal.NumeroResuelto = m.NumeroResuelto

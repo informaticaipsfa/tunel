@@ -94,11 +94,12 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	//
 	familiar["familiar.$"] = f
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
+	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
 	if err != nil {
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
 	}
+	//fmt.Println(canal)
 	return
 }
 
