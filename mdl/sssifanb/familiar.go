@@ -92,13 +92,32 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	familiar := make(map[string]interface{})
 
 	//
-	familiar["familiar.$"] = f
+	familiar["familiar.$.persona"] = f.Persona
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
 	if err != nil {
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
 	}
+
+	parentesco := make(map[string]interface{})
+	beneficio := make(map[string]interface{})
+	//
+	parentesco["familiar.$.parentesco"] = f.Parentesco
+	// c = sys.MGOSession.DB(CBASE).C(CMILITAR)
+	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": parentesco})
+	if err != nil {
+		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	beneficio["familiar.$.beneficio"] = f.Benficio
+	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": beneficio})
+	if err != nil {
+		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
 	//fmt.Println(canal)
 	return
 }

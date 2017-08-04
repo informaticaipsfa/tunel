@@ -9,6 +9,7 @@ import (
 //Recibo de Pago
 type Recibo struct {
 	ID          string    `json:"id" bson:"id"`
+	IDF         string    `json:"idf" bson:"idf"` //ID FAMILIAR
 	Numero      string    `json:"numero" bson:"numero"`
 	CanalDePago string    `json:"canal" bson:"canal"`
 	Fecha       time.Time `json:"fecha" bson:"fecha"`
