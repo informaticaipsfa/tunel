@@ -25,6 +25,9 @@ type Familiar struct {
 	Documento       int       `json:"documento" bson:"documento"`
 	Adoptado        bool      `json:"adoptado" bson:"adoptado"`
 	DocumentoPadre  string    `json:"documentopadre" bson:"documentopadre"`
+	HistoriaMedica  string    `json:"historiamedica" bson:"historiamedica"`
+	Donante         string    `json:"donante" bson:"donante"`
+	EstatusCarnet   int       `json:"estatuscarnet" bson:"estatuscarnet"`
 	// EstatusAfiliacion string `json:"estatus" bson:"adoptado"`
 	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
 }
@@ -105,14 +108,14 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	//
 	parentesco["familiar.$.parentesco"] = f.Parentesco
 	// c = sys.MGOSession.DB(CBASE).C(CMILITAR)
-	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": parentesco})
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": parentesco})
 	if err != nil {
 		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
 		return
 	}
 
 	beneficio["familiar.$.beneficio"] = f.Benficio
-	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": beneficio})
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": beneficio})
 	if err != nil {
 		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
 		return
@@ -123,8 +126,9 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 }
 
 //AplicarReglasCarnetHijos Reglas
-func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVencimientoCarnet time.Time) {
-	fechaActual = time.Now()
+func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet, err error) {
+	carnet := make(map[string]interface{})
+	fechaActual := time.Now()
 	Anio, Mes, Dia := fechaActual.Date()
 	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
 	layOut := "2006-01-02"
@@ -144,7 +148,22 @@ func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVenci
 	DiaS := strconv.Itoa(Dia)
 
 	fecha := AnioS + "-" + MesS + "-" + DiaS
-	fechaVencimientoCarnet, _ = time.Parse(layOut, fecha)
+	fechaVencimientoCarnet, _ := time.Parse(layOut, fecha)
+	TIM.Serial = TIM.GenerarSerial()
+	TIM.FechaCreacion = fechaActual
+	TIM.FechaVencimiento = fechaVencimientoCarnet
+	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
+	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
+	// TIM.Componente.Abreviatura = m.Componente.Abreviatura
+	// TIM.Componente.Descripcion = m.Componente.Descripcion
+	// TIM.Grado.Abreviatura = m.Grado.Abreviatura
+	// TIM.Grado.Descripcion = m.Grado.Descripcion
+	// TIM.ID = f.Persona.DatoBasico.Cedula
+	TIM.Tipo = 0
+	TIM.Estatus = 0
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	carnet["estatuscarnet"] = 1
+	err = c.Update(bson.M{"id": f.Persona.DatoBasico.Cedula}, bson.M{"$set": carnet})
 	return
 }
 

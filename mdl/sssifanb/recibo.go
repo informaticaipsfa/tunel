@@ -22,6 +22,7 @@ type Recibo struct {
 func (r *Recibo) Salvar() (err error) {
 	var TIM Carnet
 	TIM.ID = r.ID
+	TIM.IDF = r.IDF
 	TIM.IP = r.IP
 	TIM.Motivo = r.Motivo
 	TIM.Salvar()

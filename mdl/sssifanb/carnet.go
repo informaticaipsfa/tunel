@@ -16,6 +16,7 @@ import (
 //Carnet Tarjeta de Identificacion Militar
 type Carnet struct {
 	ID                      string     `json:"id,omitempty" bson:"id"`
+	IDF                     string     `json:"idf,omitempty" bson:"idf"`
 	Tipo                    int        `json:"tipo,omitempty" bson:"tipo"` // 0: Militar 1: Empleado 2: Familiares
 	Nombre                  string     `json:"nombre,omitempty" bson:"nombre"`
 	Apellido                string     `json:"apellido,omitempty" bson:"apellido"`
@@ -52,11 +53,17 @@ func (c *Carnet) GenerarSerial() string {
 func (tim *Carnet) Salvar() (err error) {
 	var militar Militar
 	militar.ConsultarMGO(tim.ID)
-	militar.TIM, _ = militar.GenerarCarnet()
 	militar.TIM.IP = tim.IP
 	militar.TIM.Motivo = tim.Motivo
-	c := sys.MGOSession.DB(CBASE).C(CTIM)
-	err = c.Insert(militar.TIM)
+	if tim.ID == tim.IDF {
+		militar.TIM, _ = militar.GenerarCarnet()
+		c := sys.MGOSession.DB(CBASE).C(CTIM)
+		err = c.Insert(militar.TIM)
+
+	} else { //Carnet de Familiares
+
+	}
+
 	return
 }
 
