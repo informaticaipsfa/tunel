@@ -33,22 +33,22 @@ func CargarModulosWeb() {
 
 	Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", per.Consultar).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Actualizar)).Methods("PUT")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Insertar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", per.Actualizar).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", per.Insertar).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", per.Eliminar).Methods("DELETE")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Opciones)).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", comp.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/estado", esta.Consultar).Methods("GET")
 
-	Enrutador.HandleFunc("/ipsfa/api/familiar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Actualizar)).Methods("PUT")
-	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Insertar)).Methods("POST")
-	// Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/crud/{id}", per.Consultar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/crud",  wfam.Actualizar).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wfam.Insertar).Methods("POST")
+	// Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wfam.Opciones).Methods("OPTIONS")
 
-	Enrutador.HandleFunc("/ipsfa/api/recibo/crud/{id}", wUsuario.ValidarToken(wrec.Consultar)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/recibo/crud/{id}", wrec.Consultar).Methods("GET")
 	//Enrutador.HandleFunc("/ipsfa/api/recibo/crud", wrec.Actualizar).Methods("PUT")
-	Enrutador.HandleFunc("/ipsfa/api/recibo/crud", wUsuario.ValidarToken(wrec.Insertar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/recibo/crud", wrec.Insertar).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/carnet/listar/{id}", wcar.Listar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/carnet/apro/{estatus}/{serial}", wcar.Aprobar).Methods("GET")
