@@ -12,6 +12,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
@@ -70,7 +71,7 @@ type Usuario struct {
 	Id           bson.ObjectId `json:"id" bson:"_id"`
 	Cedula       string        `json:"cedula"`
 	Nombre       string        `json:"nombre"`
-	Login        string        `json:"login"`
+	Login        string        `json:"usuario"`
 	Correo       string        `json:"correo,omitempty"`
 	Clave        string        `json:"clave,omitempty"`
 	Sucursal     string        `json:"sucursal,omitempty" bson:"sucursal"`
@@ -79,6 +80,9 @@ type Usuario struct {
 	Token        string        `json:"token,omitempty"`
 	Perfil       Perfil        `json:"Perfil,omitempty"`
 	FirmaDigital FirmaDigital  `json:"FirmaDigital,omitempty"`
+	Direccion    string        `json:"direccion,omitempty"`
+	Telefono     string        `json:"telefono,omitempty"`
+	Cargo        string        `json:"cargo,omitempty"`
 }
 
 //FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
@@ -134,7 +138,7 @@ func (usr *Usuario) Salvar() error {
 //Validar Usuarios
 func (u *Usuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB("ipsfa_test").C("usuario")
+	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
 	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false, "firmadigital": false}).One(&u)
 	return
 }
@@ -142,7 +146,7 @@ func (u *Usuario) Validar(login string, clave string) (err error) {
 //Validar Usuarios
 func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB("ipsfa_test").C("usuario")
+	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
 	actualizar := make(map[string]interface{})
 	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
 	err = c.Update(bson.M{"login": login, "clave": clave}, bson.M{"$set": actualizar})

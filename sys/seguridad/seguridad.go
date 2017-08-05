@@ -43,7 +43,7 @@ func GenerarJWT(u Usuario) string {
 		Usuario: u,
 		Rol:     rol,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * 10).Unix(),
 			Issuer:    "Conexion Bus Empresarial",
 		},
 	}

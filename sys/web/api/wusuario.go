@@ -117,31 +117,33 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	// 	w.Write(j)
 	// } else {
 	//
-	// 	if usuario.Nombre == "usuario" && usuario.Clave == "123" {
-	// 		usuario.Nombre = "Carlos"
-	// 		usuario.Clave = ""
-	// 		token := seguridad.GenerarJWT(usuario)
-	// 		result := seguridad.RespuestaToken{Token: token}
-	// 		j, e := json.Marshal(result)
-	// 		util.Error(e)
+	// if usuario.Nombre == "usuario" && usuario.Clave == "123" {
+	// 	usuario.Nombre = "Carlos"
+	// 	usuario.Clave = ""
+	// 	token := seguridad.GenerarJWT(usuario)
+	// 	result := seguridad.RespuestaToken{Token: token}
+	// 	j, e := json.Marshal(result)
+	// 	util.Error(e)
 	//
-	// 		w.WriteHeader(http.StatusOK)
-	// 		w.Write(j)
-	// 	} else {
-	// 		w.Header().Set("Content-Type", "application/text")
-	// 		fmt.Println("Error en la conexion del usuario")
-	// 		w.WriteHeader(http.StatusForbidden)
-	// 		fmt.Fprintln(w, "Usuario y clave no validas")
-	// 	}
+	// 	w.WriteHeader(http.StatusOK)
+	// 	w.Write(j)
+	// } else {
+	// 	w.Header().Set("Content-Type", "application/text")
+	// 	fmt.Println("Error en la conexion del usuario")
+	// 	w.WriteHeader(http.StatusForbidden)
+	// 	fmt.Fprintln(w, "Usuario y clave no validas")
+	// }
 	// }
 }
 
 //ValidarToken Validacion de usuario
 func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 	var mensaje util.Mensajes
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		Cabecera(w, r)
 		token, e := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &seguridad.Reclamaciones{}, func(token *jwt.Token) (interface{}, error) {
+
 			return seguridad.LlavePublica, nil
 		})
 

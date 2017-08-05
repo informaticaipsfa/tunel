@@ -2,15 +2,16 @@ package sys
 
 import "gopkg.in/mgo.v2/bson"
 
-type Mongo struct{}
+type Mongo struct {
+}
 
 //Salvar documentos
 func (m *Mongo) Salvar(mgo interface{}, coleccion string) (err error) {
 	if coleccion != "" {
-		c := MGOSession.DB("ipsfa_test").C(coleccion)
+		c := MGOSession.DB("sssifanb").C(coleccion)
 		err = c.Insert(mgo)
 	} else {
-		c := MGOSession.DB("ipsfa_test").C("persona")
+		c := MGOSession.DB("sssifanb").C("persona")
 		err = c.Insert(mgo)
 	}
 	return
@@ -18,7 +19,7 @@ func (m *Mongo) Salvar(mgo interface{}, coleccion string) (err error) {
 
 //ConsultarID Permite realizar consultas puntuales
 func (m *Mongo) ConsultarID(id string) (obj interface{}, err error) {
-	c := MGOSession.DB("ipsfa_test").C("persona")
+	c := MGOSession.DB("sssifanb").C("persona")
 	err = c.Find(bson.M{"id": id}).One(&m)
 	return
 }
