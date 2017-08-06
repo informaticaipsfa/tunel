@@ -8,6 +8,7 @@
 package seguridad
 
 import (
+	"fmt"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -150,6 +151,27 @@ func (u *Usuario) Validar(login string, clave string) (err error) {
 	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
 	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false, "firmadigital": false}).One(&u)
 
+	return
+}
+
+func CrearClaveTodos() {
+	var usuario []Usuario
+	// var lst []interface{}
+	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
+	err := c.Find(nil).All(&usuario)
+	if err != nil {
+		return
+	}
+	// usuario = lst
+	for _, v := range usuario {
+		clave := util.GenerarHash256([]byte(v.Cedula))
+		fmt.Println(v.Cedula, " -> ", v.Clave, " -> ", clave)
+		err = c.Update(bson.M{"cedula": v.Cedula}, bson.M{"$set": bson.M{"clave": clave}})
+		if err != nil {
+			fmt.Println("Err.", err.Error())
+			return
+		}
+	}
 	return
 }
 
