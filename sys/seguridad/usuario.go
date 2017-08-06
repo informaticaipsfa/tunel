@@ -60,6 +60,15 @@ type Privilegio struct {
 type Perfil struct {
 	Descripcion string       `json:"descripcion,omitempty"`
 	Privilegios []Privilegio `json:"Privilegios,omitempty"`
+	Menu        []Menu       `json:"Menu,omitempty"`
+}
+
+type Menu struct {
+	Url    string `json:"url,omitempty"`
+	Js     string `json:"js,omitempty"`
+	Icono  string `json:"icono,omitempty"`
+	Nombre string `json:"nombre,omitempty"`
+	Accion string `json:"accion,omitempty"`
 }
 
 type Rol struct {
@@ -140,6 +149,7 @@ func (u *Usuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
 	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false, "firmadigital": false}).One(&u)
+
 	return
 }
 
