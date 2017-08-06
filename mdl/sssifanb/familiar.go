@@ -14,7 +14,7 @@ import (
 
 //Familiar Busquedas
 type Familiar struct {
-	ID              int       `json:"id" bson:"id"`
+	ID              string    `json:"id" bson:"id"`
 	Persona         Persona   `json:"Persona" bson:"persona"`
 	FechaAfiliacion time.Time `json:"fechaafiliacion" bson:"fechaafiliacion"`
 	Parentesco      string    `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
@@ -100,7 +100,12 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	//
 	familiar["familiar.$.persona"] = f.Persona
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
+	if f.ID != id {
+		fmt.Println("Cambio de Cedula de un familiar: ", id)
+		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": f.ID}, bson.M{"$set": familiar})
+	} else {
+		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
+	}
 	if err != nil {
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
