@@ -73,6 +73,8 @@ func (tim *Carnet) Salvar() (err error) {
 					TIMS = v.AplicarReglasCarnetPadres()
 				case "HJ":
 					TIMS = v.AplicarReglasCarnetHijos()
+				case "EA":
+					TIMS = v.AplicarReglasCarnetEsposa()
 				}
 			}
 		}

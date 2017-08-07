@@ -156,12 +156,14 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 
 //AplicarReglasCarnetHijos Reglas
 func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
+	var mes, dia string
 	carnet := make(map[string]interface{})
 	fechaActual := time.Now()
 	Anio, Mes, Dia := fechaActual.Date()
 	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
 	layOut := "2006-01-02"
 
+	fmt.Println(Anio, edad)
 	switch {
 	case edad < 15:
 		Anio += 5
@@ -172,11 +174,17 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	case edad > 18 && f.Condicion == 1:
 		Anio += 5
 	}
-	AnioS := strconv.Itoa(Anio)
-	MesS := strconv.Itoa(int(Mes))
-	DiaS := strconv.Itoa(Dia)
 
-	fecha := AnioS + "-" + MesS + "-" + DiaS
+	mes = strconv.Itoa(int(Mes))
+	if int(Mes) < 10 {
+		mes = "0" + strconv.Itoa(int(Mes))
+	}
+	dia = strconv.Itoa(Dia)
+	if Dia < 10 {
+		dia = "0" + strconv.Itoa(Dia)
+	}
+	fecha := strconv.Itoa(Anio) + "-" + mes + "-" + dia
+
 	fechaVencimientoCarnet, _ := time.Parse(layOut, fecha)
 	TIM.Serial = TIM.GenerarSerial()
 	TIM.FechaCreacion = fechaActual
@@ -229,6 +237,43 @@ func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 
 	if f.Parentesco == "PD" {
 		AnnoA += 10
+		mes = strconv.Itoa(int(MesA))
+		if int(MesA) < 10 {
+			mes = "0" + strconv.Itoa(int(MesA))
+		}
+		dia = strconv.Itoa(DiaA)
+		if DiaA < 10 {
+			dia = "0" + strconv.Itoa(DiaA)
+		}
+		fvenc := strconv.Itoa(AnnoA) + "-" + mes + "-" + dia
+		fechaVencimiento, _ = time.Parse(layout, fvenc)
+	}
+
+	TIM.Serial = TIM.GenerarSerial()
+	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
+	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
+	TIM.FechaCreacion = fechaActual
+	TIM.FechaVencimiento = fechaVencimiento
+	// TIM.CodigoComponente = m.Componente.Abreviatura
+	// TIM.Grado.Abreviatura = m.Grado.Abreviatura
+	TIM.Responsable = f.Persona.DatoBasico.Cedula
+	TIM.Tipo = 1
+	TIM.Estatus = 0
+	return
+
+}
+
+//AplicarReglasCarnetPadres Reglas
+func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
+
+	var mes, dia string
+	var fechaVencimiento time.Time
+	fechaActual := time.Now()
+	AnnoA, MesA, DiaA := fechaActual.Date()
+	layout := "2006-01-02"
+
+	if f.Parentesco == "EA" {
+		AnnoA += 3
 		mes = strconv.Itoa(int(MesA))
 		if int(MesA) < 10 {
 			mes = "0" + strconv.Itoa(int(MesA))
