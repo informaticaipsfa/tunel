@@ -169,7 +169,6 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 //GenerarCarnet Generacion de Carnet
 func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	var mes, dia string
-	carnet := make(map[string]interface{})
 
 	fecha := time.Now()
 	a, me, d := fecha.Date()
@@ -197,9 +196,14 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	TIM.ID = m.ID
 	TIM.Tipo = 0
 	TIM.Estatus = 0
+	carnet := make(map[string]interface{})
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	carnet["estatuscarnet"] = 1
 	err = c.Update(bson.M{"id": m.ID}, bson.M{"$set": carnet})
+
+	foto := make(map[string]interface{})
+	foto["persona.foto"] = "foto.jpg"
+	err = c.Update(bson.M{"id": m.ID}, bson.M{"$set": foto})
 	//jSon, err = json.Marshal(TIM)
 	return
 }

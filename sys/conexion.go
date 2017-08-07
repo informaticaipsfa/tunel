@@ -36,9 +36,9 @@ func ConexionPACE(mapa map[string]CadenaDeConexion) {
 	cadena := "user=" + c.Usuario + " dbname=" + c.Basedatos + " password=" + c.Clave + " host=" + c.Host + " sslmode=disable"
 	PostgreSQLPACE, _ = sql.Open("postgres", cadena)
 	if PostgreSQLPACE.Ping() != nil {
-		fmt.Println("[Pace:    Error...] ", PostgreSQLPACE.Ping())
+		fmt.Println("[Pace: ", c.Host, " Error...] ", PostgreSQLPACE.Ping())
 	} else {
-		fmt.Println("[Pace:    OK...]")
+		fmt.Println("[Pace: ", c.Host, " OK...]")
 	}
 }
 
