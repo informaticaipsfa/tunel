@@ -181,7 +181,8 @@ func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err er
 	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
 	actualizar := make(map[string]interface{})
 	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
-	err = c.Update(bson.M{"login": login, "clave": clave}, bson.M{"$set": actualizar})
+	antigua := util.GenerarHash256([]byte(clave))
+	err = c.Update(bson.M{"login": login, "clave": antigua}, bson.M{"$set": actualizar})
 	return
 }
 

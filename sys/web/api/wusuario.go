@@ -64,12 +64,11 @@ func (u *WUsuario) CambiarClave(w http.ResponseWriter, r *http.Request) {
 
 	e := json.NewDecoder(r.Body).Decode(&datos)
 	util.Error(e)
-	fmt.Println(datos)
 	ok := usr.CambiarClave(datos.Login, datos.Clave, datos.Nueva)
 	M.Tipo = 1
 	if ok != nil {
+		M.Msj = ok.Error()
 		M.Tipo = 0
-		return
 	}
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
@@ -83,11 +82,9 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
-	fmt.Println(usuario.Nombre)
 
 	usuario.Validar(usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
 
-	fmt.Println(usuario.Nombre)
 	if usuario.Nombre != "" {
 		//usuario.Nombre = "Carlos"
 		usuario.Clave = ""
@@ -104,36 +101,6 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		fmt.Fprintln(w, "Usuario y clave no validas")
 	}
-
-	// if usuario.Nombre == "presidente" && usuario.Clave == "5910545" {
-	// 	usuario.Nombre = "Carlos"
-	// 	usuario.Clave = ""
-	// 	token := seguridad.GenerarJWT(usuario)
-	// 	result := seguridad.RespuestaToken{Token: token}
-	// 	j, e := json.Marshal(result)
-	// 	util.Error(e)
-	//
-	// 	w.WriteHeader(http.StatusOK)
-	// 	w.Write(j)
-	// } else {
-	//
-	// if usuario.Nombre == "usuario" && usuario.Clave == "123" {
-	// 	usuario.Nombre = "Carlos"
-	// 	usuario.Clave = ""
-	// 	token := seguridad.GenerarJWT(usuario)
-	// 	result := seguridad.RespuestaToken{Token: token}
-	// 	j, e := json.Marshal(result)
-	// 	util.Error(e)
-	//
-	// 	w.WriteHeader(http.StatusOK)
-	// 	w.Write(j)
-	// } else {
-	// 	w.Header().Set("Content-Type", "application/text")
-	// 	fmt.Println("Error en la conexion del usuario")
-	// 	w.WriteHeader(http.StatusForbidden)
-	// 	fmt.Fprintln(w, "Usuario y clave no validas")
-	// }
-	// }
 }
 
 //ValidarToken Validacion de usuario
@@ -201,4 +168,12 @@ func (u *WUsuario) Autorizado(w http.ResponseWriter, r *http.Request) {
 	mensaje.Msj = "Acceso Autorizado"
 	j, _ := json.Marshal(mensaje)
 	w.Write(j)
+}
+
+//Opciones Militar
+func (u *WUsuario) Opciones(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	fmt.Println("OPTIONS USUARIO...")
+	//fmt.Fprintf(w, "Saludos")
+
 }

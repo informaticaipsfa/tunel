@@ -60,9 +60,11 @@ func CargarModulosSeguridad() {
 	var wUsuario api.WUsuario
 	// Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crud/{id}", wUsuario.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Login).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
 
-	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crear", wUsuario.Crear).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.Crear).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.CambiarClave)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
 
 }
 
@@ -85,7 +87,7 @@ func WMAdminLTE() {
 
 //CargarModulosWebDevel Cargador de modulos web
 func CargarModulosWebDevel() {
-
+	var wUsuario api.WUsuario
 	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
@@ -113,4 +115,8 @@ func CargarModulosWebDevel() {
 
 	Enrutador.HandleFunc("/devel/api/carnet/listar/{id}", wcar.Listar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/carnet/apro/{estatus}/{serial}", wcar.Aprobar).Methods("GET")
+
+	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.CambiarClave).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.Opciones).Methods("OPTIONS")
+
 }
