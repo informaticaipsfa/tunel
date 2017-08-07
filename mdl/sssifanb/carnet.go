@@ -68,13 +68,17 @@ func (tim *Carnet) Salvar() (err error) {
 		for _, v := range militar.Familiar {
 			if v.Persona.DatoBasico.Cedula == tim.IDF {
 				Parenstesco = v.Parentesco
+				fmt.Println("Parentesco: ", Parenstesco)
 				switch v.Parentesco {
 				case "PD":
 					TIMS = v.AplicarReglasCarnetPadres()
+
 				case "HJ":
 					TIMS = v.AplicarReglasCarnetHijos()
+					fmt.Println("Entrando, Hijos...")
 				case "EA":
 					TIMS = v.AplicarReglasCarnetEsposa()
+					fmt.Println("Entrando, Esposa...")
 				}
 			}
 		}
