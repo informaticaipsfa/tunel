@@ -36,14 +36,10 @@ func init() {
 
 //GenerarJWT Json Web Token
 func GenerarJWT(u Usuario) string {
-	rol := Rol{
-		Descripcion: "Development",
-	}
 	peticion := Reclamaciones{
 		Usuario: u,
-		Rol:     rol,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 1).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * 480).Unix(),
 			Issuer:    "Conexion Bus Empresarial",
 		},
 	}

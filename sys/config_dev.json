@@ -1,16 +1,16 @@
 [{
   "Driver" : "saman",
-  "Usuario" : "postgres",
-  "Basedatos": "saman",
-  "Clave" : "za63qj2p",
-  "Host" : "localhost",
+  "Usuario" : "ingrid",
+  "Basedatos": "bs_saman",
+  "Clave" : "ingpol123  ",
+  "Host" : "192.168.12.170",
   "Puerto" : "5432"
 },{
   "Driver" : "pace",
-  "Usuario" : "postgres",
+  "Usuario" : "mercy",
   "Basedatos": "pace",
-  "Clave" : "za63qj2p",
-  "Host" : "localhost",
+  "Clave" : "mercy792",
+  "Host" : "192.168.12.161",
   "Puerto" : "5432"
 },{
   "Driver" : "tarjeta",

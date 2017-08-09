@@ -31,10 +31,10 @@ type Mensaje struct {
 //SalvarMGO Guardar
 func (comp *Componente) SalvarMGO(colecion string) (err error) {
 	if colecion != "" {
-		c := sys.MGOSession.DB("ipsfa_test").C(colecion)
+		c := sys.MGOSession.DB(BASEDATOS).C(colecion)
 		err = c.Insert(comp)
 	} else {
-		c := sys.MGOSession.DB("ipsfa_test").C("componente")
+		c := sys.MGOSession.DB(BASEDATOS).C("componente")
 		err = c.Insert(comp)
 	}
 
@@ -44,7 +44,7 @@ func (comp *Componente) SalvarMGO(colecion string) (err error) {
 //Consultar una persona mediante el metodo de MongoDB
 func (comp *Componente) Consultar(componente string) (jSon []byte, err error) {
 	var msj Mensaje
-	c := sys.MGOSession.DB("ipsfa_test").C(COMPONENTE)
+	c := sys.MGOSession.DB(BASEDATOS).C(COMPONENTE)
 	err = c.Find(bson.M{"codigo": componente}).One(&comp)
 	if err != nil {
 		msj.Tipo = 0

@@ -8,10 +8,12 @@
 package seguridad
 
 import (
+	"fmt"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
@@ -59,6 +61,15 @@ type Privilegio struct {
 type Perfil struct {
 	Descripcion string       `json:"descripcion,omitempty"`
 	Privilegios []Privilegio `json:"Privilegios,omitempty"`
+	Menu        []Menu       `json:"Menu,omitempty"`
+}
+
+type Menu struct {
+	Url    string `json:"url,omitempty"`
+	Js     string `json:"js,omitempty"`
+	Icono  string `json:"icono,omitempty"`
+	Nombre string `json:"nombre,omitempty"`
+	Accion string `json:"accion,omitempty"`
 }
 
 type Rol struct {
@@ -70,7 +81,7 @@ type Usuario struct {
 	Id           bson.ObjectId `json:"id" bson:"_id"`
 	Cedula       string        `json:"cedula"`
 	Nombre       string        `json:"nombre"`
-	Login        string        `json:"login"`
+	Login        string        `json:"usuario"`
 	Correo       string        `json:"correo,omitempty"`
 	Clave        string        `json:"clave,omitempty"`
 	Sucursal     string        `json:"sucursal,omitempty" bson:"sucursal"`
@@ -79,6 +90,9 @@ type Usuario struct {
 	Token        string        `json:"token,omitempty"`
 	Perfil       Perfil        `json:"Perfil,omitempty"`
 	FirmaDigital FirmaDigital  `json:"FirmaDigital,omitempty"`
+	Direccion    string        `json:"direccion,omitempty"`
+	Telefono     string        `json:"telefono,omitempty"`
+	Cargo        string        `json:"cargo,omitempty"`
 }
 
 //FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
@@ -134,18 +148,41 @@ func (usr *Usuario) Salvar() error {
 //Validar Usuarios
 func (u *Usuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB("ipsfa_test").C("usuario")
+	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
 	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false, "firmadigital": false}).One(&u)
+
+	return
+}
+
+func CrearClaveTodos() {
+	var usuario []Usuario
+	// var lst []interface{}
+	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
+	err := c.Find(nil).All(&usuario)
+	if err != nil {
+		return
+	}
+	// usuario = lst
+	for _, v := range usuario {
+		clave := util.GenerarHash256([]byte(v.Cedula))
+		fmt.Println(v.Cedula, " -> ", v.Clave, " -> ", clave)
+		err = c.Update(bson.M{"cedula": v.Cedula}, bson.M{"$set": bson.M{"clave": clave}})
+		if err != nil {
+			fmt.Println("Err.", err.Error())
+			return
+		}
+	}
 	return
 }
 
 //Validar Usuarios
 func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB("ipsfa_test").C("usuario")
+	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
 	actualizar := make(map[string]interface{})
 	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
-	err = c.Update(bson.M{"login": login, "clave": clave}, bson.M{"$set": actualizar})
+	antigua := util.GenerarHash256([]byte(clave))
+	err = c.Update(bson.M{"login": login, "clave": antigua}, bson.M{"$set": actualizar})
 	return
 }
 

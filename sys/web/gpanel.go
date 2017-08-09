@@ -2,7 +2,7 @@
 package web
 
 import (
-	"html/template"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -141,12 +141,13 @@ func (G *GPanel) Validar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (G *GPanel) IrA(w http.ResponseWriter) {
-	// fmt.Println("Entrando en funcion ", G.TituloDePagina)
+func (G *GPanel) IrA(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Entrando en funcion ")
+	G.Error(w)
 	// var t *template.Template
 	// var err error
-	// var base string = "public_web/adminlte/"
-	//
+	// base := "public_web/sssifanb/"
+	// t, err = template.ParseFiles(base + "starter.html")
 	// if G.TituloDePagina != _Login {
 	//
 	// 	plantilla := base + "p" + G.TituloDePagina + ".ghtm"
@@ -171,7 +172,7 @@ func (G *GPanel) IrA(w http.ResponseWriter) {
 	// } else {
 	// 	t, err = template.ParseFiles(base + G.TituloDePagina + ".html")
 	// }
-	//
+
 	// if err != nil {
 	// 	G.Error(w)
 	// } else {
@@ -228,8 +229,8 @@ func (G *GPanel) SubirArchivoLoteria(w http.ResponseWriter, r *http.Request) {
 
 //En caso de acceder a una url sin acceso
 func (G *GPanel) Error(w http.ResponseWriter) {
-	terr, _ := template.ParseFiles("public_web/adminlte/err.html")
-	terr.Execute(w, G)
+	w.WriteHeader(http.StatusForbidden)
+	w.Write([]byte("Usted intenta entrar en un area segura..."))
 
 }
 

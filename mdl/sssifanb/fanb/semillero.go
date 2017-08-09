@@ -22,7 +22,7 @@ type Semillero struct {
 //SalvarMGO Guardar
 func (s *Semillero) SalvarMGO() (err error) {
 
-	c := sys.MGOSession.DB("ipsfa_test").C(SEMILLERO)
+	c := sys.MGOSession.DB(BASEDATOS).C(SEMILLERO)
 	err = c.Insert(s)
 
 	return
@@ -31,7 +31,7 @@ func (s *Semillero) SalvarMGO() (err error) {
 //Consultar una persona mediante el metodo de MongoDB
 func (s *Semillero) Consultar(estado string) (jSon []byte, err error) {
 	var msj Mensaje
-	c := sys.MGOSession.DB("ipsfa_test").C(SEMILLERO)
+	c := sys.MGOSession.DB(BASEDATOS).C(SEMILLERO)
 	err = c.Find(bson.M{"codigo": estado}).One(&s)
 	if err != nil {
 		msj.Tipo = 0
@@ -45,7 +45,7 @@ func (s *Semillero) Consultar(estado string) (jSon []byte, err error) {
 
 //Maximo una persona mediante el metodo de MongoDB
 func (s *Semillero) Maximo() (maximo int, err error) {
-	c := sys.MGOSession.DB("ipsfa_test").C(SEMILLERO)
+	c := sys.MGOSession.DB(BASEDATOS).C(SEMILLERO)
 	orden := bson.M{"$sort": bson.M{"codigo": -1}}
 	limite := bson.M{"$limit": 1}
 	err = c.Pipe([]bson.M{orden, limite}).One(&s)

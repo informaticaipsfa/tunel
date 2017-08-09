@@ -15,7 +15,8 @@ import (
 
 //Carnet Tarjeta de Identificacion Militar
 type Carnet struct {
-	ID                      string     `json:"id,omitempty" bson:"id"`
+	ID                      string     `json:"id" bson:"id"`
+	IDF                     string     `json:"idf" bson:"idf"`
 	Tipo                    int        `json:"tipo,omitempty" bson:"tipo"` // 0: Militar 1: Empleado 2: Familiares
 	Nombre                  string     `json:"nombre,omitempty" bson:"nombre"`
 	Apellido                string     `json:"apellido,omitempty" bson:"apellido"`
@@ -51,12 +52,51 @@ func (c *Carnet) GenerarSerial() string {
 //Salvar Guardar
 func (tim *Carnet) Salvar() (err error) {
 	var militar Militar
+	fmt.Println(tim)
 	militar.ConsultarMGO(tim.ID)
-	militar.TIM, _ = militar.GenerarCarnet()
 	militar.TIM.IP = tim.IP
+	militar.TIM.ID = tim.ID
+	militar.TIM.IDF = tim.IDF
 	militar.TIM.Motivo = tim.Motivo
-	c := sys.MGOSession.DB(CBASE).C(CTIM)
-	err = c.Insert(militar.TIM)
+	if tim.ID == tim.IDF {
+		militar.TIM, _ = militar.GenerarCarnet()
+		c := sys.MGOSession.DB(CBASE).C(CTIM)
+		err = c.Insert(militar.TIM)
+	} else { //Carnet de Familiares
+		var TIMS Carnet
+		var Parenstesco string
+		for _, v := range militar.Familiar {
+			if v.Persona.DatoBasico.Cedula == tim.IDF {
+				Parenstesco = v.Parentesco
+				fmt.Println("Parentesco: ", Parenstesco)
+				switch v.Parentesco {
+				case "PD":
+					TIMS = v.AplicarReglasCarnetPadres()
+				case "HJ":
+					TIMS = v.AplicarReglasCarnetHijos()
+					fmt.Println("Entrando, Hijos...")
+				case "EA":
+					TIMS = v.AplicarReglasCarnetEsposa()
+					fmt.Println("Entrando, Esposa...")
+				case "VI":
+					TIMS = v.AplicarReglasCarnetEsposa()
+					fmt.Println("Entrando, Esposa...")
+				}
+			}
+		}
+		TIMS.Motivo = tim.Motivo
+		TIMS.IP = tim.IP
+		TIMS.ID = tim.ID
+		TIMS.IDF = tim.IDF
+		TIMS.Componente.Abreviatura = militar.Componente.Abreviatura
+		TIMS.Componente.Descripcion = militar.Componente.Descripcion
+		TIMS.Grado.Abreviatura = militar.Grado.Abreviatura
+		TIMS.Grado.Descripcion = militar.Grado.Descripcion
+		TIMS.Grado.Nombre = Parenstesco
+		c := sys.MGOSession.DB(CBASE).C(CTIM)
+		err = c.Insert(TIMS)
+	}
+
 	return
 }
 

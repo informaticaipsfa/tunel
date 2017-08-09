@@ -8,13 +8,13 @@ func HistoriaPension() string { //
 				bonovac,bonovacaguinaldo
 	FROM pension_calc pc JOIN personas p ON pc.nropersona=p.nropersona
 	-- WHERE p.codnip='9150043'
-	ORDER BY p.codnip,pc.auditfechacambio ASC;`
+	ORDER BY p.codnip,pc.auditfechacambio ASC --limit 10;`
 }
 
 func HistorialUsuario() string {
 	return `
 	select usuariocodigo,codnip, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo  from seg_usuarios
 		join personas on seg_usuarios.nropersona= personas.nropersona
-		where usuariocodigo LIKE '%afi%' AND estatususrcod ='ACT' 
+		where usuariocodigo LIKE '%afi%' AND estatususrcod ='ACT'
 	`
 }

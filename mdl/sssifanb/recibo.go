@@ -9,6 +9,7 @@ import (
 //Recibo de Pago
 type Recibo struct {
 	ID          string    `json:"id" bson:"id"`
+	IDF         string    `json:"idf" bson:"idf"` //ID FAMILIAR
 	Numero      string    `json:"numero" bson:"numero"`
 	CanalDePago string    `json:"canal" bson:"canal"`
 	Fecha       time.Time `json:"fecha" bson:"fecha"`
@@ -21,6 +22,7 @@ type Recibo struct {
 func (r *Recibo) Salvar() (err error) {
 	var TIM Carnet
 	TIM.ID = r.ID
+	TIM.IDF = r.IDF
 	TIM.IP = r.IP
 	TIM.Motivo = r.Motivo
 	TIM.Salvar()

@@ -16,7 +16,7 @@ func personaMilitar() {
 		 FROM personas GROUP BY codnip
 		 ) AS tb --WHERE tb.fr > 1
 		) AS pers JOIN (
-		SELECT	codnip AS cedula, prs.nropersona, fecha_ingreso
+		SELECT	codnip AS cedula, prs.nropersona
 		FROM personas AS prs	JOIN	pers_dat_militares AS pd ON  prs.nropersona=pd.nropersona
 		) AS militar ON pers.codnip=militar.cedula );
 		CREATE INDEX cedula_idx ON analisis.personas_militares (cedula);
@@ -111,7 +111,7 @@ func reduccion() string {
 						JOIN ipsfa_grados AS igra ON pm.gradocod=igra.gradocod AND pm.componentecod=igra.componentecod
 						LEFT JOIN (SELECT DISTINCT ON (nropersona) nropersona,porcprestmonto FROM pension_calc) AS porc
 							ON porc.nropersona=pension.nropersona
-					) AS B ON B.nropersona = TBL.np  -- limit 1000 -- WHERE cedula_saman='16872776' --  WHERE B.perssituaccod = 'ACT' --`
+					) AS B ON B.nropersona = TBL.np  --limit 1 -- WHERE cedula_saman='16872776' --  WHERE B.perssituaccod = 'ACT' --`
 }
 
 //obtenerHistorialFamiliares
@@ -146,7 +146,8 @@ func obtenerHistorialMilitar() string {
 				analisis.reducciones as AR
 				JOIN personas p ON AR.np=p.nropersona
 				JOIN ipsfa_grado_x_pers ipg ON ipg.nropersona = AR.np
-			ORDER BY AR.cedula_saman,p.nropersona, gradofchrecipsfa`
+			ORDER BY AR.cedula_saman,p.nropersona, gradofchrecipsfa
+			--LIMIT 10`
 	//WHERE p.nropersona IN (1393199,79227)
 
 }
@@ -159,6 +160,7 @@ func obtenerCuentaBancaria() string {
 		analisis.reducciones as AR
 		JOIN pers_cta_bancarias  AS cta
 		ON AR.np=cta.nropersona ORDER BY AR.cedula_saman DESC
+		--LIMIT 10
 		`
 
 }

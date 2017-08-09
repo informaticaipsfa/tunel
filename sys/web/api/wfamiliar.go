@@ -35,7 +35,7 @@ func (f *WFamiliar) Actualizar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 
 	var dataJSON sssifanb.Familiar
-
+	var M sssifanb.Mensaje
 	err := json.NewDecoder(r.Body).Decode(&dataJSON)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -44,8 +44,9 @@ func (f *WFamiliar) Actualizar(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
-
-	j, _ := dataJSON.Actualizar()
+	M.Tipo = 1
+	dataJSON.Actualizar()
+	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 

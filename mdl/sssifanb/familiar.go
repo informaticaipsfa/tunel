@@ -14,7 +14,7 @@ import (
 
 //Familiar Busquedas
 type Familiar struct {
-	ID              int       `json:"id" bson:"id"`
+	ID              string    `json:"id" bson:"id"`
 	Persona         Persona   `json:"Persona" bson:"persona"`
 	FechaAfiliacion time.Time `json:"fechaafiliacion" bson:"fechaafiliacion"`
 	Parentesco      string    `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
@@ -25,6 +25,12 @@ type Familiar struct {
 	Documento       int       `json:"documento" bson:"documento"`
 	Adoptado        bool      `json:"adoptado" bson:"adoptado"`
 	DocumentoPadre  string    `json:"documentopadre" bson:"documentopadre"`
+	HistoriaMedica  string    `json:"historiamedica" bson:"historiamedica"`
+	Donante         string    `json:"donante" bson:"donante"`
+	EstatusCarnet   int       `json:"estatuscarnet" bson:"estatuscarnet"`
+	GrupoSanguineo  string    `json:"gruposanguineo" bson:"gruposanguineo"`
+	TIF             Carnet    `json:"Tif" bson:"tif"`
+
 	// EstatusAfiliacion string `json:"estatus" bson:"adoptado"`
 	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
 }
@@ -90,26 +96,72 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 
 	id := f.Persona.DatoBasico.Cedula
 	familiar := make(map[string]interface{})
-
-	//
-	familiar["familiar.$"] = f
+	familiar["familiar.$.persona"] = f.Persona
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
+	if f.ID != id {
+		fmt.Println("Cambio de Cedula de un familiar: ", id)
+		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": f.ID}, bson.M{"$set": familiar})
+	} else {
+		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
+	}
 	if err != nil {
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
 	}
-	//fmt.Println(canal)
+
+	fechaafiliacion := make(map[string]interface{})
+	fechaafiliacion["familiar.$.fechaafiliacion"] = time.Now()
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": fechaafiliacion})
+	if err != nil {
+		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	//
+	parentesco := make(map[string]interface{})
+	parentesco["familiar.$.parentesco"] = f.Parentesco
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": parentesco})
+	if err != nil {
+		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	beneficio := make(map[string]interface{})
+	beneficio["familiar.$.beneficio"] = f.Benficio
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": beneficio})
+	if err != nil {
+		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+		return
+	}
+	historia := make(map[string]interface{})
+	historia["familiar.$.historiamedica"] = f.HistoriaMedica
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": historia})
+	if err != nil {
+		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+		return
+	}
+	donante := make(map[string]interface{})
+	donante["familiar.$.donante"] = f.Donante
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": donante})
+	if err != nil {
+		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	fmt.Println(parentesco)
 	return
 }
 
 //AplicarReglasCarnetHijos Reglas
-func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVencimientoCarnet time.Time) {
-	fechaActual = time.Now()
+func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
+	var mes, dia string
+	carnet := make(map[string]interface{})
+	fechaActual := time.Now()
 	Anio, Mes, Dia := fechaActual.Date()
 	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
 	layOut := "2006-01-02"
 
+	fmt.Println(Anio, edad)
 	switch {
 	case edad < 15:
 		Anio += 5
@@ -120,12 +172,36 @@ func (f *Familiar) AplicarReglasCarnetHijos() (fechaActual time.Time, fechaVenci
 	case edad > 18 && f.Condicion == 1:
 		Anio += 5
 	}
-	AnioS := strconv.Itoa(Anio)
-	MesS := strconv.Itoa(int(Mes))
-	DiaS := strconv.Itoa(Dia)
 
-	fecha := AnioS + "-" + MesS + "-" + DiaS
-	fechaVencimientoCarnet, _ = time.Parse(layOut, fecha)
+	mes = strconv.Itoa(int(Mes))
+	if int(Mes) < 10 {
+		mes = "0" + strconv.Itoa(int(Mes))
+	}
+	dia = strconv.Itoa(Dia)
+	if Dia < 10 {
+		dia = "0" + strconv.Itoa(Dia)
+	}
+	fecha := strconv.Itoa(Anio) + "-" + mes + "-" + dia
+
+	fechaVencimientoCarnet, _ := time.Parse(layOut, fecha)
+	TIM.Serial = TIM.GenerarSerial()
+	TIM.FechaCreacion = fechaActual
+	TIM.FechaVencimiento = fechaVencimientoCarnet
+	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
+	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
+	// TIM.Componente.Abreviatura = m.Componente.Abreviatura
+	// TIM.Componente.Descripcion = m.Componente.Descripcion
+	// TIM.Grado.Abreviatura = m.Grado.Abreviatura
+	// TIM.Grado.Descripcion = m.Grado.Descripcion
+	// TIM.ID = f.Persona.DatoBasico.Cedula
+	TIM.Tipo = 0
+	TIM.Estatus = 0
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	carnet["estatuscarnet"] = 1
+	err := c.Update(bson.M{"id": f.Persona.DatoBasico.Cedula}, bson.M{"$set": carnet})
+	if err != nil {
+		return
+	}
 	return
 }
 
@@ -149,8 +225,8 @@ func (f *Familiar) ContarFamiliar() {
 }
 
 //AplicarReglasCarnetPadres Reglas
-func (f *Familiar) AplicarReglasCarnetPadres() (jSon []byte, err error) {
-	var TIM Carnet
+func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
+
 	var mes, dia string
 	var fechaVencimiento time.Time
 	fechaActual := time.Now()
@@ -172,6 +248,8 @@ func (f *Familiar) AplicarReglasCarnetPadres() (jSon []byte, err error) {
 	}
 
 	TIM.Serial = TIM.GenerarSerial()
+	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
+	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
 	TIM.FechaCreacion = fechaActual
 	TIM.FechaVencimiento = fechaVencimiento
 	// TIM.CodigoComponente = m.Componente.Abreviatura
@@ -179,7 +257,43 @@ func (f *Familiar) AplicarReglasCarnetPadres() (jSon []byte, err error) {
 	TIM.Responsable = f.Persona.DatoBasico.Cedula
 	TIM.Tipo = 1
 	TIM.Estatus = 0
-	jSon, err = json.Marshal(TIM)
+	return
+
+}
+
+//AplicarReglasCarnetPadres Reglas
+func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
+
+	var mes, dia string
+	var fechaVencimiento time.Time
+	fechaActual := time.Now()
+	AnnoA, MesA, DiaA := fechaActual.Date()
+	layout := "2006-01-02"
+
+	if f.Parentesco == "EA" {
+		AnnoA += 3
+		mes = strconv.Itoa(int(MesA))
+		if int(MesA) < 10 {
+			mes = "0" + strconv.Itoa(int(MesA))
+		}
+		dia = strconv.Itoa(DiaA)
+		if DiaA < 10 {
+			dia = "0" + strconv.Itoa(DiaA)
+		}
+		fvenc := strconv.Itoa(AnnoA) + "-" + mes + "-" + dia
+		fechaVencimiento, _ = time.Parse(layout, fvenc)
+	}
+
+	TIM.Serial = TIM.GenerarSerial()
+	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
+	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
+	TIM.FechaCreacion = fechaActual
+	TIM.FechaVencimiento = fechaVencimiento
+	// TIM.CodigoComponente = m.Componente.Abreviatura
+	// TIM.Grado.Abreviatura = m.Grado.Abreviatura
+	TIM.Responsable = f.Persona.DatoBasico.Cedula
+	TIM.Tipo = 1
+	TIM.Estatus = 0
 	return
 
 }

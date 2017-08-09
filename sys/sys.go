@@ -1,4 +1,4 @@
-package sssifanb
+package sys
 
 const (
 	SERVERIMG   string = "htttp://192.168.12.161/imagenes/"
