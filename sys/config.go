@@ -107,6 +107,16 @@ func init() {
 			MySQL = true
 		case "mongodb":
 			MongoDB = true
+			cad := make(map[string]CadenaDeConexion)
+			cad["mongodb"] = CadenaDeConexion{
+				Driver:    valor.Driver,
+				Usuario:   valor.Usuario,
+				Basedatos: valor.Basedatos,
+				Clave:     valor.Clave,
+				Host:      valor.Host,
+				Puerto:    valor.Puerto,
+			}
+			MongoDBConexion(cad)
 		}
 	}
 	util.Error(e)

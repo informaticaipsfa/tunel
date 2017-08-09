@@ -54,12 +54,14 @@ func (tim *Carnet) Salvar() (err error) {
 	var militar Militar
 	fmt.Println(tim)
 	militar.ConsultarMGO(tim.ID)
-	militar.TIM.IP = tim.IP
 	militar.TIM.ID = tim.ID
 	militar.TIM.IDF = tim.IDF
+	militar.TIM.IP = tim.IP
 	militar.TIM.Motivo = tim.Motivo
 	if tim.ID == tim.IDF {
 		militar.TIM, _ = militar.GenerarCarnet()
+		militar.TIM.IP = tim.IP
+		militar.TIM.Motivo = tim.Motivo
 		c := sys.MGOSession.DB(CBASE).C(CTIM)
 		err = c.Insert(militar.TIM)
 	} else { //Carnet de Familiares

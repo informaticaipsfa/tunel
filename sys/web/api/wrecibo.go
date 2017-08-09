@@ -38,7 +38,7 @@ func (wre *WRecibo) Insertar(w http.ResponseWriter, r *http.Request) {
 	var recibo sssifanb.Recibo
 	ip := strings.Split(r.RemoteAddr, ":")
 
-	fmt.Println("Entrando desde: " + ip[0])
+	fmt.Println("Entrando desde para emitir tim: " + ip[0])
 	err := json.NewDecoder(r.Body).Decode(&recibo)
 
 	M.Tipo = 1

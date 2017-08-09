@@ -149,7 +149,7 @@ func (usr *Usuario) Salvar() error {
 func (u *Usuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
-	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false, "firmadigital": false}).One(&u)
+	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false}).One(&u)
 
 	return
 }
