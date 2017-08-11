@@ -5,4 +5,5 @@ const (
 	ESTADO     string = "estado"
 	COMPONENTE string = "componente"
 	SEMILLERO  string = "semillero"
+	TRAZA      string = "traza"
 )

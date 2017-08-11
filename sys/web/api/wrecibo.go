@@ -16,19 +16,6 @@ type WRecibo struct{}
 func (wre *WRecibo) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	fmt.Println(r)
-
-	// var recibo sssifanb.Recibo
-	// var cedula = mux.Vars(r)
-	// dataJSON.Persona.DatoBasico.Cedula = cedula["id"]
-	// fmt.Println(dataJSON.Persona.DatoBasico.Cedula)
-	// j, e := dataJSON.Consultar()
-	// if e != nil {
-	// 	w.WriteHeader(http.StatusForbidden)
-	// 	w.Write([]byte("Error al consultar los datos"))
-	// 	return
-	// }
-	// w.WriteHeader(http.StatusOK)
-	// w.Write(j)
 }
 
 //Insertar Militar
@@ -51,6 +38,8 @@ func (wre *WRecibo) Insertar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//e := militar.SalvarMGOI("militares", objeto)
+	recibo.Usuario = UsuarioConectado.Login
+
 	recibo.IP = ip[0]
 	e := recibo.Salvar()
 	if e != nil {

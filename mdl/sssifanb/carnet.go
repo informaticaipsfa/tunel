@@ -33,6 +33,7 @@ type Carnet struct {
 	Estatus                 int        `json:"estatus,omitempty" bson:"estatus"`
 	IP                      string     `json:"ip" bson:"ip"`
 	Motivo                  string     `json:"motivo" bson:"motivo"`
+	Usuario                 string     `json:"usuario" bson:"usuario"`
 }
 
 //AplicarReglas Basicas
@@ -52,16 +53,19 @@ func (c *Carnet) GenerarSerial() string {
 //Salvar Guardar
 func (tim *Carnet) Salvar() (err error) {
 	var militar Militar
-	fmt.Println(tim)
+
 	militar.ConsultarMGO(tim.ID)
 	militar.TIM.ID = tim.ID
 	militar.TIM.IDF = tim.IDF
 	militar.TIM.IP = tim.IP
 	militar.TIM.Motivo = tim.Motivo
-	if tim.ID == tim.IDF {
+
+	if tim.ID == tim.IDF { // Carnet Titulares
+		militar.TIM.Usuario = tim.Usuario
 		militar.TIM, _ = militar.GenerarCarnet()
 		militar.TIM.IP = tim.IP
 		militar.TIM.Motivo = tim.Motivo
+		// militar.TIM.Usuario = tim.Usuario
 		c := sys.MGOSession.DB(CBASE).C(CTIM)
 		err = c.Insert(militar.TIM)
 	} else { //Carnet de Familiares
@@ -90,6 +94,7 @@ func (tim *Carnet) Salvar() (err error) {
 		TIMS.IP = tim.IP
 		TIMS.ID = tim.ID
 		TIMS.IDF = tim.IDF
+		TIMS.Usuario = tim.Usuario
 		TIMS.Componente.Abreviatura = militar.Componente.Abreviatura
 		TIMS.Componente.Descripcion = militar.Componente.Descripcion
 		TIMS.Grado.Abreviatura = militar.Grado.Abreviatura
