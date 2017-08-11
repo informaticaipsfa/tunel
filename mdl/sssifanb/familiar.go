@@ -211,7 +211,19 @@ func (f *Familiar) IncluirFamiliar() (err error) {
 	familiar := make(map[string]interface{})
 	familiar["familiar"] = f
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	err = c.Update(bson.M{"id": f.DocumentoPadre}, bson.M{"$push": familiar})
+	var result Familiar
+	var parametro string
+	e := c.Find(bson.M{"id": f.DocumentoPadre, "familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula}).Select(bson.M{"familiar": true}).One(&result)
+	if e != nil {
+		fmt.Println("Insertando...", e.Error())
+
+	}
+	// parametro = "$push"
+
+	parametro = "$set"
+	fmt.Println("Actualizando...")
+	fmt.Println(result)
+	err = c.Update(bson.M{"id": f.DocumentoPadre}, bson.M{parametro: familiar})
 	if err != nil {
 		fmt.Println(" " + err.Error())
 		return
