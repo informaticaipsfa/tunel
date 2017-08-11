@@ -78,9 +78,7 @@ func (f *WFamiliar) Insertar(w http.ResponseWriter, r *http.Request) {
 	}
 	j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
-
 	w.Write(j)
-	fmt.Fprintf(w, "Saludos")
 }
 
 //Opciones Militar

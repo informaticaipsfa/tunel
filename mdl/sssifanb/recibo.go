@@ -1,7 +1,6 @@
 package sssifanb
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/sys"
@@ -27,8 +26,7 @@ func (r *Recibo) Salvar() (err error) {
 	TIM.IDF = r.IDF
 	TIM.IP = r.IP
 	TIM.Motivo = r.Motivo
-	TIM.Usuario = r.Usuario
-	fmt.Println(r.Usuario)
+	TIM.Usuario = r.Usuario[:3]
 	TIM.Salvar()
 	c := sys.MGOSession.DB(CBASE).C(CRECIBO)
 	err = c.Insert(r)

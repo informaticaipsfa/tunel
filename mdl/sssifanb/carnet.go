@@ -53,7 +53,7 @@ func (c *Carnet) GenerarSerial() string {
 //Salvar Guardar
 func (tim *Carnet) Salvar() (err error) {
 	var militar Militar
-
+	fmt.Println("Salvar " + tim.Usuario)
 	militar.ConsultarMGO(tim.ID)
 	militar.TIM.ID = tim.ID
 	militar.TIM.IDF = tim.IDF
@@ -61,11 +61,11 @@ func (tim *Carnet) Salvar() (err error) {
 	militar.TIM.Motivo = tim.Motivo
 
 	if tim.ID == tim.IDF { // Carnet Titulares
-		militar.TIM.Usuario = tim.Usuario
 		militar.TIM, _ = militar.GenerarCarnet()
 		militar.TIM.IP = tim.IP
 		militar.TIM.Motivo = tim.Motivo
-		// militar.TIM.Usuario = tim.Usuario
+		militar.TIM.Usuario = tim.Usuario
+
 		c := sys.MGOSession.DB(CBASE).C(CTIM)
 		err = c.Insert(militar.TIM)
 	} else { //Carnet de Familiares
@@ -74,10 +74,10 @@ func (tim *Carnet) Salvar() (err error) {
 		for _, v := range militar.Familiar {
 			if v.Persona.DatoBasico.Cedula == tim.IDF {
 				Parenstesco = v.Parentesco
-				fmt.Println("Parentesco: ", Parenstesco)
 				switch v.Parentesco {
 				case "PD":
 					TIMS = v.AplicarReglasCarnetPadres()
+					fmt.Println("Entrando, Padre...")
 				case "HJ":
 					TIMS = v.AplicarReglasCarnetHijos()
 					fmt.Println("Entrando, Hijos...")

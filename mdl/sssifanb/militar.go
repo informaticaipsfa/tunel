@@ -185,7 +185,7 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	fechavece, _ := time.Parse("2006-01-02", fvenc)
 
 	TIM.Serial = m.TIM.GenerarSerial()
-	TIM.Serial = m.TIM.Usuario[:3] + TIM.Serial
+	TIM.Serial = TIM.Usuario + TIM.Serial
 	TIM.FechaCreacion = fecha
 	TIM.FechaVencimiento = fechavece
 	TIM.Nombre = m.Persona.DatoBasico.NombrePrimero
