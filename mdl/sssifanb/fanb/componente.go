@@ -14,13 +14,6 @@ type Componente struct {
 	Grado  []Grado `json:"Grado" bson:"Grado"`
 }
 
-type Grado struct {
-	Codigo      string `json:"codigo" bson:"codigo"`
-	Rango       string `json:"rango" bson:"rango"`
-	Nombre      string `json:"nombre" bson:"nombre"`
-	Descripcion string `json:"descripcion" bson:"descripcion"`
-}
-
 //Mensaje del sistema
 type Mensaje struct {
 	Mensaje string `json:"msj"`

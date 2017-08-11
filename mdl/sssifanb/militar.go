@@ -133,11 +133,11 @@ func (m *Militar) Conversion() {
 }
 
 //ConversionGrado Grados
-func (m *Militar) ConversionGrado() {
+/*func (m *Militar) ConversionGrado() {
 	if m.Situacion == "RCP" {
 
 	}
-}
+}*/
 
 //Consultar una persona mediante el metodo de MongoDB
 func (m *Militar) Consultar() (jSon []byte, err error) {
