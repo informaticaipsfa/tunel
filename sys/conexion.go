@@ -12,8 +12,9 @@ import (
 )
 
 //MongoDBConexion Conexion a Mongo DB
-func MongoDBConexion() {
-	MGOSession, Error = mgo.Dial("localhost:27017")
+func MongoDBConexion(mapa map[string]CadenaDeConexion) {
+	c := mapa["mongodb"]
+	MGOSession, Error = mgo.Dial(c.Host + ":27017")
 	fmt.Println("Cargando Conexión Con MongoDB...")
 	util.Error(Error)
 }

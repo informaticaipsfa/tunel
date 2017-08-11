@@ -110,7 +110,10 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		Cabecera(w, r)
 		token, e := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &seguridad.Reclamaciones{}, func(token *jwt.Token) (interface{}, error) {
-			// fmt.Println(token.Claims)
+			//var claims jwt.Claims
+			reclamacion := token.Claims.(*seguridad.Reclamaciones)
+			UsuarioConectado = reclamacion.Usuario
+			fmt.Println("Se esta conectando: ", reclamacion.Usuario.Nombre, " Desde: ", reclamacion.Usuario.FirmaDigital.DireccionIP)
 			return seguridad.LlavePublica, nil
 		})
 

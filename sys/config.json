@@ -31,9 +31,9 @@
 {
   "Driver" : "mongodb",
   "Usuario" : "mongodb",
-  "Basedatos": "pace",
-  "Clave" : "za63qj2p",
-  "Host" : "localhost",
+  "Basedatos": "sssifanb",
+  "Clave" : "6pt33pSUz",
+  "Host" : "192.168.6.45",
   "Puerto" : "27017"
 }
 ]

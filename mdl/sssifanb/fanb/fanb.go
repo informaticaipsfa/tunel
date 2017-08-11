@@ -7,4 +7,5 @@ const (
 	CATEGORIA  string = "categoria"
 	GRADO      string = "grado"
 	SEMILLERO  string = "semillero"
+	TRAZA      string = "traza"
 )

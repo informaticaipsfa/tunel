@@ -3,6 +3,7 @@ package sssifanb
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 	"time"
 
@@ -105,7 +106,7 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
 	}
 	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
+		log.Println("Cedula: " + id + " -> " + err.Error())
 		return
 	}
 
@@ -161,7 +162,6 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
 	layOut := "2006-01-02"
 
-	fmt.Println(Anio, edad)
 	switch {
 	case edad < 15:
 		Anio += 5
@@ -185,6 +185,7 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 
 	fechaVencimientoCarnet, _ := time.Parse(layOut, fecha)
 	TIM.Serial = TIM.GenerarSerial()
+	TIM.Serial = TIM.Usuario[:3] + TIM.Serial
 	TIM.FechaCreacion = fechaActual
 	TIM.FechaVencimiento = fechaVencimientoCarnet
 	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
@@ -197,10 +198,10 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	TIM.Tipo = 0
 	TIM.Estatus = 0
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	carnet["estatuscarnet"] = 1
-	err := c.Update(bson.M{"id": f.Persona.DatoBasico.Cedula}, bson.M{"$set": carnet})
+	carnet["familiar.$.estatuscarnet"] = 1
+	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
 	if err != nil {
-		return
+		fmt.Println("Err. Creando Estatus de Carnet para hijos")
 	}
 	return
 }
@@ -226,7 +227,7 @@ func (f *Familiar) ContarFamiliar() {
 
 //AplicarReglasCarnetPadres Reglas
 func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
-
+	carnet := make(map[string]interface{})
 	var mes, dia string
 	var fechaVencimiento time.Time
 	fechaActual := time.Now()
@@ -248,6 +249,8 @@ func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 	}
 
 	TIM.Serial = TIM.GenerarSerial()
+	fmt.Println(TIM.Usuario)
+	// TIM.Serial = TIM.Serial
 	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
 	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
 	TIM.FechaCreacion = fechaActual
@@ -257,13 +260,19 @@ func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 	TIM.Responsable = f.Persona.DatoBasico.Cedula
 	TIM.Tipo = 1
 	TIM.Estatus = 0
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	carnet["familiar.$.estatuscarnet"] = 1
+	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
+	if err != nil {
+		fmt.Println("Err. Creando Estatus de Carnet para hijos")
+	}
 	return
 
 }
 
 //AplicarReglasCarnetPadres Reglas
 func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
-
+	carnet := make(map[string]interface{})
 	var mes, dia string
 	var fechaVencimiento time.Time
 	fechaActual := time.Now()
@@ -294,6 +303,12 @@ func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 	TIM.Responsable = f.Persona.DatoBasico.Cedula
 	TIM.Tipo = 1
 	TIM.Estatus = 0
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	carnet["familiar.$.estatuscarnet"] = 1
+	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
+	if err != nil {
+		fmt.Println("Err. Creando Estatus de Carnet para hijos")
+	}
 	return
 
 }
