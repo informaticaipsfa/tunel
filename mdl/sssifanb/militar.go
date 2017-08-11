@@ -113,7 +113,7 @@ type Mensaje struct {
 //AplicarReglas Reglas Generales
 func (m *Militar) AplicarReglas() {
 	m.Conversion()
-	m.ConversionGrado()
+	// m.ConversionGrado()
 	a, mes, d := util.CalcularTiempo(m.FechaIngresoComponente)
 	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
 }

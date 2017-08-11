@@ -1,11 +1,10 @@
 package fanb
-package sssifanb
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -52,8 +51,17 @@ func (grad *Grado) Consultar(grado string) (jSon []byte, err error) {
 }
 
 //ConversionGrado Grados
-func (m *Militar) ConversionGrado() {
-	if m.Situacion == "RCP" {
+func (g *Grado) ConversionGrado() {
 
-	}
+	fmt.Println(obtenerGradoFideicomiso())
+
+}
+
+func obtenerGradoFideicomiso() string {
+	return `
+		SELECT c.componentecod, componentenombre, componentesiglas, gradocod,gradocodrangoid,gradonombrecorto,
+		gradonombrelargo
+		FROM ipsfa_grados AS g JOIN ipsfa_componentes AS c ON g.componentecod=c.componentecod
+		ORDER BY c.componentepriorpt,g.gradocodrangoid
+	`
 }

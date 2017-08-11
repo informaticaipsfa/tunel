@@ -1,11 +1,5 @@
 package estadistica
 
-import (
-	"strconv"
-
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
-)
-
 func personaMilitar() {
 	sSQL := `DROP TABLE IF EXISTS analisis.personas_militares;
 	CREATE TABLE analisis.personas_militares AS (
@@ -187,169 +181,171 @@ func obtenerMunicipiosParroquia() string { //MySQL
 			JOIN  analisis.parroquias ON analisis.municipios.id_municipio= analisis.parroquias.id_municipio
 			ORDER BY estado,municipio,parroquia`
 }
-func ActualizarPace(militar sssifanb.Militar) string {
-	// fecha_ingreso = ' . $this->fecha_ingreso .  '',
-	// f_ult_ascenso = ' . $this->fecha_ultimo_ascenso .  '',
-	// 	f_ingreso_sistema = ' . $this->fecha_ingreso .  '',
-	// 	f_creacion = ' . $this->fecha_creacion .  ',
-	// 	f_ult_modificacion = ' . $this->fecha_ultima_modificacion .  ',
-	return `UPDATE beneficiario SET
-		grado_id = ` + militar.Grado.Abreviatura + `,
-		nombres = '` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
-		apellidos = '` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
-		tiempo_servicio = '` + militar.TiempoSevicio + `',
 
-		n_hijos = ` + strconv.Itoa(militar.NumeroHijos()) + `,
+// func ActualizarPace(militar sssifanb.Militar) string {
+// 	// fecha_ingreso = ' . $this->fecha_ingreso .  '',
+// 	// f_ult_ascenso = ' . $this->fecha_ultimo_ascenso .  '',
+// 	// 	f_ingreso_sistema = ' . $this->fecha_ingreso .  '',
+// 	// 	f_creacion = ' . $this->fecha_creacion .  ',
+// 	// 	f_ult_modificacion = ' . $this->fecha_ultima_modificacion .  ',
+// 	return `UPDATE beneficiario SET
+// 		grado_id = ` + militar.Grado.Abreviatura + `,
+// 		nombres = '` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
+// 		apellidos = '` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
+// 		tiempo_servicio = '` + militar.TiempoSevicio + `',
+//
+// 		n_hijos = ` + strconv.Itoa(militar.NumeroHijos()) + `,
+//
+// 	  anio_reconocido = ` + strconv.Itoa(militar.AnoReconocido) + ` ,
+// 	  mes_reconocido = ` + strconv.Itoa(militar.MesReconocido) + `,
+// 	 	dia_reconocido = ` + strconv.Itoa(militar.DiaReconocido) + `,
+//
+//   	st_no_ascenso = ` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
+// 	 	st_profesion = ` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
+// 	 	sexo = '` + militar.Persona.DatoBasico.Sexo + `',
+//
+// 	 	usr_creacion ='tunel-ipsfa',
+//
+// 	 	usr_modificacion ='tunel-ipsfa',
+// 	 	observ_ult_modificacion='MODIFICACION POR TUNELES',
+// 	  WHERE cedula = '` + militar.Persona.DatoBasico.Cedula + `';`
+//
+// 	//echo $sActualizar;
+//
+// }
 
-	  anio_reconocido = ` + strconv.Itoa(militar.AnoReconocido) + ` ,
-	  mes_reconocido = ` + strconv.Itoa(militar.MesReconocido) + `,
-	 	dia_reconocido = ` + strconv.Itoa(militar.DiaReconocido) + `,
-
-  	st_no_ascenso = ` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
-	 	st_profesion = ` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
-	 	sexo = '` + militar.Persona.DatoBasico.Sexo + `',
-
-	 	usr_creacion ='tunel-ipsfa',
-
-	 	usr_modificacion ='tunel-ipsfa',
-	 	observ_ult_modificacion='MODIFICACION POR TUNELES',
-	  WHERE cedula = '` + militar.Persona.DatoBasico.Cedula + `';`
-
-	//echo $sActualizar;
-
-}
-
-func InsertarPace(militar sssifanb.Militar) string {
-	return ""
-	// \'' . $this->fecha_ingreso . '\',
-	// \'' . $this->fecha_ultimo_ascenso . '\',
-	// \'' . $this->fecha_ingreso_sistema . '\',
-	// \'' . $this->fecha_retiro . '\',
-	// \'' . $this->fecha_retiro_efectiva . '\',
-	// \'' . $this->fecha_creacion . '\',
-	// \'' . $this->fecha_ultima_modificacion . '\',
-	// \'' . $this->fecha_reincorporacion . '\'
-
-	// return `INSERT INTO hist_beneficiario (
-	// 		status_id,
-	// 		componente_id,
-	// 		grado_id,
-	// 		cedula,
-	// 		nombres,
-	// 		apellidos,
-	// 		tiempo_servicio,
-	// 		fecha_ingreso,
-	// 		edo_civil,
-	// 		n_hijos,
-	// 		f_ult_ascenso,
-	// 		anio_reconocido,
-	// 		mes_reconocido,
-	// 		dia_reconocido,
-	// 		f_ingreso_sistema,
-	// 		f_retiro,
-	// 		f_retiro_efectiva,
-	// 		st_no_ascenso,
-	// 		numero_cuenta,
-	// 		st_profesion,
-	// 		sexo,
-	// 		f_creacion,
-	// 		usr_creacion,
-	// 		f_ult_modificacion,
-	// 		usr_modificacion,
-	// 		observ_ult_modificacion,
-	// 		motivo_paralizacion,
-	// 		f_reincorporacion
-	// 	) VALUES ';
-	//
-	// 	$sInsertar .= '(
-	// 		\'' . $this->estatus_activo . '\',
-	// 		` + militar.Fideicomiso.ComponenteCodigo + `,
-	// 		` + militar.Fideicomiso.GradoCodigo + `,
-	// 		'` + militar.Persona.DatoBasico.Cedula + `',
-	// 		'` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
-	// 		'` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
-	// 		'` + militar.TiempoSevicio + `',
-	//
-	// 		'` + militar.Persona.DatoBasico.EstadoCivil + `'',
-	// 		` + strconv.Itoa(militar.NumeroHijos()) + `,
-	//
-	// 		` + strconv.Itoa(militar.AnoReconocido) + ` ,
-	// 	  ` + strconv.Itoa(militar.MesReconocido) + `,
-	// 	 	` + strconv.Itoa(militar.DiaReconocido) + `,
-	//
-	//
-	//
-	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
-	// 		'` + militar.Fideicomiso.CuentaBancaria + `',
-	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
-	// 		'` + militar.Persona.DatoBasico.Sexo + `',
-	//
-	// 		'tunel-ipsfa',
-	//
-	// 	 	'tunel-ipsfa',
-	// 	 	'INSERCION POR TUNELES',
-	// 		'` + militar.Fideicomiso.MotivoParalizacion + `',
-	//
-	// 	)';`
-
-	//echo $sInsertar;
-
-	//func ActualizarPersona(persona sssifanb.Persona) string {
-	//return `UPDATE personas SET
-	//_version_hb =0,
-	//tipnip = '`+ persona.DatoBasico.Nacionalidad +`',
-	//codnip = '` + persona.DatoBasico.Cedula +`',
-	//tipnit = '', nronit =0,
-	//nombreprimero = '` + persona.DatoBasico.NombrePrimero + `',
-	//nombresegundo ='` + persona.DatoBasico.NombreSegundo + `',
-	//apellidoprimero ='` + persona.DatoBasico.ApellidoPrimero + `',1:31 / 4:10
-	//apellidosegundo ='` + persona.DatoBasico.ApellidoSegundo + `,
-	//apellidocasada = '',
-	//prefijo = '',
-	// sufijo ='',
-	//nombrecompletoupp = '`+ persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
-	//nombrecompleto = '` + persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
-	//nombrecorto = '',
-	//apodo = '',
-	//imprimeapodo = '',
-	//nombrepersjuridica = '',
-	//siglaspersjuridica = '',Primero
-	//nacionalidadcod = '` + persona.DatoBasico.Nacionalidad + `',
-	//sexocod = '` + persona.DatoBasico.Sexo + `',
-	//edocivilcod = '` + persona.DatoBasico.estadocivil + `',,
-	//idiomanativocod = '',
-	//ocupactivcod = '',
-	//localidadcodnac = '',
-	//tratamientocod = '',
-	//fechanacimiento = '',
-	//fechadefuncion = '',
-	//email1 = '` + persona.Correo.Principal + `',
-	//email2 = '` + persona.Correo.Alternativo + `',,
-	//paginaweb = '',
-	//contacto =,'',
-	//capital =0,
-	//auditestatregistro = '',
-	//auditrazonoper = '',
-	//auditfechaanulac = '',
-	//auditfechacambio = '',
-	//audithoracambio = '',
-	//auditfechacreacion = '',
-	//audithoracreacion = '',
-	//auditcodusuario = '',
-	//auditcodsupervisor = '',
-	//campousuariochar_1 = '',
-	//campousuariochar_2 = '',
-	//campousuariochar_3 = '',
-	//campousuariochar_4 = '',
-	//campousuariochar_5 = '',
-	//campousuarionum_1 = '',
-	//campousuarionum_2 = '',
-	//campousuarionum_3 = '',
-	//campousuarionum_4 = '',
-	//campousuarionum_5 = ''
-	//where ciaopr=$53 and nropersona=$54 and _version_hb=$55 `
-
-}
+// func InsertarPace(militar sssifanb.Militar) string {
+// 	return ""
+// 	// \'' . $this->fecha_ingreso . '\',
+// 	// \'' . $this->fecha_ultimo_ascenso . '\',
+// 	// \'' . $this->fecha_ingreso_sistema . '\',
+// 	// \'' . $this->fecha_retiro . '\',
+// 	// \'' . $this->fecha_retiro_efectiva . '\',
+// 	// \'' . $this->fecha_creacion . '\',
+// 	// \'' . $this->fecha_ultima_modificacion . '\',
+// 	// \'' . $this->fecha_reincorporacion . '\'
+//
+// 	// return `INSERT INTO hist_beneficiario (
+// 	// 		status_id,
+// 	// 		componente_id,
+// 	// 		grado_id,
+// 	// 		cedula,
+// 	// 		nombres,
+// 	// 		apellidos,
+// 	// 		tiempo_servicio,
+// 	// 		fecha_ingreso,
+// 	// 		edo_civil,
+// 	// 		n_hijos,
+// 	// 		f_ult_ascenso,
+// 	// 		anio_reconocido,
+// 	// 		mes_reconocido,
+// 	// 		dia_reconocido,
+// 	// 		f_ingreso_sistema,
+// 	// 		f_retiro,
+// 	// 		f_retiro_efectiva,
+// 	// 		st_no_ascenso,
+// 	// 		numero_cuenta,
+// 	// 		st_profesion,
+// 	// 		sexo,
+// 	// 		f_creacion,
+// 	// 		usr_creacion,
+// 	// 		f_ult_modificacion,
+// 	// 		usr_modificacion,
+// 	// 		observ_ult_modificacion,
+// 	// 		motivo_paralizacion,
+// 	// 		f_reincorporacion
+// 	// 	) VALUES ';
+// 	//
+// 	// 	$sInsertar .= '(
+// 	// 		\'' . $this->estatus_activo . '\',
+// 	// 		` + militar.Fideicomiso.ComponenteCodigo + `,
+// 	// 		` + militar.Fideicomiso.GradoCodigo + `,
+// 	// 		'` + militar.Persona.DatoBasico.Cedula + `',
+// 	// 		'` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
+// 	// 		'` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
+// 	// 		'` + militar.TiempoSevicio + `',
+// 	//
+// 	// 		'` + militar.Persona.DatoBasico.EstadoCivil + `'',
+// 	// 		` + strconv.Itoa(militar.NumeroHijos()) + `,
+// 	//
+// 	// 		` + strconv.Itoa(militar.AnoReconocido) + ` ,
+// 	// 	  ` + strconv.Itoa(militar.MesReconocido) + `,
+// 	// 	 	` + strconv.Itoa(militar.DiaReconocido) + `,
+// 	//
+// 	//
+// 	//
+// 	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
+// 	// 		'` + militar.Fideicomiso.CuentaBancaria + `',
+// 	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
+// 	// 		'` + militar.Persona.DatoBasico.Sexo + `',
+// 	//
+// 	// 		'tunel-ipsfa',
+// 	//
+// 	// 	 	'tunel-ipsfa',
+// 	// 	 	'INSERCION POR TUNELES',
+// 	// 		'` + militar.Fideicomiso.MotivoParalizacion + `',
+// 	//
+// 	// 	)';`
+//
+// 	//echo $sInsertar;
+// 	//<<<<<<< HEAD
+//
+// 	//func ActualizarPersona(persona sssifanb.Persona) string {
+// 	//return `UPDATE personas SET
+// 	//_version_hb =0,
+// 	//tipnip = '`+ persona.DatoBasico.Nacionalidad +`',
+// 	//codnip = '` + persona.DatoBasico.Cedula +`',
+// 	//tipnit = '', nronit =0,
+// 	//nombreprimero = '` + persona.DatoBasico.NombrePrimero + `',
+// 	//nombresegundo ='` + persona.DatoBasico.NombreSegundo + `',
+// 	//apellidoprimero ='` + persona.DatoBasico.ApellidoPrimero + `',1:31 / 4:10
+// 	//apellidosegundo ='` + persona.DatoBasico.ApellidoSegundo + `,
+// 	//apellidocasada = '',
+// 	//prefijo = '',
+// 	// sufijo ='',
+// 	//nombrecompletoupp = '`+ persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
+// 	//nombrecompleto = '` + persona.DatoBasico.ConcatenarNombre() + persona.DatoBasico.ConcatenarApellido() + `',
+// 	//nombrecorto = '',
+// 	//apodo = '',
+// 	//imprimeapodo = '',
+// 	//nombrepersjuridica = '',
+// 	//siglaspersjuridica = '',Primero
+// 	//nacionalidadcod = '` + persona.DatoBasico.Nacionalidad + `',
+// 	//sexocod = '` + persona.DatoBasico.Sexo + `',
+// 	//edocivilcod = '` + persona.DatoBasico.estadocivil + `',,
+// 	//idiomanativocod = '',
+// 	//ocupactivcod = '',
+// 	//localidadcodnac = '',
+// 	//tratamientocod = '',
+// 	//fechanacimiento = '',
+// 	//fechadefuncion = '',
+// 	//email1 = '` + persona.Correo.Principal + `',
+// 	//email2 = '` + persona.Correo.Alternativo + `',,
+// 	//paginaweb = '',
+// 	//contacto =,'',
+// 	//capital =0,
+// 	//auditestatregistro = '',
+// 	//auditrazonoper = '',
+// 	//auditfechaanulac = '',
+// 	//auditfechacambio = '',
+// 	//audithoracambio = '',
+// 	//auditfechacreacion = '',
+// 	//audithoracreacion = '',
+// 	//auditcodusuario = '',
+// 	//auditcodsupervisor = '',
+// 	//campousuariochar_1 = '',
+// 	//campousuariochar_2 = '',
+// 	//campousuariochar_3 = '',
+// 	//campousuariochar_4 = '',
+// 	//campousuariochar_5 = '',
+// 	//campousuarionum_1 = '',
+// 	//campousuarionum_2 = '',
+// 	//campousuarionum_3 = '',
+// 	//campousuarionum_4 = '',
+// 	//campousuarionum_5 = ''
+// 	//where ciaopr=$53 and nropersona=$54 and _version_hb=$55 `
+//
+// }
 
 //
 // func InsertarSAMAN(militar sssifanb.Militar) string {
