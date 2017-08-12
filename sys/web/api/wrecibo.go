@@ -38,8 +38,7 @@ func (wre *WRecibo) Insertar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//e := militar.SalvarMGOI("militares", objeto)
-	recibo.Usuario = UsuarioConectado.Login
-
+	recibo.Usuario = strings.ToUpper(UsuarioConectado.Login)
 	recibo.IP = ip[0]
 	e := recibo.Salvar()
 	if e != nil {

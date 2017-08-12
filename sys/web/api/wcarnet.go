@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gorilla/mux"
@@ -68,7 +69,10 @@ func (wca *WCarnet) Listar(w http.ResponseWriter, r *http.Request) {
 	var Carnet sssifanb.Carnet
 	var estatus = mux.Vars(r)
 	nivel, _ := strconv.Atoi(estatus["id"])
-	j, e := Carnet.Listar(nivel)
+
+	usuario := UsuarioConectado.Login[:3]
+	fmt.Println(strings.ToUpper(usuario))
+	j, e := Carnet.Listar(nivel, strings.ToUpper(usuario))
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))
@@ -84,8 +88,9 @@ func (wca *WCarnet) Aprobar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var Carnet sssifanb.Carnet
 	var nivel = mux.Vars(r)
-	estatus, _ := strconv.Atoi(nivel["estatus"])
 	serial := nivel["serial"]
+	estatus, _ := strconv.Atoi(nivel["estatus"])
+	fmt.Println(nivel, "  NIVEL ", serial)
 	e := Carnet.CambiarEstado(serial, estatus)
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)

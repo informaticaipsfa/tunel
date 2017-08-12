@@ -59,13 +59,10 @@ func (tim *Carnet) Salvar() (err error) {
 	militar.TIM.IDF = tim.IDF
 	militar.TIM.IP = tim.IP
 	militar.TIM.Motivo = tim.Motivo
+	militar.TIM.Usuario = tim.Usuario
 
 	if tim.ID == tim.IDF { // Carnet Titulares
 		militar.TIM, _ = militar.GenerarCarnet()
-		militar.TIM.IP = tim.IP
-		militar.TIM.Motivo = tim.Motivo
-		militar.TIM.Usuario = tim.Usuario
-
 		c := sys.MGOSession.DB(CBASE).C(CTIM)
 		err = c.Insert(militar.TIM)
 	} else { //Carnet de Familiares
@@ -74,6 +71,7 @@ func (tim *Carnet) Salvar() (err error) {
 		for _, v := range militar.Familiar {
 			if v.Persona.DatoBasico.Cedula == tim.IDF {
 				Parenstesco = v.Parentesco
+
 				switch v.Parentesco {
 				case "PD":
 					TIMS = v.AplicarReglasCarnetPadres()
@@ -90,6 +88,7 @@ func (tim *Carnet) Salvar() (err error) {
 				}
 			}
 		}
+
 		TIMS.Motivo = tim.Motivo
 		TIMS.IP = tim.IP
 		TIMS.ID = tim.ID
@@ -100,6 +99,7 @@ func (tim *Carnet) Salvar() (err error) {
 		TIMS.Grado.Abreviatura = militar.Grado.Abreviatura
 		TIMS.Grado.Descripcion = militar.Grado.Descripcion
 		TIMS.Grado.Nombre = Parenstesco
+		TIMS.Serial = tim.Usuario + TIMS.Serial
 		c := sys.MGOSession.DB(CBASE).C(CTIM)
 		err = c.Insert(TIMS)
 	}
@@ -125,10 +125,11 @@ func (tim *Carnet) Consultar(id string) (err error) {
 }
 
 //Listar Carnet Propios
-func (tim *Carnet) Listar(estatus int) (jSon []byte, err error) {
+func (tim *Carnet) Listar(estatus int, usuario string) (jSon []byte, err error) {
 	var lst []Carnet
 	c := sys.MGOSession.DB(CBASE).C("tim")
-	err = c.Find(bson.M{"estatus": estatus}).All(&lst)
+	consulta := usuario + "*"
+	err = c.Find(bson.M{"estatus": estatus, "usuario": bson.M{"$regex": consulta}}).All(&lst)
 
 	if err != nil {
 		fmt.Println("No se encontraron registros")

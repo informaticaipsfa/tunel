@@ -7,10 +7,10 @@
   "Puerto" : "5432"
 },{
   "Driver" : "pace",
-  "Usuario" : "mercy",
+  "Usuario" : "postgres",
   "Basedatos": "pace",
-  "Clave" : "mercy792",
-  "Host" : "192.168.12.161",
+  "Clave" : "za63qj2p",
+  "Host" : "localhost",
   "Puerto" : "5432"
 },{
   "Driver" : "tarjeta",

@@ -185,7 +185,6 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 
 	fechaVencimientoCarnet, _ := time.Parse(layOut, fecha)
 	TIM.Serial = TIM.GenerarSerial()
-	TIM.Serial = TIM.Usuario + TIM.Serial
 	TIM.FechaCreacion = fechaActual
 	TIM.FechaVencimiento = fechaVencimientoCarnet
 	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
@@ -211,18 +210,30 @@ func (f *Familiar) IncluirFamiliar() (err error) {
 	familiar := make(map[string]interface{})
 	familiar["familiar"] = f
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
-	var result Familiar
+	// var fam map[string]interface{}
 	var parametro string
-	e := c.Find(bson.M{"id": f.DocumentoPadre, "familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula}).Select(bson.M{"familiar": true}).One(&result)
-	if e != nil {
-		fmt.Println("Insertando...", e.Error())
+	//
+	// fmt.Println("cedula", f.DocumentoPadre, " familiar ", f.Persona.DatoBasico.Cedula)
+	// donde := bson.M{"id": f.DocumentoPadre, "familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula}
+	// e := c.Find(donde).Select(bson.M{"familiar.persona.datobasico.cedula": true, "_id": 0}).One(&fam)
+	// if e != nil {
+	// 	fmt.Println("Insertando...", e.Error())
+	// 	// return
+	// }
 
-	}
-	// parametro = "$push"
+	// m := fam.(map[string]map[string]map[string]map[string]string)
+	// fmt.Println(fam)
+	// fmt.Println("Actualizando...")
+	// fami := fam["familiar"]
+	// for fami {
+	// 	fmt.Println(c, v)
+	//
+	// }
 
-	parametro = "$set"
-	fmt.Println("Actualizando...")
-	fmt.Println(result)
+	parametro = "$push"
+	// if fam.Persona.DatoBasico.Cedula != "" {
+	// 	parametro = "$set"
+	// }
 	err = c.Update(bson.M{"id": f.DocumentoPadre}, bson.M{parametro: familiar})
 	if err != nil {
 		fmt.Println(" " + err.Error())
@@ -260,8 +271,6 @@ func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 	}
 
 	TIM.Serial = TIM.GenerarSerial()
-	TIM.Serial = TIM.Usuario + TIM.Serial
-
 	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
 	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
 	TIM.FechaCreacion = fechaActual

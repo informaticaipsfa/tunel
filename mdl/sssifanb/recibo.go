@@ -28,6 +28,7 @@ func (r *Recibo) Salvar() (err error) {
 	TIM.Motivo = r.Motivo
 	TIM.Usuario = r.Usuario[:3]
 	TIM.Salvar()
+
 	c := sys.MGOSession.DB(CBASE).C(CRECIBO)
 	err = c.Insert(r)
 	return

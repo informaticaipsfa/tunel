@@ -184,8 +184,9 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	fvenc := strconv.Itoa(a) + "-" + mes + "-" + dia
 	fechavece, _ := time.Parse("2006-01-02", fvenc)
 
-	TIM.Serial = m.TIM.GenerarSerial()
-	TIM.Serial = TIM.Usuario + TIM.Serial
+	serial := m.TIM.Usuario + m.TIM.GenerarSerial()
+	fmt.Println("Geenerando Carnet Militar: ", serial)
+	TIM.Serial = serial
 	TIM.FechaCreacion = fecha
 	TIM.FechaVencimiento = fechavece
 	TIM.Nombre = m.Persona.DatoBasico.NombrePrimero
@@ -197,7 +198,10 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	TIM.ID = m.ID
 	TIM.Tipo = 0
 	TIM.Estatus = 0
+	TIM.IP = m.TIM.IP
+	TIM.Motivo = m.TIM.Motivo
 	TIM.Usuario = m.TIM.Usuario
+	// TIM.Usuario = m.TIM.Usuario
 	carnet := make(map[string]interface{})
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
 	carnet["estatuscarnet"] = 1

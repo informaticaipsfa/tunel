@@ -34,8 +34,6 @@ func init() {
 	if sys.MongoDB {
 		//fmt.Println("Metodo de Encriptamiento ", seguridad.Encriptamiento, "...")
 		// sys.MongoDBConexion()
-		//sys.PostgresDBConexion()
-
 		fmt.Println("")
 		fmt.Println("..........................................................")
 		fmt.Println("... Iniciando Carga de Elemento Para el servidor WEB   ...")
