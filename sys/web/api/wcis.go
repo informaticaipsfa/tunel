@@ -17,7 +17,7 @@ import (
 //WRecibo Familiares
 type WCis struct {
 	ID        string
-	Reembolso tramitacion.ReembolsoMedico
+	Reembolso tramitacion.Reembolso
 }
 
 //Consultar Militares
@@ -32,7 +32,7 @@ func (wcis *WCis) RegistrarReembolso(w http.ResponseWriter, r *http.Request) {
 	wcis.Reembolso.FechaCreacion = time.Now()
 	wcis.Reembolso.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	util.Error(e)
-	cis.ServicioMedico.Programa.ReembolsoMedico = append(cis.ServicioMedico.Programa.ReembolsoMedico, wcis.Reembolso)
+	cis.ServicioMedico.Programa.Reembolso = append(cis.ServicioMedico.Programa.Reembolso, wcis.Reembolso)
 	cis.CrearReembolso(wcis.ID)
 	fmt.Println(wcis.ID)
 	fmt.Println("obj: ", cis)

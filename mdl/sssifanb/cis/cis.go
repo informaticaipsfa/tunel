@@ -31,7 +31,7 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string) (jSon []byte, err erro
 	M.Mensaje = "Creando Reembolso"
 	M.Tipo = 1
 	reembolso := make(map[string]interface{})
-	reembolso["cis.serviciomedico.programa.reembolso"] = cuidado.ServicioMedico.Programa.ReembolsoMedico
+	reembolso["cis.serviciomedico.programa.reembolso"] = cuidado.ServicioMedico.Programa.Reembolso
 	c := sys.MGOSession.DB(CBASE).C("militar")
 	err = c.Update(bson.M{"id": id}, bson.M{"$push": reembolso})
 	if err != nil {

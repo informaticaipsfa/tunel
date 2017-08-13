@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type ReembolsoMedico struct {
+type Reembolso struct {
 	Numero          string         `json:"numero" bson:"numero"`
 	Estatus         int            `json:"estatus" bson:"estatus"`
 	MontoSolicitado float32        `json:"montosolicitado" bson:"montosolicitado"`

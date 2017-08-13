@@ -57,7 +57,7 @@ type Militar struct {
 	CodigoComponente       string              `json:"codigocomponente,omitempty" bson:"codigocomponente"`
 	NumeroHistoria         string              `json:"numerohistoria,omitempty" bson:"numerohistoria"`
 	EstatusCarnet          int                 `json:"estatuscarnet" bson:"estatuscarnet"`
-	CIS                    cis.CuidadoIntegral `json:"CIS,omitempty" bson:"cis"`
+	CIS                    cis.CuidadoIntegral `json:"CIS" bson:"cis"`
 }
 
 //Anomalia Irregularidades

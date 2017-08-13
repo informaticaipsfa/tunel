@@ -1,6 +1,6 @@
 package tramitacion
 
-type ApoyoEconomico struct {
+type Apoyo struct {
 	CasoParticular    []CasoParticular
 	CovenioSeguro     []ConvenioSeguro
 	FondoContingencia []FondoContingencia
