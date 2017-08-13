@@ -848,9 +848,9 @@ func (e *Estructura) ActualizarFechaDefuncion() (jSon []byte, err error) {
 		c := sys.MGOSession.DB("sssifanb").C("militar")
 		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
 
-		familiar := make(map[string]interface{})
-		familiar["familiar.$.persona.datobasico.fechadefuncion"] = fechavence
-		c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": ced}, bson.M{"$set": militar})
+		// familiar := make(map[string]interface{})
+		// familiar["familiar.$.persona.datobasico.fechadefuncion"] = fechavence
+		// c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": ced}, bson.M{"$set": militar})
 
 		i++
 		fmt.Println("Actualizando. ", i, " ID_ ", ced)
