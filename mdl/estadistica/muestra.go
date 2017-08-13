@@ -691,7 +691,6 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 			miliares++
 			cedula = cedulaAux
 			Historial = nil
-			fmt.Println("CANTIDAD: ", i, " MILITARES: ", cedula)
 		}
 		var prima sssifanb.Prima
 		historialpension.Directiva = util.ValidarNullString(direc)
