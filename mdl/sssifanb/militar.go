@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
 	"gopkg.in/mgo.v2/bson"
@@ -25,37 +26,38 @@ type Militar struct {
 	// Direccion              []Direccion `json:"Direccion,omitempty" bson:"direccion"`
 	// Telefono               []Telefono  `json:"Telefono,omitempty" bson:"telefono"`a
 	// Correo                 Correo      `json:"Correo,omitempty" bson:"correo"`
-	ID                     string             `json:"id,omitempty" bson:"id"`
-	TipoDato               int                `json:"tipodato,omitempty" bson:"tipodato"`
-	Persona                Persona            `json:"Persona,omitempty" bson:"persona"`
-	Categoria              string             `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
-	Situacion              string             `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
-	Clase                  string             `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
-	FechaIngresoComponente time.Time          `json:"fingreso,omitempty" bson:"fingreso"`
-	FechaAscenso           time.Time          `json:"fascenso,omitempty" bson:"fascenso"`
-	FechaRetiro            time.Time          `json:"fretiro,omitempty" bson:"fretiro"`
-	AnoReconocido          int                `json:"areconocido,omitempty" bson:"areconocido"`
-	MesReconocido          int                `json:"mreconocido,omitempty" bson:"mreconocido"`
-	DiaReconocido          int                `json:"dreconocido,omitempty" bson:"dreconocido"`
-	NumeroResuelto         string             `json:"nresuelto,omitempty" bson:"nresuelto"`
-	FechaResuelto          time.Time          `json:"fresuelto,omitempty" bson:"fresuelto"`
-	Posicion               int                `json:"posicion,omitempty" bson:"posicion"`
-	DescripcionHistorica   string             `json:"dhistorica,omitempty" bson:"dhistorica"` //codigo
-	Componente             Componente         `json:"Componente,omitempty" bson:"componente"`
-	Grado                  Grado              `json:"Grado,omitempty" bson:"grado"` //grado
-	TIM                    Carnet             `json:"Tim,omitempty" bson:"tim"`     //Tarjeta de Identificacion Militar
-	Familiar               []Familiar         `json:"Familiar" bson:"familiar"`
-	HistorialMilitar       []HistorialMilitar `json:"HistorialMilitar" bson:"historialmilitar"`
-	AppSaman               bool               `json:"appsaman" bson:"appsaman"`
-	AppPace                bool               `json:"apppace" bson:"apppace"`
-	AppNomina              bool               `json:"appnomina" bson:"appnomina"`
-	TiempoSevicio          string             `json:"tiemposervicio,omitempty" bson:"tiemposervicio,omitempty"`
-	Pension                Pension            `json:"Pension,omitempty" bson:"pension"`
-	Fideicomiso            Fideicomiso        `json:"Fideicomiso,omitempty" bson:"fideicomiso"`
-	Anomalia               Anomalia           `json:"Anomalia,omitempty" bson:"anomalia"`
-	CodigoComponente       string             `json:"codigocomponente,omitempty" bson:"codigocomponente"`
-	NumeroHistoria         string             `json:"numerohistoria,omitempty" bson:"numerohistoria"`
-	EstatusCarnet          int                `json:"estatuscarnet" bson:"estatuscarnet"`
+	ID                     string              `json:"id,omitempty" bson:"id"`
+	TipoDato               int                 `json:"tipodato,omitempty" bson:"tipodato"`
+	Persona                Persona             `json:"Persona,omitempty" bson:"persona"`
+	Categoria              string              `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Situacion              string              `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
+	Clase                  string              `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	FechaIngresoComponente time.Time           `json:"fingreso,omitempty" bson:"fingreso"`
+	FechaAscenso           time.Time           `json:"fascenso,omitempty" bson:"fascenso"`
+	FechaRetiro            time.Time           `json:"fretiro,omitempty" bson:"fretiro"`
+	AnoReconocido          int                 `json:"areconocido,omitempty" bson:"areconocido"`
+	MesReconocido          int                 `json:"mreconocido,omitempty" bson:"mreconocido"`
+	DiaReconocido          int                 `json:"dreconocido,omitempty" bson:"dreconocido"`
+	NumeroResuelto         string              `json:"nresuelto,omitempty" bson:"nresuelto"`
+	FechaResuelto          time.Time           `json:"fresuelto,omitempty" bson:"fresuelto"`
+	Posicion               int                 `json:"posicion,omitempty" bson:"posicion"`
+	DescripcionHistorica   string              `json:"dhistorica,omitempty" bson:"dhistorica"` //codigo
+	Componente             Componente          `json:"Componente,omitempty" bson:"componente"`
+	Grado                  Grado               `json:"Grado,omitempty" bson:"grado"` //grado
+	TIM                    Carnet              `json:"Tim,omitempty" bson:"tim"`     //Tarjeta de Identificacion Militar
+	Familiar               []Familiar          `json:"Familiar" bson:"familiar"`
+	HistorialMilitar       []HistorialMilitar  `json:"HistorialMilitar" bson:"historialmilitar"`
+	AppSaman               bool                `json:"appsaman" bson:"appsaman"`
+	AppPace                bool                `json:"apppace" bson:"apppace"`
+	AppNomina              bool                `json:"appnomina" bson:"appnomina"`
+	TiempoSevicio          string              `json:"tiemposervicio,omitempty" bson:"tiemposervicio,omitempty"`
+	Pension                Pension             `json:"Pension,omitempty" bson:"pension"`
+	Fideicomiso            Fideicomiso         `json:"Fideicomiso,omitempty" bson:"fideicomiso"`
+	Anomalia               Anomalia            `json:"Anomalia,omitempty" bson:"anomalia"`
+	CodigoComponente       string              `json:"codigocomponente,omitempty" bson:"codigocomponente"`
+	NumeroHistoria         string              `json:"numerohistoria,omitempty" bson:"numerohistoria"`
+	EstatusCarnet          int                 `json:"estatuscarnet" bson:"estatuscarnet"`
+	CIS                    cis.CuidadoIntegral `json:"CIS,omitempty" bson:"cis"`
 }
 
 //Anomalia Irregularidades
@@ -155,10 +157,29 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 			msj.Tipo = 0
 			jSon, err = json.Marshal(msj)
 		} else {
-			// militar.Persona.DatoBasico.FechaNacimiento = militar.Persona.DatoBasico.FechaNacimiento.UTC()
-			// militar.FechaIngresoComponente = militar.FechaIngresoComponente.UTC()
-			// militar.FechaAscenso = militar.FechaAscenso.UTC()
+			militar.AplicarReglas()
+			jSon, err = json.Marshal(militar)
+		}
+	}
+	return
+}
 
+//ConsultarCIS una persona mediante el metodo de MongoDB
+func (m *Militar) ConsultarCIS() (jSon []byte, err error) {
+	var militar Militar
+	var msj Mensaje
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	seleccionar := bson.M{"persona": true, "familiar": true, "cis": true}
+	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).Select(seleccionar).One(&militar)
+	if err != nil {
+		fmt.Println(err.Error())
+		msj.Tipo = 0
+		jSon, err = json.Marshal(msj)
+	} else {
+		if militar.Persona.DatoBasico.Cedula == "" {
+			msj.Tipo = 0
+			jSon, err = json.Marshal(msj)
+		} else {
 			militar.AplicarReglas()
 			jSon, err = json.Marshal(militar)
 		}
@@ -185,7 +206,7 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	fechavece, _ := time.Parse("2006-01-02", fvenc)
 
 	serial := m.TIM.Usuario + m.TIM.GenerarSerial()
-	fmt.Println("Geenerando Carnet Militar: ", serial)
+	// fmt.Println("Geenerando Carnet Militar: ", serial)
 	TIM.Serial = serial
 	TIM.FechaCreacion = fecha
 	TIM.FechaVencimiento = fechavece

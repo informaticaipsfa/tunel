@@ -1,4 +1,4 @@
-package cis
+package tramitacion
 
 type ApoyoEconomico struct {
 	CasoParticular    []CasoParticular
@@ -6,6 +6,6 @@ type ApoyoEconomico struct {
 	FondoContingencia []FondoContingencia
 }
 
-func (ae *ApoyoEconomico) Listar() []ApoyoEconomico {
-
-}
+// func (ae *ApoyoEconomico) Listar() []ApoyoEconomico {
+// 	return
+// }

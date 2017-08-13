@@ -14,6 +14,7 @@ type DatoBasico struct {
 	FechaNacimiento time.Time `json:"fechanacimiento" bson:"fechanacimiento"` //POR DEFINIR TIPO DE CAMPO
 	Sexo            string    `json:"sexo" bson:"sexo"`
 	EstadoCivil     string    `json:"estadocivil,omitempty" bson:"estadocivil"`
+	FechaDefuncion  string    `json:"fechadefuncion,omitempty" bson:"fechadefuncion"`
 }
 
 //AplicarReglas Politicas

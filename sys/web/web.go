@@ -88,6 +88,7 @@ func WMAdminLTE() {
 //CargarModulosWebDevel Cargador de modulos web
 func CargarModulosWebDevel() {
 	var wUsuario api.WUsuario
+	var wCis api.WCis
 	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
@@ -118,5 +119,7 @@ func CargarModulosWebDevel() {
 
 	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.CambiarClave).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.Opciones).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.RegistrarReembolso).Methods("POST")
 
 }

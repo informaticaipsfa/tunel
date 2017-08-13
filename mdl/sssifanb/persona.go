@@ -15,6 +15,5 @@ type Persona struct {
 	URLHuella         string            `json:"huella,omitempty" bson:"huella"`
 	URLFirma          string            `json:"firma,omitempty" bson:"firma"`
 	URLCedula         string            `json:"urlcedula,omitempty" bson:"urlcedula"`
-
 	// Militar         Militar          `json:"Militar,omitempty" bson:"militar"`
 }

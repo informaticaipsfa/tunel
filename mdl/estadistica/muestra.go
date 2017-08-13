@@ -21,7 +21,7 @@ import (
 //VNULL Validar
 const VNULL string = "null"
 
-//Estructura Generacion de Grupos de Datos
+// Estructura Generacion de Grupos de Datos
 type Estructura struct {
 	Cedula       string  `json:"cedula,omitempty"` //Identificador
 	Nropersona   int     `json:"nropersona,omitempty"`
@@ -691,6 +691,7 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 			miliares++
 			cedula = cedulaAux
 			Historial = nil
+			fmt.Println("CANTIDAD: ", i, " MILITARES: ", cedula)
 		}
 		var prima sssifanb.Prima
 		historialpension.Directiva = util.ValidarNullString(direc)
@@ -708,6 +709,7 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 
 		Historial = append(Historial, historialpension)
 		i++
+
 	}
 	var Militar sssifanb.Militar
 
@@ -769,5 +771,90 @@ func (e *Estructura) CrearUsuarios() (jSon []byte, err error) {
 	}
 	msj.Tipo = 1
 	jSon, err = json.Marshal(msj)
+	return
+}
+
+func (e *Estructura) ActualizarFechaCarnet() (jSon []byte, err error) {
+	var msj Mensaje
+
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerFechaVencimiento())
+	if err != nil {
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+
+	for sq.Next() {
+
+		var ced string
+		var fech sql.NullString
+		var fechavence time.Time
+		err = sq.Scan(&ced, &fech)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		layOut := "2006-01-02"
+		fecha := util.ValidarNullString(fech)
+		if fecha != VNULL {
+			dateString := strings.Replace(fecha, "/", "-", -1)
+			dateStamp, err := time.Parse(layOut, dateString)
+			if err == nil {
+				fechavence = dateStamp
+			}
+		}
+		militar := make(map[string]interface{})
+		militar["tim.fechavencimiento"] = fechavence
+		c := sys.MGOSession.DB("sssifanb").C("militar")
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
+
+		i++
+	}
+	return
+}
+
+func (e *Estructura) ActualizarFechaDefuncion() (jSon []byte, err error) {
+	var msj Mensaje
+
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerFechaDefuncion())
+	if err != nil {
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+
+	for sq.Next() {
+
+		var ced string
+		var fech sql.NullString
+		var fechavence time.Time
+		err = sq.Scan(&ced, &fech)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		layOut := "2006-01-02"
+		fecha := util.ValidarNullString(fech)
+		if fecha != VNULL {
+			dateString := strings.Replace(fecha, "/", "-", -1)
+			dateStamp, err := time.Parse(layOut, dateString)
+			if err == nil {
+				fechavence = dateStamp
+			}
+		}
+		militar := make(map[string]interface{})
+		militar["persona.datobasico.fechadefuncion"] = fechavence
+		c := sys.MGOSession.DB("sssifanb").C("militar")
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
+
+		familiar := make(map[string]interface{})
+		familiar["familiar.$.persona.datobasico.fechadefuncion"] = fechavence
+		c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": ced}, bson.M{"$set": militar})
+
+		i++
+		fmt.Println("Actualizando. ", i, " ID_ ", ced)
+	}
 	return
 }

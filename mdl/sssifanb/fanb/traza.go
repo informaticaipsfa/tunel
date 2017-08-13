@@ -14,6 +14,7 @@ type Traza struct {
 	Time      time.Time `json:"tiempo" bson:"tiempo"`
 	Log       string    `json:"log" bson:"log"`
 	Documento string    `json:"documento" bson:"documento"`
+	IP        string    `json:"ip" bson:"ip"`
 }
 
 //Crear Trazabilidad

@@ -145,6 +145,15 @@ func obtenerHistorialMilitar() string {
 	//WHERE p.nropersona IN (1393199,79227)
 
 }
+func obtenerFechaVencimiento() string {
+	return `SELECT codnip,fchvctocarnet FROM pers_dat_afiliac af
+		JOIN personas pr ON af.nropersona=pr.nropersona
+		WHERE fchvctocarnet != ''`
+}
+
+func obtenerFechaDefuncion() string {
+	return `select codnip, fechadefuncion from personas where fechadefuncion != ''`
+}
 
 func obtenerCuentaBancaria() string {
 	return `

@@ -60,7 +60,7 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var militar sssifanb.Militar
 
-	fmt.Println("POST...")
+	// fmt.Println("POST...")
 	err := json.NewDecoder(r.Body).Decode(&militar)
 	M.Tipo = 1
 	if err != nil {

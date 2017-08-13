@@ -46,7 +46,7 @@ func (c *Carnet) AplicarReglas() {
 //GenerarSerial Seriales de Carnet
 func (c *Carnet) GenerarSerial() string {
 	var Semillero fanb.Semillero
-	i, _ := Semillero.Maximo()
+	i, _ := Semillero.Maximo("semillero")
 	return util.CompletarCeros(strconv.Itoa(i), 0, 8)
 }
 

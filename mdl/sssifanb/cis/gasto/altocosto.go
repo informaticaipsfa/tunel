@@ -1,4 +1,4 @@
-package cis
+package gasto
 
 type AltoCosto struct {
 	Medicamento       string
@@ -6,6 +6,6 @@ type AltoCosto struct {
 	Farmacia          string
 }
 
-func (ac *AltoCosto) Listar() []AltoCosto {
-
-}
+// func (ac *AltoCosto) Listar() []AltoCosto {
+//
+// }

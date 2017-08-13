@@ -1,4 +1,4 @@
-package cis
+package tramitacion
 
 type ConvenioSeguro struct {
 }

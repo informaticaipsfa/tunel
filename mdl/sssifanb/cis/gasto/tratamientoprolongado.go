@@ -1,11 +1,11 @@
-package cis
+package gasto
 
 type TratamientoProlongado struct {
-    Medicamento       string
-    TiempoTratamiento int
-    Farmacia          string
+	Medicamento       string
+	TiempoTratamiento int
+	Farmacia          string
 }
 
-func (tp *TratamientoProlongado) Listar() []TratamientoProlongado {
-
-}
+// func (tp *TratamientoProlongado) Listar() []TratamientoProlongado {
+//
+// }

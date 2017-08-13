@@ -10,6 +10,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
 
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
@@ -78,7 +79,7 @@ func (u *WUsuario) CambiarClave(w http.ResponseWriter, r *http.Request) {
 //Login conexion para solicitud de token
 func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.Usuario
-
+	var traza fanb.Traza
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
@@ -88,11 +89,18 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	if usuario.Nombre != "" {
 		//usuario.Nombre = "Carlos"
 		usuario.Clave = ""
+
 		token := seguridad.GenerarJWT(usuario)
 		result := seguridad.RespuestaToken{Token: token}
 		j, e := json.Marshal(result)
 		util.Error(e)
-
+		ip := strings.Split(r.RemoteAddr, ":")
+		traza.Usuario = usuario.Login
+		traza.Time = time.Now()
+		traza.Log = "Inicio de sesión"
+		traza.IP = ip[0]
+		traza.Documento = "Usuario"
+		traza.Crear()
 		w.WriteHeader(http.StatusOK)
 		w.Write(j)
 	} else {
