@@ -26,14 +26,14 @@ type Mensaje struct {
 	Tipo    int    `json:"tipo"`
 }
 
-func (cuidado *CuidadoIntegral) CrearReembolso(id string) (jSon []byte, err error) {
+func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.Reembolso) (jSon []byte, err error) {
 	var M Mensaje
 	M.Mensaje = "Creando Reembolso"
 	M.Tipo = 1
-	reembolso := make(map[string]interface{})
-	reembolso["cis.serviciomedico.programa.reembolso"] = cuidado.ServicioMedico.Programa.Reembolso
+	reemb := make(map[string]interface{})
+	reemb["cis.serviciomedico.programa.reembolso"] = reembolso
 	c := sys.MGOSession.DB(CBASE).C("militar")
-	err = c.Update(bson.M{"id": id}, bson.M{"$push": reembolso})
+	err = c.Update(bson.M{"id": id}, bson.M{"$push": reemb})
 	if err != nil {
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return

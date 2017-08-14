@@ -20,7 +20,7 @@ type Carnet struct {
 	Tipo                    int        `json:"tipo,omitempty" bson:"tipo"` // 0: Militar 1: Empleado 2: Familiares
 	Nombre                  string     `json:"nombre,omitempty" bson:"nombre"`
 	Apellido                string     `json:"apellido,omitempty" bson:"apellido"`
-	Condicion               string     `json:"condicion,omitempty" bson:"condicion"`
+	Condicion               bool       `json:"condicion,omitempty" bson:"condicion"`
 	Serial                  string     `json:"serial,omitempty" bson:"serial"`
 	FechaCreacion           time.Time  `json:"fechacreacion,omitempty" bson:"fechacreacion"`
 	FechaVencimiento        time.Time  `json:"fechavencimiento,omitempty" bson:"fechavencimiento"`

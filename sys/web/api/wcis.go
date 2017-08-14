@@ -32,8 +32,8 @@ func (wcis *WCis) RegistrarReembolso(w http.ResponseWriter, r *http.Request) {
 	wcis.Reembolso.FechaCreacion = time.Now()
 	wcis.Reembolso.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	util.Error(e)
-	cis.ServicioMedico.Programa.Reembolso = append(cis.ServicioMedico.Programa.Reembolso, wcis.Reembolso)
-	cis.CrearReembolso(wcis.ID)
+	// cis.ServicioMedico.Programa.Reembolso = append(cis.ServicioMedico.Programa.Reembolso, wcis.Reembolso)
+	cis.CrearReembolso(wcis.ID, wcis.Reembolso)
 	fmt.Println(wcis.ID)
 	fmt.Println("obj: ", cis)
 	M.Tipo = 0

@@ -57,6 +57,7 @@ type Militar struct {
 	CodigoComponente       string              `json:"codigocomponente,omitempty" bson:"codigocomponente"`
 	NumeroHistoria         string              `json:"numerohistoria,omitempty" bson:"numerohistoria"`
 	EstatusCarnet          int                 `json:"estatuscarnet" bson:"estatuscarnet"`
+	PaseARetiro            bool                `json:"pasearetiro" bson:"pasearetiro"`
 	CIS                    cis.CuidadoIntegral `json:"CIS" bson:"cis"`
 }
 
@@ -217,6 +218,7 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	TIM.Grado.Abreviatura = m.Grado.Abreviatura
 	TIM.Grado.Descripcion = m.Grado.Descripcion
 	TIM.ID = m.ID
+	TIM.Condicion = m.PaseARetiro
 	TIM.Tipo = 0
 	TIM.Estatus = 0
 	TIM.IP = m.TIM.IP
@@ -344,6 +346,7 @@ func (m *Militar) MGOActualizar() (err error) {
 	mOriginal.NumeroResuelto = m.NumeroResuelto
 	mOriginal.CodigoComponente = m.CodigoComponente
 	mOriginal.NumeroHistoria = m.NumeroHistoria
+	mOriginal.PaseARetiro = m.PaseARetiro
 
 	//
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
