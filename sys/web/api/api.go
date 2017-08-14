@@ -4,8 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
 	"github.com/gorilla/mux"
 )
@@ -17,18 +20,27 @@ type Militar struct{}
 
 //Consultar Militares
 func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
+	var traza fanb.Traza
 	Cabecera(w, r)
 	var dataJSON sssifanb.Militar
 	var cedula = mux.Vars(r)
 	dataJSON.Persona.DatoBasico.Cedula = cedula["id"]
-	// fmt.Println(dataJSON.Persona.DatoBasico.Cedula)
 	j, e := dataJSON.Consultar()
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
+
 	fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = cedula["id"]
+	traza.Documento = "Consultando Militar"
+	traza.CrearHistoricoConsulta("historicoconsultas")
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }

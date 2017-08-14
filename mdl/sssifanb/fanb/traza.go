@@ -30,3 +30,10 @@ func (t *Traza) Consultar() (lst []Traza, err error) {
 	err = c.Find(bson.M{}).All(&lst)
 	return
 }
+
+//Crear Trazabilidad
+func (t *Traza) CrearHistoricoConsulta(colecion string) (err error) {
+	c := sys.MGOSession.DB(BASEDATOS).C(colecion)
+	err = c.Insert(t)
+	return
+}
