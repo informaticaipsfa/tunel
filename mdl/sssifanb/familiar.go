@@ -189,11 +189,6 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	TIM.FechaVencimiento = fechaVencimientoCarnet
 	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
 	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
-	// TIM.Componente.Abreviatura = m.Componente.Abreviatura
-	// TIM.Componente.Descripcion = m.Componente.Descripcion
-	// TIM.Grado.Abreviatura = m.Grado.Abreviatura
-	// TIM.Grado.Descripcion = m.Grado.Descripcion
-	// TIM.ID = f.Persona.DatoBasico.Cedula
 	TIM.Tipo = 0
 	TIM.Estatus = 0
 	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
@@ -201,6 +196,40 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
 	if err != nil {
 		fmt.Println("Err. Creando Estatus de Carnet para hijos")
+	}
+	return
+}
+
+//AplicarReglasCarnetHijos Reglas
+func (f *Familiar) AplicarReglasCarnetHermanos() (TIM Carnet) {
+	var mes, dia string
+	carnet := make(map[string]interface{})
+	fechaActual := time.Now()
+	Anio, Mes, Dia := fechaActual.Date()
+	layOut := "2006-01-02"
+	Anio += 1
+	mes = strconv.Itoa(int(Mes))
+	if int(Mes) < 10 {
+		mes = "0" + strconv.Itoa(int(Mes))
+	}
+	dia = strconv.Itoa(Dia)
+	if Dia < 10 {
+		dia = "0" + strconv.Itoa(Dia)
+	}
+	fecha := strconv.Itoa(Anio) + "-" + mes + "-" + dia
+	fechaVencimientoCarnet, _ := time.Parse(layOut, fecha)
+	TIM.Serial = TIM.GenerarSerial()
+	TIM.FechaCreacion = fechaActual
+	TIM.FechaVencimiento = fechaVencimientoCarnet
+	TIM.Nombre = f.Persona.DatoBasico.NombrePrimero
+	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
+	TIM.Tipo = 0
+	TIM.Estatus = 0
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	carnet["familiar.$.estatuscarnet"] = 1
+	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
+	if err != nil {
+		fmt.Println("Err. Creando Estatus de Carnet para hermanos")
 	}
 	return
 }

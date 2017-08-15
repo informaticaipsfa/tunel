@@ -85,6 +85,9 @@ func (tim *Carnet) Salvar() (err error) {
 				case "VI":
 					TIMS = v.AplicarReglasCarnetEsposa()
 					fmt.Println("Entrando, Esposa...")
+				case "HO":
+					TIMS = v.AplicarReglasCarnetHermanos()
+					fmt.Println("Entrando, Hermano...")
 				}
 			}
 		}
