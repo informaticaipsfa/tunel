@@ -22,10 +22,6 @@ const (
 
 //Militar militares
 type Militar struct {
-	//Persona                DatoBasico  `json:"Persona,omitempty" bson:"persona"`
-	// Direccion              []Direccion `json:"Direccion,omitempty" bson:"direccion"`
-	// Telefono               []Telefono  `json:"Telefono,omitempty" bson:"telefono"`a
-	// Correo                 Correo      `json:"Correo,omitempty" bson:"correo"`
 	ID                     string              `json:"id,omitempty" bson:"id"`
 	TipoDato               int                 `json:"tipodato,omitempty" bson:"tipodato"`
 	Persona                Persona             `json:"Persona,omitempty" bson:"persona"`

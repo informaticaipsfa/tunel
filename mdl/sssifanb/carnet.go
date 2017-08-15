@@ -113,14 +113,26 @@ func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 
 	carnet["estatus"] = estatus
 	fmt.Println(serial, " ", estatus)
-
 	err = c.Update(bson.M{"serial": serial}, bson.M{"$set": carnet})
+	if estatus == 3 {
+		err = tim.CambiarEstadoMilitar(serial)
+	}
 	return
 }
 
 //Consultar Carnets
-func (tim *Carnet) Consultar(id string) (err error) {
-
+func (tim *Carnet) CambiarEstadoMilitar(serial string) (err error) {
+	var TIM Carnet
+	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	err = c.Find(bson.M{"serial": serial}).One(&TIM)
+	if err != nil {
+		return
+	}
+	if TIM.ID != "" && TIM.IDF == "" {
+		carnet := make(map[string]interface{})
+		carnet["estatuscarnet"] = 0
+		err = c.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
+	}
 	return
 }
 
