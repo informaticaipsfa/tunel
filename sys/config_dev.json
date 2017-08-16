@@ -3,7 +3,7 @@
   "Usuario" : "ingrid",
   "Basedatos": "bs_saman",
   "Clave" : "ingpol123",
-  "Host" : "192.168.12.150",
+  "Host" : "192.168.12.170",
   "Puerto" : "5432"
 },{
   "Driver" : "pace",

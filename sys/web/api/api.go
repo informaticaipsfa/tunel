@@ -50,7 +50,7 @@ func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 	Cabecera(w, r)
 	var dataJSON sssifanb.Militar
-	fmt.Println(r.Body)
+	//fmt.Println(r.Body)
 	err := json.NewDecoder(r.Body).Decode(&dataJSON)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -59,7 +59,7 @@ func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
-	fmt.Println(dataJSON.Persona.DatoBasico.NroPersona)
+	//fmt.Println(dataJSON.Persona.DatoBasico.NroPersona)
 	j, _ := dataJSON.Actualizar()
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)

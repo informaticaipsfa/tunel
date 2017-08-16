@@ -36,11 +36,11 @@ func (d *DatoBasico) ConvertirNacionalidad() string {
 	nacionalidad := ""
 	switch d.Nacionalidad {
 	case "V":
-		nacionalidad = `VENEZOLANO (A)`
+		nacionalidad = `VEN`
 	case "M":
-		nacionalidad = `MENOR`
+		nacionalidad = `MEN`
 	case "E":
-		nacionalidad = `EXTRANJERO (A)`
+		nacionalidad = `EXT`
 
 	}
 	return nacionalidad
