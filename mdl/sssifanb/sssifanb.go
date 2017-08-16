@@ -31,6 +31,6 @@ func ActualizarPersona(persona Persona) string {
 		email2 = '` + persona.Correo.Alternativo + `',
 		auditfechacambio = '` + fechaSlashActual + `',
 		auditcodusuario = 'SSSIFANB'
-		WHERE nropersona=` + strconv.Itoa(persona.DatoBasico.NroPersona)
+		WHERE nropersona=` + strconv.Itoa(persona.DatoBasico.NroPersona) + ` AND codnip='` + persona.DatoBasico.Cedula + `'`
 
 }
