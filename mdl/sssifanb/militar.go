@@ -347,8 +347,6 @@ func (m *Militar) MGOActualizar() (err error) {
 	s := ActualizarPersona(m.Persona)
 	fmt.Println(m.Persona.DatoBasico.NroPersona)
 	go sys.PostgreSQLSAMAN.Exec(s)
-	fmt.Println(s)
-	fmt.Println("Actualizando Saman")
 	return
 }
 
