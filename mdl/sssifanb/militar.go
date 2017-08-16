@@ -353,7 +353,7 @@ func (m *Militar) SalvarMGO() (err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Insert(m)
 	if err != nil {
-		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: " err.Error())
+		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
 	}
 	return
 }
