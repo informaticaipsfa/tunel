@@ -22,23 +22,22 @@ type Grado struct {
 	Pgsql   string `json:"pgsql,omitempty"`
 }*/
 
-//SalvarMGO Guardar
+// SalvarMGO Guardar
 func (grad *Grado) SalvarMGO(colecion string) (err error) {
 	if colecion != "" {
-		c := sys.MGOSession.DB(BASEDATOS).C(colecion)
+		c := sys.MGOSession.DB(sys.CBASE).C(colecion)
 		err = c.Insert(grad)
 	} else {
-		c := sys.MGOSession.DB(BASEDATOS).C("grado")
+		c := sys.MGOSession.DB(sys.CBASE).C("grado")
 		err = c.Insert(grad)
 	}
-
 	return
 }
 
-//Consultar una persona mediante el metodo de MongoDB
+// Consultar una persona mediante el metodo de MongoDB
 func (grad *Grado) Consultar(grado string) (jSon []byte, err error) {
 	var msj Mensaje
-	c := sys.MGOSession.DB(BASEDATOS).C(GRADO)
+	c := sys.MGOSession.DB(sys.CBASE).C("grado")
 	err = c.Find(bson.M{"codigo": grado}).One(&grad)
 	if err != nil {
 		msj.Tipo = 0

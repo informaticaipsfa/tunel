@@ -131,18 +131,11 @@ func (m *Militar) Conversion() {
 	}
 }
 
-//ConversionGrado Grados
-/*func (m *Militar) ConversionGrado() {
-	if m.Situacion == "RCP" {
-
-	}
-}*/
-
 //Consultar una persona mediante el metodo de MongoDB
 func (m *Militar) Consultar() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 
 	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
 	if err != nil {
@@ -161,11 +154,11 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 	return
 }
 
-//ConsultarCIS una persona mediante el metodo de MongoDB
+// ConsultarCIS una persona mediante el metodo de MongoDB
 func (m *Militar) ConsultarCIS() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	seleccionar := bson.M{"persona": true, "familiar": true, "cis": true}
 	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).Select(seleccionar).One(&militar)
 	if err != nil {
@@ -222,7 +215,7 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	TIM.Usuario = m.TIM.Usuario
 	// TIM.Usuario = m.TIM.Usuario
 	carnet := make(map[string]interface{})
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	carnet["estatuscarnet"] = 1
 	err = c.Update(bson.M{"id": m.ID}, bson.M{"$set": carnet})
 
@@ -315,7 +308,7 @@ func (m *Militar) Actualizar() (jSon []byte, err error) {
 //ActualizarMGO Actualizar
 func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (err error) {
 
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": oid}, bson.M{"$set": familiar})
 
 	if err != nil {
@@ -345,7 +338,7 @@ func (m *Militar) MGOActualizar() (err error) {
 	mOriginal.PaseARetiro = m.PaseARetiro
 
 	//
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": mOriginal.ID}, &mOriginal)
 	if err != nil {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
@@ -357,17 +350,17 @@ func (m *Militar) MGOActualizar() (err error) {
 //SalvarMGO Guardar
 func (m *Militar) SalvarMGO() (err error) {
 
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Insert(m)
-
-	//fmt.Println(err)
-
+	if err != nil {
+		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: " err.Error())
+	}
 	return
 }
 
 //consultarMongo una persona mediante el metodo de MongoDB
 func consultarMongo(cedula string) (m Militar, err error) {
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Find(bson.M{"id": cedula}).One(&m)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -380,10 +373,10 @@ func consultarMongo(cedula string) (m Militar, err error) {
 //SalvarMGOI Guardar
 func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 	if colecion != "" {
-		c := sys.MGOSession.DB(CBASE).C(colecion)
+		c := sys.MGOSession.DB(sys.CBASE).C(colecion)
 		err = c.Insert(objeto)
 	} else {
-		c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 		err = c.Insert(objeto)
 	}
 
@@ -394,14 +387,14 @@ func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 
 //ConsultarMGO una persona mediante el metodo de MongoDB
 func (m *Militar) ConsultarMGO(cedula string) (err error) {
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Find(bson.M{"id": cedula}).One(&m)
 	return
 }
 
 //ListarMGO Listado General
 func (m *Militar) ListarMGO(cedula string) (lst []Militar, err error) {
-	c := sys.MGOSession.DB(CBASE).C("persona")
+	c := sys.MGOSession.DB(sys.CBASE).C("persona")
 	err = c.Find(bson.M{}).All(&lst)
 	return
 }

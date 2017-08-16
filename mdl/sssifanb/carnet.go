@@ -63,7 +63,7 @@ func (tim *Carnet) Salvar() (err error) {
 
 	if tim.ID == tim.IDF { // Carnet Titulares
 		militar.TIM, _ = militar.GenerarCarnet()
-		c := sys.MGOSession.DB(CBASE).C(CTIM)
+		c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 		err = c.Insert(militar.TIM)
 	} else { //Carnet de Familiares
 		var TIMS Carnet
@@ -103,16 +103,17 @@ func (tim *Carnet) Salvar() (err error) {
 		TIMS.Grado.Descripcion = militar.Grado.Descripcion
 		TIMS.Grado.Nombre = Parenstesco
 		TIMS.Serial = tim.Usuario + TIMS.Serial
-		c := sys.MGOSession.DB(CBASE).C(CTIM)
+		c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 		err = c.Insert(TIMS)
 	}
 
 	return
 }
 
+// CambiarEstado Seleccionar estados
 func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 	carnet := make(map[string]interface{})
-	c := sys.MGOSession.DB(CBASE).C(CTIM)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 
 	carnet["estatus"] = estatus
 	fmt.Println(serial, " ", estatus)
@@ -126,7 +127,7 @@ func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 //Consultar Carnets
 func (tim *Carnet) CambiarEstadoMilitar(serial string) (err error) {
 	var TIM Carnet
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Find(bson.M{"serial": serial}).One(&TIM)
 	if err != nil {
 		return
@@ -142,7 +143,7 @@ func (tim *Carnet) CambiarEstadoMilitar(serial string) (err error) {
 //Listar Carnet Propios
 func (tim *Carnet) Listar(estatus int, usuario string) (jSon []byte, err error) {
 	var lst []Carnet
-	c := sys.MGOSession.DB(CBASE).C("tim")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 	consulta := usuario + "*"
 	err = c.Find(bson.M{"estatus": estatus, "usuario": bson.M{"$regex": consulta}}).All(&lst)
 

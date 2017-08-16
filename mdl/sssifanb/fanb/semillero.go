@@ -20,7 +20,7 @@ type Semillero struct {
 
 //SalvarMGO Guardar
 func (s *Semillero) SalvarMGO(coleccion string) (err error) {
-	c := sys.MGOSession.DB(BASEDATOS).C(coleccion)
+	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
 	err = c.Insert(s)
 	return
 }
@@ -42,7 +42,7 @@ func (s *Semillero) SalvarMGO(coleccion string) (err error) {
 
 //Maximo una persona mediante el metodo de MongoDB
 func (s *Semillero) Maximo(coleccion string) (maximo int, err error) {
-	c := sys.MGOSession.DB(BASEDATOS).C(coleccion)
+	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
 	orden := bson.M{"$sort": bson.M{"codigo": -1}}
 	limite := bson.M{"$limit": 1}
 	err = c.Pipe([]bson.M{orden, limite}).One(&s)

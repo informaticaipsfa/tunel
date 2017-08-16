@@ -1,9 +1,9 @@
 package sssifanb
 
 type BolentinIngreso struct {
-	tipopago   string
-	numeropago string
-	fechapago  string
-	canalpago  string //DESCRIPCION EJEMPLO CAJA 02
-	montopago  float32
+	Tipopago   string
+	NumeroPago string
+	FechaPago  string
+	CanalPago  string //DESCRIPCION EJEMPLO CAJA 02
+	MontoPago  float32
 }

@@ -23,10 +23,10 @@ type Categoria struct {
 //SalvarMGO Guardar
 func (cate *Categoria) SalvarMGO(colecion string) (err error) {
 	if colecion != "" {
-		c := sys.MGOSession.DB(BASEDATOS).C(colecion)
+		c := sys.MGOSession.DB(sys.CBASE).C(colecion)
 		err = c.Insert(cate)
 	} else {
-		c := sys.MGOSession.DB(BASEDATOS).C("categoria")
+		c := sys.MGOSession.DB(sys.CBASE).C("categoria")
 		err = c.Insert(cate)
 	}
 
@@ -36,7 +36,7 @@ func (cate *Categoria) SalvarMGO(colecion string) (err error) {
 //Consultar una persona mediante el metodo de MongoDB
 func (cate *Categoria) Consultar(categoria string) (jSon []byte, err error) {
 	var msj Mensaje
-	c := sys.MGOSession.DB(BASEDATOS).C(CATEGORIA)
+	c := sys.MGOSession.DB(sys.CBASE).C("categoria")
 	err = c.Find(bson.M{"codigo": categoria}).One(&cate)
 	if err != nil {
 		msj.Tipo = 0

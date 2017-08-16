@@ -31,7 +31,7 @@ type Municipio struct {
 //SalvarMGO Guardar
 func (e *Estado) SalvarMGO(colecion string) (err error) {
 	if colecion != "" {
-		c := sys.MGOSession.DB(BASEDATOS).C(colecion)
+		c := sys.MGOSession.DB(sys.CBASE).C(colecion)
 		err = c.Insert(e)
 	} else {
 		c := sys.MGOSession.DB("ipsfa_test").C("estado")
@@ -44,7 +44,7 @@ func (e *Estado) SalvarMGO(colecion string) (err error) {
 func (e *Estado) ConsultarEstado() (jSon []byte, err error) {
 	var msj Mensaje
 	var lst []interface{}
-	c := sys.MGOSession.DB(BASEDATOS).C(ESTADO)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CESTADO)
 	err = c.Find(nil).All(&lst)
 	if err != nil {
 		msj.Tipo = 0
@@ -59,7 +59,7 @@ func (e *Estado) ConsultarEstado() (jSon []byte, err error) {
 //Consultar una persona mediante el metodo de MongoDB
 func (e *Estado) Consultar(estado string) (jSon []byte, err error) {
 	var msj Mensaje
-	c := sys.MGOSession.DB(BASEDATOS).C(ESTADO)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CESTADO)
 	err = c.Find(bson.M{"codigo": estado}).One(&e)
 	if err != nil {
 		msj.Tipo = 0
@@ -73,7 +73,7 @@ func (e *Estado) Consultar(estado string) (jSon []byte, err error) {
 
 //ActualizarMGO Actualizar
 func (e *Estado) ActualizarMGO(donde bson.M, estado map[string]interface{}) (err error) {
-	c := sys.MGOSession.DB(BASEDATOS).C(ESTADO)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CESTADO)
 	err = c.Update(donde, bson.M{"$set": estado})
 
 	if err != nil {

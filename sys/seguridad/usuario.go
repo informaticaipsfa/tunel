@@ -13,7 +13,6 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
 )
@@ -148,7 +147,7 @@ func (usr *Usuario) Salvar() error {
 //Validar Usuarios
 func (u *Usuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
+	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
 	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false}).One(&u)
 
 	return
@@ -157,7 +156,7 @@ func (u *Usuario) Validar(login string, clave string) (err error) {
 func CrearClaveTodos() {
 	var usuario []Usuario
 	// var lst []interface{}
-	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
+	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
 	err := c.Find(nil).All(&usuario)
 	if err != nil {
 		return
@@ -178,7 +177,7 @@ func CrearClaveTodos() {
 //Validar Usuarios
 func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB(sssifanb.CBASE).C("usuario")
+	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
 	actualizar := make(map[string]interface{})
 	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
 	antigua := util.GenerarHash256([]byte(clave))

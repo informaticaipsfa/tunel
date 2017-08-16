@@ -98,7 +98,7 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	id := f.Persona.DatoBasico.Cedula
 	familiar := make(map[string]interface{})
 	familiar["familiar.$.persona"] = f.Persona
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	if f.ID != id {
 		fmt.Println("Cambio de Cedula de un familiar: ", id)
 		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": f.ID}, bson.M{"$set": familiar})
@@ -191,7 +191,7 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
 	TIM.Tipo = 0
 	TIM.Estatus = 0
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	carnet["familiar.$.estatuscarnet"] = 1
 	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
 	if err != nil {
@@ -225,7 +225,7 @@ func (f *Familiar) AplicarReglasCarnetHermanos() (TIM Carnet) {
 	TIM.Apellido = f.Persona.DatoBasico.ApellidoPrimero
 	TIM.Tipo = 0
 	TIM.Estatus = 0
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	carnet["familiar.$.estatuscarnet"] = 1
 	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
 	if err != nil {
@@ -238,7 +238,7 @@ func (f *Familiar) AplicarReglasCarnetHermanos() (TIM Carnet) {
 func (f *Familiar) IncluirFamiliar() (err error) {
 	familiar := make(map[string]interface{})
 	familiar["familiar"] = f
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	// var fam map[string]interface{}
 	var parametro string
 	//
@@ -309,7 +309,7 @@ func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 	TIM.Responsable = f.Persona.DatoBasico.Cedula
 	TIM.Tipo = 1
 	TIM.Estatus = 0
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	carnet["familiar.$.estatuscarnet"] = 1
 	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
 	if err != nil {
@@ -353,7 +353,7 @@ func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 	TIM.Responsable = f.Persona.DatoBasico.Cedula
 	TIM.Tipo = 1
 	TIM.Estatus = 0
-	c := sys.MGOSession.DB(CBASE).C(CMILITAR)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	carnet["familiar.$.estatuscarnet"] = 1
 	err := c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": carnet})
 	if err != nil {
