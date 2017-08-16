@@ -144,7 +144,7 @@ func (tim *Carnet) CambiarEstadoMilitar(serial string) (err error) {
 func (tim *Carnet) Listar(estatus int, usuario string) (jSon []byte, err error) {
 	var lst []Carnet
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
-	consulta := usuario + "*"
+	consulta := usuario
 	err = c.Find(bson.M{"estatus": estatus, "usuario": bson.M{"$regex": consulta}}).All(&lst)
 
 	if err != nil {

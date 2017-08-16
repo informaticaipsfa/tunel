@@ -1,9 +1,9 @@
 [{
   "Driver" : "saman",
-  "Usuario" : "ingrid",
-  "Basedatos": "bs_saman",
-  "Clave" : "ingpol123  ",
-  "Host" : "192.168.12.170",
+  "Usuario" : "postgres",
+  "Basedatos": "saman",
+  "Clave" : "za63qj2p  ",
+  "Host" : "localhost",
   "Puerto" : "5432"
 },{
   "Driver" : "pace",

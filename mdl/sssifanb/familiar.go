@@ -150,6 +150,14 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	if err != nil {
 		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
 	}
+
+	condicion := make(map[string]interface{})
+	condicion["familiar.$.condicion"] = f.Condicion
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": condicion})
+	if err != nil {
+		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+	}
+
 	return
 }
 

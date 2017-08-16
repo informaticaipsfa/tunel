@@ -252,7 +252,7 @@ func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
 
 		sq.Scan(&cedula, &tipnip, &numero, &nombp, &nombs, &apellp, &apells, &sexo)
 		m.Persona.DatoBasico.Cedula = cedula
-		m.Persona.DatoBasico.NumeroPersona = numero
+		m.Persona.DatoBasico.NroPersona = numero
 		m.Persona.DatoBasico.NombrePrimero = util.ValidarNullString(nombp)
 		m.Persona.DatoBasico.NombreSegundo = util.ValidarNullString(nombs)
 		m.Persona.DatoBasico.ApellidoPrimero = util.ValidarNullString(apellp)
@@ -344,6 +344,11 @@ func (m *Militar) MGOActualizar() (err error) {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
+	s := ActualizarPersona(m.Persona)
+	fmt.Println(m.Persona.DatoBasico.NroPersona)
+	go sys.PostgreSQLSAMAN.Exec(s)
+	fmt.Println(s)
+	fmt.Println("Actualizando Saman")
 	return
 }
 

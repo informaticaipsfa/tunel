@@ -59,7 +59,7 @@ func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
-
+	fmt.Println(dataJSON.Persona.DatoBasico.NroPersona)
 	j, _ := dataJSON.Actualizar()
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)

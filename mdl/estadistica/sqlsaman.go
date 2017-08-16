@@ -18,3 +18,7 @@ func HistorialUsuario() string {
 		where usuariocodigo LIKE '%afi%' AND estatususrcod ='ACT'
 	`
 }
+
+func HistoriaReembolsos() string {
+	return `SELECT * FROM `
+}

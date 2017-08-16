@@ -5,7 +5,7 @@ import "time"
 //DatoBasico Datos importantes de la persona
 type DatoBasico struct {
 	Cedula          string    `json:"cedula" bson:"cedula"`
-	NumeroPersona   int       `json:"nropersona" bson:"nropersona"`
+	NroPersona      int       `json:"nropersona" bson:"nropersona"`
 	Nacionalidad    string    `json:"nacionalidad" bson:"nacionalidad"`
 	NombrePrimero   string    `json:"nombreprimero" bson:"nombreprimero"`
 	NombreSegundo   string    `json:"nombresegundo" bson:"nombresegundo"`
@@ -30,4 +30,19 @@ func (d *DatoBasico) ConcatenarNombre() string {
 //ConcatenarApellido Nombre y Apellidos
 func (d *DatoBasico) ConcatenarApellido() string {
 	return d.ApellidoPrimero + " " + d.ApellidoSegundo
+}
+
+func (d *DatoBasico) ConvertirNacionalidad() string {
+	nacionalidad := ""
+	switch d.Nacionalidad {
+	case "V":
+		nacionalidad = `VENEZOLANO (A)`
+	case "M":
+		nacionalidad = `MENOR`
+	case "E":
+		nacionalidad = `EXTRANJERO (A)`
+
+	}
+	return nacionalidad
+
 }

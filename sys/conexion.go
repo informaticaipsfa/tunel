@@ -27,7 +27,7 @@ func ConexionSAMAN(mapa map[string]CadenaDeConexion) {
 	if PostgreSQLSAMAN.Ping() != nil {
 		fmt.Println("[Saman:   Error...] ", PostgreSQLSAMAN.Ping())
 	} else {
-		fmt.Println("[Saman:   OK...]")
+		fmt.Println("[Saman: ", c.Host, "  OK...]")
 	}
 }
 
