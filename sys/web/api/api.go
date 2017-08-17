@@ -32,7 +32,7 @@ func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
+	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
 	ip := strings.Split(r.RemoteAddr, ":")
 
 	traza.IP = ip[0]
@@ -49,8 +49,8 @@ func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
 func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 	Cabecera(w, r)
+	ip := strings.Split(r.RemoteAddr, ":")
 	var dataJSON sssifanb.Militar
-	//fmt.Println(r.Body)
 	err := json.NewDecoder(r.Body).Decode(&dataJSON)
 	if err != nil {
 		fmt.Println(err.Error())
@@ -59,16 +59,16 @@ func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
-	//fmt.Println(dataJSON.Persona.DatoBasico.NroPersona)
-	j, _ := dataJSON.Actualizar()
+
+	j, _ := dataJSON.Actualizar(UsuarioConectado.Login, ip[0])
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
-
 }
 
 //Insertar Militar
 func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
+	var traza fanb.Traza
 	var M sssifanb.Mensaje
 	var militar sssifanb.Militar
 
@@ -89,11 +89,20 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 		M.Mensaje = e.Error()
 		M.Tipo = 0
 	}
+
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = militar.ID
+	traza.Documento = "Agregando: " + militar.Grado.Abreviatura + "|" + militar.Situacion +
+		"|" + militar.FechaIngresoComponente.String() + "|" + militar.FechaAscenso.String()
+	traza.CrearHistoricoConsulta("hmilitar")
+
 	j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
-
 	w.Write(j)
-	// fmt.Fprintf(w, "Saludos")
 }
 
 //Eliminar Militar

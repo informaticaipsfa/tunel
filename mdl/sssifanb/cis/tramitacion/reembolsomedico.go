@@ -14,6 +14,7 @@ type Reembolso struct {
 	Concepto        []Concepto     `json:"Concepto" bson:"concepto"`
 	MontoAprobado   float32        `json:"montoaprobado" bson:"montoaprobado"`
 	FechaAprobado   time.Time      `json:"fechaaprobado" bson:"fechaaprobado"`
+	Requisitos      []int          `json:"requisitos" bson:"requisitos"`
 }
 
 type DatoFinanciero struct {

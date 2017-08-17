@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/util"
 	"gopkg.in/mgo.v2/bson"
@@ -281,27 +282,13 @@ func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
 }
 
 //Actualizar Vida Militar
-func (m *Militar) Actualizar() (jSon []byte, err error) {
+func (m *Militar) Actualizar(usuario string, ip string) (jSon []byte, err error) {
 	var msj Mensaje
 	m.TipoDato = 0
-
-	// s := `UPDATE personas SET nombreprimero='` +
-	// 	m.Persona.DatoBasico.NombrePrimero +
-	// 	`', nombresegundo='` +
-	// 	m.Persona.DatoBasico.NombreSegundo +
-	// 	`' WHERE codnip='` + m.Persona.DatoBasico.Cedula + `'`
-	// _, err = sys.PostgreSQLSAMAN.Exec(s)
-	// if err != nil {
-	// 	msj.Mensaje = "Error: Consulta ya existe."
-	// 	msj.Tipo = 2
-	// 	msj.Pgsql = err.Error()
-	// 	jSon, err = json.Marshal(msj)
-	// 	return
-	// }
 	msj.Mensaje = "Su data ha sido actualizada."
 	msj.Tipo = 2
 	jSon, err = json.Marshal(msj)
-	m.MGOActualizar()
+	m.MGOActualizar(usuario, ip)
 	return
 }
 
@@ -319,8 +306,10 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 }
 
 //MGOActualizar Actualizando en MONGO
-func (m *Militar) MGOActualizar() (err error) {
+func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	var mOriginal Militar
+	var traza fanb.Traza
+
 	mOriginal, _ = consultarMongo(m.ID)
 	mOriginal.Persona = m.Persona
 	mOriginal.Grado = m.Grado
@@ -336,7 +325,13 @@ func (m *Militar) MGOActualizar() (err error) {
 	mOriginal.CodigoComponente = m.CodigoComponente
 	mOriginal.NumeroHistoria = m.NumeroHistoria
 	mOriginal.PaseARetiro = m.PaseARetiro
-
+	traza.Time = time.Now()
+	traza.Usuario = usuario
+	traza.IP = ip
+	traza.Log = "Actualizacion: " + mOriginal.Grado.Abreviatura + "|" + mOriginal.Situacion +
+		"|" + m.FechaIngresoComponente.String() + "|" + m.FechaAscenso.String()
+	traza.Documento = m.ID
+	traza.CrearHistoricoConsulta("hmilitar")
 	//
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": mOriginal.ID}, &mOriginal)
@@ -345,7 +340,7 @@ func (m *Militar) MGOActualizar() (err error) {
 		return
 	}
 	s := ActualizarPersona(m.Persona)
-	fmt.Println(m.Persona.DatoBasico.NroPersona)
+	//fmt.Println(m.Persona.DatoBasico.NroPersona)
 	go sys.PostgreSQLSAMAN.Exec(s)
 	return
 }
