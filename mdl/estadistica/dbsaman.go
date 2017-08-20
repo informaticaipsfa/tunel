@@ -191,38 +191,6 @@ func obtenerMunicipiosParroquia() string { //MySQL
 			ORDER BY estado,municipio,parroquia`
 }
 
-// func ActualizarPace(militar sssifanb.Militar) string {
-// 	// fecha_ingreso = ' . $this->fecha_ingreso .  '',
-// 	// f_ult_ascenso = ' . $this->fecha_ultimo_ascenso .  '',
-// 	// 	f_ingreso_sistema = ' . $this->fecha_ingreso .  '',
-// 	// 	f_creacion = ' . $this->fecha_creacion .  ',
-// 	// 	f_ult_modificacion = ' . $this->fecha_ultima_modificacion .  ',
-// 	return `UPDATE beneficiario SET
-// 		grado_id = ` + militar.Grado.Abreviatura + `,
-// 		nombres = '` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
-// 		apellidos = '` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
-// 		tiempo_servicio = '` + militar.TiempoSevicio + `',
-//
-// 		n_hijos = ` + strconv.Itoa(militar.NumeroHijos()) + `,
-//
-// 	  anio_reconocido = ` + strconv.Itoa(militar.AnoReconocido) + ` ,
-// 	  mes_reconocido = ` + strconv.Itoa(militar.MesReconocido) + `,
-// 	 	dia_reconocido = ` + strconv.Itoa(militar.DiaReconocido) + `,
-//
-//   	st_no_ascenso = ` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
-// 	 	st_profesion = ` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
-// 	 	sexo = '` + militar.Persona.DatoBasico.Sexo + `',
-//
-// 	 	usr_creacion ='tunel-ipsfa',
-//
-// 	 	usr_modificacion ='tunel-ipsfa',
-// 	 	observ_ult_modificacion='MODIFICACION POR TUNELES',
-// 	  WHERE cedula = '` + militar.Persona.DatoBasico.Cedula + `';`
-//
-// 	//echo $sActualizar;
-//
-// }
-
 // func InsertarPace(militar sssifanb.Militar) string {
 // 	return ""
 // 	// \'' . $this->fecha_ingreso . '\',

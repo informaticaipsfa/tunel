@@ -32,5 +32,31 @@ func ActualizarPersona(persona Persona) string {
 		auditfechacambio = '` + fechaSlashActual + `',
 		auditcodusuario = 'SSSIFANB'
 		WHERE nropersona=` + strconv.Itoa(persona.DatoBasico.NroPersona) + ` AND codnip='` + persona.DatoBasico.Cedula + `'`
+}
+
+func ActualizarPace(militar Militar) string {
+	// fecha_ingreso = ' . $this->fecha_ingreso .  '',
+	// f_ult_ascenso = ' . $this->fecha_ultimo_ascenso .  '',
+	// 	f_ingreso_sistema = ' . $this->fecha_ingreso .  '',
+	// 	f_creacion = ' . $this->fecha_creacion .  ',
+	// 	f_ult_modificacion = ' . $this->fecha_ultima_modificacion .  ',
+	// n_hijos = ` + strconv.Itoa(militar.NumeroHijos()) + `,
+	return `UPDATE beneficiario SET
+		grado_id = ` + militar.Grado.Abreviatura + `,
+		nombres = '` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
+		apellidos = '` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
+		tiempo_servicio = '` + militar.TiempoSevicio + `',
+	  anio_reconocido = ` + strconv.Itoa(militar.AnoReconocido) + ` ,
+	  mes_reconocido = ` + strconv.Itoa(militar.MesReconocido) + `,
+	 	dia_reconocido = ` + strconv.Itoa(militar.DiaReconocido) + `,
+  	st_no_ascenso = ` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
+	 	st_profesion = ` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
+	 	sexo = '` + militar.Persona.DatoBasico.Sexo + `',
+	 	usr_creacion ='tunel-ipsfa',
+	 	usr_modificacion ='tunel-ipsfa',
+	 	observ_ult_modificacion='SSSIFANB',
+	  WHERE cedula = '` + militar.Persona.DatoBasico.Cedula + `';`
+
+	//echo $sActualizar;
 
 }

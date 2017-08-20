@@ -15,6 +15,10 @@ type Reembolso struct {
 	MontoAprobado   float32        `json:"montoaprobado" bson:"montoaprobado"`
 	FechaAprobado   time.Time      `json:"fechaaprobado" bson:"fechaaprobado"`
 	Requisitos      []int          `json:"requisitos" bson:"requisitos"`
+	Componente      string         `json:"componente" bson:"componente"`
+	Grado           string         `json:"grado" bson:"grado"`
+	Clase           string         `json:"clase" bson:"clase"`
+	Situacion       string         `json:"situacion" bson:"situacion"`
 }
 
 type DatoFinanciero struct {
@@ -30,6 +34,7 @@ type Concepto struct {
 	Descripcion string  `json:"descripcion" bson:"descripcion"`
 	DatoFactura Factura `json:"DatoFactura" bson:"datofactura"`
 	Afiliado    string  `json:"afiliado" bson:"afiliado"` //Cedula, Guión (-), Nombre
+	Requisitos  []int   `json:"requisitos" bson:"requisitos"`
 }
 
 type Factura struct {

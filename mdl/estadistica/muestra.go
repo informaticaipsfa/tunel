@@ -12,6 +12,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
@@ -101,7 +102,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.Categoria = util.ValidarNullString(cate)
 
 		militar.Persona.DatoBasico.Cedula = cedulas
-		militar.Persona.DatoBasico.NumeroPersona = nro
+		militar.Persona.DatoBasico.NroPersona = nro
 		militar.Persona.DatoBasico.Nacionalidad = nac
 		militar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombp)) + " " + strings.ToUpper(util.ValidarNullString(nombs))
 		militar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apellp)) + " " + strings.ToUpper(util.ValidarNullString(apells))
@@ -337,7 +338,7 @@ func (e *Estructura) CargarFamiliar() (jSon []byte, err error) {
 		}
 		familiar.Parentesco = util.ValidarNullString(paren)
 		familiar.Persona.DatoBasico.Cedula = codnip
-		familiar.Persona.DatoBasico.NumeroPersona = nro
+		familiar.Persona.DatoBasico.NroPersona = nro
 		familiar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
 		familiar.Persona.DatoBasico.Nacionalidad = util.ValidarNullString(nac)
 
@@ -855,5 +856,70 @@ func (e *Estructura) ActualizarFechaDefuncion() (jSon []byte, err error) {
 		i++
 		fmt.Println("Actualizando. ", i, " ID_ ", ced)
 	}
+	return
+}
+
+func HistorialReembolso() (jSon []byte, err error) {
+	var msj Mensaje
+	var cedula string
+	sq, err := sys.PostgreSQLSAMAN.Query(HistoriaReembolsos())
+	if err != nil {
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	i := 0
+
+	for sq.Next() {
+		var reembolso tramitacion.Reembolso
+
+		var ced, nro, npmil, nppag, tipocod,
+			pagomonto, montoaprobado,
+			instfinannombre, cuenta, concnombre, canal,
+			componente, grado, clase,
+			situac string
+		var solicitud, aprobacion sql.NullString
+
+		sq.Scan(&ced, &nro, &npmil, &nppag, &tipocod,
+			&solicitud, &aprobacion, &pagomonto, &montoaprobado,
+			&instfinannombre, &cuenta, &concnombre, &canal,
+			&componente, &grado, &clase,
+			&situac)
+		if i == 0 {
+			cedula = ced
+		}
+		if cedula != ced {
+			fmt.Println("Cantidad ")
+		}
+
+		layOut := "2006-01-02"
+		fechasolicitud := util.ValidarNullString(solicitud)
+		if fechasolicitud != VNULL {
+			dateString := strings.Replace(fechasolicitud, "/", "-", -1)
+			dateStamp, er := time.Parse(layOut, dateString)
+			if er == nil {
+				reembolso.FechaCreacion = dateStamp
+			}
+		}
+		fechaaprobado := util.ValidarNullString(aprobacion)
+		if fechaaprobado != VNULL {
+			dateString := strings.Replace(fechaaprobado, "/", "-", -1)
+			dateStamp, er := time.Parse(layOut, dateString)
+			if er == nil {
+				reembolso.FechaAprobado = dateStamp
+			}
+
+		}
+
+		reembolso.Clase = clase
+		reembolso.Componente = componente
+		reembolso.Grado = grado
+		reembolso.Situacion = situac
+
+		reembolso.Estatus = 0
+		fmt.Println(reembolso)
+
+	}
+
 	return
 }
