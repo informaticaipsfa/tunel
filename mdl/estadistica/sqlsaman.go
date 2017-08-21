@@ -22,28 +22,39 @@ func HistorialUsuario() string {
 func HistoriaReembolsos() string {
 	return `
 			SELECT
-				codnip,
-				rbs.reembsolicnro AS oid,
+				prs.codnip,
+				rbs.reembsolicnro,
 				rbs.nropersonaafilmil,
-				rbs.nropersonapago,rbs.reembtipocod,
-				rbs.reembfchsolicitud AS fechaSolicitud,
-				rbs.reembfchaprobacion AS fechaAprobacion,
-				ordenpagomonto AS montoSolicitado,
-				reembconcmontoapr AS montoAprobado,
+				rbs.nropersonapago,
+				rbs.reembtipocod,
+				rbs.reembfchsolicitud,
+				rbs.reembfchaprobacion,
+				ordenpagomonto,
+				reembconcmontoapr,
 				inf.instfinannombre,
 				cuenta,
-				rdc.reembconcnombre,canalliquidnombre,
+				tpc.tipcuentanombre,
+				rdc.reembconcnombre,
+				canalliquidnombre,
 				componentecod,
 				gradocod,
 				perscategcod,
-				perssituaccod
-			FROM personas
-				INNER JOIN ci_reembolso_solic rbs ON personas.nropersona=rbs.nropersonaafilmil
-				INNER JOIN canal_liquidacion cnl ON rbs.canalliquidcod=cnl.canalliquidcod
-				INNER JOIN ci_reembolso_det rdt ON rbs.reembsolicnro=rdt.reembsolicnro
-				INNER JOIN ci_reembolso_concep rdc on rdt.reembconccod=rdc.reembconccod
-				INNER JOIN ci_reembolso_tipo ON (rbs.reembtipocod=ci_reembolso_tipo.reembtipocod)
-				LEFT JOIN inst_financieras inf ON inf.instfinancod=rbs.instfinancod
+				perssituaccod,
+				prs.nombrecompleto,
+				prc.codnip,
+				prc.nombrecompleto,
+				pdb.tipbenefcod
+			FROM personas prs
+			INNER JOIN ci_reembolso_solic rbs ON prs.nropersona=rbs.nropersonaafilmil
+			INNER JOIN tipos_cuenta tpc ON tpc.tipcuentacod=rbs.tipcuentacod
+			INNER JOIN canal_liquidacion cnl ON rbs.canalliquidcod=cnl.canalliquidcod
+			INNER JOIN ci_reembolso_det rdt ON rbs.reembsolicnro=rdt.reembsolicnro
+			INNER JOIN ci_reembolso_concep rdc on rdt.reembconccod=rdc.reembconccod
+			INNER JOIN ci_reembolso_tipo ON (rbs.reembtipocod=ci_reembolso_tipo.reembtipocod)
+			LEFT JOIN inst_financieras inf ON inf.instfinancod=rbs.instfinancod
+			INNER JOIN personas prc ON rbs.nropersonapago=prc.nropersona
+			LEFT JOIN pers_dat_benef pdb ON pdb.nropersona=prc.nropersona AND pdb.nropersonatitular=prs.nropersona
 			WHERE rbs.reembtipocod = 'DAF'
-			ORDER BY codnip, rbs.reembfchsolicitud`
+			AND prs.codnip='16210806'
+			ORDER BY prs.codnip, rbs.reembfchsolicitud`
 }
