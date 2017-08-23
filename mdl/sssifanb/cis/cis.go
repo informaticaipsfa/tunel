@@ -26,7 +26,7 @@ type Mensaje struct {
 	Tipo    int    `json:"tipo"`
 }
 
-func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.Reembolso) (jSon []byte, err error) {
+func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.Reembolso, telefono tramitacion.Telefono) (jSon []byte, err error) {
 	var M Mensaje
 	M.Mensaje = "Creando Reembolso"
 	M.Tipo = 1
@@ -38,6 +38,36 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
 	}
+
+	// **** Actualizando direccion del militar ****
+
+	direccion := reembolso.Direccion
+	dir := make(map[string]interface{})
+	dir["persona.direccion.0"] = direccion
+
+	fmt.Println("Direccion", direccion)
+	err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
+	if err != nil {
+		fmt.Println("Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	tel := make(map[string]interface{})
+	tel["persona.telefono"] = telefono
+	err = c.Update(bson.M{"id": id}, bson.M{"$set": tel})
+	if err != nil {
+		fmt.Println("Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	corr := make(map[string]interface{})
+	corr["persona.correo"] = reembolso.Correo
+	err = c.Update(bson.M{"id": id}, bson.M{"$set": corr})
+	if err != nil {
+		fmt.Println("Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
 	jSon, err = json.Marshal(M)
 	return
 }

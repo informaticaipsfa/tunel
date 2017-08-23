@@ -19,6 +19,9 @@ type Reembolso struct {
 	Grado           string         `json:"grado" bson:"grado"`
 	Clase           string         `json:"clase" bson:"clase"`
 	Situacion       string         `json:"situacion" bson:"situacion"`
+	Direccion       Direccion      `json:"Direccion" bson:"direccion"`
+	Telefono        Telefono       `json:"Telefono" bson:"telefono"`
+	Correo          Correo         `json:"Correo" bson:"correo"`
 }
 
 type DatoFinanciero struct {
@@ -52,4 +55,30 @@ type Proveedor struct {
 	Direccion   string         `json:"direccion" bson:"direccion"`
 	Banco       DatoFinanciero `json:"Banco" bson:"banco"`
 	Descripcion string         `json:"descripcion" bson:"descripcion"`
+}
+
+//Direccion ruta y secciones
+type Direccion struct {
+	Tipo         int    `json:"tipo,omitempty" bson:"tipo"` //domiciliaria, trabajo, emergencia
+	Ciudad       string `json:"ciudad,omitempty" bson:"ciudad"`
+	Estado       string `json:"estado,omitempty" bson:"estado"`
+	Municipio    string `json:"municipio,omitempty" bson:"municipio"`
+	Parroquia    string `json:"parroquia,omitempty" bson:"parroquia"`
+	CalleAvenida string `json:"calleavenida" bson:"calleavenida"`
+	Casa         string `json:"casa" bson:"casa"`
+	Apartamento  string `json:"apartamento" bson:"apartamento"`
+	Numero       int    `json:"numero,omitempty" bson:"numero"`
+}
+
+type Telefono struct {
+	Movil        string `json:"movil,omitempty" bson:"movil"`
+	Domiciliario string `json:"domiciliario,omitempty" bson:"domiciliario"`
+	Emergencia   string `json:"emergencia,omitempty" bson:"emergencia"`
+}
+
+//Correo Direcciones electronicas
+type Correo struct {
+	Principal     string `json:"principal,omitempty" bson:"principal"`
+	Alternativo   string `json:"alternativo,omitempty" bson:"alternativo"`
+	Institucional string `json:"institucional,omitempty" bson:"institucional"`
 }
