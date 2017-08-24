@@ -87,7 +87,7 @@ func HistorialReembolso() (jSon []byte, err error) {
 		e := c.Update(bson.M{"id": ced}, bson.M{"$push": reemb})
 		if e != nil {
 			fmt.Println("Error: cedula: ", ced)
-			return
+			// return
 		}
 
 		if estatus == 0 {
@@ -95,6 +95,7 @@ func HistorialReembolso() (jSon []byte, err error) {
 			var creembolso tramitacion.ColeccionReembolso
 			creembolso.ID = ced
 			creembolso.Numero = nro
+			creembolso.Nombre = util.ValidarNullString(nombre)
 			creembolso.Usuario = "sssifanb"
 			creembolso.Estatus = 0
 			creembolso.Reembolso = reembolso
@@ -103,7 +104,7 @@ func HistorialReembolso() (jSon []byte, err error) {
 			err = coleccion.Insert(creembolso)
 			if err != nil {
 				fmt.Println("Error: cedula: ", ced)
-				return
+				// return
 			}
 		}
 

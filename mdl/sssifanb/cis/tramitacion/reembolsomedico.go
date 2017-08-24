@@ -4,6 +4,12 @@ import (
 	"time"
 )
 
+const (
+	SACTIVO        int32 = 0
+	SPENDIENTE     int32 = 1
+	SRECOMENDACION int32 = 2
+)
+
 type Reembolso struct {
 	Numero          string         `json:"numero" bson:"numero"`
 	Estatus         int            `json:"estatus" bson:"estatus"`
@@ -22,6 +28,7 @@ type Reembolso struct {
 	Direccion       Direccion      `json:"Direccion" bson:"direccion"`
 	Telefono        Telefono       `json:"Telefono" bson:"telefono"`
 	Correo          Correo         `json:"Correo" bson:"correo"`
+	Seguimiento
 }
 
 type DatoFinanciero struct {
@@ -83,6 +90,16 @@ type Correo struct {
 	Institucional string `json:"institucional,omitempty" bson:"institucional"`
 }
 
+type Seguimiento struct {
+	Estatus       int
+	Observaciones []Observacion
+}
+
+type Observacion struct {
+	FechaCreacion time.Time
+	Usuario       string
+	Contenido     string
+}
 type ColeccionReembolso struct {
 	ID            string    `json:"id" bson:"id"`
 	Nombre        string    `json:"nombre" bson:"nombre"`
