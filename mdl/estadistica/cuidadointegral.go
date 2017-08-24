@@ -56,7 +56,7 @@ func HistorialReembolso() (jSon []byte, err error) {
 			dateStamp, er := time.Parse(layOut, dateString)
 			if er == nil {
 				reembolso.FechaAprobado = dateStamp
-				estatus = 4
+				estatus = 99
 			}
 		}
 
@@ -69,9 +69,9 @@ func HistorialReembolso() (jSon []byte, err error) {
 		if paren == "null" {
 			paren = "MILITAR"
 		}
-		afiliado := ced + "|" + util.ValidarNullString(nombre) + "(" + paren + ")"
+		afiliado := ced + "-" + util.ValidarNullString(nombre) + "(" + paren + ")"
 		if ced == codnip {
-			afiliado = codnip + "|" + util.ValidarNullString(nombrea) + "(" + paren + ")"
+			afiliado = codnip + "-" + util.ValidarNullString(nombrea) + "(" + paren + ")"
 		}
 		Concepto.Afiliado = afiliado
 		Concepto.Descripcion = concnombre
@@ -86,10 +86,28 @@ func HistorialReembolso() (jSon []byte, err error) {
 		reemb["cis.serviciomedico.programa.reembolso"] = reembolso
 		e := c.Update(bson.M{"id": ced}, bson.M{"$push": reemb})
 		if e != nil {
-			fmt.Println("Erro: cedula: ", ced)
+			fmt.Println("Error: cedula: ", ced)
 			return
 		}
-		fmt.Println(i, "Cedula: ", ced, ": ", reembolso)
+
+		if estatus == 0 {
+			//Listado de Reportes
+			var creembolso tramitacion.ColeccionReembolso
+			creembolso.ID = ced
+			creembolso.Numero = nro
+			creembolso.Usuario = "sssifanb"
+			creembolso.Estatus = 0
+			creembolso.Reembolso = reembolso
+			creembolso.FechaCreacion = reembolso.FechaCreacion
+			coleccion := sys.MGOSession.DB("sssifanb").C("reembolso")
+			err = coleccion.Insert(creembolso)
+			if err != nil {
+				fmt.Println("Error: cedula: ", ced)
+				return
+			}
+		}
+
+		fmt.Println(i, "Cedula: ", ced)
 	}
 
 	return

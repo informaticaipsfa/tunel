@@ -82,3 +82,13 @@ type Correo struct {
 	Alternativo   string `json:"alternativo,omitempty" bson:"alternativo"`
 	Institucional string `json:"institucional,omitempty" bson:"institucional"`
 }
+
+type ColeccionReembolso struct {
+	ID            string    `json:"id" bson:"id"`
+	Nombre        string    `json:"nombre" bson:"nombre"`
+	Numero        string    `json:"numero" bson:"numero"`
+	FechaCreacion time.Time `json:"fechacreacion" bson:"fechacreacion"`
+	Estatus       int       `json:"estatus" bson:"estatus"`
+	Reembolso     Reembolso `json:"Reembolso" bson:"reembolso"`
+	Usuario       string    `json:"usuario" bson:"usuario"`
+}

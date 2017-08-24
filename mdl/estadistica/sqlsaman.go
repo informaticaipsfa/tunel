@@ -55,6 +55,6 @@ func HistoriaReembolsos() string {
 			INNER JOIN personas prc ON rbs.nropersonapago=prc.nropersona
 			LEFT JOIN pers_dat_benef pdb ON pdb.nropersona=prc.nropersona AND pdb.nropersonatitular=prs.nropersona
 			WHERE rbs.reembtipocod = 'DAF'
-			AND prs.codnip='16210806'
+			-- AND prs.codnip='14664180'
 			ORDER BY prs.codnip, rbs.reembfchsolicitud`
 }
