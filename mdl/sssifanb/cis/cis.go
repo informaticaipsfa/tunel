@@ -31,8 +31,9 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 	M.Mensaje = "Creando Reembolso"
 	M.Tipo = 1
 	reemb := make(map[string]interface{})
+
 	reemb["cis.serviciomedico.programa.reembolso"] = reembolso
-	c := sys.MGOSession.DB(CBASE).C("militar")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": id}, bson.M{"$push": reemb})
 	if err != nil {
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
@@ -69,5 +70,34 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 	}
 
 	jSon, err = json.Marshal(M)
+	return
+}
+
+func (cuidado *CuidadoIntegral) ListarReembolso(estatus int) (jSon []byte, err error) {
+	// var result []tramitacion.ColeccionReembolso
+	var result []interface{}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	err = c.Find(bson.M{"estatus": estatus}).Select(bson.M{"reembolso": false, "_id": false}).All(&result)
+	if err != nil {
+		fmt.Println("Err")
+		//return
+	}
+	jSon, err = json.Marshal(result)
+	return
+}
+
+func (cuidado *CuidadoIntegral) CrearSeguimientoReembolso(id string, numero string, Seguimiento tramitacion.Seguimiento) (jSon []byte, err error) {
+	var M Mensaje
+	M.Mensaje = "Creando Reembolso"
+	M.Tipo = 1
+	seguir := make(map[string]interface{})
+
+	seguir["cis.serviciomedico.programa.reembolso.seguimiento"] = Seguimiento
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	err = c.Update(bson.M{"id": id, "numero": numero}, bson.M{"$push": seguir})
+	if err != nil {
+		// return
+	}
+
 	return
 }

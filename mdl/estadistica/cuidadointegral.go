@@ -27,7 +27,9 @@ func HistorialReembolso() (jSon []byte, err error) {
 
 	for sq.Next() {
 		var reembolso tramitacion.Reembolso
-		var ced, nro, npmil, nppag, tipocod, pagomonto, montoaprobado,
+		var montoaprobado, pagomonto sql.NullFloat64
+
+		var ced, nro, npmil, nppag, tipocod,
 			instfinannombre, cuenta, concnombre, canal, codnip string
 		var componente, grado, clase, situac string
 		var tipocuenta, nombre, nombrea, parentesco sql.NullString
@@ -61,6 +63,8 @@ func HistorialReembolso() (jSon []byte, err error) {
 		}
 
 		reembolso.Numero = nro
+		reembolso.MontoSolicitado = util.ValidarNullFloat64(pagomonto)
+		reembolso.MontoAprobado = util.ValidarNullFloat64(montoaprobado)
 		reembolso.CuentaBancaria.Cedula = ced
 		reembolso.CuentaBancaria.Tipo = util.ValidarNullString(tipocuenta)
 		reembolso.CuentaBancaria.Institucion = instfinannombre
@@ -100,6 +104,10 @@ func HistorialReembolso() (jSon []byte, err error) {
 			creembolso.Estatus = 0
 			creembolso.Reembolso = reembolso
 			creembolso.FechaCreacion = reembolso.FechaCreacion
+			creembolso.MontoSolicitado = reembolso.MontoSolicitado
+			creembolso.FechaAprobado = reembolso.FechaAprobado
+			creembolso.MontoAprobado = reembolso.MontoAprobado
+
 			coleccion := sys.MGOSession.DB("sssifanb").C("reembolso")
 			err = coleccion.Insert(creembolso)
 			if err != nil {

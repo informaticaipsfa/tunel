@@ -5,21 +5,21 @@ import (
 )
 
 const (
-	SACTIVO        int32 = 0
-	SPENDIENTE     int32 = 1
-	SRECOMENDACION int32 = 2
+	SACTIVO        int = 0
+	SPENDIENTE     int = 1
+	SRECOMENDACION int = 2
 )
 
 type Reembolso struct {
 	Numero          string         `json:"numero" bson:"numero"`
 	Estatus         int            `json:"estatus" bson:"estatus"`
-	MontoSolicitado float32        `json:"montosolicitado" bson:"montosolicitado"`
 	FechaCreacion   time.Time      `json:"fechacreacion" bson:"fechacreacion"`
+	MontoSolicitado float64        `json:"montosolicitado" bson:"montosolicitado"`
 	CuentaBancaria  DatoFinanciero `json:"CuentaBancaria" bson:"CuentaBancaria"`
 	Responsable     string         `json:"responsable" bson:"responsable"`
 	Concepto        []Concepto     `json:"Concepto" bson:"concepto"`
-	MontoAprobado   float32        `json:"montoaprobado" bson:"montoaprobado"`
 	FechaAprobado   time.Time      `json:"fechaaprobado" bson:"fechaaprobado"`
+	MontoAprobado   float64        `json:"montoaprobado" bson:"montoaprobado"`
 	Requisitos      []int          `json:"requisitos" bson:"requisitos"`
 	Componente      string         `json:"componente" bson:"componente"`
 	Grado           string         `json:"grado" bson:"grado"`
@@ -28,7 +28,8 @@ type Reembolso struct {
 	Direccion       Direccion      `json:"Direccion" bson:"direccion"`
 	Telefono        Telefono       `json:"Telefono" bson:"telefono"`
 	Correo          Correo         `json:"Correo" bson:"correo"`
-	Seguimiento
+	Seguimiento     Seguimiento    `json:"Seguimiento" bson:"seguimiento"`
+	Usuario         string         `json:"usuario" bson:"usuario"`
 }
 
 type DatoFinanciero struct {
@@ -51,7 +52,7 @@ type Factura struct {
 	Numero       string    `json:"numero" bson:"numero"`
 	Control      string    `json:"control" bson:"control"`
 	Fecha        time.Time `json:"fecha" bson:"fecha"`
-	Monto        float32   `json:"monto" bson:"monto"`
+	Monto        float64   `json:"monto" bson:"monto"`
 	Beneficiario Proveedor `json:"Beneficiario" bson:"beneficiario"`
 }
 
@@ -101,11 +102,15 @@ type Observacion struct {
 	Contenido     string
 }
 type ColeccionReembolso struct {
-	ID            string    `json:"id" bson:"id"`
-	Nombre        string    `json:"nombre" bson:"nombre"`
-	Numero        string    `json:"numero" bson:"numero"`
-	FechaCreacion time.Time `json:"fechacreacion" bson:"fechacreacion"`
-	Estatus       int       `json:"estatus" bson:"estatus"`
-	Reembolso     Reembolso `json:"Reembolso" bson:"reembolso"`
-	Usuario       string    `json:"usuario" bson:"usuario"`
+	ID                 string    `json:"id" bson:"id"`
+	Nombre             string    `json:"nombre" bson:"nombre"`
+	Numero             string    `json:"numero" bson:"numero"`
+	FechaCreacion      time.Time `json:"fechacreacion" bson:"fechacreacion"`
+	MontoSolicitado    float64   `json:"montosolicitado" bson:"montosolicitado"`
+	FechaAprobado      time.Time `json:"fechaaprobado" bson:"fechaaprobado"`
+	MontoAprobado      float64   `json:"montoaprobado" bson:"montoaprobado"`
+	Estatus            int       `json:"estatus" bson:"estatus"`
+	EstatusSeguimiento int       `json:"estatusseguimiento" bson:"estatusseguimiento"`
+	Reembolso          Reembolso `json:"Reembolso,omitempty" bson:"reembolso"`
+	Usuario            string    `json:"usuario" bson:"usuario"`
 }

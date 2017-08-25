@@ -121,5 +121,6 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.RegistrarReembolso).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/wreembolso/listar/{id}", wCis.ListarReembolso).Methods("GET")
 
 }

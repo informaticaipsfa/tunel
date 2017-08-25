@@ -10,6 +10,7 @@ const (
 	CCOMPONENTE string = "componente"
 	CRECIBO     string = "recibo"
 	CINTEGRAL   string = "cuidadointegral"
+	CREEMBOLSO  string = "reembolso"
 	CTRAZA      string = "traza"
 	CCATEGORIA  string = "traza"
 )
