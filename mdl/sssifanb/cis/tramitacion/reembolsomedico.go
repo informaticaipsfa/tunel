@@ -49,11 +49,12 @@ type Concepto struct {
 }
 
 type Factura struct {
-	Numero       string    `json:"numero" bson:"numero"`
-	Control      string    `json:"control" bson:"control"`
-	Fecha        time.Time `json:"fecha" bson:"fecha"`
-	Monto        float64   `json:"monto" bson:"monto"`
-	Beneficiario Proveedor `json:"Beneficiario" bson:"beneficiario"`
+	Numero        string    `json:"numero" bson:"numero"`
+	Control       string    `json:"control" bson:"control"`
+	Fecha         time.Time `json:"fecha" bson:"fecha"`
+	Monto         float64   `json:"monto" bson:"monto"`
+	MontoAprobado float64   `json:"montoaprobado" bson:"montoaprobado"`
+	Beneficiario  Proveedor `json:"Beneficiario" bson:"beneficiario"`
 }
 
 type Proveedor struct {
@@ -121,4 +122,10 @@ type ActualizarReembolso struct {
 	Numero        string
 	Posicion      int
 	Observaciones []string
+}
+
+type EstatusReembolso struct {
+	ID      string
+	Numero  string
+	Estatus int
 }

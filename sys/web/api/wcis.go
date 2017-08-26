@@ -87,6 +87,25 @@ func (wcis *WCis) ListarReembolso(w http.ResponseWriter, r *http.Request) {
 	w.Write(jSon)
 }
 
+// ActualizarReembolso Militares
+func (wcis *WCis) Estatus(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	var cis cis.CuidadoIntegral
+	var Estatus tramitacion.EstatusReembolso
+
+	fmt.Println("Acceso Estatus...")
+	Cabecera(w, r)
+	e := json.NewDecoder(r.Body).Decode(&Estatus)
+
+	util.Error(e)
+	cis.EstatusReembolso(Estatus)
+	M.Tipo = 0
+	j, e := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(j)
+}
+
 //Consultar Militares
 func (wcis *WCis) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)

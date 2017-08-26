@@ -123,6 +123,7 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wreembolso/listar/{id}", wCis.ListarReembolso).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Actualizar).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wreembolso/estatus", wCis.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Opciones).Methods("OPTIONS")
 
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/gasto"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
@@ -27,6 +28,7 @@ type Mensaje struct {
 	Tipo    int    `json:"tipo"`
 }
 
+// CrearReembolso Actualizando
 func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.Reembolso, telefono tramitacion.Telefono) (jSon []byte, err error) {
 	var M Mensaje
 	M.Mensaje = "Creando Reembolso"
@@ -74,6 +76,7 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 	return
 }
 
+// ListarReembolso Actualizando
 func (cuidado *CuidadoIntegral) ListarReembolso(estatus int) (jSon []byte, err error) {
 	// var result []tramitacion.ColeccionReembolso
 	var result []interface{}
@@ -108,15 +111,42 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 		fmt.Println(err.Error())
 		return
 	}
+	rmb.Estatus = AReembolso.Reembolso.Estatus
+	rmb.EstatusSeguimiento = AReembolso.Reembolso.Seguimiento.Estatus
+	rmb.MontoAprobado = AReembolso.Reembolso.MontoAprobado
+	rmb.FechaAprobado = time.Now()
 
-	//
-	// co := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
-	// seg := make(map[string]interface{})
-	// seg["reembolso"] = AReembolso.Reembolso
-	// err = co.Update(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}, bson.M{"$set": seg})
-	// if err != nil {
-	// 	// return
-	// }
+	err = co.Update(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}, bson.M{"$set": rmb})
+	if err != nil {
+		// return
+	}
+	fmt.Println("Actualizando")
+	return
+}
+
+// EstatusReembolso Cambiar de Estado
+func (cuidado *CuidadoIntegral) EstatusReembolso(E tramitacion.EstatusReembolso) (jSon []byte, err error) {
+	var M Mensaje
+	M.Mensaje = "Estatus del Reembolso"
+	M.Tipo = 1
+
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	estat := make(map[string]interface{})
+	estat["cis.serviciomedico.programa.reembolso.$.estatus"] = E.Estatus
+	err = c.Update(bson.M{"id": E.ID, "cis.serviciomedico.programa.reembolso.numero": E.Numero}, bson.M{"$set": estat})
+	if err != nil {
+		fmt.Println(err.Error())
+		// return
+	}
+
+	co := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	esta := make(map[string]interface{})
+	esta["estatus"] = E.Estatus
+	err = co.Update(bson.M{"id": E.ID, "numero": E.Numero}, bson.M{"$set": esta})
+	if err != nil {
+		fmt.Println(err.Error())
+		// return
+	}
 
 	return
 }
