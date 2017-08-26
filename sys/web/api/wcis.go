@@ -23,7 +23,7 @@ type WCis struct {
 }
 
 //Consultar Militares
-func (wcis *WCis) RegistrarReembolso(w http.ResponseWriter, r *http.Request) {
+func (wcis *WCis) Registrar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var cis cis.CuidadoIntegral
 	var Semillero fanb.Semillero
@@ -43,6 +43,35 @@ func (wcis *WCis) RegistrarReembolso(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+// ActualizarReembolso Militares
+func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	var cis cis.CuidadoIntegral
+	var reemb tramitacion.ActualizarReembolso
+
+	fmt.Println("Acceso...")
+	Cabecera(w, r)
+	e := json.NewDecoder(r.Body).Decode(&reemb)
+
+	for _, v := range reemb.Observaciones {
+		var Obs tramitacion.Observacion
+		Obs.Contenido = v
+		fmt.Println(Obs.Contenido)
+		Obs.FechaCreacion = time.Now()
+		Obs.Usuario = UsuarioConectado.Login
+		reemb.Reembolso.Seguimiento.Observaciones = append(reemb.Reembolso.Seguimiento.Observaciones, Obs)
+	}
+
+	reemb.Reembolso.Usuario = UsuarioConectado.Login
+	util.Error(e)
+	cis.ActualizarReembolso(reemb)
+	M.Tipo = 0
+	j, e := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+
+	w.Write(j)
+}
+
 //Consultar Militares
 func (wcis *WCis) ListarReembolso(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
@@ -50,10 +79,16 @@ func (wcis *WCis) ListarReembolso(w http.ResponseWriter, r *http.Request) {
 	var variable = mux.Vars(r)
 	estatus, _ := strconv.Atoi(variable["id"])
 	Cabecera(w, r)
-	fmt.Println("Hola Mundo")
+	// fmt.Println("Hola Mundo")
 	jSon, _ := cis.ListarReembolso(estatus)
 	M.Tipo = 0
 
 	w.WriteHeader(http.StatusOK)
 	w.Write(jSon)
+}
+
+//Consultar Militares
+func (wcis *WCis) Opciones(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	fmt.Println("OPTIONS...")
 }

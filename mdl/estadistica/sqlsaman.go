@@ -43,7 +43,9 @@ func HistoriaReembolsos() string {
 				prs.nombrecompleto,
 				prc.codnip,
 				prc.nombrecompleto,
-				pdb.tipbenefcod
+				pdb.persrelstipcod,
+				prdet.nombrecompleto AS benef,
+				prdet.codnip AS cedbeneficiado
 			FROM personas prs
 			INNER JOIN ci_reembolso_solic rbs ON prs.nropersona=rbs.nropersonaafilmil
 			INNER JOIN tipos_cuenta tpc ON tpc.tipcuentacod=rbs.tipcuentacod
@@ -53,8 +55,9 @@ func HistoriaReembolsos() string {
 			INNER JOIN ci_reembolso_tipo ON (rbs.reembtipocod=ci_reembolso_tipo.reembtipocod)
 			LEFT JOIN inst_financieras inf ON inf.instfinancod=rbs.instfinancod
 			INNER JOIN personas prc ON rbs.nropersonapago=prc.nropersona
-			LEFT JOIN pers_dat_benef pdb ON pdb.nropersona=prc.nropersona AND pdb.nropersonatitular=prs.nropersona
+			INNER JOIN personas prdet ON rdt.nropersafilfam=prdet.nropersona
+			LEFT JOIN pers_relaciones pdb ON prdet.nropersona = pdb.nropersona
 			WHERE rbs.reembtipocod = 'DAF'
-			-- AND prs.codnip='14664180'
-			ORDER BY prs.codnip, rbs.reembfchsolicitud`
+			AND prs.codnip IN ( '10010499', '16210806')
+			ORDER BY prs.codnip, rbs.reembsolicnro, rbs.reembfchsolicitud`
 }

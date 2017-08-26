@@ -3,6 +3,7 @@ package cis
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/gasto"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
@@ -86,18 +87,36 @@ func (cuidado *CuidadoIntegral) ListarReembolso(estatus int) (jSon []byte, err e
 	return
 }
 
-func (cuidado *CuidadoIntegral) CrearSeguimientoReembolso(id string, numero string, Seguimiento tramitacion.Seguimiento) (jSon []byte, err error) {
+// ActualizarReembolso Actualizando
+func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.ActualizarReembolso) (jSon []byte, err error) {
 	var M Mensaje
 	M.Mensaje = "Creando Reembolso"
 	M.Tipo = 1
 	seguir := make(map[string]interface{})
-
-	seguir["cis.serviciomedico.programa.reembolso.seguimiento"] = Seguimiento
+	valor := "cis.serviciomedico.programa.reembolso." + strconv.Itoa(AReembolso.Posicion)
+	seguir[valor] = AReembolso.Reembolso
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
-	err = c.Update(bson.M{"id": id, "numero": numero}, bson.M{"$push": seguir})
+	err = c.Update(bson.M{"id": AReembolso.ID}, bson.M{"$set": seguir})
 	if err != nil {
 		// return
 	}
+	var rmb tramitacion.ColeccionReembolso
+
+	co := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	err = co.Find(bson.M{"id": AReembolso.ID}).One(&rmb)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	//
+	// co := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	// seg := make(map[string]interface{})
+	// seg["reembolso"] = AReembolso.Reembolso
+	// err = co.Update(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}, bson.M{"$set": seg})
+	// if err != nil {
+	// 	// return
+	// }
 
 	return
 }

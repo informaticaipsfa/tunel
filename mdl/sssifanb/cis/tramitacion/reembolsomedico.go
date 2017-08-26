@@ -92,14 +92,14 @@ type Correo struct {
 }
 
 type Seguimiento struct {
-	Estatus       int
-	Observaciones []Observacion
+	Estatus       int           `json:"estatus,omitempty" bson:"estatus"`
+	Observaciones []Observacion `json:"Observaciones,omitempty" bson:"observaciones"`
 }
 
 type Observacion struct {
-	FechaCreacion time.Time
-	Usuario       string
-	Contenido     string
+	FechaCreacion time.Time `json:"fechacreacion,omitempty" bson:"fechacreacion"`
+	Usuario       string    `json:"usuario,omitempty" bson:"usuario"`
+	Contenido     string    `json:"contenido,omitempty" bson:"contenido"`
 }
 type ColeccionReembolso struct {
 	ID                 string    `json:"id" bson:"id"`
@@ -113,4 +113,12 @@ type ColeccionReembolso struct {
 	EstatusSeguimiento int       `json:"estatusseguimiento" bson:"estatusseguimiento"`
 	Reembolso          Reembolso `json:"Reembolso,omitempty" bson:"reembolso"`
 	Usuario            string    `json:"usuario" bson:"usuario"`
+}
+
+type ActualizarReembolso struct {
+	ID            string
+	Reembolso     Reembolso
+	Numero        string
+	Posicion      int
+	Observaciones []string
 }
