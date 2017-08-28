@@ -20,6 +20,7 @@ type WCis struct {
 	ID        string
 	Reembolso tramitacion.Reembolso
 	Telefono  tramitacion.Telefono
+	Nombre    string
 }
 
 //Consultar Militares
@@ -35,7 +36,7 @@ func (wcis *WCis) Registrar(w http.ResponseWriter, r *http.Request) {
 	wcis.Reembolso.Usuario = UsuarioConectado.Login
 	wcis.Reembolso.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	util.Error(e)
-	cis.CrearReembolso(wcis.ID, wcis.Reembolso, wcis.Telefono)
+	cis.CrearReembolso(wcis.ID, wcis.Reembolso, wcis.Telefono, wcis.Nombre)
 	M.Tipo = 0
 	j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)

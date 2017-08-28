@@ -8,6 +8,7 @@
 package seguridad
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -77,21 +78,24 @@ type Rol struct {
 
 // Usuarios del Sistema
 type Usuario struct {
-	Id           bson.ObjectId `json:"id" bson:"_id"`
-	Cedula       string        `json:"cedula"`
-	Nombre       string        `json:"nombre"`
-	Login        string        `json:"usuario"`
-	Correo       string        `json:"correo,omitempty"`
-	Clave        string        `json:"clave,omitempty"`
-	Sucursal     string        `json:"sucursal,omitempty" bson:"sucursal"`
-	Sistema      string        `json:"sistema,omitempty" bson:"sistema"`
-	Rol          Rol           `json:"Roles,omitempty"`
-	Token        string        `json:"token,omitempty"`
-	Perfil       Perfil        `json:"Perfil,omitempty"`
-	FirmaDigital FirmaDigital  `json:"FirmaDigital,omitempty"`
-	Direccion    string        `json:"direccion,omitempty"`
-	Telefono     string        `json:"telefono,omitempty"`
-	Cargo        string        `json:"cargo,omitempty"`
+	Id            bson.ObjectId `json:"id" bson:"_id"`
+	Cedula        string        `json:"cedula"`
+	Nombre        string        `json:"nombre"`
+	Login         string        `json:"usuario"`
+	Correo        string        `json:"correo"`
+	FechaCreacion time.Time     `json:"fechacreacion,omitempty"`
+	Estatus       int           `json:"estatus"`
+	Clave         string        `json:"clave,omitempty"`
+	Sucursal      string        `json:"sucursal,omitempty" bson:"sucursal"`
+	Departamento  string        `json:"departamento,omitempty" bson:"departamento"`
+	Sistema       string        `json:"sistema,omitempty" bson:"sistema"`
+	Rol           Rol           `json:"Roles,omitempty"`
+	Token         string        `json:"token,omitempty"`
+	Perfil        Perfil        `json:"Perfil,omitempty"`
+	FirmaDigital  FirmaDigital  `json:"FirmaDigital,omitempty"`
+	Direccion     string        `json:"direccion,omitempty"`
+	Telefono      string        `json:"telefono,omitempty"`
+	Cargo         string        `json:"cargo,omitempty"`
 }
 
 //FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
@@ -186,8 +190,20 @@ func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err er
 }
 
 //Consultar el sistema de usuarios
-func (u *Usuario) Consultar() (v bool) {
+func (u *Usuario) Consultar(cedula string) (j []byte, err error) {
+	u.Nombre = ""
+	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
+	err = c.Find(bson.M{"cedula": cedula}).Select(bson.M{"clave": false}).One(&u)
+	j, _ = json.Marshal(u)
+	return
+}
 
+//Listar el sistema de usuarios
+func (u *Usuario) Listar() (j []byte, err error) {
+	var lstUsuario []Usuario
+	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
+	err = c.Find(bson.M{}).All(&lstUsuario)
+	j, _ = json.Marshal(lstUsuario)
 	return
 }
 

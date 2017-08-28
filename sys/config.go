@@ -22,7 +22,7 @@ var (
 	MGOSession        *mgo.Session
 	PostgreSQLSAMAN   *sql.DB
 	PostgreSQLPACE    *sql.DB
-	PostgreSQLTARJETA *sql.DB
+	PostgreSQLPENSION *sql.DB
 	Error             error
 )
 
@@ -92,9 +92,9 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionPACE(cad)
-		case "tarjeta":
+		case "pension":
 			cad := make(map[string]CadenaDeConexion)
-			cad["tarjeta"] = CadenaDeConexion{
+			cad["pension"] = CadenaDeConexion{
 				Driver:    valor.Driver,
 				Usuario:   valor.Usuario,
 				Basedatos: valor.Basedatos,
@@ -102,7 +102,7 @@ func init() {
 				Host:      valor.Host,
 				Puerto:    valor.Puerto,
 			}
-			ConexionTARJETA(cad)
+			ConexionPENSION(cad)
 		case "mysql":
 			MySQL = true
 		case "mongodb":

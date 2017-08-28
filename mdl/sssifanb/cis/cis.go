@@ -29,7 +29,7 @@ type Mensaje struct {
 }
 
 // CrearReembolso Actualizando
-func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.Reembolso, telefono tramitacion.Telefono) (jSon []byte, err error) {
+func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.Reembolso, telefono tramitacion.Telefono, nombre string) (jSon []byte, err error) {
 	var M Mensaje
 	M.Mensaje = "Creando Reembolso"
 	M.Tipo = 1
@@ -70,6 +70,25 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 	if err != nil {
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
+	}
+
+	var creembolso tramitacion.ColeccionReembolso
+	creembolso.ID = id
+	creembolso.Numero = reembolso.Numero
+	creembolso.Nombre = nombre
+	creembolso.Usuario = reembolso.Usuario
+	creembolso.Estatus = 0
+	creembolso.Reembolso = reembolso
+	creembolso.FechaCreacion = reembolso.FechaCreacion
+	creembolso.MontoSolicitado = reembolso.MontoSolicitado
+	creembolso.FechaAprobado = reembolso.FechaAprobado
+	creembolso.MontoAprobado = reembolso.MontoAprobado
+
+	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	err = coleccion.Insert(creembolso)
+	if err != nil {
+		fmt.Println("Error creando reembolso det: ", id)
+		// return
 	}
 
 	jSon, err = json.Marshal(M)

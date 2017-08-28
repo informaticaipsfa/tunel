@@ -8,6 +8,13 @@ const (
 	SACTIVO        int = 0
 	SPENDIENTE     int = 1
 	SRECOMENDACION int = 2
+	RRECHAZADO     int = -1
+	RINICIAL       int = 0
+	RPENDIENTE     int = 1
+	RJEFATURA      int = 2
+	RGERENCIA      int = 3
+	RPRESIDENCIA   int = 4
+	RAPROBADO      int = 5
 )
 
 type Reembolso struct {

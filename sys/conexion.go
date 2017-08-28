@@ -44,14 +44,14 @@ func ConexionPACE(mapa map[string]CadenaDeConexion) {
 }
 
 //ConexionTARJETA
-func ConexionTARJETA(mapa map[string]CadenaDeConexion) {
-	c := mapa["tarjeta"]
+func ConexionPENSION(mapa map[string]CadenaDeConexion) {
+	c := mapa["pension"]
 	cadena := "user=" + c.Usuario + " dbname=" + c.Basedatos + " password=" + c.Clave + " host=" + c.Host + " sslmode=disable"
-	PostgreSQLTARJETA, _ = sql.Open("postgres", cadena)
-	if PostgreSQLTARJETA.Ping() != nil {
-		fmt.Println("[Tarjeta: Error...] ", PostgreSQLTARJETA.Ping())
+	PostgreSQLPENSION, _ = sql.Open("postgres", cadena)
+	if PostgreSQLPENSION.Ping() != nil {
+		fmt.Println("[Pensiones: Error...] ", PostgreSQLPENSION.Ping())
 	} else {
-		fmt.Println("[Tarjeta: OK...]")
+		fmt.Println("[Pensiones: OK...]")
 	}
 	return
 }

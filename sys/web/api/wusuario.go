@@ -9,6 +9,7 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/dgrijalva/jwt-go/request"
+	"github.com/gorilla/mux"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
@@ -178,6 +179,37 @@ func (u *WUsuario) Autorizado(w http.ResponseWriter, r *http.Request) {
 	mensaje.Tipo = 1
 	mensaje.Msj = "Acceso Autorizado"
 	j, _ := json.Marshal(mensaje)
+	w.Write(j)
+}
+
+//Login conexion para solicitud de token
+func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
+	var usuario seguridad.Usuario
+	var traza fanb.Traza
+	Cabecera(w, r)
+	var cedula = mux.Vars(r)
+	ced := cedula["id"]
+
+	j, _ := usuario.Consultar(ced)
+
+	ip := strings.Split(r.RemoteAddr, ":")
+	traza.Usuario = usuario.Login
+	traza.Time = time.Now()
+	traza.Log = "Consultar Usuario"
+	traza.IP = ip[0]
+	traza.Documento = "Usuario"
+	traza.CrearHistoricoConsulta("husuario")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+
+}
+
+//Listar Usuario del sistema
+func (u *WUsuario) Listar(w http.ResponseWriter, r *http.Request) {
+	var usuario seguridad.Usuario
+	Cabecera(w, r)
+	j, _ := usuario.Listar()
+	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
 

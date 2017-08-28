@@ -117,8 +117,11 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/carnet/listar/{id}", wcar.Listar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/carnet/apro/{estatus}/{serial}", wcar.Aprobar).Methods("GET")
 
-	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.CambiarClave).Methods("PUT")
-	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/devel/api/wusuario/crud/{id}", wUsuario.Consultar).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/wusuario/listar", wUsuario.Listar).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/wusuario/crud", wUsuario.Crear).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/wusuario/crud", wUsuario.CambiarClave).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wusuario/crud", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/devel/api/wreembolso/listar/{id}", wCis.ListarReembolso).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Registrar).Methods("POST")
