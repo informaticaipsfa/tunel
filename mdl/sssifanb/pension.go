@@ -3,11 +3,37 @@ package sssifanb
 import (
 	"fmt"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"gopkg.in/mgo.v2/bson"
 )
+
+//Militar militares
+type PensionMilitar struct {
+	ID                     string     `json:"id,omitempty" bson:"id"`
+	TipoDato               int        `json:"tipodato,omitempty" bson:"tipodato"`
+	Persona                Persona    `json:"Persona,omitempty" bson:"persona"`
+	Categoria              string     `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Situacion              string     `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
+	Clase                  string     `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	FechaIngresoComponente time.Time  `json:"fingreso,omitempty" bson:"fingreso"`
+	FechaAscenso           time.Time  `json:"fascenso,omitempty" bson:"fascenso"`
+	FechaRetiro            time.Time  `json:"fretiro,omitempty" bson:"fretiro"`
+	AnoReconocido          int        `json:"areconocido,omitempty" bson:"areconocido"`
+	MesReconocido          int        `json:"mreconocido,omitempty" bson:"mreconocido"`
+	DiaReconocido          int        `json:"dreconocido,omitempty" bson:"dreconocido"`
+	NumeroResuelto         string     `json:"nresuelto,omitempty" bson:"nresuelto"`
+	FechaResuelto          string     `json:"fresuelto,omitempty" bson:"fresuelto"`
+	Posicion               int        `json:"posicion,omitempty" bson:"posicion"`
+	DescripcionHistorica   string     `json:"dhistorica,omitempty" bson:"dhistorica"` //codigo
+	Componente             Componente `json:"Componente,omitempty" bson:"componente"`
+	Grado                  Grado      `json:"Grado,omitempty" bson:"grado"` //grado
+	Familiar               []Familiar `json:"Familiar" bson:"familiar"`
+	Pension                Pension    `json:"Pension,omitempty" bson:"pension"`
+}
 
 type Pension struct {
 	GradoCodigo            string                   `json:"grado" bson:"grado"`
@@ -66,7 +92,7 @@ type Beneficiario struct {
 }
 
 //Listado de Componentes Por Grados
-var lstMilitares []Militar
+var lstMilitares []PensionMilitar
 var lstComponente []fanb.Componente
 
 func (P *Pension) Exportar() {
@@ -75,21 +101,39 @@ func (P *Pension) Exportar() {
 	fmt.Println("Cargando Militares")
 	consultarPensionados()
 	//
+	i := 0
+	coma := ""
+	cuerpo := ""
+	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
+		f_retiro_efectiva, porcentaje)	VALUES `
+	fmt.Println("Creando lote...")
 	for _, v := range lstMilitares {
-		grado, componente := obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
-		ins := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id)
-			VALUES (
-				'` + v.Persona.DatoBasico.Cedula + `',
-				'` + v.Persona.DatoBasico.NombrePrimero + `',
-				'` + v.Persona.DatoBasico.ApellidoPrimero + `',
-				` + grado + `,` + strconv.Itoa(componente) + `)`
-
-		_, err := sys.PostgreSQLPENSION.Exec(ins)
-		if err != nil {
-			fmt.Println("Error en el query: ", ins, " ", err.Error())
+		if i > 0 {
+			coma = ","
 		}
 
+		grado, componente := obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
+		np := v.Persona.DatoBasico.NombrePrimero
+		ap := v.Persona.DatoBasico.ApellidoPrimero
+		porcentaje := strconv.FormatFloat(v.Pension.PorcentajePrestaciones, 'f', 2, 64)
+		cuerpo += coma + `(
+				'` + v.Persona.DatoBasico.Cedula + `',
+				'` + strings.Replace(np, "'", " ", -1) + `',
+				'` + strings.Replace(ap, "'", " ", -1) + `',
+				` + grado + `,` + strconv.Itoa(componente) + `,
+				'` + v.FechaIngresoComponente.String()[0:10] + `',
+				'` + v.FechaAscenso.String()[0:10] + `',
+				'` + v.FechaRetiro.String()[0:10] + `','` + v.FechaRetiro.String()[0:10] + `',` + porcentaje + `)`
+		i++
+
 		// fmt.Println(" Situacion: ", v.Situacion, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
+	}
+	fmt.Println("Preparando para insertar")
+	query := insert + cuerpo
+	// fmt.Println("Consultar ", query)
+	_, err := sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query: ", err.Error())
 	}
 
 }
@@ -100,6 +144,7 @@ func consultarPensionados() {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	seleccion := bson.M{
 		"persona.datobasico":      true,
+		"fascenso":                true,
 		"fingreso":                true,
 		"fretiro":                 true,
 		"situacion":               true,
@@ -134,7 +179,7 @@ func consultarComponentes() {
 func obtenerGrado(codigo string, gradocodigo string) (grado string, componente int) {
 
 	for c, v := range lstComponente {
-		componente = c
+		componente = c + 1
 		if v.Codigo == codigo {
 			for _, g := range v.Grado {
 				if g.Codigo == gradocodigo {

@@ -89,6 +89,7 @@ func WMAdminLTE() {
 func CargarModulosWebDevel() {
 	var wUsuario api.WUsuario
 	var wCis api.WCis
+	var wCisA api.WCisApoyo
 	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
@@ -128,5 +129,11 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Actualizar).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wreembolso/estatus", wCis.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Opciones).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/devel/api/wapoyo/listar/{id}", wCisA.ListarApoyo).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Registrar).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Actualizar).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wapoyo/estatus", wCisA.Estatus).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Opciones).Methods("OPTIONS")
 
 }

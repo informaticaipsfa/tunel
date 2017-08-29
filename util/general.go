@@ -83,7 +83,11 @@ func Fatal(e error) {
 
 //CalcularTiempo Calculos
 func CalcularTiempo(fechaNacimiento time.Time) (Ano int, Mes time.Month, Dia int) {
-	fechaActual := time.Now()
+	fechaActual := time.Now() // } else {
+	// 	w.WriteHeader(http.StatusUnauthorized)
+	// 	m.Msj = "El equipo donde no esta autorizado"
+	// 	m.Tipo = 2
+	// }
 	AnnoA, MesA, DiaA := fechaActual.Date()
 	AnoN, MesN, DiaM := fechaNacimiento.Date()
 

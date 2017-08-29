@@ -27,23 +27,23 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	usuario.FirmaDigital.DireccionIP = ip[0]
 	usuario.FirmaDigital.Tiempo = time.Now()
 
-	if ip[0] == "192.168.6.45" {
+	// if ip[0] == "192.168.6.45" {
 
-		e := usuario.Salvar()
-		if e != nil {
-			w.WriteHeader(http.StatusForbidden)
-			m.Msj = e.Error()
-			m.Tipo = 1
-		} else {
-			w.WriteHeader(http.StatusOK)
-			m.Msj = "Usuario creado"
-			m.Tipo = 0
-		}
+	e := usuario.Salvar()
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		m.Msj = e.Error()
+		m.Tipo = 1
 	} else {
-		w.WriteHeader(http.StatusUnauthorized)
-		m.Msj = "El equipo donde no esta autorizado"
-		m.Tipo = 2
+		w.WriteHeader(http.StatusOK)
+		m.Msj = "Usuario creado"
+		m.Tipo = 0
 	}
+	// } else {
+	// 	w.WriteHeader(http.StatusUnauthorized)
+	// 	m.Msj = "El equipo donde no esta autorizado"
+	// 	m.Tipo = 2
+	// }
 
 	m.Fecha = time.Now()
 	j, _ := json.Marshal(m)

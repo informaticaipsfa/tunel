@@ -11,6 +11,7 @@ const (
 	CRECIBO     string = "recibo"
 	CINTEGRAL   string = "cuidadointegral"
 	CREEMBOLSO  string = "reembolso"
+	CAPOYO      string = "apoyo"
 	CTRAZA      string = "traza"
 	CCATEGORIA  string = "traza"
 )
