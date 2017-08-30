@@ -12,6 +12,7 @@ const (
 	CINTEGRAL   string = "cuidadointegral"
 	CREEMBOLSO  string = "reembolso"
 	CAPOYO      string = "apoyo"
+	CCARTAAVAL  string = "cartaaval"
 	CTRAZA      string = "traza"
 	CCATEGORIA  string = "traza"
 )

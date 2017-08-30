@@ -305,3 +305,73 @@ func (cuidado *CuidadoIntegral) EstatusApoyo(E tramitacion.EstatusApoyo) (jSon [
 
 	return
 }
+
+// CrearCarta Actualizando
+func (cuidado *CuidadoIntegral) CrearCarta(id string, carta tramitacion.CartaAval, nombre string) (jSon []byte, err error) {
+	var M Mensaje
+	M.Mensaje = "Creando Carta Aval"
+	M.Tipo = 1
+	apo := make(map[string]interface{})
+
+	apo["cis.serviciomedico.programa.cartaaval"] = carta
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	err = c.Update(bson.M{"id": id}, bson.M{"$push": apo})
+	if err != nil {
+		fmt.Println("Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	// **** Actualizando direccion del militar ****
+	//
+	// direccion := reembolso.Direccion
+	// dir := make(map[string]interface{})
+	// dir["persona.direccion.0"] = direccion
+	//
+	// fmt.Println("Direccion", direccion)
+	// err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
+	// if err != nil {
+	// 	fmt.Println("Cedula: " + id + " -> " + err.Error())
+	// 	return
+	// }
+
+	var cartaaval tramitacion.ColeccionCartaAval
+	cartaaval.ID = id
+	cartaaval.Numero = carta.Numero
+	cartaaval.Nombre = nombre
+	cartaaval.Usuario = carta.Usuario
+	cartaaval.Estatus = 0
+	cartaaval.Carta = carta
+	cartaaval.FechaCreacion = carta.FechaCreacion
+	cartaaval.MontoSolicitado = carta.MontoSolicitado
+	cartaaval.FechaAprobado = carta.FechaAprobado
+	cartaaval.MontoAprobado = carta.MontoAprobado
+
+	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CCARTAAVAL)
+	err = coleccion.Insert(cartaaval)
+	if err != nil {
+		fmt.Println("Error creando reembolso det: ", id)
+		// return
+	}
+
+	jSon, err = json.Marshal(M)
+	return
+}
+
+// ListarCarta Actualizando
+func (cuidado *CuidadoIntegral) ListarCarta(estatus int) (jSon []byte, err error) {
+	// var result []tramitacion.ColeccionReembolso
+	var result []interface{}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CCARTAAVAL)
+	err = c.Find(bson.M{"estatus": estatus}).Select(bson.M{"carta": false, "_id": false}).All(&result)
+	if err != nil {
+		fmt.Println("Err. Carta")
+		//return
+	}
+	// var Lista interface{}
+	// Lista = interface{
+	// 	Reembolso: result,
+	// }
+
+	jSon, err = json.Marshal(result)
+	return
+}

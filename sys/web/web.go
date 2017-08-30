@@ -90,6 +90,7 @@ func CargarModulosWebDevel() {
 	var wUsuario api.WUsuario
 	var wCis api.WCis
 	var wCisA api.WCisApoyo
+	var wCisC api.WCisCarta
 	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
@@ -135,5 +136,11 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Actualizar).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wapoyo/estatus", wCisA.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Opciones).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/devel/api/wcarta/listar/{id}", wCisC.Listar).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/wcarta", wCisC.Registrar).Methods("POST")
+	// Enrutador.HandleFunc("/devel/api/wcarta", wCisA.Actualizar).Methods("PUT")
+	// Enrutador.HandleFunc("/devel/api/wcarta/estatus", wCisA.Estatus).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wcarta", wCisA.Opciones).Methods("OPTIONS")
 
 }
