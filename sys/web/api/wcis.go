@@ -107,6 +107,7 @@ func (wcis *WCis) Estatus(w http.ResponseWriter, r *http.Request) {
 	util.Error(e)
 	cis.EstatusReembolso(Estatus)
 	M.Tipo = 0
+	M.Mensaje = "Estatus actualizado"
 	j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 

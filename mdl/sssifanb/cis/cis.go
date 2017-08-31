@@ -138,6 +138,7 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 	rmb.Estatus = AReembolso.Reembolso.Estatus
 	rmb.EstatusSeguimiento = AReembolso.Reembolso.Seguimiento.Estatus
 	rmb.MontoAprobado = AReembolso.Reembolso.MontoAprobado
+	rmb.MontoSolicitado = AReembolso.Reembolso.MontoSolicitado
 	rmb.FechaAprobado = time.Now()
 
 	err = co.Update(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}, bson.M{"$set": rmb})
@@ -269,6 +270,7 @@ func (cuidado *CuidadoIntegral) ActualizarApoyo(AAPoyo tramitacion.ActualizarApo
 	rmb.Estatus = AAPoyo.Apoyo.Estatus
 	rmb.EstatusSeguimiento = AAPoyo.Apoyo.Seguimiento.Estatus
 	rmb.MontoAprobado = AAPoyo.Apoyo.MontoAprobado
+	rmb.MontoSolicitado = AAPoyo.Apoyo.MontoSolicitado
 	rmb.FechaAprobado = time.Now()
 
 	err = co.Update(bson.M{"id": AAPoyo.ID, "numero": AAPoyo.Numero}, bson.M{"$set": rmb})

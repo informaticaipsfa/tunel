@@ -128,14 +128,16 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wreembolso/listar/{id}", wCis.ListarReembolso).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Actualizar).Methods("PUT")
-	Enrutador.HandleFunc("/devel/api/wreembolso/estatus", wCis.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/devel/api/wreembolso/estatus", wCis.Estatus).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wreembolso/estatus", wCis.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/devel/api/wapoyo/listar/{id}", wCisA.ListarApoyo).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Actualizar).Methods("PUT")
-	Enrutador.HandleFunc("/devel/api/wapoyo/estatus", wCisA.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/devel/api/wapoyo/estatus", wCisA.Estatus).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wapoyo/estatus", wCisA.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/devel/api/wcarta/listar/{id}", wCisC.Listar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wcarta", wCisC.Registrar).Methods("POST")

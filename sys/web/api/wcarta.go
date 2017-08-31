@@ -30,6 +30,7 @@ func (wcis *WCisCarta) Registrar(w http.ResponseWriter, r *http.Request) {
 
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&wcis)
+	// fmt.Println(wcis.Nombre, "---")
 	wcis.Carta.FechaCreacion = time.Now()
 	wcis.Carta.Usuario = UsuarioConectado.Login
 	wcis.Carta.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
