@@ -128,7 +128,7 @@ func (P *Pension) Exportar() {
 
 		// fmt.Println(" Situacion: ", v.Situacion, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
 	}
-	fmt.Println("Preparando para insertar")
+	fmt.Println("Preparando para insertar: ", i)
 	query := insert + cuerpo
 	// fmt.Println("Consultar ", query)
 	_, err := sys.PostgreSQLPENSION.Exec(query)

@@ -857,3 +857,24 @@ func (e *Estructura) ActualizarFechaDefuncion() (jSon []byte, err error) {
 	}
 	return
 }
+
+func (e *Estructura) ConvertirGradoGN() (jSon []byte, err error) {
+	var msj Mensaje
+
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionadosAntes2008GN())
+	if err != nil {
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		var ced string
+		militar := make(map[string]interface{})
+		sq.Scan(&ced)
+		militar["pension.grado"] = "SAY"
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
+		fmt.Println("Cedula", ced)
+	}
+	return
+}

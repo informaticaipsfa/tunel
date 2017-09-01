@@ -145,6 +145,13 @@ func obtenerHistorialMilitar() string {
 	//WHERE p.nropersona IN (1393199,79227)
 
 }
+
+func obtenerPensionadosAntes2008GN() string {
+	return `SELECT pr.codnip FROM pension AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE fchegreso < '2008-07-01' AND gradocod IN ('S1')  AND  componentecod = 'GN'`
+}
+
 func obtenerFechaVencimiento() string {
 	return `SELECT codnip,fchvctocarnet FROM pers_dat_afiliac af
 		JOIN personas pr ON af.nropersona=pr.nropersona
