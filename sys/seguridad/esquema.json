@@ -1,0 +1,41 @@
+{
+  "_id": ObjectID("1"),
+  "nombre" : "Carlos",
+  "clave": "secret(md5)",
+  "correo": "api@restfull.com"
+  "perfil": {
+    "nombre" : "Administrador Web",
+    "privilegios" : [
+      {
+        1:"Salvar"
+      },
+      {
+        2:"Imprimir"
+      },
+      {
+        3:"Reporte"
+      }
+    ],
+
+  },
+  "rol": {
+    "nombre": "Administrador",
+    "metodoseguro":
+      {
+        "Consultar"  : "boolean",
+        "Insertar"   : "boolean",
+        "Actualizar" : "boolean",
+        "Eliminar"   : "boolean",
+        "Crud"       : "boolean",
+        "CrearSQL"   : "boolean",
+        "Todo"       : "boolean",
+        "Prueba"     : "boolean",
+        "Hack"       : "boolean",
+        "Desarrollo" : "boolean",
+        "Consola"    : "boolean",
+        "Funcion"    : "boolean"
+      },
+  },
+  "grupo": "root",
+  "ip": "127.0.0.1|%|192.168.0.1/256",
+}

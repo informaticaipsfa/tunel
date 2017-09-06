@@ -1,0 +1,39 @@
+[{
+  "Driver" : "postgres",
+  "Usuario" : "postgres",
+  "Basedatos": "Saman",
+  "Clave" : "data",
+  "Host" : "192.168.6.65",
+  "Puerto" : "5432"
+},{
+  "Driver" : "pgpace",
+  "Usuario" : "mercy",
+  "Basedatos": "pace",
+  "Clave" : "mercy792",
+  "Host" : "192.168.12.161",
+  "Puerto" : "5432"
+},{
+  "Driver" : "pgtarjeta",
+  "Usuario" : "postgres",
+  "Basedatos": "saman",
+  "Clave" : "za63qj2p",
+  "Host" : "localhost",
+  "Puerto" : "5432"
+},
+{
+  "Driver" : "mysql",
+  "Usuario" : "mysql",
+  "Basedatos": "pace",
+  "Clave" : "za63qj2p",
+  "Host" : "localhost",
+  "Puerto" : "3306"
+},
+{
+  "Driver" : "mongodb",
+  "Usuario" : "mongodb",
+  "Basedatos": "sssifanb",
+  "Clave" : "6pt33pSUz",
+  "Host" : "192.168.6.45",
+  "Puerto" : "27017"
+}
+]
