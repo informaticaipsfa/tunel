@@ -23,7 +23,7 @@ type WCisCarta struct {
 
 //Consultar Militares
 func (wcis *WCisCarta) Registrar(w http.ResponseWriter, r *http.Request) {
-	var M sssifanb.Mensaje
+	// var M sssifanb.Mensaje
 	var cis cis.CuidadoIntegral
 	var Semillero fanb.Semillero
 	i, _ := Semillero.Maximo("semillerocis")
@@ -35,9 +35,9 @@ func (wcis *WCisCarta) Registrar(w http.ResponseWriter, r *http.Request) {
 	wcis.Carta.Usuario = UsuarioConectado.Login
 	wcis.Carta.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	util.Error(e)
-	cis.CrearCarta(wcis.ID, wcis.Carta, wcis.Nombre)
-	M.Tipo = 0
-	j, e := json.Marshal(M)
+	j, e := cis.CrearCarta(wcis.ID, wcis.Carta, wcis.Nombre)
+	// M.Tipo = 0
+	// j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 
 	w.Write(j)

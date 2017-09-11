@@ -78,7 +78,7 @@ type Rol struct {
 
 // Usuarios del Sistema
 type Usuario struct {
-	Id            bson.ObjectId `json:"id" bson:"_id"`
+	ID            bson.ObjectId `json:"id" bson:"_id"`
 	Cedula        string        `json:"cedula"`
 	Nombre        string        `json:"nombre"`
 	Login         string        `json:"usuario"`
@@ -120,31 +120,11 @@ func (usr *Usuario) Salvar() error {
 	// var privilegio Privilegio
 	// var lst []Privilegio
 	//
-	// usr.Id = bson.NewObjectId()
-	// usr.Nombre = "Root"
-	// usr.Login = "root"
-	// usr.Sucursal = "Principal"
-	// usr.Clave = util.GenerarHash256([]byte(usr.Login))
-	//
-	// usr.Rol.ID = ROOT
-	// usr.Rol.Descripcion = "Super Usuario"
-	// usr.Perfil.ID = ROOT
-	// usr.Perfil.Descripcion = "Super Usuario"
-	//
-	// privilegio.Metodo = "afiliacion.salvar"
-	// privilegio.Descripcion = "Crear Usuario"
-	// privilegio.Accion = "Insert()" // ES6 Metodos
-	// lst = append(lst, privilegio)
-	//
-	// privilegio.Metodo = "afiliacion.modificar"
-	// privilegio.Descripcion = "Modificar Usuario"
-	// privilegio.Accion = "Update()"
-	// lst = append(lst, privilegio)
-	// usr.Perfil.Privilegios = lst
+	usr.ID = bson.NewObjectId()
+	fmt.Println("Creando Usuario")
 
-	var mongo sys.Mongo
-
-	return mongo.Salvar(usr, "usuario")
+	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
+	return c.Insert(usr)
 
 }
 
@@ -202,7 +182,7 @@ func (u *Usuario) Consultar(cedula string) (j []byte, err error) {
 func (u *Usuario) Listar() (j []byte, err error) {
 	var lstUsuario []Usuario
 	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
-	err = c.Find(bson.M{}).All(&lstUsuario)
+	err = c.Find(bson.M{}).Select(bson.M{"clave": false}).All(&lstUsuario)
 	j, _ = json.Marshal(lstUsuario)
 	return
 }
@@ -211,7 +191,7 @@ func (u *Usuario) Generico() error {
 	var privilegio Privilegio
 	var lst []Privilegio
 	var usr Usuario
-	usr.Id = bson.NewObjectId()
+	usr.ID = bson.NewObjectId()
 	usr.Nombre = "Informatica - Consulta"
 	usr.Login = "usuario"
 	usr.Sucursal = "Principal"

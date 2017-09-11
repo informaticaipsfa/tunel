@@ -26,14 +26,18 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	ip := strings.Split(r.RemoteAddr, ":")
 	usuario.FirmaDigital.DireccionIP = ip[0]
 	usuario.FirmaDigital.Tiempo = time.Now()
+	usuario.FechaCreacion = time.Now()
 
+	e := json.NewDecoder(r.Body).Decode(&usuario)
+	util.Error(e)
 	// if ip[0] == "192.168.6.45" {
 
-	e := usuario.Salvar()
+	e = usuario.Salvar()
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		m.Msj = e.Error()
 		m.Tipo = 1
+		fmt.Println("Err: ", e.Error())
 	} else {
 		w.WriteHeader(http.StatusOK)
 		m.Msj = "Usuario creado"

@@ -13,6 +13,8 @@ const (
 	CREEMBOLSO  string = "reembolso"
 	CAPOYO      string = "apoyo"
 	CCARTAAVAL  string = "cartaaval"
+	CFACTURA    string = "factura"
+	CFEVIDA     string = "fevida"
 	CTRAZA      string = "traza"
 	CCATEGORIA  string = "traza"
 )

@@ -1,7 +1,13 @@
 package investigacion
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
+
+	"gopkg.in/mgo.v2/bson"
+
+	"github.com/gesaodin/tunel-ipsfa/sys"
 )
 
 const (
@@ -10,9 +16,67 @@ const (
 	GRACIA    int32 = 3
 )
 
+//Mensaje del sistema
+type Mensaje struct {
+	Mensaje string `json:"msj"`
+	Tipo    int    `json:"tipo"`
+}
+
+type WFedeVida struct {
+	ID          string
+	IDF         string
+	Direccion   Direccion
+	DireccionEx string
+	FechaEx     time.Time
+	Nombre      string
+}
+
+//FeDeVida Control de Fe de Vida
 type FeDeVida struct {
-	fechadeemision time.Time
-	datospersona   DatoPersonal
-	tipopension    int32 //1 retiro, 2 invalidez, 3 gracia
-	estado         bool
+	FechaCreacion time.Time    `json:"fechacreacion" bson:"fechacreacion"`
+	DatoBasico    DatoPersonal `json:"DatoBasico" bson:"datobasico"`
+	TipoPension   int32        `json:"tipo" bson:"tipo"` //1 retiro, 2 invalidez, 3 gracia
+	Estatus       bool         `json:"estatus" bson:"estatus"`
+	IDF           string       `json:"idf" bson:"idf"`
+	DireccionEx   string       `json:"direccionex" bson:"direccionex"`
+	FechaEx       time.Time    `json:"fechaex" bson:"fechaex"`
+}
+
+//Crear Creacion de Cuenta
+func (fe *WFedeVida) Crear() (jSon []byte, err error) {
+	var fevida FeDeVida
+	var M Mensaje
+
+	fevida.DatoBasico.Direccion = fe.Direccion
+	fevida.DatoBasico.Cedula = fe.ID
+	fevida.DatoBasico.NombreCompleto = fe.Nombre
+	fevida.IDF = fe.IDF
+	fevida.DireccionEx = fe.DireccionEx
+	fevida.FechaEx = fe.FechaEx
+	fevida.FechaCreacion = time.Now()
+	fevida.Estatus = true
+	fevida.TipoPension = 0
+
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CFEVIDA)
+	err = c.Insert(fe)
+	if err != nil {
+		fmt.Println("Error creando reembolso det: ")
+		// return
+	}
+
+	cisfe := make(map[string]interface{})
+
+	cisfe["cis.investigacion.fedevida"] = fevida
+	co := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	err = co.Update(bson.M{"id": fe.ID}, bson.M{"$push": cisfe})
+	if err != nil {
+		fmt.Println("Cedula: " + fe.ID + " -> " + err.Error())
+		// return
+	}
+
+	M.Mensaje = "Bien"
+	M.Tipo = 1
+
+	jSon, err = json.Marshal(M)
+	return
 }

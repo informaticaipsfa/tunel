@@ -95,6 +95,7 @@ func CargarModulosWebDevel() {
 	var comp api.APIComponente
 	var esta api.APIEstado
 	var wrec api.WRecibo
+	var wfe api.WFedeVida
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
 
@@ -145,4 +146,6 @@ func CargarModulosWebDevel() {
 	// Enrutador.HandleFunc("/devel/api/wcarta/estatus", wCisA.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wcarta", wCisA.Opciones).Methods("OPTIONS")
 
+	// Enrutador.HandleFunc("/devel/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/wfedevida", wfe.Registrar).Methods("POST")
 }

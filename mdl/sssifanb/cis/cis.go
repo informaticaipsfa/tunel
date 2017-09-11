@@ -7,17 +7,14 @@ import (
 	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/gasto"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/investigacion"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
 	"github.com/gesaodin/tunel-ipsfa/sys"
 	"gopkg.in/mgo.v2/bson"
 )
 
-const (
-	CCIS  string = "cis"
-	CBASE string = "sssifanb"
-)
-
 type CuidadoIntegral struct {
+	Investigacion  investigacion.FeDeVida     `json:"FeDeVida" bson:"fedeVida"`
 	ServicioMedico tramitacion.ServicioMedico `json:"ServicioMedico" bson:"serviciomedico"`
 	Gasto          gasto.GastoFarmaceutico    `json:"Gasto" bson:"gasto"`
 }
@@ -89,6 +86,17 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 	if err != nil {
 		fmt.Println("Error creando reembolso det: ", id)
 		// return
+	}
+
+	coleccionfactura := sys.MGOSession.DB(sys.CBASE).C(sys.CFACTURA)
+	for _, v := range reembolso.Concepto {
+		var factura tramitacion.Factura
+		factura = v.DatoFactura
+		err = coleccionfactura.Insert(factura)
+		if err != nil {
+			fmt.Println("Error creando Facturas det: ", factura.Numero)
+			// return
+		}
 	}
 
 	jSon, err = json.Marshal(M)
@@ -311,8 +319,7 @@ func (cuidado *CuidadoIntegral) EstatusApoyo(E tramitacion.EstatusApoyo) (jSon [
 // CrearCarta Actualizando
 func (cuidado *CuidadoIntegral) CrearCarta(id string, carta tramitacion.CartaAval, nombre string) (jSon []byte, err error) {
 	var M Mensaje
-	M.Mensaje = "Creando Carta Aval"
-	M.Tipo = 1
+
 	apo := make(map[string]interface{})
 
 	apo["cis.serviciomedico.programa.cartaaval"] = carta
@@ -322,19 +329,6 @@ func (cuidado *CuidadoIntegral) CrearCarta(id string, carta tramitacion.CartaAva
 		fmt.Println("Cedula: " + id + " -> " + err.Error())
 		return
 	}
-
-	// **** Actualizando direccion del militar ****
-	//
-	// direccion := reembolso.Direccion
-	// dir := make(map[string]interface{})
-	// dir["persona.direccion.0"] = direccion
-	//
-	// fmt.Println("Direccion", direccion)
-	// err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
-	// if err != nil {
-	// 	fmt.Println("Cedula: " + id + " -> " + err.Error())
-	// 	return
-	// }
 
 	var cartaaval tramitacion.ColeccionCartaAval
 	cartaaval.ID = id
@@ -354,7 +348,8 @@ func (cuidado *CuidadoIntegral) CrearCarta(id string, carta tramitacion.CartaAva
 		fmt.Println("Error creando reembolso det: ", id)
 		// return
 	}
-
+	M.Mensaje = carta.Numero
+	M.Tipo = 1
 	jSon, err = json.Marshal(M)
 	return
 }
