@@ -14,9 +14,9 @@ import (
 )
 
 type CuidadoIntegral struct {
-	Investigacion  investigacion.FeDeVida     `json:"FeDeVida" bson:"fedeVida"`
-	ServicioMedico tramitacion.ServicioMedico `json:"ServicioMedico" bson:"serviciomedico"`
-	Gasto          gasto.GastoFarmaceutico    `json:"Gasto" bson:"gasto"`
+	Investigacion  investigacion.Investigacion `json:"Investigacion" bson:"investigacion"`
+	ServicioMedico tramitacion.ServicioMedico  `json:"ServicioMedico" bson:"serviciomedico"`
+	Gasto          gasto.GastoFarmaceutico     `json:"Gasto" bson:"gasto"`
 }
 
 //Mensaje del sistema

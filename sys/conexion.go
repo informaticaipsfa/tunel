@@ -62,9 +62,9 @@ func ConexionPENSIONSIGESP(mapa map[string]CadenaDeConexion) {
 	cadena := "user=" + c.Usuario + " dbname=" + c.Basedatos + " password=" + c.Clave + " host=" + c.Host + " sslmode=disable"
 	PostgreSQLPENSIONSIGESP, _ = sql.Open("postgres", cadena)
 	if PostgreSQLPENSIONSIGESP.Ping() != nil {
-		fmt.Println("[Pensiones: Error...] ", PostgreSQLPENSIONSIGESP.Ping())
+		fmt.Println("[Pensiones SIGESP: Error...] ", PostgreSQLPENSIONSIGESP.Ping())
 	} else {
-		fmt.Println("[Pensiones: OK...]")
+		fmt.Println("[Pensiones SIGESP: OK...]")
 	}
 	return
 }
