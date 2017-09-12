@@ -16,5 +16,6 @@ const (
 	CFACTURA    string = "factura"
 	CFEVIDA     string = "fevida"
 	CTRAZA      string = "traza"
-	CCATEGORIA  string = "traza"
+	CCATEGORIA  string = "categoria"
+	CUSUARIO    string = "usuario"
 )

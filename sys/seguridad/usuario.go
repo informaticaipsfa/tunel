@@ -79,30 +79,31 @@ type Rol struct {
 // Usuarios del Sistema
 type Usuario struct {
 	ID            bson.ObjectId `json:"id" bson:"_id"`
-	Cedula        string        `json:"cedula"`
-	Nombre        string        `json:"nombre"`
-	Login         string        `json:"usuario"`
-	Correo        string        `json:"correo"`
-	FechaCreacion time.Time     `json:"fechacreacion,omitempty"`
-	Estatus       int           `json:"estatus"`
-	Clave         string        `json:"clave,omitempty"`
-	Sucursal      string        `json:"sucursal,omitempty" bson:"sucursal"`
+	Cedula        string        `json:"cedula" bson:"cedula"`
+	Nombre        string        `json:"nombre" bson:"nombre"`
+	Login         string        `json:"usuario" bson:"login"`
+	Correo        string        `json:"correo" bson:"correo"`
+	FechaCreacion time.Time     `json:"fechacreacion,omitempty" bson:"fechacreacion"`
+	Estatus       int           `json:"estatus" bson:"estatus"`
+	Clave         string        `json:"clave,omitempty" bson:"clave"`
+	Situacion     string        `json:"situacion,omitempty" bson:"situacion"` //PM - PC
+	Sucursal      string        `json:"sucursal,omitempty" bson:"sucursal" bson:"sucursal"`
 	Departamento  string        `json:"departamento,omitempty" bson:"departamento"`
 	Sistema       string        `json:"sistema,omitempty" bson:"sistema"`
-	Rol           Rol           `json:"Roles,omitempty"`
-	Token         string        `json:"token,omitempty"`
-	Perfil        Perfil        `json:"Perfil,omitempty"`
-	FirmaDigital  FirmaDigital  `json:"FirmaDigital,omitempty"`
-	Direccion     string        `json:"direccion,omitempty"`
-	Telefono      string        `json:"telefono,omitempty"`
-	Cargo         string        `json:"cargo,omitempty"`
+	Rol           Rol           `json:"Roles,omitempty" bson:"roles"`
+	Token         string        `json:"token,omitempty" bson:"token"`
+	Perfil        Perfil        `json:"Perfil,omitempty" bson:"perfil"`
+	FirmaDigital  FirmaDigital  `json:"FirmaDigital,omitempty" bson:"firmadigital"`
+	Direccion     string        `json:"direccion,omitempty" bson:"direccion"`
+	Telefono      string        `json:"telefono,omitempty" bson:"telefono"`
+	Cargo         string        `json:"cargo,omitempty" bson:"cargo"`
 }
 
 //FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
 type FirmaDigital struct {
-	DireccionMac string
-	DireccionIP  string
-	Tiempo       time.Time
+	DireccionMac string    `json:"direccionmap,omitempty" bson:"direccionmap"`
+	DireccionIP  string    `json:"direccionip,omitempty" bson:"direccionip"`
+	Tiempo       time.Time `json:"tiempo,omitempty" bson:"tiempo"`
 }
 
 type RespuestaToken struct {
@@ -116,14 +117,12 @@ func (f *FirmaDigital) Registrar() bool {
 
 //Salvar Metodo para crear usuarios del sistema
 func (usr *Usuario) Salvar() error {
-
-	// var privilegio Privilegio
-	// var lst []Privilegio
-	//
 	usr.ID = bson.NewObjectId()
+	usr.Clave = util.GenerarHash256([]byte(usr.Clave))
+	usr.FechaCreacion = time.Now()
 	fmt.Println("Creando Usuario")
 
-	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CUSUARIO)
 	return c.Insert(usr)
 
 }
@@ -131,7 +130,7 @@ func (usr *Usuario) Salvar() error {
 //Validar Usuarios
 func (u *Usuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CUSUARIO)
 	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false}).One(&u)
 
 	return

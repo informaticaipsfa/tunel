@@ -1,3 +1,4 @@
 /servicio
 /start.sh
 sys/config_dev.json
+tmp/*

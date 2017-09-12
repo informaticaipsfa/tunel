@@ -13,17 +13,18 @@ type config struct{}
 
 //Variables del modelo
 var (
-	Version           string = "V.0.0.1"
-	MySQL             bool   = false
-	MongoDB           bool   = false
-	SQLServer         bool   = false
-	Oracle            bool   = false
-	BaseDeDatos       BaseDatos
-	MGOSession        *mgo.Session
-	PostgreSQLSAMAN   *sql.DB
-	PostgreSQLPACE    *sql.DB
-	PostgreSQLPENSION *sql.DB
-	Error             error
+	Version                 string = "V.0.0.1"
+	MySQL                   bool   = false
+	MongoDB                 bool   = false
+	SQLServer               bool   = false
+	Oracle                  bool   = false
+	BaseDeDatos             BaseDatos
+	MGOSession              *mgo.Session
+	PostgreSQLSAMAN         *sql.DB
+	PostgreSQLPACE          *sql.DB
+	PostgreSQLPENSION       *sql.DB
+	PostgreSQLPENSIONSIGESP *sql.DB
+	Error                   error
 )
 
 //Constantes del sistema
@@ -103,6 +104,17 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionPENSION(cad)
+		case "pensiones":
+			cad := make(map[string]CadenaDeConexion)
+			cad["pensiones"] = CadenaDeConexion{
+				Driver:    valor.Driver,
+				Usuario:   valor.Usuario,
+				Basedatos: valor.Basedatos,
+				Clave:     valor.Clave,
+				Host:      valor.Host,
+				Puerto:    valor.Puerto,
+			}
+			ConexionPENSIONSIGESP(cad)
 		case "mysql":
 			MySQL = true
 		case "mongodb":
