@@ -20,7 +20,6 @@ import (
 	"fmt"
 
 	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
 func init() {
@@ -40,8 +39,8 @@ func init() {
 }
 
 func main() {
-	var arch util.Archivo
-	arch.LeerPorLinea("tmp/inv.xlsx", sys.PostgreSQLPENSIONSIGESP)
+	// var arch util.Archivo
+	// arch.LeerPorLinea("tmp/inv.xlsx", sys.PostgreSQLPENSIONSIGESP)
 	// var migrado estadistica.Estructura
 	// migrado.ConvertirGradoGN()
 	// var Pension sssifanb.Pension

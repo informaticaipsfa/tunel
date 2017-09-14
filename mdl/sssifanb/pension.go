@@ -41,6 +41,7 @@ type Pension struct {
 	Clase                  string                   `json:"clase" bson:"clase"`
 	Categoria              string                   `json:"categoria" bson:"categoria"`
 	Situacion              string                   `json:"situacion" bson:"situacion"`
+	Tipo                   string                   `json:"tipo" bson:"tipo"`
 	FechaPromocion         string                   `json:"fpromocion" bson:"fpromocion"`
 	FechaUltimoAscenso     string                   `json:"fultimoascenso" bson:"fultimoascenso"`
 	AnoServicio            int                      `json:"aservicio" bson:"aservicio"`
