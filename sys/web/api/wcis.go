@@ -56,10 +56,11 @@ func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
 	var cis cis.CuidadoIntegral
 	var reemb tramitacion.ActualizarReembolso
 
-	// fmt.Println("Acceso...")
+	fmt.Println("Acceso...")
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&reemb)
 
+	fmt.Println("Numero:  ", reemb.Numero)
 	for _, v := range reemb.Observaciones {
 		var Obs tramitacion.Observacion
 		Obs.Contenido = v

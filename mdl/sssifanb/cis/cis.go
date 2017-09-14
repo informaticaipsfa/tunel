@@ -148,7 +148,7 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 	rmb.MontoAprobado = AReembolso.Reembolso.MontoAprobado
 	rmb.MontoSolicitado = AReembolso.Reembolso.MontoSolicitado
 	rmb.FechaAprobado = time.Now()
-
+	fmt.Println("Numero:  ", AReembolso.Numero)
 	err = co.Update(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}, bson.M{"$set": rmb})
 	if err != nil {
 		// return

@@ -124,11 +124,11 @@ type ColeccionReembolso struct {
 }
 
 type ActualizarReembolso struct {
-	ID            string
-	Reembolso     Reembolso
-	Numero        string
-	Posicion      int
-	Observaciones []string
+	ID            string    `json:"id" bson:"id"`
+	Reembolso     Reembolso `json:"Reembolso" bson:"Reembolso"`
+	Numero        string    `json:"numero" bson:"numero"`
+	Posicion      int       `json:"posicion" bson:"posicion"`
+	Observaciones []string  `json:"observaciones" bson:"observaciones"`
 }
 
 type EstatusReembolso struct {
