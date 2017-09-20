@@ -27,17 +27,19 @@ type CartaAval struct {
 }
 
 type ConceptoCartaAval struct {
-	Motivo            string    `json:"motivo" bson:"motivo"`
-	Diagnostico       string    `json:"diagnostico" bson:"diagnostico"`
-	Descripcion       string    `json:"descripcion" bson:"descripcion"`
-	DatoFactura       Factura   `json:"DatoFactura" bson:"datofactura"`
-	Afiliado          string    `json:"afiliado" bson:"afiliado"` //Cedula, Guión (-), Nombre
-	Requisitos        []int     `json:"requisitos" bson:"requisitos"`
-	MontoPresupuesto  float64   `json:"montopresupuesto" bson:"montopresupuesto"`
-	FechaPresupuesto  time.Time `json:"fechapresupuesto" bson:"fechapresupuesto"`
-	NumeroPresupuesto string    `json:"numeropresupuesto" bson:"numeropresupuesto"`
-	MontoSeguro       float64   `json:"montoseguro" bson:"montoseguro"`
-	FechaSeguro       time.Time `json:"fechaseguro" bson:"fechaseguro"`
+	Motivo             string    `json:"motivo" bson:"motivo"`
+	Diagnostico        string    `json:"diagnostico" bson:"diagnostico"`
+	Descripcion        string    `json:"descripcion" bson:"descripcion"`
+	DatoFactura        Factura   `json:"DatoFactura" bson:"datofactura"`
+	Afiliado           string    `json:"afiliado" bson:"afiliado"` //Cedula, Guión (-), Nombre
+	Requisitos         []int     `json:"requisitos" bson:"requisitos"`
+	MontoPresupuesto   float64   `json:"montopresupuesto" bson:"montopresupuesto"`
+	FechaPresupuesto   time.Time `json:"fechapresupuesto" bson:"fechapresupuesto"`
+	NumeroPresupuesto  string    `json:"numeropresupuesto" bson:"numeropresupuesto"`
+	MontoSeguro        float64   `json:"montoseguro" bson:"montoseguro"`
+	FechaSeguro        time.Time `json:"fechaseguro" bson:"fechaseguro"`
+	MontoAfiliado      float64   `json:"montoafiliado" bson:"montoafiliado"`
+	PorcentajeAfiliado float64   `json:"porcentajeafi" bson:"porcentajeafi"`
 }
 
 type ColeccionCartaAval struct {

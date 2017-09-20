@@ -3,11 +3,14 @@ package investigacion
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
 	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/util"
 )
 
 const (
@@ -33,6 +36,7 @@ type WFedeVida struct {
 
 //FeDeVida Control de Fe de Vida
 type FeDeVida struct {
+	Numero        string       `json:"numero" bson:"numero"`
 	FechaCreacion time.Time    `json:"fechacreacion" bson:"fechacreacion"`
 	DatoBasico    DatoPersonal `json:"DatoBasico" bson:"datobasico"`
 	TipoPension   int32        `json:"tipo" bson:"tipo"` //1 retiro, 2 invalidez, 3 gracia
@@ -40,6 +44,7 @@ type FeDeVida struct {
 	IDF           string       `json:"idf" bson:"idf"`
 	DireccionEx   string       `json:"direccionex" bson:"direccionex"`
 	FechaEx       time.Time    `json:"fechaex" bson:"fechaex"`
+	PaisEx        string       `json:"paisex" bson:"paisex"`
 }
 
 //Crear Creacion de Cuenta
@@ -47,6 +52,10 @@ func (fe *WFedeVida) Crear() (jSon []byte, err error) {
 	var fevida FeDeVida
 	var M Mensaje
 
+	var semillero fanb.Semillero
+
+	i, _ := semillero.Maximo("semillerocis")
+	fevida.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	fevida.DatoBasico.Direccion = fe.Direccion
 	fevida.DatoBasico.Cedula = fe.ID
 	fevida.DatoBasico.NombreCompleto = fe.Nombre
@@ -74,7 +83,7 @@ func (fe *WFedeVida) Crear() (jSon []byte, err error) {
 		// return
 	}
 
-	M.Mensaje = "Bien"
+	M.Mensaje = fevida.Numero
 	M.Tipo = 1
 
 	jSon, err = json.Marshal(M)
