@@ -25,21 +25,6 @@ func (s *Semillero) SalvarMGO(coleccion string) (err error) {
 	return
 }
 
-//Consultar una persona mediante el metodo de MongoDB
-// func (s *Semillero) Consultar(estado string) (jSon []byte, err error) {
-// 	var msj Mensaje
-// 	c := sys.MGOSession.DB(BASEDATOS).C(SEMILLERO)
-// 	err = c.Find(bson.M{"codigo": estado}).One(&s)
-// 	if err != nil {
-// 		msj.Tipo = 0
-// 		msj.Mensaje = err.Error()
-// 		jSon, err = json.Marshal(msj)
-// 	} else {
-// 		jSon, err = json.Marshal(s)
-// 	}
-// 	return
-// }
-
 //Maximo una persona mediante el metodo de MongoDB
 func (s *Semillero) Maximo(coleccion string) (maximo int, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
