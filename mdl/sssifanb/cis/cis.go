@@ -10,6 +10,7 @@ import (
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/investigacion"
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
 	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/util"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -35,39 +36,26 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 	reemb["cis.serviciomedico.programa.reembolso"] = reembolso
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": id}, bson.M{"$push": reemb})
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
+	util.Error(err)
 
 	// **** Actualizando direccion del militar ****
-
 	direccion := reembolso.Direccion
 	dir := make(map[string]interface{})
 	dir["persona.direccion.0"] = direccion
 
 	fmt.Println("Direccion", direccion)
 	err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
+	util.Error(err)
 
 	tel := make(map[string]interface{})
 	tel["persona.telefono"] = telefono
 	err = c.Update(bson.M{"id": id}, bson.M{"$set": tel})
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
+	util.Error(err)
 
 	corr := make(map[string]interface{})
 	corr["persona.correo"] = reembolso.Correo
 	err = c.Update(bson.M{"id": id}, bson.M{"$set": corr})
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
+	util.Error(err)
 
 	var creembolso tramitacion.ColeccionReembolso
 	creembolso.ID = id
@@ -83,20 +71,14 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 
 	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
 	err = coleccion.Insert(creembolso)
-	if err != nil {
-		fmt.Println("Error creando reembolso det: ", id)
-		// return
-	}
+	util.Error(err)
 
 	coleccionfactura := sys.MGOSession.DB(sys.CBASE).C(sys.CFACTURA)
 	for _, v := range reembolso.Concepto {
 		var factura tramitacion.Factura
 		factura = v.DatoFactura
 		err = coleccionfactura.Insert(factura)
-		if err != nil {
-			fmt.Println("Error creando Facturas det: ", factura.Numero)
-			// return
-		}
+		util.Error(err)
 	}
 
 	jSon, err = json.Marshal(M)

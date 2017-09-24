@@ -60,6 +60,7 @@ type Factura struct {
 	Control       string    `json:"control" bson:"control"`
 	Fecha         time.Time `json:"fecha" bson:"fecha"`
 	Monto         float64   `json:"monto" bson:"monto"`
+	Porcentaje    float64   `json:"porcentaje" bson:"porcentaje"`
 	MontoAprobado float64   `json:"montoaprobado" bson:"montoaprobado"`
 	Beneficiario  Proveedor `json:"Beneficiario" bson:"beneficiario"`
 }

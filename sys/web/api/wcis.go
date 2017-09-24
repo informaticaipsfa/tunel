@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
@@ -45,8 +46,17 @@ func (wcis *WCis) Registrar(w http.ResponseWriter, r *http.Request) {
 	cis.CrearReembolso(wcis.ID, wcis.Reembolso, wcis.Telefono, wcis.Nombre)
 	M.Tipo = 0
 	j, e := json.Marshal(M)
-	w.WriteHeader(http.StatusOK)
 
+	var traza fanb.TrazaCIS
+	ip := strings.Split(r.RemoteAddr, ":")
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = wcis.Reembolso.Numero
+	traza.Documento = wcis.Reembolso.Concepto
+	traza.Crear()
+
+	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
 
@@ -73,6 +83,16 @@ func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
 	reemb.Reembolso.Usuario = UsuarioConectado.Login
 	util.Error(e)
 	cis.ActualizarReembolso(reemb)
+
+	var traza fanb.TrazaCIS
+	ip := strings.Split(r.RemoteAddr, ":")
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = reemb.Numero
+	traza.Documento = reemb.Reembolso.Concepto
+	traza.Crear()
+
 	M.Tipo = 0
 	j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
@@ -107,6 +127,7 @@ func (wcis *WCis) Estatus(w http.ResponseWriter, r *http.Request) {
 
 	util.Error(e)
 	cis.EstatusReembolso(Estatus)
+
 	M.Tipo = 0
 	M.Mensaje = "Estatus actualizado"
 	j, e := json.Marshal(M)

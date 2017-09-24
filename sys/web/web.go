@@ -33,6 +33,11 @@ func CargarModulosWeb() {
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
 
+	var wCis api.WCis
+	var wCisA api.WCisApoyo
+	var wCisC api.WCisCarta
+	var wfe api.WFedeVida
+
 	Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Actualizar)).Methods("PUT")
@@ -54,6 +59,30 @@ func CargarModulosWeb() {
 
 	Enrutador.HandleFunc("/ipsfa/api/carnet/listar/{id}", wUsuario.ValidarToken(wcar.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/carnet/apro/{estatus}/{serial}", wUsuario.ValidarToken(wcar.Aprobar)).Methods("GET")
+
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso/listar/{id}", wUsuario.ValidarToken(wCis.ListarReembolso)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Registrar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Actualizar)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatus", wUsuario.ValidarToken(wCis.Estatus)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatus", wUsuario.ValidarToken(wCis.Opciones)).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo/listar/{id}", wUsuario.ValidarToken(wCisA.ListarApoyo)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Registrar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Actualizar)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo/estatus", wUsuario.ValidarToken(wCisA.Estatus)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo/estatus", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/ipsfa/api/wcarta/listar/{id}", wUsuario.ValidarToken(wCisC.Listar)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wcarta", wUsuario.ValidarToken(wCisC.Registrar)).Methods("POST")
+	// Enrutador.HandleFunc("/ipsfa/api/wcarta", wCisA.Actualizar).Methods("PUT")
+	// Enrutador.HandleFunc("/ipsfa/api/wcarta/estatus", wCisA.Estatus).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wcarta", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
+
+	// Enrutador.HandleFunc("/ipsfa/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wfedevida", wUsuario.ValidarToken(wfe.Registrar)).Methods("POST")
+
 }
 
 func CargarModulosSeguridad() {
@@ -91,11 +120,11 @@ func CargarModulosWebDevel() {
 	var wCis api.WCis
 	var wCisA api.WCisApoyo
 	var wCisC api.WCisCarta
+	var wfe api.WFedeVida
 	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
 	var wrec api.WRecibo
-	var wfe api.WFedeVida
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
 
