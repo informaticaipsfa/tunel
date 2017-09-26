@@ -52,13 +52,8 @@ func ActualizarPace(militar Militar) string {
   	st_no_ascenso = ` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
 	 	st_profesion = ` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
 	 	sexo = '` + militar.Persona.DatoBasico.Sexo + `',
-<<<<<<< HEAD
 	 	usr_creacion ='tunel',
 	 	usr_modificacion ='tunel',
-=======
-	 	usr_creacion ='tunel-ipsfa',
-	 	usr_modificacion ='tunel-ipsfa',
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	 	observ_ult_modificacion='SSSIFANB',
 	  WHERE cedula = '` + militar.Persona.DatoBasico.Cedula + `';`
 

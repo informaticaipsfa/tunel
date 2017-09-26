@@ -7,11 +7,7 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
-<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/util"
-=======
-	"github.com/gesaodin/tunel-ipsfa/util"
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	_ "github.com/lib/pq"
 )
 
@@ -59,7 +55,6 @@ func ConexionPENSION(mapa map[string]CadenaDeConexion) {
 	}
 	return
 }
-<<<<<<< HEAD
 
 //ConexionTARJETA
 func ConexionPENSIONSIGESP(mapa map[string]CadenaDeConexion) {
@@ -73,5 +68,3 @@ func ConexionPENSIONSIGESP(mapa map[string]CadenaDeConexion) {
 	}
 	return
 }
-=======
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406

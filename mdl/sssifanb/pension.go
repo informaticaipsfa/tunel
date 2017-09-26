@@ -6,13 +6,8 @@ import (
 	"strings"
 	"time"
 
-<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys"
-=======
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/sys"
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -46,10 +41,7 @@ type Pension struct {
 	Clase                  string                   `json:"clase" bson:"clase"`
 	Categoria              string                   `json:"categoria" bson:"categoria"`
 	Situacion              string                   `json:"situacion" bson:"situacion"`
-<<<<<<< HEAD
 	Tipo                   string                   `json:"tipo" bson:"tipo"`
-=======
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	FechaPromocion         string                   `json:"fpromocion" bson:"fpromocion"`
 	FechaUltimoAscenso     string                   `json:"fultimoascenso" bson:"fultimoascenso"`
 	AnoServicio            int                      `json:"aservicio" bson:"aservicio"`

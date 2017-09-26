@@ -14,13 +14,8 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/util"
-=======
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/util"
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 const (
@@ -83,7 +78,6 @@ type Rol struct {
 
 // Usuarios del Sistema
 type Usuario struct {
-<<<<<<< HEAD
 	ID            bson.ObjectId `json:"id" bson:"_id"`
 	Cedula        string        `json:"cedula" bson:"cedula"`
 	Nombre        string        `json:"nombre" bson:"nombre"`
@@ -104,39 +98,13 @@ type Usuario struct {
 	Telefono      string        `json:"telefono,omitempty" bson:"telefono"`
 	Cargo         string        `json:"cargo,omitempty" bson:"cargo"`
 	Modulo        string        `json:"modulo,omitempty" bson:"modulo"`
-=======
-	Id            bson.ObjectId `json:"id" bson:"_id"`
-	Cedula        string        `json:"cedula"`
-	Nombre        string        `json:"nombre"`
-	Login         string        `json:"usuario"`
-	Correo        string        `json:"correo"`
-	FechaCreacion time.Time     `json:"fechacreacion,omitempty"`
-	Estatus       int           `json:"estatus"`
-	Clave         string        `json:"clave,omitempty"`
-	Sucursal      string        `json:"sucursal,omitempty" bson:"sucursal"`
-	Departamento  string        `json:"departamento,omitempty" bson:"departamento"`
-	Sistema       string        `json:"sistema,omitempty" bson:"sistema"`
-	Rol           Rol           `json:"Roles,omitempty"`
-	Token         string        `json:"token,omitempty"`
-	Perfil        Perfil        `json:"Perfil,omitempty"`
-	FirmaDigital  FirmaDigital  `json:"FirmaDigital,omitempty"`
-	Direccion     string        `json:"direccion,omitempty"`
-	Telefono      string        `json:"telefono,omitempty"`
-	Cargo         string        `json:"cargo,omitempty"`
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }
 
 //FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
 type FirmaDigital struct {
-<<<<<<< HEAD
 	DireccionMac string    `json:"direccionmap,omitempty" bson:"direccionmap"`
 	DireccionIP  string    `json:"direccionip,omitempty" bson:"direccionip"`
 	Tiempo       time.Time `json:"tiempo,omitempty" bson:"tiempo"`
-=======
-	DireccionMac string
-	DireccionIP  string
-	Tiempo       time.Time
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }
 
 type RespuestaToken struct {
@@ -150,7 +118,6 @@ func (f *FirmaDigital) Registrar() bool {
 
 //Salvar Metodo para crear usuarios del sistema
 func (usr *Usuario) Salvar() error {
-<<<<<<< HEAD
 	usr.ID = bson.NewObjectId()
 	usr.Clave = util.GenerarHash256([]byte(usr.Clave))
 	usr.FechaCreacion = time.Now()
@@ -158,48 +125,13 @@ func (usr *Usuario) Salvar() error {
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CUSUARIO)
 	return c.Insert(usr)
-=======
-
-	// var privilegio Privilegio
-	// var lst []Privilegio
-	//
-	// usr.Id = bson.NewObjectId()
-	// usr.Nombre = "Root"
-	// usr.Login = "root"
-	// usr.Sucursal = "Principal"
-	// usr.Clave = util.GenerarHash256([]byte(usr.Login))
-	//
-	// usr.Rol.ID = ROOT
-	// usr.Rol.Descripcion = "Super Usuario"
-	// usr.Perfil.ID = ROOT
-	// usr.Perfil.Descripcion = "Super Usuario"
-	//
-	// privilegio.Metodo = "afiliacion.salvar"
-	// privilegio.Descripcion = "Crear Usuario"
-	// privilegio.Accion = "Insert()" // ES6 Metodos
-	// lst = append(lst, privilegio)
-	//
-	// privilegio.Metodo = "afiliacion.modificar"
-	// privilegio.Descripcion = "Modificar Usuario"
-	// privilegio.Accion = "Update()"
-	// lst = append(lst, privilegio)
-	// usr.Perfil.Privilegios = lst
-
-	var mongo sys.Mongo
-
-	return mongo.Salvar(usr, "usuario")
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 
 }
 
 //Validar Usuarios
 func (u *Usuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
-<<<<<<< HEAD
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CUSUARIO)
-=======
-	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	err = c.Find(bson.M{"login": login, "clave": clave}).Select(bson.M{"clave": false}).One(&u)
 
 	return
@@ -250,11 +182,7 @@ func (u *Usuario) Consultar(cedula string) (j []byte, err error) {
 func (u *Usuario) Listar() (j []byte, err error) {
 	var lstUsuario []Usuario
 	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
-<<<<<<< HEAD
 	err = c.Find(bson.M{}).Select(bson.M{"clave": false}).All(&lstUsuario)
-=======
-	err = c.Find(bson.M{}).All(&lstUsuario)
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	j, _ = json.Marshal(lstUsuario)
 	return
 }
@@ -263,11 +191,7 @@ func (u *Usuario) Generico() error {
 	var privilegio Privilegio
 	var lst []Privilegio
 	var usr Usuario
-<<<<<<< HEAD
 	usr.ID = bson.NewObjectId()
-=======
-	usr.Id = bson.NewObjectId()
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	usr.Nombre = "Informatica - Consulta"
 	usr.Login = "usuario"
 	usr.Sucursal = "Principal"

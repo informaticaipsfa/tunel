@@ -7,15 +7,9 @@ import (
 	"strings"
 	"time"
 
-<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys/seguridad"
-=======
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	"github.com/gorilla/mux"
 )
 

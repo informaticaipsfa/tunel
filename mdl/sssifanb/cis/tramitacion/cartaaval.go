@@ -27,7 +27,6 @@ type CartaAval struct {
 }
 
 type ConceptoCartaAval struct {
-<<<<<<< HEAD
 	Motivo             string    `json:"motivo" bson:"motivo"`
 	Diagnostico        string    `json:"diagnostico" bson:"diagnostico"`
 	Descripcion        string    `json:"descripcion" bson:"descripcion"`
@@ -41,14 +40,6 @@ type ConceptoCartaAval struct {
 	FechaSeguro        time.Time `json:"fechaseguro" bson:"fechaseguro"`
 	MontoAfiliado      float64   `json:"montoafiliado" bson:"montoafiliado"`
 	PorcentajeAfiliado float64   `json:"porcentajeafi" bson:"porcentajeafi"`
-=======
-	Motivo      string  `json:"motivo" bson:"motivo"`
-	Diagnostico string  `json:"diagnostico" bson:"diagnostico"`
-	Descripcion string  `json:"descripcion" bson:"descripcion"`
-	DatoFactura Factura `json:"DatoFactura" bson:"datofactura"`
-	Afiliado    string  `json:"afiliado" bson:"afiliado"` //Cedula, Guión (-), Nombre
-	Requisitos  []int   `json:"requisitos" bson:"requisitos"`
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }
 
 type ColeccionCartaAval struct {

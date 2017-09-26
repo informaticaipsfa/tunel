@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"time"
 
-<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/gasto"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/investigacion"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/tramitacion"
@@ -19,22 +18,6 @@ type CuidadoIntegral struct {
 	Investigacion  investigacion.Investigacion `json:"Investigacion" bson:"investigacion"`
 	ServicioMedico tramitacion.ServicioMedico  `json:"ServicioMedico" bson:"serviciomedico"`
 	Gasto          gasto.GastoFarmaceutico     `json:"Gasto" bson:"gasto"`
-=======
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/gasto"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"gopkg.in/mgo.v2/bson"
-)
-
-const (
-	CCIS  string = "cis"
-	CBASE string = "sssifanb"
-)
-
-type CuidadoIntegral struct {
-	ServicioMedico tramitacion.ServicioMedico `json:"ServicioMedico" bson:"serviciomedico"`
-	Gasto          gasto.GastoFarmaceutico    `json:"Gasto" bson:"gasto"`
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }
 
 //Mensaje del sistema
@@ -53,57 +36,34 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 	reemb["cis.serviciomedico.programa.reembolso"] = reembolso
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": id}, bson.M{"$push": reemb})
-<<<<<<< HEAD
 	util.Error(err)
 
 	// **** Actualizando direccion del militar ****
-=======
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
-
-	// **** Actualizando direccion del militar ****
-
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	direccion := reembolso.Direccion
 	dir := make(map[string]interface{})
 	dir["persona.direccion.0"] = direccion
-
-	fmt.Println("Direccion", direccion)
 	err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
-<<<<<<< HEAD
 	util.Error(err)
-=======
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
+
+	teldomi := make(map[string]interface{})
+	teldomi["persona.telefono.domiciliario"] = reembolso.Telefono.Domiciliario
+	err = c.Update(bson.M{"id": id}, bson.M{"$set": teldomi})
+	util.Error(err)
+
+	telmovil := make(map[string]interface{})
+	telmovil["persona.telefono.movil"] = reembolso.Telefono.Movil
+	err = c.Update(bson.M{"id": id}, bson.M{"$set": telmovil})
+	util.Error(err)
 
 	tel := make(map[string]interface{})
-	tel["persona.telefono"] = telefono
+	tel["persona.telefono.emergencia"] = reembolso.Telefono.Emergencia
 	err = c.Update(bson.M{"id": id}, bson.M{"$set": tel})
-<<<<<<< HEAD
 	util.Error(err)
-=======
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 
 	corr := make(map[string]interface{})
 	corr["persona.correo"] = reembolso.Correo
 	err = c.Update(bson.M{"id": id}, bson.M{"$set": corr})
-<<<<<<< HEAD
 	util.Error(err)
-=======
-	if err != nil {
-		fmt.Println("Cedula: " + id + " -> " + err.Error())
-		return
-	}
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 
 	var creembolso tramitacion.ColeccionReembolso
 	creembolso.ID = id
@@ -119,7 +79,6 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 
 	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
 	err = coleccion.Insert(creembolso)
-<<<<<<< HEAD
 	util.Error(err)
 
 	coleccionfactura := sys.MGOSession.DB(sys.CBASE).C(sys.CFACTURA)
@@ -128,11 +87,6 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 		factura = v.DatoFactura
 		err = coleccionfactura.Insert(factura)
 		util.Error(err)
-=======
-	if err != nil {
-		fmt.Println("Error creando reembolso det: ", id)
-		// return
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	}
 
 	jSon, err = json.Marshal(M)
@@ -184,11 +138,7 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 	rmb.MontoAprobado = AReembolso.Reembolso.MontoAprobado
 	rmb.MontoSolicitado = AReembolso.Reembolso.MontoSolicitado
 	rmb.FechaAprobado = time.Now()
-<<<<<<< HEAD
 	fmt.Println("Numero:  ", AReembolso.Numero)
-=======
-
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	err = co.Update(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}, bson.M{"$set": rmb})
 	if err != nil {
 		// return
@@ -359,12 +309,7 @@ func (cuidado *CuidadoIntegral) EstatusApoyo(E tramitacion.EstatusApoyo) (jSon [
 // CrearCarta Actualizando
 func (cuidado *CuidadoIntegral) CrearCarta(id string, carta tramitacion.CartaAval, nombre string) (jSon []byte, err error) {
 	var M Mensaje
-<<<<<<< HEAD
 
-=======
-	M.Mensaje = "Creando Carta Aval"
-	M.Tipo = 1
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	apo := make(map[string]interface{})
 
 	apo["cis.serviciomedico.programa.cartaaval"] = carta
@@ -375,22 +320,6 @@ func (cuidado *CuidadoIntegral) CrearCarta(id string, carta tramitacion.CartaAva
 		return
 	}
 
-<<<<<<< HEAD
-=======
-	// **** Actualizando direccion del militar ****
-	//
-	// direccion := reembolso.Direccion
-	// dir := make(map[string]interface{})
-	// dir["persona.direccion.0"] = direccion
-	//
-	// fmt.Println("Direccion", direccion)
-	// err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
-	// if err != nil {
-	// 	fmt.Println("Cedula: " + id + " -> " + err.Error())
-	// 	return
-	// }
-
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	var cartaaval tramitacion.ColeccionCartaAval
 	cartaaval.ID = id
 	cartaaval.Numero = carta.Numero
@@ -409,12 +338,8 @@ func (cuidado *CuidadoIntegral) CrearCarta(id string, carta tramitacion.CartaAva
 		fmt.Println("Error creando reembolso det: ", id)
 		// return
 	}
-<<<<<<< HEAD
 	M.Mensaje = carta.Numero
 	M.Tipo = 1
-=======
-
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	jSon, err = json.Marshal(M)
 	return
 }

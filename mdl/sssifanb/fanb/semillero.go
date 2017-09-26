@@ -5,11 +5,7 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/sys"
-=======
-	"github.com/gesaodin/tunel-ipsfa/sys"
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 //Semillero Estructura
@@ -29,24 +25,6 @@ func (s *Semillero) SalvarMGO(coleccion string) (err error) {
 	return
 }
 
-<<<<<<< HEAD
-=======
-//Consultar una persona mediante el metodo de MongoDB
-// func (s *Semillero) Consultar(estado string) (jSon []byte, err error) {
-// 	var msj Mensaje
-// 	c := sys.MGOSession.DB(BASEDATOS).C(SEMILLERO)
-// 	err = c.Find(bson.M{"codigo": estado}).One(&s)
-// 	if err != nil {
-// 		msj.Tipo = 0
-// 		msj.Mensaje = err.Error()
-// 		jSon, err = json.Marshal(msj)
-// 	} else {
-// 		jSon, err = json.Marshal(s)
-// 	}
-// 	return
-// }
-
->>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 //Maximo una persona mediante el metodo de MongoDB
 func (s *Semillero) Maximo(coleccion string) (maximo int, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
