@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/informaticaipsfa/tunel/sys/web/api"
 	"github.com/gorilla/mux"
+	"github.com/informaticaipsfa/tunel/sys/web/api"
 )
 
 //Variables de Control
@@ -37,6 +37,8 @@ func CargarModulosWeb() {
 	var wCisA api.WCisApoyo
 	var wCisC api.WCisCarta
 	var wfe api.WFedeVida
+
+	var wfactura api.WFactura
 
 	Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
@@ -83,6 +85,7 @@ func CargarModulosWeb() {
 	// Enrutador.HandleFunc("/ipsfa/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wfedevida", wUsuario.ValidarToken(wfe.Registrar)).Methods("POST")
 
+	Enrutador.HandleFunc("/ipsfa/api/wfactura", wUsuario.ValidarToken(wfactura.Consultar)).Methods("POST")
 }
 
 func CargarModulosSeguridad() {
@@ -127,6 +130,8 @@ func CargarModulosWebDevel() {
 	var wrec api.WRecibo
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
+
+	var wfactura api.WFactura
 
 	Enrutador.HandleFunc("/devel/api/militar/crud/{id}", per.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Actualizar).Methods("PUT")
@@ -177,4 +182,5 @@ func CargarModulosWebDevel() {
 
 	// Enrutador.HandleFunc("/devel/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wfedevida", wfe.Registrar).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/wfactura", wfactura.Consultar).Methods("POST")
 }

@@ -1,7 +1,13 @@
 package tramitacion
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
+
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/sys"
+	"gopkg.in/mgo.v2/bson"
 )
 
 const (
@@ -136,4 +142,24 @@ type EstatusReembolso struct {
 	ID      string
 	Numero  string
 	Estatus int
+}
+
+func (fact *Factura) Consultar(rif string, numero string) (jSon []byte, err error) {
+	var result Factura
+	var M fanb.Mensaje
+
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CFACTURA)
+	err = c.Find(bson.M{"beneficiario.rif": rif, "numero": numero}).One(&result)
+	if err != nil {
+		fmt.Println("Err. Factura")
+		//return
+	}
+	M.Tipo = 0
+	M.Mensaje = "Factura Disponible"
+	if result.Numero != "" {
+		M.Tipo = 1
+		M.Mensaje = "La factura ya se encuentra registrada"
+	}
+	jSon, err = json.Marshal(M)
+	return
 }
