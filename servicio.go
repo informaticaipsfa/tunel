@@ -18,6 +18,7 @@ package main
 
 import (
 	"fmt"
+<<<<<<< HEAD
 	"log"
 	"net/http"
 	"time"
@@ -25,6 +26,11 @@ import (
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/sys/web"
 	"github.com/gorilla/context"
+=======
+
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/gesaodin/tunel-ipsfa/sys"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 func init() {
@@ -44,12 +50,19 @@ func init() {
 }
 
 func main() {
+<<<<<<< HEAD
 	// var arch util.Archivo
 	// arch.LeerPorLinea("tmp/inv.xlsx", sys.PostgreSQLPENSIONSIGESP)
 	// var migrado estadistica.Estructura
 	// migrado.ConvertirGradoGN()
 	// var Pension sssifanb.Pension
 	// Pension.Exportar()
+=======
+	// var migrado estadistica.Estructura
+	// migrado.ConvertirGradoGN()
+	var Pension sssifanb.Pension
+	Pension.Exportar()
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 
 	//var priorizador estadistica.Priorizador
 	// var familiares estadistica.Estructura
@@ -69,6 +82,7 @@ func main() {
 
 	// familiares.ActualizarFamiliar()
 
+<<<<<<< HEAD
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 	srv := &http.Server{
@@ -89,5 +103,27 @@ func main() {
 	}
 	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
 	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
+=======
+	// fmt.Println("Inciando la carga del sistema")
+	// web.Cargar()
+	// srv := &http.Server{
+	// 	Handler:      context.ClearHandler(web.Enrutador),
+	// 	Addr:         ":" + sys.PUERTO,
+	// 	WriteTimeout: 15 * time.Second,
+	// 	ReadTimeout:  15 * time.Second,
+	// }
+	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
+	// go srv.ListenAndServe()
+	// //
+	// //https://dominio.com/* Protocolo de capa de seguridad
+	// server := &http.Server{
+	// 	Handler:      context.ClearHandler(web.Enrutador),
+	// 	Addr:         ":" + sys.PUERTO_SSL,
+	// 	WriteTimeout: 15 * time.Second,
+	// 	ReadTimeout:  15 * time.Second,
+	// }
+	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
+	// log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 
 }

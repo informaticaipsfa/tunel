@@ -60,7 +60,10 @@ type Factura struct {
 	Control       string    `json:"control" bson:"control"`
 	Fecha         time.Time `json:"fecha" bson:"fecha"`
 	Monto         float64   `json:"monto" bson:"monto"`
+<<<<<<< HEAD
 	Porcentaje    float64   `json:"porcentaje" bson:"porcentaje"`
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	MontoAprobado float64   `json:"montoaprobado" bson:"montoaprobado"`
 	Beneficiario  Proveedor `json:"Beneficiario" bson:"beneficiario"`
 }
@@ -125,11 +128,19 @@ type ColeccionReembolso struct {
 }
 
 type ActualizarReembolso struct {
+<<<<<<< HEAD
 	ID            string    `json:"id" bson:"id"`
 	Reembolso     Reembolso `json:"Reembolso" bson:"Reembolso"`
 	Numero        string    `json:"numero" bson:"numero"`
 	Posicion      int       `json:"posicion" bson:"posicion"`
 	Observaciones []string  `json:"observaciones" bson:"observaciones"`
+=======
+	ID            string
+	Reembolso     Reembolso
+	Numero        string
+	Posicion      int
+	Observaciones []string
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }
 
 type EstatusReembolso struct {

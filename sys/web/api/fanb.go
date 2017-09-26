@@ -3,7 +3,11 @@ package api
 import (
 	"net/http"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+=======
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	"github.com/gorilla/mux"
 )
 

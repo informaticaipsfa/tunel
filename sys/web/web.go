@@ -6,7 +6,11 @@ import (
 	"fmt"
 	"net/http"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/sys/web/api"
+=======
+	"github.com/gesaodin/tunel-ipsfa/sys/web/api"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	"github.com/gorilla/mux"
 )
 
@@ -33,11 +37,14 @@ func CargarModulosWeb() {
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
 
+<<<<<<< HEAD
 	var wCis api.WCis
 	var wCisA api.WCisApoyo
 	var wCisC api.WCisCarta
 	var wfe api.WFedeVida
 
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Actualizar)).Methods("PUT")
@@ -59,6 +66,7 @@ func CargarModulosWeb() {
 
 	Enrutador.HandleFunc("/ipsfa/api/carnet/listar/{id}", wUsuario.ValidarToken(wcar.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/carnet/apro/{estatus}/{serial}", wUsuario.ValidarToken(wcar.Aprobar)).Methods("GET")
+<<<<<<< HEAD
 
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso/listar/{id}", wUsuario.ValidarToken(wCis.ListarReembolso)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Registrar)).Methods("POST")
@@ -83,6 +91,8 @@ func CargarModulosWeb() {
 	// Enrutador.HandleFunc("/ipsfa/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wfedevida", wUsuario.ValidarToken(wfe.Registrar)).Methods("POST")
 
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }
 
 func CargarModulosSeguridad() {
@@ -120,7 +130,10 @@ func CargarModulosWebDevel() {
 	var wCis api.WCis
 	var wCisA api.WCisApoyo
 	var wCisC api.WCisCarta
+<<<<<<< HEAD
 	var wfe api.WFedeVida
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
@@ -175,6 +188,9 @@ func CargarModulosWebDevel() {
 	// Enrutador.HandleFunc("/devel/api/wcarta/estatus", wCisA.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wcarta", wCisA.Opciones).Methods("OPTIONS")
 
+<<<<<<< HEAD
 	// Enrutador.HandleFunc("/devel/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wfedevida", wfe.Registrar).Methods("POST")
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }

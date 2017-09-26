@@ -1,5 +1,6 @@
 package util
 
+<<<<<<< HEAD
 import (
 	"database/sql"
 	"fmt"
@@ -7,6 +8,9 @@ import (
 
 	"github.com/tealeg/xlsx"
 )
+=======
+import "io/ioutil"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 
 type Archivo struct {
 	Ruta             string
@@ -18,6 +22,7 @@ func (a *Archivo) Crear(cadena string) bool {
 	return true
 }
 
+<<<<<<< HEAD
 func (a *Archivo) LeerPorLinea(excelFileName string, PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	var iconstante, iconcepto string
 	var codconcepto string
@@ -87,6 +92,12 @@ func (a *Archivo) LeerPorLinea(excelFileName string, PostgreSQLPENSIONSIGESP *sq
 // 	return true
 // }
 
+=======
+func (a *Archivo) LeerPorLinea() bool {
+	return true
+}
+
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 func (a *Archivo) LeerTodo() (f []byte, err error) {
 	f, err = ioutil.ReadFile(a.NombreDelArchivo)
 	return

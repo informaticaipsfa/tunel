@@ -9,9 +9,15 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/tramitacion"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/util"
+=======
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
+	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/util"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 func HistorialReembolso() (jSon []byte, err error) {

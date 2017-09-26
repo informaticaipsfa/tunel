@@ -1,6 +1,7 @@
 package investigacion
 
 import (
+<<<<<<< HEAD
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -11,6 +12,9 @@ import (
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/util"
+=======
+	"time"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 const (
@@ -19,6 +23,7 @@ const (
 	GRACIA    int32 = 3
 )
 
+<<<<<<< HEAD
 //Mensaje del sistema
 type Mensaje struct {
 	Mensaje string `json:"msj"`
@@ -88,4 +93,11 @@ func (fe *WFedeVida) Crear() (jSon []byte, err error) {
 
 	jSon, err = json.Marshal(M)
 	return
+=======
+type FeDeVida struct {
+	fechadeemision time.Time
+	datospersona   DatoPersonal
+	tipopension    int32 //1 retiro, 2 invalidez, 3 gracia
+	estado         bool
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 }

@@ -1,4 +1,7 @@
 /servicio
 /start.sh
 sys/config_dev.json
+<<<<<<< HEAD
 tmp/*
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406

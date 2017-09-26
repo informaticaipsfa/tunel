@@ -6,13 +6,18 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/util"
+=======
+	"github.com/gesaodin/tunel-ipsfa/util"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 type config struct{}
 
 //Variables del modelo
 var (
+<<<<<<< HEAD
 	Version                 string = "V.0.0.1"
 	MySQL                   bool   = false
 	MongoDB                 bool   = false
@@ -25,6 +30,19 @@ var (
 	PostgreSQLPENSION       *sql.DB
 	PostgreSQLPENSIONSIGESP *sql.DB
 	Error                   error
+=======
+	Version           string = "V.0.0.1"
+	MySQL             bool   = false
+	MongoDB           bool   = false
+	SQLServer         bool   = false
+	Oracle            bool   = false
+	BaseDeDatos       BaseDatos
+	MGOSession        *mgo.Session
+	PostgreSQLSAMAN   *sql.DB
+	PostgreSQLPACE    *sql.DB
+	PostgreSQLPENSION *sql.DB
+	Error             error
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 //Constantes del sistema
@@ -104,6 +122,7 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionPENSION(cad)
+<<<<<<< HEAD
 		case "pensiones":
 			cad := make(map[string]CadenaDeConexion)
 			cad["pensiones"] = CadenaDeConexion{
@@ -115,6 +134,8 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionPENSIONSIGESP(cad)
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 		case "mysql":
 			MySQL = true
 		case "mongodb":

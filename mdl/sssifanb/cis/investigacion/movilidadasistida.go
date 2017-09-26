@@ -2,6 +2,11 @@ package investigacion
 
 import (
 	"time"
+<<<<<<< HEAD
+=======
+
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 const (
@@ -40,6 +45,7 @@ type DatoPersonal struct {
 	Cedula         string
 	Situacion      string
 	NombreCompleto string
+<<<<<<< HEAD
 	Direccion      Direccion
 	Telefono       string
 	Parentesco     string
@@ -57,3 +63,9 @@ type Direccion struct {
 	Apartamento  string `json:"apartamento" bson:"apartamento"`
 	Numero       int    `json:"numero,omitempty" bson:"numero"`
 }
+=======
+	Direccion      sssifanb.Direccion
+	Telefono       string
+	Parentesco     string
+}
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406

@@ -11,9 +11,15 @@ import (
 	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gorilla/mux"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys/seguridad"
 	"github.com/informaticaipsfa/tunel/util"
+=======
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
+	"github.com/gesaodin/tunel-ipsfa/util"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 type WUsuario struct{}
@@ -26,6 +32,7 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	ip := strings.Split(r.RemoteAddr, ":")
 	usuario.FirmaDigital.DireccionIP = ip[0]
 	usuario.FirmaDigital.Tiempo = time.Now()
+<<<<<<< HEAD
 	usuario.FechaCreacion = time.Now()
 
 	e := json.NewDecoder(r.Body).Decode(&usuario)
@@ -33,11 +40,20 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	// if ip[0] == "192.168.6.45" {
 
 	e = usuario.Salvar()
+=======
+
+	// if ip[0] == "192.168.6.45" {
+
+	e := usuario.Salvar()
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		m.Msj = e.Error()
 		m.Tipo = 1
+<<<<<<< HEAD
 		fmt.Println("Err: ", e.Error())
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	} else {
 		w.WriteHeader(http.StatusOK)
 		m.Msj = "Usuario creado"

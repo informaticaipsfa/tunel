@@ -8,9 +8,15 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/util"
+=======
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/gesaodin/tunel-ipsfa/util"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 //Carnet Tarjeta de Identificacion Militar

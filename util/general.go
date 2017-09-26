@@ -64,9 +64,13 @@ func DiasDelMes(fecha time.Time) int {
 //CompletarCeros llenar con ceros antes y despues de una cadena
 func CompletarCeros(cadena string, orientacion int, cantidad int) string {
 	var result string
+<<<<<<< HEAD
 	cant := len(cadena)
 	total := cantidad - cant
 	for i := 0; i < total; i++ {
+=======
+	for i := 0; i < cantidad; i++ {
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 		result += "0"
 	}
 	if orientacion == 0 {

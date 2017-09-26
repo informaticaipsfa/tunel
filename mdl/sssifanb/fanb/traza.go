@@ -5,7 +5,11 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/sys"
+=======
+	"github.com/gesaodin/tunel-ipsfa/sys"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 )
 
 //Traza Historico del Usuario
@@ -17,6 +21,7 @@ type Traza struct {
 	IP        string    `json:"ip" bson:"ip"`
 }
 
+<<<<<<< HEAD
 //Traza Historico del Usuario
 type TrazaCIS struct {
 	Usuario   string      `json:"usuario" bson:"usuario"`
@@ -26,6 +31,8 @@ type TrazaCIS struct {
 	IP        string      `json:"ip" bson:"ip"`
 }
 
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 //Crear Trazabilidad
 func (t *Traza) Crear() (err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTRAZA)
@@ -46,6 +53,7 @@ func (t *Traza) CrearHistoricoConsulta(colecion string) (err error) {
 	err = c.Insert(t)
 	return
 }
+<<<<<<< HEAD
 
 //Crear Trazabilidad
 func (t *TrazaCIS) Crear() (err error) {
@@ -53,3 +61,5 @@ func (t *TrazaCIS) Crear() (err error) {
 	err = c.Insert(t)
 	return
 }
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406

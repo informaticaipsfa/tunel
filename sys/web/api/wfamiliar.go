@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+=======
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	"github.com/gorilla/mux"
 )
 

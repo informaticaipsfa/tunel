@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+<<<<<<< HEAD
 	"strings"
 	"time"
 
@@ -13,6 +14,15 @@ import (
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/tramitacion"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/util"
+=======
+	"time"
+
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+	"github.com/gesaodin/tunel-ipsfa/util"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	"github.com/gorilla/mux"
 )
 
@@ -46,6 +56,7 @@ func (wcis *WCis) Registrar(w http.ResponseWriter, r *http.Request) {
 	cis.CrearReembolso(wcis.ID, wcis.Reembolso, wcis.Telefono, wcis.Nombre)
 	M.Tipo = 0
 	j, e := json.Marshal(M)
+<<<<<<< HEAD
 
 	var traza fanb.TrazaCIS
 	ip := strings.Split(r.RemoteAddr, ":")
@@ -57,6 +68,10 @@ func (wcis *WCis) Registrar(w http.ResponseWriter, r *http.Request) {
 	traza.Crear()
 
 	w.WriteHeader(http.StatusOK)
+=======
+	w.WriteHeader(http.StatusOK)
+
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	w.Write(j)
 }
 
@@ -66,11 +81,18 @@ func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
 	var cis cis.CuidadoIntegral
 	var reemb tramitacion.ActualizarReembolso
 
+<<<<<<< HEAD
 	fmt.Println("Acceso...")
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&reemb)
 
 	fmt.Println("Numero:  ", reemb.Numero)
+=======
+	// fmt.Println("Acceso...")
+	Cabecera(w, r)
+	e := json.NewDecoder(r.Body).Decode(&reemb)
+
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	for _, v := range reemb.Observaciones {
 		var Obs tramitacion.Observacion
 		Obs.Contenido = v
@@ -83,6 +105,7 @@ func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
 	reemb.Reembolso.Usuario = UsuarioConectado.Login
 	util.Error(e)
 	cis.ActualizarReembolso(reemb)
+<<<<<<< HEAD
 
 	var traza fanb.TrazaCIS
 	ip := strings.Split(r.RemoteAddr, ":")
@@ -93,6 +116,8 @@ func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
 	traza.Documento = reemb.Reembolso.Concepto
 	traza.Crear()
 
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	M.Tipo = 0
 	j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
@@ -127,7 +152,10 @@ func (wcis *WCis) Estatus(w http.ResponseWriter, r *http.Request) {
 
 	util.Error(e)
 	cis.EstatusReembolso(Estatus)
+<<<<<<< HEAD
 
+=======
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	M.Tipo = 0
 	M.Mensaje = "Estatus actualizado"
 	j, e := json.Marshal(M)

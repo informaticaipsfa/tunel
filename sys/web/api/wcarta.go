@@ -7,11 +7,19 @@ import (
 	"strconv"
 	"time"
 
+<<<<<<< HEAD
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/tramitacion"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/util"
+=======
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
+	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+	"github.com/gesaodin/tunel-ipsfa/util"
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	"github.com/gorilla/mux"
 )
 
@@ -23,7 +31,11 @@ type WCisCarta struct {
 
 //Consultar Militares
 func (wcis *WCisCarta) Registrar(w http.ResponseWriter, r *http.Request) {
+<<<<<<< HEAD
 	// var M sssifanb.Mensaje
+=======
+	var M sssifanb.Mensaje
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	var cis cis.CuidadoIntegral
 	var Semillero fanb.Semillero
 	i, _ := Semillero.Maximo("semillerocis")
@@ -35,9 +47,15 @@ func (wcis *WCisCarta) Registrar(w http.ResponseWriter, r *http.Request) {
 	wcis.Carta.Usuario = UsuarioConectado.Login
 	wcis.Carta.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	util.Error(e)
+<<<<<<< HEAD
 	j, e := cis.CrearCarta(wcis.ID, wcis.Carta, wcis.Nombre)
 	// M.Tipo = 0
 	// j, e := json.Marshal(M)
+=======
+	cis.CrearCarta(wcis.ID, wcis.Carta, wcis.Nombre)
+	M.Tipo = 0
+	j, e := json.Marshal(M)
+>>>>>>> ea581ffe0c74c05e26fc1e8f862f22c48b479406
 	w.WriteHeader(http.StatusOK)
 
 	w.Write(j)
