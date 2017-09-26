@@ -5,7 +5,7 @@ package logs
 import (
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
+	"github.com/informaticaipsfa/tunel/sys/seguridad"
 )
 
 type Recurso struct {

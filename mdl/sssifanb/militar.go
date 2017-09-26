@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/util"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/util"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -100,7 +100,7 @@ type Grado struct {
 
 //Listar sistemas
 func (m *Militar) Listar() {
-	//gesaodin@gmail.com
+	//informaticaipsfa@gmail.com
 }
 
 //Mensaje del sistema

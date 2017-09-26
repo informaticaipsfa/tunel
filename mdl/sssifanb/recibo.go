@@ -3,7 +3,7 @@ package sssifanb
 import (
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/informaticaipsfa/tunel/sys"
 )
 
 //Recibo de Pago

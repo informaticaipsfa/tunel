@@ -6,11 +6,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/gasto"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/investigacion"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/util"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/gasto"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/investigacion"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/tramitacion"
+	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/util"
 	"gopkg.in/mgo.v2/bson"
 )
 

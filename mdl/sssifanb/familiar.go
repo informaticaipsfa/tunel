@@ -9,8 +9,8 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/util"
+	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 //Familiar Busquedas

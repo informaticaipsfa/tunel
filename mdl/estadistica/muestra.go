@@ -11,11 +11,11 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
-	"github.com/gesaodin/tunel-ipsfa/util"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/sys/seguridad"
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 //VNULL Validar

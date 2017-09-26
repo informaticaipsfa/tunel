@@ -7,7 +7,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/gesaodin/tunel-ipsfa/util"
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 //Constantes Generales

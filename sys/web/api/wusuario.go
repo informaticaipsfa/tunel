@@ -11,9 +11,9 @@ import (
 	"github.com/dgrijalva/jwt-go/request"
 	"github.com/gorilla/mux"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
-	"github.com/gesaodin/tunel-ipsfa/util"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/sys/seguridad"
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 type WUsuario struct{}

@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/tramitacion"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/util"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/tramitacion"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/util"
 	"github.com/gorilla/mux"
 )
 

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/sys/seguridad"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/sys/seguridad"
 	"github.com/gorilla/mux"
 )
 

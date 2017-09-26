@@ -263,9 +263,9 @@ func obtenerMunicipiosParroquia() string { //MySQL
 // 	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
 // 	// 		'` + militar.Persona.DatoBasico.Sexo + `',
 // 	//
-// 	// 		'tunel-ipsfa',
+// 	// 		'tunel',
 // 	//
-// 	// 	 	'tunel-ipsfa',
+// 	// 	 	'tunel',
 // 	// 	 	'INSERCION POR TUNELES',
 // 	// 		'` + militar.Fideicomiso.MotivoParalizacion + `',
 // 	//

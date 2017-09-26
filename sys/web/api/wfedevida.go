@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/cis/investigacion"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/investigacion"
 )
 
 type WFedeVida struct {

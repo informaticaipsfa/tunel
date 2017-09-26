@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
-	"github.com/gesaodin/tunel-ipsfa/sys"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/sys"
 	"gopkg.in/mgo.v2/bson"
 )
 

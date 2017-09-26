@@ -3,7 +3,7 @@ package api
 import (
 	"net/http"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/gorilla/mux"
 )
 

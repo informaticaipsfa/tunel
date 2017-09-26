@@ -22,8 +22,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/gesaodin/tunel-ipsfa/sys"
-	"github.com/gesaodin/tunel-ipsfa/sys/web"
+	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/sys/web"
 	"github.com/gorilla/context"
 )
 

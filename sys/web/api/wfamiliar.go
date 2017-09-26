@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gesaodin/tunel-ipsfa/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/gorilla/mux"
 )
 
