@@ -13,6 +13,10 @@ func ActualizarPersona(persona Persona) string {
 
 	convertir := persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
 	fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
+
+	convertirDef := persona.DatoBasico.FechaDefuncion.Format("2006-01-02")
+	fechaSlashDefuncion := strings.Replace(convertirDef, "-", "/", -1)
+
 	return `UPDATE personas SET
 		tipnip = '` + persona.DatoBasico.Nacionalidad + `',
 		codnip = '` + persona.DatoBasico.Cedula + `',
@@ -26,7 +30,7 @@ func ActualizarPersona(persona Persona) string {
 		sexocod = '` + persona.DatoBasico.Sexo + `',
 		edocivilcod = '` + persona.DatoBasico.EstadoCivil + `',
 		fechanacimiento = '` + fechaSlashNacimiento + `',
-		fechadefuncion = '` + persona.DatoBasico.FechaDefuncion + `',
+		fechadefuncion = '` + fechaSlashDefuncion + `',
 		email1 = '` + persona.Correo.Principal + `',
 		email2 = '` + persona.Correo.Alternativo + `',
 		auditfechacambio = '` + fechaSlashActual + `',
