@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/gasto"
@@ -190,17 +191,19 @@ func (cuidado *CuidadoIntegral) CrearApoyo(id string, apoyo tramitacion.Apoyo, n
 	}
 
 	// **** Actualizando direccion del militar ****
-	//
-	// direccion := reembolso.Direccion
-	// dir := make(map[string]interface{})
-	// dir["persona.direccion.0"] = direccion
-	//
-	// fmt.Println("Direccion", direccion)
-	// err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
-	// if err != nil {
-	// 	fmt.Println("Cedula: " + id + " -> " + err.Error())
-	// 	return
-	// }
+	direccion := apoyo.Direccion
+	dir := make(map[string]interface{})
+
+	cedulaf := strings.Split(apoyo.Concepto[0].Afiliado, "-")[0]
+	if cedulaf == id {
+		dir["persona.direccion.0"] = direccion
+		err = c.Update(bson.M{"id": id}, bson.M{"$set": dir})
+		util.Error(err)
+	} else {
+		dir["familiar.$.persona.direccion.0"] = direccion
+		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": cedulaf}, bson.M{"$set": dir})
+		util.Error(err)
+	}
 
 	var capoyo tramitacion.ColeccionApoyo
 	capoyo.ID = id

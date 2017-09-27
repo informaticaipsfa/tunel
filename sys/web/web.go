@@ -39,6 +39,7 @@ func CargarModulosWeb() {
 	var wfe api.WFedeVida
 
 	var wfactura api.WFactura
+	var wmedicina api.WMedicina
 
 	Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
@@ -86,6 +87,8 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/wfedevida", wUsuario.ValidarToken(wfe.Registrar)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wfactura", wUsuario.ValidarToken(wfactura.Consultar)).Methods("POST")
+
+	Enrutador.HandleFunc("/ipsfa/api/wmedicina", wUsuario.ValidarToken(wmedicina.Registrar)).Methods("POST")
 }
 
 func CargarModulosSeguridad() {
@@ -97,6 +100,10 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.Crear).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.CambiarClave)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.Crear).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.CambiarClave).Methods("PUT")
+	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.Opciones).Methods("OPTIONS")
 
 }
 
@@ -132,6 +139,7 @@ func CargarModulosWebDevel() {
 	var wfam api.WFamiliar
 
 	var wfactura api.WFactura
+	var wmedicina api.WMedicina
 
 	Enrutador.HandleFunc("/devel/api/militar/crud/{id}", per.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Actualizar).Methods("PUT")
@@ -183,4 +191,5 @@ func CargarModulosWebDevel() {
 	// Enrutador.HandleFunc("/devel/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wfedevida", wfe.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wfactura", wfactura.Consultar).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/wmedicina", wmedicina.Registrar).Methods("POST")
 }
