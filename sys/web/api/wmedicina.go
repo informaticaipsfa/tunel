@@ -24,8 +24,8 @@ func (wcis *WMedicina) Registrar(w http.ResponseWriter, r *http.Request) {
 	if e != nil {
 		fmt.Println(e.Error())
 	}
-	cis.Medicina.Usuario = UsuarioConectado.Login
-	cis.Medicina.Fecha = time.Now()
+	cis.Usuario = UsuarioConectado.Login
+	cis.Fecha = time.Now()
 	cis.Crear()
 	var traza fanb.TrazaCIS
 	ip := strings.Split(r.RemoteAddr, ":")
