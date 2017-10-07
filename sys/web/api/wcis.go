@@ -18,10 +18,11 @@ import (
 
 //WRecibo Familiares
 type WCis struct {
-	ID        string
-	Reembolso tramitacion.Reembolso
-	Telefono  tramitacion.Telefono
-	Nombre    string
+	ID            string
+	Reembolso     tramitacion.Reembolso
+	Telefono      tramitacion.Telefono
+	Nombre        string
+	Observaciones string
 }
 
 type WCisApoyo struct {
@@ -35,6 +36,7 @@ func (wcis *WCis) Registrar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var cis cis.CuidadoIntegral
 	var Semillero fanb.Semillero
+	var Obs tramitacion.Observacion
 	i, _ := Semillero.Maximo("semillerocis")
 
 	Cabecera(w, r)
@@ -42,7 +44,14 @@ func (wcis *WCis) Registrar(w http.ResponseWriter, r *http.Request) {
 	wcis.Reembolso.FechaCreacion = time.Now()
 	wcis.Reembolso.Usuario = UsuarioConectado.Login
 	wcis.Reembolso.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
+
+	Obs.FechaCreacion = time.Now()
+	Obs.Usuario = UsuarioConectado.Login
+	Obs.Contenido = wcis.Observaciones
+	wcis.Reembolso.Seguimiento.Observaciones = append(wcis.Reembolso.Seguimiento.Observaciones, Obs)
+
 	util.Error(e)
+
 	cis.CrearReembolso(wcis.ID, wcis.Reembolso, wcis.Telefono, wcis.Nombre)
 	M.Tipo = 0
 	M.Mensaje = wcis.Reembolso.Numero
