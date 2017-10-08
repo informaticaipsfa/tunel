@@ -80,7 +80,6 @@ func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&reemb)
 
-	fmt.Println("Numero:  ", reemb.Numero)
 	for _, v := range reemb.Observaciones {
 		var Obs tramitacion.Observacion
 		Obs.Contenido = v
@@ -131,10 +130,10 @@ func (wcis *WCis) Estatus(w http.ResponseWriter, r *http.Request) {
 	var cis cis.CuidadoIntegral
 	var Estatus tramitacion.EstatusReembolso
 
-	// fmt.Println("Acceso Estatus...")
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&Estatus)
 
+	fmt.Println("Acceso Estatus...", Estatus.Estatus, " ", Estatus.ID, " | ", Estatus.Numero)
 	util.Error(e)
 	cis.EstatusReembolso(Estatus)
 

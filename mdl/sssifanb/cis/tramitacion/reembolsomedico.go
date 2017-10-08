@@ -139,9 +139,10 @@ type ActualizarReembolso struct {
 }
 
 type EstatusReembolso struct {
-	ID      string
-	Numero  string
-	Estatus int
+	ID       string `json:"id" bson:"id"`
+	Numero   string `json:"numero" bson:"numero"`
+	Posicion int    `json:"posicion" bson:"posicion"`
+	Estatus  int    `json:"estatus" bson:"estatus"`
 }
 
 func (fact *Factura) Consultar(rif string, numero string) (jSon []byte, err error) {

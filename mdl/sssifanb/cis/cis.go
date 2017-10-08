@@ -116,10 +116,11 @@ func (cuidado *CuidadoIntegral) ListarReembolso(estatus int) (jSon []byte, err e
 // ActualizarReembolso Actualizando
 func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.ActualizarReembolso) (jSon []byte, err error) {
 	var M Mensaje
-	M.Mensaje = "Creando Reembolso"
+	M.Mensaje = "Actualizando Reembolso"
 	M.Tipo = 1
 	seguir := make(map[string]interface{})
 	valor := "cis.serviciomedico.programa.reembolso." + strconv.Itoa(AReembolso.Posicion)
+	fmt.Println(valor)
 	seguir[valor] = AReembolso.Reembolso
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": AReembolso.ID}, bson.M{"$set": seguir})
@@ -134,12 +135,13 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 		fmt.Println(err.Error())
 		return
 	}
-	rmb.Estatus = AReembolso.Reembolso.Estatus
+	fmt.Println("Reembolso", AReembolso.Numero, "Estatus: ", rmb.Estatus)
+	// rmb.Estatus = AReembolso.Reembolso.Estatus
 	rmb.EstatusSeguimiento = AReembolso.Reembolso.Seguimiento.Estatus
 	rmb.MontoAprobado = AReembolso.Reembolso.MontoAprobado
 	rmb.MontoSolicitado = AReembolso.Reembolso.MontoSolicitado
 	rmb.FechaAprobado = time.Now()
-	fmt.Println("Numero:  ", AReembolso.Numero)
+
 	err = co.Update(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}, bson.M{"$set": rmb})
 	if err != nil {
 		// return
