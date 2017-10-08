@@ -129,7 +129,7 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 	var rmb tramitacion.ColeccionReembolso
 
 	co := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
-	err = co.Find(bson.M{"id": AReembolso.ID}).One(&rmb)
+	err = co.Find(bson.M{"id": AReembolso.ID, "numero": AReembolso.Numero}).One(&rmb)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
@@ -263,7 +263,7 @@ func (cuidado *CuidadoIntegral) ActualizarApoyo(AAPoyo tramitacion.ActualizarApo
 	var rmb tramitacion.ColeccionApoyo
 
 	co := sys.MGOSession.DB(sys.CBASE).C(sys.CAPOYO)
-	err = co.Find(bson.M{"id": AAPoyo.ID}).One(&rmb)
+	err = co.Find(bson.M{"id": AAPoyo.ID, "numero": AAPoyo.Numero}).One(&rmb)
 	if err != nil {
 		fmt.Println(err.Error())
 		return

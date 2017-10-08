@@ -26,9 +26,10 @@ type WCis struct {
 }
 
 type WCisApoyo struct {
-	ID     string
-	Apoyo  tramitacion.Apoyo
-	Nombre string
+	ID            string
+	Apoyo         tramitacion.Apoyo
+	Nombre        string
+	Observaciones string
 }
 
 //Consultar Militares
@@ -76,7 +77,6 @@ func (wcis *WCis) Actualizar(w http.ResponseWriter, r *http.Request) {
 	var cis cis.CuidadoIntegral
 	var reemb tramitacion.ActualizarReembolso
 
-	fmt.Println("Acceso...")
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&reemb)
 
@@ -160,6 +160,7 @@ func (wcis *WCisApoyo) Registrar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var cis cis.CuidadoIntegral
 	var Semillero fanb.Semillero
+	var Obs tramitacion.Observacion
 	i, _ := Semillero.Maximo("semillerocis")
 
 	Cabecera(w, r)
@@ -168,6 +169,12 @@ func (wcis *WCisApoyo) Registrar(w http.ResponseWriter, r *http.Request) {
 	wcis.Apoyo.Usuario = UsuarioConectado.Login
 	wcis.Apoyo.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	util.Error(e)
+
+	Obs.FechaCreacion = time.Now()
+	Obs.Usuario = UsuarioConectado.Login
+	Obs.Contenido = wcis.Observaciones
+	wcis.Apoyo.Seguimiento.Observaciones = append(wcis.Apoyo.Seguimiento.Observaciones, Obs)
+
 	cis.CrearApoyo(wcis.ID, wcis.Apoyo, wcis.Nombre)
 	M.Tipo = 0
 	M.Mensaje = wcis.Apoyo.Numero
