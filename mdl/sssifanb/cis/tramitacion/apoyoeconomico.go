@@ -32,6 +32,7 @@ type ConceptoApoyo struct {
 	Afiliado         string  `json:"afiliado" bson:"afiliado"` //Cedula, Guión (-), Nombre
 	Requisitos       []int   `json:"requisitos" bson:"requisitos"`
 	Patologia        string  `json:"patologia" bson:"patologia"`
+	MontoSolicitado  float64 `json:"montosolicitado" bson:"montosolicitado"`
 	MontoAseguradora float64 `json:"montoaseguradora" bson:"montoaseguradora"`
 	MontoAportar     float64 `json:"montoaportar" bson:"montoaportar"`
 }
