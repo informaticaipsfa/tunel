@@ -136,7 +136,7 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 		return
 	}
 	fmt.Println("Reembolso", AReembolso.Numero, "Estatus: ", rmb.Estatus)
-	// rmb.Estatus = AReembolso.Reembolso.Estatus
+	rmb.Reembolso.Responsable = AReembolso.Reembolso.Responsable
 	rmb.EstatusSeguimiento = AReembolso.Reembolso.Seguimiento.Estatus
 	rmb.MontoAprobado = AReembolso.Reembolso.MontoAprobado
 	rmb.MontoSolicitado = AReembolso.Reembolso.MontoSolicitado
@@ -270,7 +270,8 @@ func (cuidado *CuidadoIntegral) ActualizarApoyo(AAPoyo tramitacion.ActualizarApo
 		fmt.Println(err.Error())
 		return
 	}
-	rmb.Estatus = AAPoyo.Apoyo.Estatus
+	// rmb.Estatus = AAPoyo.Apoyo.Estatus
+	rmb.Apoyo.Responsable = AAPoyo.Apoyo.Responsable
 	rmb.EstatusSeguimiento = AAPoyo.Apoyo.Seguimiento.Estatus
 	rmb.MontoAprobado = AAPoyo.Apoyo.MontoAprobado
 	rmb.MontoSolicitado = AAPoyo.Apoyo.MontoSolicitado
