@@ -29,6 +29,8 @@ type WFedeVida struct {
 	ID          string
 	IDF         string
 	Direccion   Direccion
+	Telefono    Telefono
+	Correo      Correo
 	DireccionEx string
 	FechaEx     time.Time
 	Nombre      string
@@ -57,6 +59,8 @@ func (fe *WFedeVida) Crear() (jSon []byte, err error) {
 	i, _ := semillero.Maximo("semillerocis")
 	fevida.Numero = util.CompletarCeros(strconv.Itoa(i), 0, 8)
 	fevida.DatoBasico.Direccion = fe.Direccion
+	fevida.DatoBasico.Telefono = fe.Telefono
+	fevida.DatoBasico.Correo = fe.Correo
 	fevida.DatoBasico.Cedula = fe.ID
 	fevida.DatoBasico.NombreCompleto = fe.Nombre
 	fevida.IDF = fe.IDF

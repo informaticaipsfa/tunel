@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/investigacion"
@@ -21,8 +20,8 @@ func (WFe *WFedeVida) Registrar(w http.ResponseWriter, r *http.Request) {
 		// return
 	}
 
-	fmt.Println("Direccion")
-	fmt.Println(fe.Direccion)
+	// fmt.Println("Direccion")
+	// fmt.Println(fe.Direccion)
 
 	j, _ := fe.Crear()
 

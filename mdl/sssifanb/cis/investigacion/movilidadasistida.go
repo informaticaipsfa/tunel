@@ -41,7 +41,8 @@ type DatoPersonal struct {
 	Situacion      string
 	NombreCompleto string
 	Direccion      Direccion
-	Telefono       string
+	Telefono       Telefono
+	Correo         Correo
 	Parentesco     string
 }
 
@@ -56,4 +57,17 @@ type Direccion struct {
 	Casa         string `json:"casa" bson:"casa"`
 	Apartamento  string `json:"apartamento" bson:"apartamento"`
 	Numero       int    `json:"numero,omitempty" bson:"numero"`
+}
+
+type Telefono struct {
+	Movil        string `json:"movil,omitempty" bson:"movil"`
+	Domiciliario string `json:"domiciliario,omitempty" bson:"domiciliario"`
+	Emergencia   string `json:"emergencia,omitempty" bson:"emergencia"`
+}
+
+//Correo Direcciones electronicas
+type Correo struct {
+	Principal     string `json:"principal,omitempty" bson:"principal"`
+	Alternativo   string `json:"alternativo,omitempty" bson:"alternativo"`
+	Institucional string `json:"institucional,omitempty" bson:"institucional"`
 }

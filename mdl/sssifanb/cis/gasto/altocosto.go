@@ -19,12 +19,41 @@ type AltoCosto struct {
 }
 
 type WAltoCosto struct {
-	ID       string      `json:"id" bson:"id"`
-	IDF      string      `json:"idf" bson:"idf"`
-	Medicina []AltoCosto `json:"Medicina" bson:"medicina"`
-	Afiliado string      `json:"afiliado" bson:"afiliado"`
-	Usuario  string      `json:"usuario" bson:"usuario"`
-	Fecha    time.Time   `json:"fecha" bson:"fecha"`
+	ID        string      `json:"id" bson:"id"`
+	IDF       string      `json:"idf" bson:"idf"`
+	Medicina  []AltoCosto `json:"Medicina" bson:"medicina"`
+	Afiliado  string      `json:"afiliado" bson:"afiliado"`
+	Usuario   string      `json:"usuario" bson:"usuario"`
+	Fecha     time.Time   `json:"fecha" bson:"fecha"`
+	Direccion Direccion   `json:"Direccion" bson:"direccion"`
+	Telefono  Telefono    `json:"Telefono" bson:"telefono"`
+	Correo    Correo      `json:"Correo" bson:"correo"`
+}
+
+//Direccion ruta y secciones
+type Direccion struct {
+	Tipo         int    `json:"tipo,omitempty" bson:"tipo"` //domiciliaria, trabajo, emergencia
+	Ciudad       string `json:"ciudad,omitempty" bson:"ciudad"`
+	Estado       string `json:"estado,omitempty" bson:"estado"`
+	Municipio    string `json:"municipio,omitempty" bson:"municipio"`
+	Parroquia    string `json:"parroquia,omitempty" bson:"parroquia"`
+	CalleAvenida string `json:"calleavenida" bson:"calleavenida"`
+	Casa         string `json:"casa" bson:"casa"`
+	Apartamento  string `json:"apartamento" bson:"apartamento"`
+	Numero       int    `json:"numero,omitempty" bson:"numero"`
+}
+
+type Telefono struct {
+	Movil        string `json:"movil,omitempty" bson:"movil"`
+	Domiciliario string `json:"domiciliario,omitempty" bson:"domiciliario"`
+	Emergencia   string `json:"emergencia,omitempty" bson:"emergencia"`
+}
+
+//Correo Direcciones electronicas
+type Correo struct {
+	Principal     string `json:"principal,omitempty" bson:"principal"`
+	Alternativo   string `json:"alternativo,omitempty" bson:"alternativo"`
+	Institucional string `json:"institucional,omitempty" bson:"institucional"`
 }
 
 //Crear Registrando

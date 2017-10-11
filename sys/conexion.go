@@ -31,6 +31,18 @@ func ConexionSAMAN(mapa map[string]CadenaDeConexion) {
 	}
 }
 
+//ConexionEMPLEADO Funcion de Conexion a Postgres
+func ConexionEMPLEADO(mapa map[string]CadenaDeConexion) {
+	c := mapa["empleado"]
+	cadena := "user=" + c.Usuario + " dbname=" + c.Basedatos + " password=" + c.Clave + " host=" + c.Host + " sslmode=disable"
+	PostgreSQLEMPLEADOSIGESP, _ = sql.Open("postgres", cadena)
+	if PostgreSQLEMPLEADOSIGESP.Ping() != nil {
+		fmt.Println("[Empleado:   Error...] ", PostgreSQLEMPLEADOSIGESP.Ping())
+	} else {
+		fmt.Println("[Empleado: ", c.Host, "  OK...]")
+	}
+}
+
 //ConexionPACE
 func ConexionPACE(mapa map[string]CadenaDeConexion) {
 	c := mapa["pace"]
