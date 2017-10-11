@@ -19,6 +19,7 @@ type AltoCosto struct {
 }
 
 type WAltoCosto struct {
+	Numero    string      `json:"numero" bson:"numero"`
 	ID        string      `json:"id" bson:"id"`
 	IDF       string      `json:"idf" bson:"idf"`
 	Medicina  []AltoCosto `json:"Medicina" bson:"medicina"`
