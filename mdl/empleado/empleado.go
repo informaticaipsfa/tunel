@@ -3,6 +3,8 @@ package empleado
 import (
 	"fmt"
 
+	"gopkg.in/mgo.v2/bson"
+
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/sys"
 )
@@ -62,7 +64,7 @@ type Empleado struct {
 	TipoNomina string
 }
 
-func (e *Empleado) Consultar() bool {
+func (e *Empleado) Insertar() bool {
 	sq, err := sys.PostgreSQLEMPLEADOSIGESP.Query(BuscarEmpleadosSigesp())
 	if err != nil {
 
@@ -89,4 +91,27 @@ func (e *Empleado) Consultar() bool {
 		}
 	}
 	return true
+}
+
+func (E *Empleado) Actualizar() {
+	sq, err := sys.PostgreSQLEMPLEADOSIGESP.Query(BuscarEmpleadosSigesp())
+	if err != nil {
+
+	}
+	coleccion := sys.MGOSession.DB("sssifanb").C("empleado")
+	for sq.Next() {
+		cargo := make(map[string]interface{})
+
+		var ced, nom, ape, fch, edo, sex, rif, fing, ano, car, ger, ban, cue, tip string
+		sq.Scan(&ced, &nom, &ape, &fch, &edo, &sex, &rif, &fing, &ano,
+			&car, &ger, &ban, &cue, &tip)
+		cargo["cargo"] = car
+		fmt.Println("Cedula", ced)
+		err = coleccion.Update(bson.M{"persona.datobasico.cedula": ced}, bson.M{"$set": cargo})
+		if err != nil {
+			fmt.Println("Error: cedula: ", ced)
+			// return
+		}
+
+	}
 }
