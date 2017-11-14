@@ -147,7 +147,22 @@ func obtenerHistorialMilitar() string {
 }
 
 func obtenerPrimaProfesional() string {
-	return `SELECT pr.codnip, pen.primaprofesional FROM pension_calc AS pen
+	return `SELECT pr.codnip, pen.porcprimaprof
+	FROM pension_calc AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE pensionvigente ='S' AND pensionasignada > 0`
+}
+
+func obtenerPrimaNoAscenso() string {
+	return `SELECT pr.codnip, pen.porcprimanoascenso
+	FROM pension_calc AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE pensionvigente ='S' AND pensionasignada > 0`
+}
+
+func obtenerPrimaEspecial() string {
+	return `SELECT pr.codnip, pen.primaespecial
+	FROM pension_calc AS pen
 	JOIN personas AS pr ON pen.nropersona=pr.nropersona
 	WHERE pensionvigente ='S' AND pensionasignada > 0`
 }

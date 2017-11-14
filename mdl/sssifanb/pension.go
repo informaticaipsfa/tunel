@@ -54,6 +54,7 @@ type Pension struct {
 	PorcentajePrestaciones float64                  `json:"pprestaciones" bson:"pprestaciones"`
 	PrimaProfesional       float64                  `json:"pprofesional" bson:"pprofesional"`
 	PrimaNoAscenso         float64                  `json:"pnoascenso" bson:"pnoascenso"`
+	PrimaEspecial          float64                  `json:"pespecial" bson:"pespecial"`
 }
 
 type HistorialPensionSueldo struct {
@@ -108,7 +109,7 @@ func (P *Pension) Exportar() {
 	coma := ""
 	cuerpo := ""
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
-		f_retiro_efectiva, monto_noascenso, monto_profesion, porcentaje)	VALUES `
+		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, porcentaje)	VALUES `
 	fmt.Println("Creando lote...")
 	for _, v := range lstMilitares {
 		if i > 0 {
@@ -121,6 +122,7 @@ func (P *Pension) Exportar() {
 		porcentaje := strconv.FormatFloat(v.Pension.PorcentajePrestaciones, 'f', 2, 64)
 		pprofesional := strconv.FormatFloat(v.Pension.PrimaProfesional, 'f', 2, 64)
 		pnoascenso := strconv.FormatFloat(v.Pension.PrimaNoAscenso, 'f', 2, 64)
+		pespecial := strconv.FormatFloat(v.Pension.PrimaEspecial, 'f', 2, 64)
 		cuerpo += coma + `(
 				'` + v.Persona.DatoBasico.Cedula + `',
 				'` + strings.Replace(np, "'", " ", -1) + `',
@@ -132,6 +134,7 @@ func (P *Pension) Exportar() {
 				'` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] + `',
 				` + pnoascenso + `,
 				` + pprofesional + `,
+				` + pespecial + `,
 				` + porcentaje + `)`
 		i++
 
@@ -166,6 +169,7 @@ func consultarPensionados() {
 		"pension.pprestaciones":   true,
 		"pension.pprofesional":    true,
 		"pension.pnoascenso":      true,
+		"pension.pespecial":       true,
 	}
 	err := c.Find(bson.M{"pension.pensionasignada": bson.M{"$gt": 0}}).Select(seleccion).All(&lstMilitares)
 	if err != nil {

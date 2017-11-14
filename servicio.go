@@ -41,7 +41,7 @@ func init() {
 
 func main() {
 	//var e estadistica.Estructura
-	//e.ActualizarPrimaProfesional()
+	//e.ActualizarPrimaEspecial()
 	// var emp empleado.Empleado
 	// emp.Actualizar()
 	// var arch util.Archivo

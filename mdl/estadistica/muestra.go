@@ -894,3 +894,19 @@ func (e *Estructura) ActualizarPrimaProfesional() {
 		util.Error(err)
 	}
 }
+
+func (e *Estructura) ActualizarPrimaEspecial() {
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPrimaEspecial())
+	util.Error(err)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		pespecial := make(map[string]interface{})
+		var ced string
+		var pespec sql.NullFloat64
+		sq.Scan(&ced, &pespec)
+		pespecial["pension.pespecial"] = util.ValidarNullFloat64(pespec)
+		fmt.Println("Cedula", ced)
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": pespecial})
+		util.Error(err)
+	}
+}
