@@ -3,7 +3,7 @@
   "Usuario" : "postgres",
   "Basedatos": "Saman",
   "Clave" : "data",
-  "Host" : "192.168.6.65",
+  "Host" : "localhost",
   "Puerto" : "5432"
 },{
   "Driver" : "pgpace",

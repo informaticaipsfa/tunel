@@ -1,6 +1,9 @@
 package sssifanb
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 //DatoBasico Datos importantes de la persona
 type DatoBasico struct {
@@ -24,14 +27,25 @@ func (d *DatoBasico) AplicarReglas() {
 
 //ConcatenarNombre Unir nombres
 func (d *DatoBasico) ConcatenarNombre() string {
-	return d.NombrePrimero + " " + d.NombreSegundo
+	return strings.TrimSpace(d.NombrePrimero) + " " + strings.TrimSpace(d.NombreSegundo)
 }
 
 //ConcatenarApellido Nombre y Apellidos
 func (d *DatoBasico) ConcatenarApellido() string {
-	return d.ApellidoPrimero + " " + d.ApellidoSegundo
+	return strings.TrimSpace(d.ApellidoPrimero) + " " + strings.TrimSpace(d.ApellidoSegundo)
 }
 
+//ConcatenarNombreApellido Nombre y apellido
+func (d *DatoBasico) ConcatenarNombreApellido() string {
+	return d.ConcatenarNombre() + " " + d.ConcatenarApellido()
+}
+
+//ConcatenarApellidoNombre Apellido y Nombre
+func (d *DatoBasico) ConcatenarApellidoNombre() string {
+	return d.ConcatenarApellido() + " " + d.ConcatenarNombre()
+}
+
+//ConvertirNacionalidad Devolver nacionalidad
 func (d *DatoBasico) ConvertirNacionalidad() string {
 	nacionalidad := ""
 	switch d.Nacionalidad {

@@ -107,6 +107,7 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/devel/api/wusuario", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/devel/api/wusuario/listar", wUsuario.Listar).Methods("GET")
 
+	Enrutador.HandleFunc("/ipsfa/api/wusuario/validarphp", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("GET")
 }
 
 //Principal Página inicial del sistema o bienvenida
