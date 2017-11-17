@@ -23,12 +23,20 @@ func Sincronizar(militar Militar) {
 	}
 	if existe == 0 {
 		m := InsertarMilitarSAMANSN(militar)
-		sys.PostgreSQLSAMAN.Exec(m)
+		_, e := sys.PostgreSQLSAMAN.Exec(m)
+		if e != nil {
+			fmt.Println(e.Error())
+			return
+		}
 		fmt.Println("INSERTADO: ", militar.Persona.DatoBasico.Cedula)
 	} else {
 		p := ActualizarPersona(militar.Persona)
 		m := ActualizarMilitar(militar)
-		sys.PostgreSQLSAMAN.Exec(p + m)
+		_, e := sys.PostgreSQLSAMAN.Exec(p + m)
+		if e != nil {
+			fmt.Println(e.Error())
+			return
+		}
 		fmt.Println("ACTUALIZADO: ", militar.Persona.DatoBasico.Cedula)
 	}
 
@@ -87,7 +95,7 @@ func ActualizarMilitar(militar Militar) string {
 	fechaSlashRetiro := strings.Replace(convertirE, "-", "/", -1)
 
 	return `
-		UPDATE pers_dat_militar SET
+		UPDATE pers_dat_militares SET
 			componentecod = '` + militar.Componente.Abreviatura + `',
 			gradocod = '` + militar.Grado.Abreviatura + `',
 			perssituaccod = '` + militar.Situacion + `',
