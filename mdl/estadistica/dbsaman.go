@@ -146,6 +146,27 @@ func obtenerHistorialMilitar() string {
 
 }
 
+func obtenerPrimaProfesional() string {
+	return `SELECT pr.codnip, pen.porcprimaprof
+	FROM pension_calc AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE pensionvigente ='S' AND pensionasignada > 0`
+}
+
+func obtenerPrimaNoAscenso() string {
+	return `SELECT pr.codnip, pen.porcprimanoascenso
+	FROM pension_calc AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE pensionvigente ='S' AND pensionasignada > 0`
+}
+
+func obtenerPrimaEspecial() string {
+	return `SELECT pr.codnip, pen.primaespecial
+	FROM pension_calc AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE pensionvigente ='S' AND pensionasignada > 0`
+}
+
 func obtenerPensionadosAntes2008GN() string {
 	return `SELECT pr.codnip FROM pension AS pen
 	JOIN personas AS pr ON pen.nropersona=pr.nropersona
@@ -276,63 +297,3 @@ func obtenerMunicipiosParroquia() string { //MySQL
 //
 
 //
-// func InsertarSAMAN(militar sssifanb.Militar) string {
-// 	return `insert into public.personas (
-// 	_version_hb,
-// 	tipnip= ` + militar.Persona.tipnip + `,
-// 	codnip,
-//   tipnit,
-// 	nronit,
-//   nombreprimero= '` + militar.Persona.DatoBasico.NombrePrimero() + `',
-//   nombresegundo= '` + militar.persona.DatosBasico.NonmbreSegundo + `,
-//   apellidoprimero= '` + militar.persona.DatosBasico.ApellidoPrimero + `,
-//   apellidosegundo= '` + militar.persona.DatosBasico.ApellidoSegundo + `,
-//   apellidocasada,
-//   prefijo= '',
-// 	sufijo= '',
-// 	nombrecompletoupp,
-//   nombrecompleto,
-//   nombrecorto,
-//   apodo,
-// 	imprimeapodo,
-// 	nombrepersjuridica,
-// 	siglaspersjuridica,
-// 	nacionalidadcod = '` + persona.DatoBasico.Nacionalidad + `',
-//   sexocod= '` + militar.Persona.DatoBasico.Sexo + `',
-// 	edocivilcod= '` + militar.Persona.DatoBasico.EstadoCivil + `',
-// 	idiomanativocod,
-// 	ocupactivcod,
-//   localidadcodnac,
-// 	tratamientocod,
-// 	fechanacimiento,
-//   fechadefuncion,
-//   email1,
-//   email2,
-// 	paginaweb,
-//   contacto,
-//   capital,
-//   auditestatregistro,
-// 	auditrazonoper,
-//   auditfechaanulac,
-// 	auditfechacambio,
-// 	audithoracambio,
-// 	auditfechacreacion,1:31 / 4:10
-//
-// 	audithoracreacion,
-// 	auditcodusuario,
-// 	auditcodsupervisor,
-// 	campousuariochar_1,
-// 	campousuariochar_2,
-// 	campousuariochar_3,
-// 	campousuariochar_4,
-// 	campousuariochar_5,
-// 	campousuarionum_1,
-// 	campousuarionum_2,
-// 	campousuarionum_3,
-// 	campousuarionum_4,
-// 	campousuarionum_5,
-// 	ciaopr,
-// 	nropersona
-// 	) values `
-//
-// }

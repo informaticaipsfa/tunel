@@ -741,7 +741,7 @@ func (e *Estructura) CrearUsuarios() (jSon []byte, err error) {
 		sq.Scan(&usua, &cedula, &nombp, &nombs, &apellp, &apellis)
 		//
 
-		Usuario.Id = bson.NewObjectId()
+		Usuario.ID = bson.NewObjectId()
 		Usuario.Cedula = cedula
 		nombre := util.ValidarNullString(nombp) + " " + util.ValidarNullString(nombs) +
 			" " + util.ValidarNullString(apellp) + " " + util.ValidarNullString(apellis)
@@ -877,4 +877,36 @@ func (e *Estructura) ConvertirGradoGN() (jSon []byte, err error) {
 		fmt.Println("Cedula", ced)
 	}
 	return
+}
+
+func (e *Estructura) ActualizarPrimaProfesional() {
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPrimaProfesional())
+	util.Error(err)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		pprofesional := make(map[string]interface{})
+		var ced string
+		var pprof sql.NullFloat64
+		sq.Scan(&ced, &pprof)
+		pprofesional["pension.pprofesional"] = util.ValidarNullFloat64(pprof)
+		fmt.Println("Cedula", ced)
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": pprofesional})
+		util.Error(err)
+	}
+}
+
+func (e *Estructura) ActualizarPrimaEspecial() {
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPrimaEspecial())
+	util.Error(err)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		pespecial := make(map[string]interface{})
+		var ced string
+		var pespec sql.NullFloat64
+		sq.Scan(&ced, &pespec)
+		pespecial["pension.pespecial"] = util.ValidarNullFloat64(pespec)
+		fmt.Println("Cedula", ced)
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": pespecial})
+		util.Error(err)
+	}
 }

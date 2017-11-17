@@ -368,3 +368,7 @@ func (cuidado *CuidadoIntegral) ListarCarta(estatus int) (jSon []byte, err error
 	jSon, err = json.Marshal(result)
 	return
 }
+
+func (cuidado *CuidadoIntegral) CrearTratamiento() {
+
+}

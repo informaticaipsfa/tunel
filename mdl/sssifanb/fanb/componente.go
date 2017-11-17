@@ -2,6 +2,7 @@ package fanb
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/informaticaipsfa/tunel/sys"
 	"gopkg.in/mgo.v2/bson"
@@ -21,6 +22,12 @@ type Mensaje struct {
 	Pgsql   string `json:"pgsql,omitempty"`
 }
 
+type Conversion struct {
+	Componente string `json:"componente"`
+	GradoPace  string `json:"grado"`
+	GradoSaman string `json:"gradosaman"`
+}
+
 //SalvarMGO Guardar
 func (comp *Componente) SalvarMGO(colecion string) (err error) {
 	if colecion != "" {
@@ -34,7 +41,7 @@ func (comp *Componente) SalvarMGO(colecion string) (err error) {
 	return
 }
 
-//Consultar una persona mediante el metodo de MongoDB
+//Consultar una Componente mediante el metodo de MongoDB
 func (comp *Componente) Consultar(componente string) (jSon []byte, err error) {
 	var msj Mensaje
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CCOMPONENTE)
@@ -45,6 +52,44 @@ func (comp *Componente) Consultar(componente string) (jSon []byte, err error) {
 		jSon, err = json.Marshal(msj)
 	} else {
 		jSon, err = json.Marshal(comp)
+	}
+	return
+}
+
+//Consultar una Componente mediante el metodo de MongoDB
+func (comp *Componente) ConsultarGrado(componente string, grado string) (ComponenteConver Conversion) {
+	// var ComponenteConver Conversion
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CCOMPONENTE)
+	fmt.Println("codigo: ", componente, "Grado.codigo: ", grado)
+	err := c.Find(bson.M{"codigo": componente}).One(&comp)
+	ComponenteConver.Componente = ComponenteID(comp.Codigo)
+	if err != nil {
+		fmt.Println("Err: fanb.componente.ConsultarGrado() ")
+	} else {
+		for _, v := range comp.Grado {
+			if v.Codigo == grado {
+				//fmt.Println(v.Codigo, "   ", grado, " --> ", v.Cpace)
+				ComponenteConver.GradoPace = v.Cpace
+			}
+		}
+	}
+	return
+}
+
+func ComponenteID(abreviatura string) (codigo string) {
+	switch abreviatura {
+	case "EJ":
+		codigo = "1"
+		break
+	case "AR":
+		codigo = "2"
+		break
+	case "AV":
+		codigo = "3"
+		break
+	case "GN":
+		codigo = "4"
+		break
 	}
 	return
 }
