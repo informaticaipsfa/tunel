@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/sys/web"
 )
@@ -75,6 +76,11 @@ func main() {
 	//
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
+
+	var militar sssifanb.Militar
+
+	militar.ActualizarSaman()
+
 	srv := &http.Server{
 		Handler:      context.ClearHandler(web.Enrutador),
 		Addr:         ":" + sys.PUERTO,

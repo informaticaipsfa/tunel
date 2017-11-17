@@ -351,8 +351,10 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		return
 	}
 	s := ActualizarPersona(m.Persona)
-	//fmt.Println(m.Persona.DatoBasico.NroPersona)
-	go sys.PostgreSQLSAMAN.Exec(s)
+	x := ActualizarMilitar(mOriginal)
+	d := s + x
+	go sys.PostgreSQLSAMAN.Exec(d)
+
 	return
 }
 
@@ -409,4 +411,18 @@ func (m *Militar) ListarMGO(cedula string) (lst []Militar, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C("persona")
 	err = c.Find(bson.M{}).All(&lst)
 	return
+}
+
+func (m *Militar) ActualizarSaman() {
+	var lstMilitares []Militar
+
+	c := sys.MGOSession.DB(sys.CBASE).C("militar")
+	err := c.Find(bson.M{"persona.datobasico.nropersona": bson.M{"$lte": 0}}).All(&lstMilitares)
+	if err != nil {
+		return
+	}
+	for _, militar := range lstMilitares {
+
+		Sincronizar(militar)
+	}
 }
