@@ -417,12 +417,14 @@ func (m *Militar) ActualizarSaman() {
 	var lstMilitares []Militar
 
 	c := sys.MGOSession.DB(sys.CBASE).C("militar")
-	err := c.Find(bson.M{"persona.datobasico.nropersona": bson.M{"$lte": 0}}).All(&lstMilitares)
+	err := c.Find(bson.M{"situacion": "ACT"}).All(&lstMilitares)
 	if err != nil {
 		return
 	}
+	i := 0
 	for _, militar := range lstMilitares {
-
+		i++
 		Sincronizar(militar)
 	}
+	fmt.Println("Cantidad : ", i)
 }

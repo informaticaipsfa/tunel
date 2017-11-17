@@ -23,12 +23,12 @@ func Sincronizar(militar Militar) {
 	}
 	if existe == 0 {
 		m := InsertarMilitarSAMANSN(militar)
-		sys.PostgreSQLSAMAN.Query(m)
+		sys.PostgreSQLSAMAN.Exec(m)
 		fmt.Println("INSERTADO: ", militar.Persona.DatoBasico.Cedula)
 	} else {
 		p := ActualizarPersona(militar.Persona)
 		m := ActualizarMilitar(militar)
-		sys.PostgreSQLSAMAN.Query(p + m)
+		sys.PostgreSQLSAMAN.Exec(p + m)
 		fmt.Println("ACTUALIZADO: ", militar.Persona.DatoBasico.Cedula)
 	}
 
