@@ -71,9 +71,9 @@ func ActualizarPersona(persona Persona) string {
 		email2 = '` + persona.Correo.Alternativo + `',
 		auditfechacambio = '` + fechaSlashActual + `',
 		auditcodusuario = 'SSSIFANB'
-		WHERE nropersona= (SELECT p.nropersona FROM personas p
-			JOIN pers_dat_militares m on p.nropersona=m.nropersona
-			WHERE p.codnip='` + persona.DatoBasico.Cedula + `' LIMIT 1);`
+		WHERE nropersona= (SELECT personas.nropersona FROM personas
+			JOIN pers_dat_militares on personas.nropersona=pers_dat_militares.nropersona
+			WHERE personas.codnip='` + persona.DatoBasico.Cedula + `' LIMIT 1);`
 }
 
 //
@@ -115,9 +115,9 @@ func ActualizarMilitar(militar Militar) string {
 			auditfechacreacion = '` + fechaSlashActual + `',
 			audithoracreacion = '16:04',
 			auditcodusuario = 'SSSIFANB'
-			WHERE nropersona = ( SELECT p.nropersona FROM personas p
-				JOIN pers_dat_militares m on p.nropersona=m.nropersona
-				WHERE p.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1);
+			WHERE nropersona = ( SELECT personas.nropersona FROM personas
+				JOIN pers_dat_militares on personas.nropersona=pers_dat_militares.nropersona
+				WHERE personas.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1);
 	`
 }
 
