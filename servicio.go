@@ -18,8 +18,11 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"net/http"
+	"time"
 
-	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/gorilla/context"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/sys/web"
 )
@@ -73,27 +76,27 @@ func main() {
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 
-	var militar sssifanb.Militar
+	// var militar sssifanb.Militar
+	//
+	// militar.ActualizarSaman()
 
-	militar.ActualizarSaman()
-
-	// srv := &http.Server{
-	// 	Handler:      context.ClearHandler(web.Enrutador),
-	// 	Addr:         ":" + sys.PUERTO,
-	// 	WriteTimeout: 15 * time.Second,
-	// 	ReadTimeout:  15 * time.Second,
-	// }
-	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
-	// go srv.ListenAndServe()
-	// //
-	// //https://dominio.com/* Protocolo de capa de seguridad
-	// server := &http.Server{
-	// 	Handler:      context.ClearHandler(web.Enrutador),
-	// 	Addr:         ":" + sys.PUERTO_SSL,
-	// 	WriteTimeout: 15 * time.Second,
-	// 	ReadTimeout:  15 * time.Second,
-	// }
-	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
-	// log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
+	srv := &http.Server{
+		Handler:      context.ClearHandler(web.Enrutador),
+		Addr:         ":" + sys.PUERTO,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
+	go srv.ListenAndServe()
+	//
+	//https://dominio.com/* Protocolo de capa de seguridad
+	server := &http.Server{
+		Handler:      context.ClearHandler(web.Enrutador),
+		Addr:         ":" + sys.PUERTO_SSL,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
+	}
+	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
+	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
 
 }
