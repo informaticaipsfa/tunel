@@ -42,6 +42,23 @@ func Sincronizar(militar Militar) {
 
 }
 
+func SincronizarTest(militar Militar) {
+	s := `SELECT p.nropersona FROM personas p
+		JOIN pers_dat_militares m on p.nropersona=m.nropersona
+		WHERE p.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1`
+	sq, err := sys.PostgreSQLSAMAN.Query(s)
+	if err != nil {
+		return
+	}
+
+	for sq.Next() {
+		var ced string
+		sq.Scan(&ced)
+		fmt.Println("Encontrado... ", ced)
+
+	}
+}
+
 func ActualizarPersona(persona Persona) string {
 	fecha := time.Now()
 	convertedDateString := fecha.Format("2006-01-02")

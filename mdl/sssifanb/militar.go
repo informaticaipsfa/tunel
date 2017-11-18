@@ -350,10 +350,10 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
-	s := ActualizarPersona(m.Persona)
+	// s := ActualizarPersona(m.Persona)
 	// x := ActualizarMilitar(mOriginal)
-	fmt.Println(s)
-	go ActualizarPostgresSaman(s)
+	// fmt.Println(s)
+	go SincronizarTest(mOriginal) //ActualizarPostgresSaman(s)
 	return
 }
 
