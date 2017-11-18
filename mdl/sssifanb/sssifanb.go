@@ -43,10 +43,10 @@ func Sincronizar(militar Militar) {
 }
 
 func SincronizarTest(militar Militar) {
-	s := `SELECT p.nropersona FROM personas p
-		JOIN pers_dat_militares m on p.nropersona=m.nropersona
-		WHERE p.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1`
-	sq, err := sys.PostgreSQLSAMAN.Query(s)
+	s := `SELECT personas.nropersona FROM personas
+		JOIN pers_dat_militares on personas.nropersona=pers_dat_militares.nropersona
+		WHERE personas.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1`
+	sq, err := sys.PostgreSQLSAMANWEB.Query(s)
 	if err != nil {
 		return
 	}
