@@ -350,23 +350,22 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
-	// s := ActualizarPersona(m.Persona)
-	// x := ActualizarMilitar(mOriginal)
-	// fmt.Println(s)
-	SincronizarTest(mOriginal) //ActualizarPostgresSaman(s)
+	s := ActualizarPersona(m.Persona)
+	x := ActualizarMilitar(mOriginal)
+	go ActualizarPostgresSaman(s + x)
 	return
 }
 
 func ActualizarPostgresSaman(d string) {
-	// _, err := sys.PostgreSQLSAMAN.Query(d)
-	//
-	// if err != nil {
-	// 	fmt.Println("SAMAN: ", err.Error())
-	// }
-	// _, err := sys.PostgreSQLSAMANWEB.Exec(d)
-	// if err != nil {
-	// 	fmt.Println("SAMANWEB: ", err.Error())
-	// }
+	_, err := sys.PostgreSQLSAMAN.Exec(d)
+
+	if err != nil {
+		fmt.Println("SAMAN: ", err.Error())
+	}
+	_, err = sys.PsqlWEB.Exec(d)
+	if err != nil {
+		fmt.Println("SAMANWEB: ", err.Error())
+	}
 }
 
 //SalvarMGO Guardar

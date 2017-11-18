@@ -94,7 +94,7 @@ func ActualizarPersona(persona Persona) string {
 			WHERE personas.codnip='` + persona.DatoBasico.Cedula + `' LIMIT 1);`
 }
 
-//
+//ActualizarMilitar Militares
 func ActualizarMilitar(militar Militar) string {
 	fecha := time.Now()
 	convertedDateString := fecha.Format("2006-01-02")
