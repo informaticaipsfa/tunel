@@ -363,10 +363,10 @@ func ActualizarPostgresSaman(d string) {
 	// if err != nil {
 	// 	fmt.Println("SAMAN: ", err.Error())
 	// }
-	_, err := sys.PostgreSQLSAMANWEB.Exec(d)
-	if err != nil {
-		fmt.Println("SAMANWEB: ", err.Error())
-	}
+	// _, err := sys.PostgreSQLSAMANWEB.Exec(d)
+	// if err != nil {
+	// 	fmt.Println("SAMANWEB: ", err.Error())
+	// }
 }
 
 //SalvarMGO Guardar
@@ -380,7 +380,7 @@ func (m *Militar) SalvarMGO() (err error) {
 
 	s := InsertarMilitarSAMAN(m)
 	go sys.PostgreSQLSAMAN.Exec(s)
-	go sys.PostgreSQLSAMANWEB.Exec(s)
+	// go sys.PostgreSQLSAMANWEB.Exec(s)
 	return
 }
 
