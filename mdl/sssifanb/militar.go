@@ -354,7 +354,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	x := ActualizarMilitar(mOriginal)
 	d := s + x
 	go sys.PostgreSQLSAMAN.Exec(d)
-
+	go sys.PostgreSQLSAMANWEB.Exec(d)
 	return
 }
 
@@ -369,6 +369,7 @@ func (m *Militar) SalvarMGO() (err error) {
 
 	s := InsertarMilitarSAMAN(m)
 	go sys.PostgreSQLSAMAN.Exec(s)
+	go sys.PostgreSQLSAMANWEB.Exec(s)
 	return
 }
 

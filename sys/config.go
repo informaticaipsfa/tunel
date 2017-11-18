@@ -21,6 +21,7 @@ var (
 	BaseDeDatos              BaseDatos
 	MGOSession               *mgo.Session
 	PostgreSQLSAMAN          *sql.DB
+	PostgreSQLSAMANWEB       *sql.DB
 	PostgreSQLPACE           *sql.DB
 	PostgreSQLPENSION        *sql.DB
 	PostgreSQLPENSIONSIGESP  *sql.DB
@@ -82,7 +83,17 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionSAMAN(cad)
-
+		case "samanweb":
+			cad := make(map[string]CadenaDeConexion)
+			cad["samanweb"] = CadenaDeConexion{
+				Driver:    valor.Driver,
+				Usuario:   valor.Usuario,
+				Basedatos: valor.Basedatos,
+				Clave:     valor.Clave,
+				Host:      valor.Host,
+				Puerto:    valor.Puerto,
+			}
+			ConexionSAMANWEB(cad)
 		case "empleado":
 			cad := make(map[string]CadenaDeConexion)
 			cad["empleado"] = CadenaDeConexion{
