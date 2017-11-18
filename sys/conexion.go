@@ -35,12 +35,13 @@ func ConexionSAMAN(mapa map[string]CadenaDeConexion) {
 func ConexionSAMANWEB(mapa map[string]CadenaDeConexion) {
 	c := mapa["samanweb"]
 	cadena := "user=" + c.Usuario + " dbname=" + c.Basedatos + " password=" + c.Clave + " host=" + c.Host + " sslmode=disable"
-	PostgreSQLSAMAN, _ = sql.Open("postgres", cadena)
-	if PostgreSQLSAMAN.Ping() != nil {
-		fmt.Println("[SamanWEB:   Error...] ", PostgreSQLSAMAN.Ping())
+	PostgreSQLSAMANWEB, _ = sql.Open("postgres", cadena)
+	if PostgreSQLSAMANWEB.Ping() != nil {
+		fmt.Println("[SamanWEB:   Error...] ", PostgreSQLSAMANWEB.Ping())
 	} else {
 		fmt.Println("[SamanWEB: ", c.Host, "  OK...]")
 	}
+
 }
 
 //ConexionEMPLEADO Funcion de Conexion a Postgres
