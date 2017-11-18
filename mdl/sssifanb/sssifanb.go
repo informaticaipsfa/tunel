@@ -48,15 +48,17 @@ func SincronizarTest(militar Militar) {
 		WHERE personas.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1`
 	sq, err := sys.PostgreSQLSAMANWEB.Query(s)
 	if err != nil {
+		fmt.Println("Err", err.Error())
 		return
+	} else {
+		for sq.Next() {
+			var ced string
+			sq.Scan(&ced)
+			fmt.Println("Encontrado... ", ced)
+
+		}
 	}
 
-	for sq.Next() {
-		var ced string
-		sq.Scan(&ced)
-		fmt.Println("Encontrado... ", ced)
-
-	}
 }
 
 func ActualizarPersona(persona Persona) string {
