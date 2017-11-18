@@ -83,6 +83,7 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionSAMAN(cad)
+			break
 		case "samanweb":
 			cad := make(map[string]CadenaDeConexion)
 			cad["samanweb"] = CadenaDeConexion{
@@ -94,6 +95,7 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionSAMANWEB(cad)
+			break
 		case "empleado":
 			cad := make(map[string]CadenaDeConexion)
 			cad["empleado"] = CadenaDeConexion{
@@ -105,6 +107,7 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionEMPLEADO(cad)
+			break
 		case "pace":
 			cad := make(map[string]CadenaDeConexion)
 			cad["pace"] = CadenaDeConexion{
@@ -127,6 +130,7 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionPENSION(cad)
+			break
 		case "pensiones":
 			cad := make(map[string]CadenaDeConexion)
 			cad["pensiones"] = CadenaDeConexion{
@@ -138,8 +142,10 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			ConexionPENSIONSIGESP(cad)
+			break
 		case "mysql":
 			MySQL = true
+			break
 		case "mongodb":
 			MongoDB = true
 			cad := make(map[string]CadenaDeConexion)
@@ -152,6 +158,7 @@ func init() {
 				Puerto:    valor.Puerto,
 			}
 			MongoDBConexion(cad)
+			break
 		}
 	}
 	util.Error(e)
