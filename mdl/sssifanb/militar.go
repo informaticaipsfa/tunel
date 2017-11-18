@@ -352,6 +352,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	}
 	s := ActualizarPersona(m.Persona)
 	x := ActualizarMilitar(mOriginal)
+	fmt.Println(s + x)
 	go ActualizarPostgresSaman(s + x)
 	return
 }

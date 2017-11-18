@@ -119,6 +119,7 @@ func ActualizarMilitar(militar Militar) string {
 				JOIN pers_dat_militares on personas.nropersona=pers_dat_militares.nropersona
 				WHERE personas.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1);
 	`
+
 }
 
 func ActualizarPace(militar Militar) string {
