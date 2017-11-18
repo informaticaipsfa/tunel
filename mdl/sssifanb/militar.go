@@ -359,7 +359,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 func ActualizarPostgresSaman(d string) {
 	_, err := sys.PostgreSQLSAMAN.Exec(d)
 	if err != nil {
-		fmt.Println("SAMANWEB: ", err.Error())
+		fmt.Println("SAMAN: ", err.Error())
 	}
 	_, err = sys.PostgreSQLSAMANWEB.Exec(d)
 	if err != nil {
