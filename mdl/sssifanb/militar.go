@@ -378,9 +378,20 @@ func (m *Militar) SalvarMGO() (err error) {
 	}
 
 	s := InsertarMilitarSAMAN(m)
-	go sys.PostgreSQLSAMAN.Exec(s)
-	// go sys.PostgreSQLSAMANWEB.Exec(s)
+	go InsertarPostgresSaman(s)
 	return
+}
+
+func InsertarPostgresSaman(d string) {
+	_, err := sys.PostgreSQLSAMAN.Exec(d)
+
+	if err != nil {
+		fmt.Println("SAMAN: ", err.Error())
+	}
+	_, err = sys.PsqlWEB.Exec(d)
+	if err != nil {
+		fmt.Println("SAMANWEB: ", err.Error())
+	}
 }
 
 //consultarMongo una persona mediante el metodo de MongoDB
