@@ -37,6 +37,7 @@ func CargarModulosWeb() {
 	var wCisA api.WCisApoyo
 	var wCisC api.WCisCarta
 	var wfe api.WFedeVida
+	var wtp api.WTratamiento
 
 	var wfactura api.WFactura
 	var wmedicina api.WMedicina
@@ -83,7 +84,8 @@ func CargarModulosWeb() {
 	// Enrutador.HandleFunc("/ipsfa/api/wcarta/estatus", wCisA.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/wcarta", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
 
-	// Enrutador.HandleFunc("/ipsfa/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wtratamiento", wUsuario.ValidarToken(wtp.Registrar)).Methods("POST")
+
 	Enrutador.HandleFunc("/ipsfa/api/wfedevida", wUsuario.ValidarToken(wfe.Registrar)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wfactura", wUsuario.ValidarToken(wfactura.Consultar)).Methods("POST")
@@ -140,6 +142,7 @@ func CargarModulosWebDevel() {
 	var wrec api.WRecibo
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
+	var wtp api.WTratamiento
 
 	var wfactura api.WFactura
 	var wmedicina api.WMedicina
@@ -191,7 +194,7 @@ func CargarModulosWebDevel() {
 	// Enrutador.HandleFunc("/devel/api/wcarta/estatus", wCisA.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wcarta", wCisA.Opciones).Methods("OPTIONS")
 
-	// Enrutador.HandleFunc("/devel/api/wfedevida/listar/{id}", wCisC.Listar).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/wtratamiento", wtp.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wfedevida", wfe.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wfactura", wfactura.Consultar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wmedicina", wmedicina.Registrar).Methods("POST")

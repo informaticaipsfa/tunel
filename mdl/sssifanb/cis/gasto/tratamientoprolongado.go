@@ -1,6 +1,13 @@
 package gasto
 
-import "time"
+import (
+	"encoding/json"
+	"fmt"
+	"time"
+
+	"github.com/informaticaipsfa/tunel/sys"
+	"gopkg.in/mgo.v2/bson"
+)
 
 type TratamientoProlongado struct {
 	Numero            string        `json:"numero" bson:"numero"`
@@ -54,4 +61,44 @@ type Tratamiento struct {
 	Dosis            string    `json:"dosis" bson:"dosis"`
 	Cantidad         string    `json:"cantidad" bson:"cantidad"`
 	FechaVencimiento time.Time `json:"fechavencimiento" bson:"fechavencimiento"`
+}
+
+//Mensaje del sistema
+type Mensaje struct {
+	Mensaje string `json:"msj"`
+	Tipo    int    `json:"tipo"`
+}
+
+type WTratamiento struct {
+	ID                    string
+	TratamientoProlongado TratamientoProlongado
+	Nombre                string
+	Observaciones         string
+}
+
+//Crear Creacion de Cuenta
+func (tp *WTratamiento) Crear() (jSon []byte, err error) {
+	var M Mensaje
+	fmt.Println("Control...")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTRATAMIENTO)
+	err = c.Insert(tp)
+	if err != nil {
+		fmt.Println("Error creando reembolso det: ")
+		// return
+	}
+
+	tra := make(map[string]interface{})
+	tra["cis.gasto.tratamientoprolongado"] = tp.TratamientoProlongado
+	co := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	err = co.Update(bson.M{"id": tp.ID}, bson.M{"$push": tra})
+	if err != nil {
+		fmt.Println("Cedula: " + tp.ID + " -> " + err.Error())
+		// return
+	}
+
+	M.Mensaje = tp.TratamientoProlongado.Numero
+	M.Tipo = 1
+
+	jSon, err = json.Marshal(M)
+	return
 }
