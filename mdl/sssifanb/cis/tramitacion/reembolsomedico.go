@@ -164,3 +164,22 @@ func (fact *Factura) Consultar(rif string, numero string) (jSon []byte, err erro
 	jSon, err = json.Marshal(M)
 	return
 }
+
+//GenerarReporte Control de Listados
+func (r *Reembolso) GenerarReporte(estatus string) (jSon []byte, err error) {
+	var result []Reembolso
+	var lista []interface{}
+
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	err = c.Find(bson.M{"estatus": estatus, "fechaaprobado": "numero"}).All(&result)
+	if err != nil {
+		fmt.Println("Err. Reporte")
+		//return
+	}
+	for _, v := range result {
+		lst := make(map[string]interface{})
+		lst["cedula"] = v.Numero
+		lista = append(lista, lst)
+	}
+	return
+}
