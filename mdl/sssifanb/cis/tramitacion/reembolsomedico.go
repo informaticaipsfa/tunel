@@ -171,7 +171,9 @@ func (r *Reembolso) GenerarReporte(estatus string) (jSon []byte, err error) {
 	var lista []interface{}
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
-	err = c.Find(bson.M{"estatus": estatus, "fechaaprobado": "numero"}).All(&result)
+	buscar := bson.M{"$gte": "ISODate('2017-05-18T16:00:00Z')", "$lte": "ISODate('2017-12-18T00:00:00Z')"}
+
+	err = c.Find(bson.M{"estatus": 4, "fechacreacion": buscar}).All(&result)
 	if err != nil {
 		fmt.Println("Err. Reporte")
 		//return
