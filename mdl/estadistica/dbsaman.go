@@ -168,9 +168,15 @@ func obtenerPrimaEspecial() string {
 }
 
 func obtenerPensionadosAntes2008GN() string {
-	return `SELECT pr.codnip FROM pension AS pen
+	return `SELECT pr.codnip, pen.gradocod FROM pension AS pen
 	JOIN personas AS pr ON pen.nropersona=pr.nropersona
-	WHERE fchegreso < '2008-07-01' AND gradocod IN ('S1')  AND  componentecod = 'GN'`
+	WHERE gradocod IN ('SAY','S1','S2','C1','C2','DTGDO','GN')  AND  componentecod = 'GN'`
+}
+
+func obtenerPensionadosAntes2008AV() string {
+	return `SELECT pr.codnip, pen.gradocod FROM pension AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE gradocod IN ('ATG','ATA','ATM','AT1','AT2','AT3','AT')  AND  componentecod = 'AV'`
 }
 
 func obtenerFechaVencimiento() string {

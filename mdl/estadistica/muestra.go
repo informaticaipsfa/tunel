@@ -860,7 +860,6 @@ func (e *Estructura) ActualizarFechaDefuncion() (jSon []byte, err error) {
 
 func (e *Estructura) ConvertirGradoGN() (jSon []byte, err error) {
 	var msj Mensaje
-
 	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionadosAntes2008GN())
 	if err != nil {
 		msj.Mensaje = "Err: " + err.Error()
@@ -870,9 +869,65 @@ func (e *Estructura) ConvertirGradoGN() (jSon []byte, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	for sq.Next() {
 		var ced string
+		var cod string
 		militar := make(map[string]interface{})
-		sq.Scan(&ced)
-		militar["pension.grado"] = "SAY"
+		sq.Scan(&ced, &cod)
+		//militar["pension.grado"] = "SAY"
+		switch cod {
+		case "SAY":
+			militar["pension.grado"] = "SS"
+		case "S1":
+			militar["pension.grado"] = "SAY"
+		case "S2":
+			militar["pension.grado"] = "SM1"
+		case "C1":
+			militar["pension.grado"] = "SM2"
+		case "C2":
+			militar["pension.grado"] = "SM3"
+		case "DTGDO":
+			militar["pension.grado"] = "S1"
+		case "GN":
+			militar["pension.grado"] = "S2"
+
+		}
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
+		fmt.Println("Cedula", ced)
+	}
+	return
+}
+
+func (e *Estructura) ConvertirGradoAV() (jSon []byte, err error) {
+	var msj Mensaje
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionadosAntes2008AV())
+	if err != nil {
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		var ced string
+		var cod string
+		militar := make(map[string]interface{})
+		sq.Scan(&ced, &cod)
+		//militar["pension.grado"] = "SAY"
+		switch cod {
+		case "ATG":
+			militar["pension.grado"] = "SS"
+		case "ATA":
+			militar["pension.grado"] = "SAY"
+		case "ATM":
+			militar["pension.grado"] = "SM1"
+		case "AT1":
+			militar["pension.grado"] = "SM2"
+		case "AT2":
+			militar["pension.grado"] = "SM3"
+		case "AT3":
+			militar["pension.grado"] = "S1"
+		case "AT":
+			militar["pension.grado"] = "S2"
+
+		}
 		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
 		fmt.Println("Cedula", ced)
 	}

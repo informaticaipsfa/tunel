@@ -50,10 +50,11 @@ func main() {
 	// emp.Actualizar()
 	// var arch util.Archivo
 	// arch.LeerPorLinea("tmp/inv.xlsx", sys.PostgreSQLPENSIONSIGESP)
-	// var migrado estadistica.Estructura
-	// migrado.ConvertirGradoGN()
-	// var Pension sssifanb.Pension
-	// Pension.Exportar()
+	//var migrado estadistica.Estructura
+	//migrado.ConvertirGradoGN()
+	//migrado.ConvertirGradoAV()
+	//var Pension sssifanb.Pension
+	//Pension.Exportar()
 
 	//var priorizador estadistica.Priorizador
 	// var familiares estadistica.Estructura
