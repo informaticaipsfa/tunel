@@ -246,6 +246,11 @@ func (wcis *WCisApoyo) ListarApoyo(w http.ResponseWriter, r *http.Request) {
 	w.Write(jSon)
 }
 
+//Listar Militares
+func (wcis *WCis) ListarReporteFinanzas(w http.ResponseWriter, r *http.Request) {
+
+}
+
 //Consultar Militares
 func (wcis *WCisApoyo) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)

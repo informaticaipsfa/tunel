@@ -18,13 +18,9 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"net/http"
-	"time"
 
-	"github.com/gorilla/context"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/tramitacion"
 	"github.com/informaticaipsfa/tunel/sys"
-	"github.com/informaticaipsfa/tunel/sys/web"
 )
 
 func init() {
@@ -54,7 +50,8 @@ func main() {
 	// migrado.ConvertirGradoGN()
 	// var Pension sssifanb.Pension
 	// Pension.Exportar()
-
+	var tra tramitacion.Reembolso
+	tra.GenerarReporte("4")
 	//var priorizador estadistica.Priorizador
 	// var familiares estadistica.Estructura
 	// migrado.ActualizarFechaDefuncion()
@@ -72,31 +69,27 @@ func main() {
 	// migrado.CargarPensiones()
 
 	// familiares.ActualizarFamiliar()
-	//
-	fmt.Println("Inciando la carga del sistema")
-	web.Cargar()
 
-	// var militar sssifanb.Militar
+	// fmt.Println("Inciando la carga del sistema")
+	// web.Cargar()
 	//
-	// militar.ActualizarSaman()
-
-	srv := &http.Server{
-		Handler:      context.ClearHandler(web.Enrutador),
-		Addr:         ":" + sys.PUERTO,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
-	go srv.ListenAndServe()
-	//
-	//https://dominio.com/* Protocolo de capa de seguridad
-	server := &http.Server{
-		Handler:      context.ClearHandler(web.Enrutador),
-		Addr:         ":" + sys.PUERTO_SSL,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
-	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
+	// srv := &http.Server{
+	// 	Handler:      context.ClearHandler(web.Enrutador),
+	// 	Addr:         ":" + sys.PUERTO,
+	// 	WriteTimeout: 15 * time.Second,
+	// 	ReadTimeout:  15 * time.Second,
+	// }
+	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
+	// go srv.ListenAndServe()
+	// //
+	// //https://dominio.com/* Protocolo de capa de seguridad
+	// server := &http.Server{
+	// 	Handler:      context.ClearHandler(web.Enrutador),
+	// 	Addr:         ":" + sys.PUERTO_SSL,
+	// 	WriteTimeout: 15 * time.Second,
+	// 	ReadTimeout:  15 * time.Second,
+	// }
+	// fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
+	// log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
 
 }

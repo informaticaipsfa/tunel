@@ -170,10 +170,13 @@ func (r *Reembolso) GenerarReporte(estatus string) (jSon []byte, err error) {
 	var result []Reembolso
 	var lista []interface{}
 
-	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
-	buscar := bson.M{"$gte": "ISODate('2017-05-18T16:00:00Z')", "$lte": "ISODate('2017-12-18T00:00:00Z')"}
+	Desde := time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC)
+	Hasta := time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC)
 
-	err = c.Find(bson.M{"estatus": 4, "fechacreacion": buscar}).All(&result)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	buscar := bson.M{"$gt": Desde, "$lt": Hasta}
+	fmt.Println("Control...")
+	err = c.Find(bson.M{"estatus": 4, "fechaaprobado": buscar}).All(&result)
 	if err != nil {
 		fmt.Println("Err. Reporte")
 		//return
@@ -182,6 +185,8 @@ func (r *Reembolso) GenerarReporte(estatus string) (jSon []byte, err error) {
 		lst := make(map[string]interface{})
 		lst["cedula"] = v.Numero
 		lista = append(lista, lst)
+		fmt.Println("Cedula: ", v.Numero)
 	}
+
 	return
 }

@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys/seguridad"
-	"github.com/gorilla/mux"
 )
 
 var UsuarioConectado seguridad.Usuario
@@ -72,35 +72,43 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var militar sssifanb.Militar
 
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+
 	// fmt.Println("POST...")
 	err := json.NewDecoder(r.Body).Decode(&militar)
 	M.Tipo = 1
 	if err != nil {
 		fmt.Println(err.Error())
-		fmt.Println("Estoy en un error ", err.Error())
+		fmt.Println("Estoy en un error al insertar", err.Error())
 		w.WriteHeader(http.StatusForbidden)
 		j, _ := json.Marshal(M)
 		w.Write(j)
 		return
 	}
 	//e := militar.SalvarMGOI("militares", objeto)
-	e := militar.SalvarMGO()
-	if e != nil {
-		M.Mensaje = e.Error()
-		M.Tipo = 0
+
+	if UsuarioConectado.Login[:3] != "act" {
+		e := militar.SalvarMGO()
+		if e != nil {
+			M.Mensaje = e.Error()
+			M.Tipo = 0
+		}
+
+		traza.Log = militar.ID
+		traza.Documento = "Agregando: " + militar.Grado.Abreviatura + "|" + militar.Situacion +
+			"|" + militar.FechaIngresoComponente.String() + "|" + militar.FechaAscenso.String()
+		traza.CrearHistoricoConsulta("hmilitar")
+
+	} else {
+		M.Mensaje = "Su cuenta no poseé acceso para ingresar nuevos militares"
+		M.Tipo = 2
 	}
 
-	ip := strings.Split(r.RemoteAddr, ":")
-
-	traza.IP = ip[0]
-	traza.Time = time.Now()
-	traza.Usuario = UsuarioConectado.Login
-	traza.Log = militar.ID
-	traza.Documento = "Agregando: " + militar.Grado.Abreviatura + "|" + militar.Situacion +
-		"|" + militar.FechaIngresoComponente.String() + "|" + militar.FechaAscenso.String()
-	traza.CrearHistoricoConsulta("hmilitar")
-
-	j, e := json.Marshal(M)
+	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
