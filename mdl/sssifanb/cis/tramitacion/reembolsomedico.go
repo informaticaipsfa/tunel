@@ -3,6 +3,8 @@ package tramitacion
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
@@ -145,6 +147,15 @@ type EstatusReembolso struct {
 	Estatus  int    `json:"estatus" bson:"estatus"`
 }
 
+type WReembolsoReporte struct {
+	Componente string `json:"componente" `
+	Grado      string `json:"grado"`
+	Situacion  string `json:"situacion"`
+	FechaDesde string `json:"fechadesde"`
+	FechaHasta string `json:"fechahasta"`
+	Reporte    string `json:"reporte"`
+}
+
 func (fact *Factura) Consultar(rif string, numero string) (jSon []byte, err error) {
 	var result Factura
 	var M fanb.Mensaje
@@ -166,27 +177,52 @@ func (fact *Factura) Consultar(rif string, numero string) (jSon []byte, err erro
 }
 
 //GenerarReporte Control de Listados
-func (r *Reembolso) GenerarReporte(estatus string) (jSon []byte, err error) {
-	var result []Reembolso
+func (r *WReembolsoReporte) GenerarReporte() (jSon []byte, err error) {
+	var result []ColeccionReembolso
 	var lista []interface{}
 
-	Desde := time.Date(2016, 1, 1, 0, 0, 0, 0, time.UTC)
-	Hasta := time.Date(2018, 1, 1, 0, 0, 0, 0, time.UTC)
+	cadenad := strings.Split(r.FechaDesde, "/")
+	anod, _ := strconv.Atoi(cadenad[2])
+	mesd, _ := strconv.Atoi(cadenad[1])
+	diad, _ := strconv.Atoi(cadenad[0])
 
-	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
+	cadenah := strings.Split(r.FechaHasta, "/")
+	anoh, _ := strconv.Atoi(cadenah[2])
+	mesh, _ := strconv.Atoi(cadenah[1])
+	diah, _ := strconv.Atoi(cadenah[0])
+
+	coleecion := sys.CREEMBOLSO
+	if r.Reporte == "apoyo" {
+		coleecion = sys.CAPOYO
+	}
+	Desde := time.Date(anod, time.Month(mesd), diad, 0, 0, 0, 0, time.UTC)
+	Hasta := time.Date(anoh, time.Month(mesh), diah, 0, 0, 0, 0, time.UTC)
+	c := sys.MGOSession.DB(sys.CBASE).C(coleecion)
+
 	buscar := bson.M{"$gt": Desde, "$lt": Hasta}
-	fmt.Println("Control...")
 	err = c.Find(bson.M{"estatus": 4, "fechaaprobado": buscar}).All(&result)
+
 	if err != nil {
 		fmt.Println("Err. Reporte")
 		//return
 	}
 	for _, v := range result {
 		lst := make(map[string]interface{})
-		lst["cedula"] = v.Numero
-		lista = append(lista, lst)
-		fmt.Println("Cedula: ", v.Numero)
-	}
+		lst["numero"] = v.Numero
+		lst["nombre"] = v.Nombre
+		lst["cedula"] = v.ID
+		lst["componente"] = v.Reembolso.Componente
+		lst["grado"] = v.Reembolso.Grado
+		lst["montoaprobado"] = v.MontoAprobado
+		lst["fechaaprobado"] = v.FechaAprobado
 
+		lst["tipo"] = v.Reembolso.CuentaBancaria.Tipo
+		lst["institucion"] = v.Reembolso.CuentaBancaria.Institucion
+		lst["cuenta"] = v.Reembolso.CuentaBancaria.Cuenta
+
+		lista = append(lista, lst)
+
+	}
+	jSon, _ = json.Marshal(lista)
 	return
 }

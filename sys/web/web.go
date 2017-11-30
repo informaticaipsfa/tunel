@@ -71,6 +71,8 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatus", wUsuario.ValidarToken(wCis.Estatus)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatus", wUsuario.ValidarToken(wCis.Opciones)).Methods("OPTIONS")
 
+	Enrutador.HandleFunc("/ipsfa/api/wreembolsoreporte", wUsuario.ValidarToken(wCis.ListarReporteFinanzas)).Methods("POST")
+
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo/listar/{id}", wUsuario.ValidarToken(wCisA.ListarApoyo)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Registrar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Actualizar)).Methods("PUT")
@@ -180,6 +182,7 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wreembolso", wCis.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/devel/api/wreembolso/estatus", wCis.Estatus).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/wreembolso/estatus", wCis.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/devel/api/wreembolsoreporte", wCis.ListarReporteFinanzas).Methods("POST")
 
 	Enrutador.HandleFunc("/devel/api/wapoyo/listar/{id}", wCisA.ListarApoyo).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/wapoyo", wCisA.Registrar).Methods("POST")

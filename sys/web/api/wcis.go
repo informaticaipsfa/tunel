@@ -248,7 +248,24 @@ func (wcis *WCisApoyo) ListarApoyo(w http.ResponseWriter, r *http.Request) {
 
 //Listar Militares
 func (wcis *WCis) ListarReporteFinanzas(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	var cis tramitacion.WReembolsoReporte
+	M.Tipo = 0
+	Cabecera(w, r)
+	fmt.Println("Entrando Rpt")
+	e := json.NewDecoder(r.Body).Decode(&cis)
 
+	if e != nil {
+		return
+	}
+
+	j, err := cis.GenerarReporte()
+	if err != nil {
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 }
 
 //Consultar Militares
