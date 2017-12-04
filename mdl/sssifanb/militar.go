@@ -450,3 +450,29 @@ func (m *Militar) ActualizarSaman() {
 	}
 	fmt.Println("Cantidad : ", i)
 }
+
+func (m *Militar) EstadisticasPorComponente() {
+	// 	db.militar.aggregate([
+	//   {$match:
+	//       {"componente.abreviatura": "EJ", "situacion":"ACT"}
+	//   },
+	//   {$group:
+	//     {
+	//       _id: { "grado":"$grado.abreviatura", "situacion":"$situacion" },
+	//       cantidad:{$sum:1}
+	//     }
+	//   }
+	// ])
+	var rs []interface{}
+	donde := bson.M{"$match": bson.M{"componente.abreviatura": "EJ"}}
+	grupo := bson.M{"$group": bson.M{"_id": bson.M{"grado": "$grado.abreviatura", "situacion": "$situacion"}, "cantidad": bson.M{"$sum": 1}}}
+	c := sys.MGOSession.DB(sys.CBASE).C("militar")
+	err := c.Pipe([]bson.M{donde, grupo}).All(&rs)
+	if err != nil {
+		return
+	}
+	for _, v := range rs {
+
+		fmt.Println(v)
+	}
+}
