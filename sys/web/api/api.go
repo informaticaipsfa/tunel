@@ -18,6 +18,12 @@ var UsuarioConectado seguridad.Usuario
 //Militar militares
 type Militar struct{}
 
+type Componente struct {
+	Componente string
+	Grado      string
+	Situacion  string
+}
+
 //Consultar Militares
 func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
 	var traza fanb.Traza
@@ -116,6 +122,24 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 //Eliminar Militar
 func (p *Militar) Eliminar(w http.ResponseWriter, r *http.Request) {
 
+}
+
+//EstadisticasPorComponente
+func (p *Militar) EstadisticasPorComponente(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	// ip := strings.Split(r.RemoteAddr, ":")
+	var militar sssifanb.Militar
+	// err := json.NewDecoder(r.Body).Decode(&militar)
+	// if err != nil {
+	// 	fmt.Println(err.Error())
+	// 	fmt.Println("Estoy en un error ", err.Error())
+	// 	w.WriteHeader(http.StatusForbidden)
+	// 	return
+	// }
+
+	j, _ := militar.EstadisticasPorComponente()
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 }
 
 //Opciones Militar
