@@ -93,3 +93,15 @@ func ComponenteID(abreviatura string) (codigo string) {
 	}
 	return
 }
+
+func (comp *Componente) ObtenerGradoID(codigo string, grado string) string {
+	var compo Componente
+	buscar := bson.M{"codigo": codigo, "Grado": bson.M{"$elemMatch": bson.M{"codigo": grado}}}
+	valor := bson.M{"Grado": bson.M{"$elemMatch": bson.M{"codigo": grado}}}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CCOMPONENTE)
+	err := c.Find(buscar).Select(valor).One(&compo)
+	if err != nil {
+		return "0"
+	}
+	return compo.Grado[0].Rango
+}

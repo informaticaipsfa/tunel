@@ -475,3 +475,34 @@ func (m *Militar) EstadisticasPorComponente() (jSon []byte, err error) {
 	jSon, err = json.Marshal(rs)
 	return
 }
+
+//EstadisticasPorGrado Estadisticas Por Grado
+func (m *Militar) EstadisticasPorGrado(codComponente string) (jSon []byte, err error) {
+	// 	db.militar.aggregate([
+	//   {$match:
+	//       {"componente.abreviatura": "EJ"}
+	//
+	//   },
+	//   {$group:
+	//     {
+	//       _id: { "codigo":"$grado.nombre", "grado":"$grado.abreviatura", "situacion":"$situacion" },
+	//       cantidad:{$sum:1}
+	//     }
+	//   },
+	//   {$sort:
+	//    { _id:1}
+	//   }
+	//
+	// ])
+	donde := bson.M{"$match": bson.M{"grado.abreviatura": codComponente}}
+	grupo := bson.M{"$group": bson.M{"_id": bson.M{"codigo": "$grado.nombre", "grado": "$grado.abreviatura", "situacion": "$situacion"}, "cantidad": bson.M{"$sum": 1}}}
+
+	var rs []interface{}
+	c := sys.MGOSession.DB(sys.CBASE).C("militar")
+	err = c.Pipe([]bson.M{donde, grupo}).All(&rs)
+	if err != nil {
+		return
+	}
+	jSon, err = json.Marshal(rs)
+	return
+}
