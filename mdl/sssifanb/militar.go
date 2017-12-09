@@ -315,11 +315,17 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 
 //MGOActualizar Actualizando en MONGO
 func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
+	var comp fanb.Componente
 	var mOriginal Militar
 	var traza fanb.Traza
 
 	mOriginal, _ = consultarMongo(m.ID)
 	mOriginal.Persona = m.Persona
+
+	m.Grado.Nombre = comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura)
+
+	fmt.Println(comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura))
+
 	mOriginal.Grado = m.Grado
 	mOriginal.Componente = m.Componente
 	mOriginal.Categoria = m.Categoria
@@ -370,8 +376,10 @@ func ActualizarPostgresSaman(d string) {
 
 //SalvarMGO Guardar
 func (m *Militar) SalvarMGO() (err error) {
+	var comp fanb.Componente
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	m.Grado.Nombre = comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura)
 	err = c.Insert(m)
 	if err != nil {
 		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
@@ -472,6 +480,7 @@ func (m *Militar) EstadisticasPorComponente() (jSon []byte, err error) {
 	if err != nil {
 		return
 	}
+	// fmt.Println(rs)
 	jSon, err = json.Marshal(rs)
 	return
 }
@@ -494,7 +503,8 @@ func (m *Militar) EstadisticasPorGrado(codComponente string) (jSon []byte, err e
 	//   }
 	//
 	// ])
-	donde := bson.M{"$match": bson.M{"grado.abreviatura": codComponente}}
+	donde := bson.M{"$match": bson.M{"componente.abreviatura": "EJ"}}
+	fmt.Println(donde)
 	grupo := bson.M{"$group": bson.M{"_id": bson.M{"codigo": "$grado.nombre", "grado": "$grado.abreviatura", "situacion": "$situacion"}, "cantidad": bson.M{"$sum": 1}}}
 
 	var rs []interface{}
@@ -504,5 +514,31 @@ func (m *Militar) EstadisticasPorGrado(codComponente string) (jSon []byte, err e
 		return
 	}
 	jSon, err = json.Marshal(rs)
+	fmt.Println(jSon)
 	return
+}
+
+func (m *Militar) ActualizarGradoCodigo() {
+	var militar []Militar
+	c := sys.MGOSession.DB(sys.CBASE).C("militar")
+	err := c.Find(bson.M{"grado.nombre": ""}).All(&militar)
+	if err != nil {
+		fmt.Println("Err", err.Error())
+		return
+	}
+
+	for _, v := range militar {
+		var comp fanb.Componente
+
+		v.Grado.Nombre = comp.ObtenerGradoID(v.Componente.Abreviatura, v.Grado.Abreviatura)
+		fmt.Println("ID : ", v.ID, " CODIGO: ", v.Grado.Nombre)
+		grado := make(map[string]interface{})
+		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+		grado["grado.nombre"] = v.Grado.Nombre
+		err = c.Update(bson.M{"id": v.ID}, bson.M{"$set": grado})
+		if err != nil {
+			fmt.Println("Err", err.Error())
+			return
+		}
+	}
 }
