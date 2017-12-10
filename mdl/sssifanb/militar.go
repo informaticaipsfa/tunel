@@ -475,7 +475,7 @@ func (m *Militar) EstadisticasPorComponente() (jSon []byte, err error) {
 	var rs []interface{}
 	donde := bson.M{"$match": bson.M{}}
 	grupo := bson.M{"$group": bson.M{"_id": bson.M{"componente": "$componente.abreviatura", "situacion": "$situacion"}, "cantidad": bson.M{"$sum": 1}}}
-	c := sys.MGOSession.DB(sys.CBASE).C("militar")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Pipe([]bson.M{donde, grupo}).All(&rs)
 	if err != nil {
 		return
@@ -503,24 +503,26 @@ func (m *Militar) EstadisticasPorGrado(codComponente string) (jSon []byte, err e
 	//   }
 	//
 	// ])
-	donde := bson.M{"$match": bson.M{"componente.abreviatura": "EJ"}}
-	fmt.Println(donde)
-	grupo := bson.M{"$group": bson.M{"_id": bson.M{"codigo": "$grado.nombre", "grado": "$grado.abreviatura", "situacion": "$situacion"}, "cantidad": bson.M{"$sum": 1}}}
+	donde := bson.M{"$match": bson.M{"componente.abreviatura": codComponente}}
 
+	grupo := bson.M{"$group": bson.M{"_id": bson.M{"codigo": "$grado.nombre", "grado": "$grado.abreviatura", "situacion": "$situacion"}, "cantidad": bson.M{"$sum": 1}}}
+	orden := bson.M{"$sort": bson.M{"_id": 1}}
 	var rs []interface{}
-	c := sys.MGOSession.DB(sys.CBASE).C("militar")
-	err = c.Pipe([]bson.M{donde, grupo}).All(&rs)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	err = c.Pipe([]bson.M{donde, grupo, orden}).All(&rs)
 	if err != nil {
+		fmt.Println("Error Grados ", err.Error())
 		return
 	}
 	jSon, err = json.Marshal(rs)
-	fmt.Println(jSon)
+
 	return
 }
 
+//ActualizarGradoCodigo Actualizando
 func (m *Militar) ActualizarGradoCodigo() {
 	var militar []Militar
-	c := sys.MGOSession.DB(sys.CBASE).C("militar")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err := c.Find(bson.M{"grado.nombre": ""}).All(&militar)
 	if err != nil {
 		fmt.Println("Err", err.Error())

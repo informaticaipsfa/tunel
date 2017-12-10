@@ -142,6 +142,29 @@ func (p *Militar) EstadisticasPorComponente(w http.ResponseWriter, r *http.Reque
 	w.Write(j)
 }
 
+//ComponenteDecode Decodificando
+type ComponenteDecode struct {
+	Grado string
+}
+
+//EstadisticasPorGrado EstadisticasPorGrado
+func (p *Militar) EstadisticasPorGrado(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	// ip := strings.Split(r.RemoteAddr, ":")
+	var militar sssifanb.Militar
+	var componente ComponenteDecode
+	err := json.NewDecoder(r.Body).Decode(&componente)
+	if err != nil {
+		fmt.Println(err.Error())
+		fmt.Println("Estoy en un error ", err.Error())
+		w.WriteHeader(http.StatusForbidden)
+		return
+	}
+	j, _ := militar.EstadisticasPorGrado(componente.Grado)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
 //Opciones Militar
 func (p *Militar) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)

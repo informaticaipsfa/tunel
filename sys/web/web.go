@@ -50,6 +50,7 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Opciones)).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportecomponente", wUsuario.ValidarToken(per.EstadisticasPorComponente)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/reportegrado", wUsuario.ValidarToken(per.EstadisticasPorGrado)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", wUsuario.ValidarToken(comp.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/estado", wUsuario.ValidarToken(esta.Consultar)).Methods("GET")
@@ -157,6 +158,7 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Eliminar).Methods("DELETE")
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/devel/api/militar/reportecomponente", per.EstadisticasPorComponente).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/militar/reportegrado", per.EstadisticasPorGrado).Methods("POST")
 
 	Enrutador.HandleFunc("/devel/api/componente/{id}", comp.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/estado", esta.Consultar).Methods("GET")
