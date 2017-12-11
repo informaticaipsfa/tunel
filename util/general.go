@@ -84,30 +84,51 @@ func Fatal(e error) {
 }
 
 //CalcularTiempo Calculos
-func CalcularTiempo(fechaNacimiento time.Time) (Ano int, Mes time.Month, Dia int) {
-	fechaActual := time.Now() // } else {
-	// 	w.WriteHeader(http.StatusUnauthorized)
-	// 	m.Msj = "El equipo donde no esta autorizado"
-	// 	m.Tipo = 2
-	// }
-	AnnoA, MesA, DiaA := fechaActual.Date()
-	AnoN, MesN, DiaM := fechaNacimiento.Date()
+func CalcularTiempo(fecha time.Time) (Ano int, Mes time.Month, Dia int) {
+	fechaActual := time.Now()
+
+	AnnoA, MesA, DiaA := fechaActual.Date() //
+	AnoN, MesN, DiaN := fecha.Date()        //Fecha de ingreso
 
 	Ano = AnnoA - AnoN
 	Mes = MesA - MesN
-	Dia = DiaA - DiaM
+	Dia = DiaA - DiaN
 
 	if Dia < 0 {
-		Dia = 0
-		Mes++
+		Dia = 30
+		Mes--
 	}
-	if Mes <= 0 {
+	if Mes < 0 {
+		Mes = 11
 		Ano--
 	}
 
 	return
 }
 
+//CalcularTiempoServicio Calculos
+func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Mes time.Month, Dia int) {
+
+	AnnoA, MesA, DiaA := fechaActual.Date() //
+	AnoN, MesN, DiaN := fecha.Date()        //Fecha de ingreso
+
+	Ano = AnnoA - AnoN
+	Mes = MesA - MesN
+	Dia = DiaA - DiaN
+
+	if Dia < 0 {
+		Dia = 30
+		Mes--
+	}
+	if Mes < 0 {
+		Mes = 11
+		Ano--
+	}
+
+	return
+}
+
+//GenerarHash256 Generar Claves 256 para usuarios
 func GenerarHash256(password []byte) (encry string) {
 	h := sha256.New()
 	h.Write(password)
@@ -116,8 +137,9 @@ func GenerarHash256(password []byte) (encry string) {
 
 }
 
+//Error Procesa errores del sistema
 func Error(e error) {
 	if e != nil {
-		fmt.Println("\nError: ", e)
+		fmt.Println("\n Utilidad Error: ", e.Error())
 	}
 }

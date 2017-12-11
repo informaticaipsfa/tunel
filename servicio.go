@@ -23,6 +23,7 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
+	"github.com/informaticaipsfa/tunel/mdl/estadistica"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/sys/web"
 )
@@ -44,10 +45,8 @@ func init() {
 }
 
 func main() {
-	//var e estadistica.Estructura
-	//e.ActualizarPrimaEspecial()
-	// var mp sssifanb.Militar
-	// mp.ActualizarGradoCodigo()
+	var e estadistica.Estructura
+	e.ActualizarMilitaresPACE()
 
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()

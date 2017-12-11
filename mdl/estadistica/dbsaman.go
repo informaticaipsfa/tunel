@@ -18,6 +18,12 @@ func personaMilitar() {
 	errorG(sSQL)
 }
 
+func personaMilitarPACE() string {
+	return `SELECT cedula, fecha_ingreso, anio_reconocido, mes_reconocido, dia_reconocido, f_retiro
+					FROM beneficiario
+					--where cedula='16210806'`
+}
+
 //historialMilitares
 func historialFamiliares() {
 	sSQL := `DROP TABLE IF EXISTS analisis.familiares; CREATE TABLE analisis.familiares AS

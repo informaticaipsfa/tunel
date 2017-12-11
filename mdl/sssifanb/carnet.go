@@ -118,7 +118,7 @@ func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 	carnet["estatus"] = estatus
 	fmt.Println(serial, " ", estatus)
 	err = c.Update(bson.M{"serial": serial}, bson.M{"$set": carnet})
-	if estatus == 3 {
+	if estatus == 3 || estatus == 2 {
 		err = tim.CambiarEstadoMilitar(serial)
 	}
 	return

@@ -56,6 +56,49 @@ func (e *Estructura) Reduccion() (jSon []byte, err error) {
 	return
 }
 
+//ActualizarMilitaresPACE Evaluación y simplificación
+func (e *Estructura) ActualizarMilitaresPACE() (jSon []byte, err error) {
+	var msj Mensaje
+	sq, err := sys.PostgreSQLPACE.Query(personaMilitarPACE())
+	if err != nil {
+
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	for sq.Next() {
+		var ced, ano, mes, dia string
+		var fing, fret sql.NullString
+		sq.Scan(&ced, &fing, &ano, &mes, &dia, &fret)
+		fmt.Println("CEDULA : ", ced)
+		fingreso := util.ValidarNullString(fing)
+		if fingreso != VNULL {
+			dateStamp, er := time.Parse("2006-01-02", fingreso[:10])
+			fmt.Println("FINGRESO ", dateStamp, "  ddd ", fing)
+			if er == nil {
+
+				upfecha := make(map[string]interface{})
+				c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+				upfecha["fingreso"] = dateStamp
+				fretiro := util.ValidarNullString(fret)
+				if fretiro != VNULL {
+					dateStampr, _ := time.Parse("2006-01-02", fretiro[:10])
+					upfecha["fretiro"] = dateStampr
+				}
+				upfecha["areconocido"], _ = strconv.Atoi(ano)
+				upfecha["mreconocido"], _ = strconv.Atoi(mes)
+				upfecha["dreconocido"], _ = strconv.Atoi(dia)
+				upfecha["fideicomiso.areconocido"], _ = strconv.Atoi(ano)
+				upfecha["fideicomiso.mreconocido"], _ = strconv.Atoi(mes)
+				upfecha["fideicomiso.dreconocido"], _ = strconv.Atoi(dia)
+				err = c.Update(bson.M{"id": ced}, bson.M{"$set": upfecha})
+			}
+		}
+
+	}
+	return
+}
+
 //Migracion Relaciones
 func (e *Estructura) Migracion() (jSon []byte, err error) {
 	var msj Mensaje

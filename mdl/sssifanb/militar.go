@@ -116,9 +116,30 @@ type Mensaje struct {
 //AplicarReglas Reglas Generales
 func (m *Militar) AplicarReglas() {
 	m.Conversion()
-	// m.ConversionGrado()
+	fecha := m.FechaIngresoComponente.UTC()
+	fechaActual := time.Now()
+	if m.Situacion != "ACT" {
+		fechaActual = m.FechaRetiro.UTC()
+	}
 
-	a, mes, d := util.CalcularTiempo(m.FechaIngresoComponente)
+	a, mes, d := util.CalcularTiempoServicio(fechaActual, fecha)
+	acr := a + m.Fideicomiso.AnoReconocido
+	mcr := int(mes) + m.Fideicomiso.MesReconocido
+	dcr := d + m.Fideicomiso.DiaReconocido
+
+	if m.Fideicomiso.AnoReconocido > 0 || m.Fideicomiso.MesReconocido > 0 || m.Fideicomiso.DiaReconocido > 0 {
+		if dcr > 29 {
+			dcr = dcr - 30
+			mcr++
+		}
+		if mcr > 11 {
+			mcr = mcr - 12
+			acr++
+		}
+		a = acr
+		mes = time.Month(mcr)
+		d = dcr
+	}
 	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
 }
 
