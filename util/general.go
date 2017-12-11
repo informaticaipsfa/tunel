@@ -117,7 +117,7 @@ func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Me
 	Dia = DiaA - DiaN
 
 	if Dia < 0 {
-		Dia = 30
+		Dia = Dia * -1
 		Mes--
 	}
 	if Mes < 0 {
