@@ -46,7 +46,8 @@ func init() {
 func main() {
 	// var e estadistica.Estructura
 	// e.ActualizarMilitaresPACE()
-
+	// var c sssifanb.Carnet
+	// c.ProcesarYActualizar()
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 

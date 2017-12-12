@@ -117,11 +117,11 @@ func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Me
 	Dia = DiaA - DiaN
 
 	if Dia < 0 {
-		Dia = Dia * -1
+		Dia = (30 + DiaA) - DiaN
 		Mes--
 	}
 	if Mes < 0 {
-		Mes = 11
+		Mes = (11 + MesA) - MesN
 		Ano--
 	}
 

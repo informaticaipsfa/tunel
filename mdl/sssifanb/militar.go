@@ -121,12 +121,14 @@ func (m *Militar) AplicarReglas() {
 	if m.Situacion != "ACT" {
 		fechaActual = m.FechaRetiro.UTC()
 	}
-
 	a, mes, d := util.CalcularTiempoServicio(fechaActual, fecha)
+
+	// fmt.Println("A ", a, "M ", mes, "D ", d)
 	acr := a + m.Fideicomiso.AnoReconocido
 	mcr := int(mes) + m.Fideicomiso.MesReconocido
 	dcr := d + m.Fideicomiso.DiaReconocido
 
+	// fmt.Println("A ", acr, "M ", mcr, "D ", dcr)
 	if m.Fideicomiso.AnoReconocido > 0 || m.Fideicomiso.MesReconocido > 0 || m.Fideicomiso.DiaReconocido > 0 {
 		if dcr > 29 {
 			dcr = dcr - 30
@@ -137,6 +139,7 @@ func (m *Militar) AplicarReglas() {
 			acr++
 		}
 		a = acr
+
 		mes = time.Month(mcr)
 		d = dcr
 	}

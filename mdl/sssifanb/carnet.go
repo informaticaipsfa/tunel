@@ -119,25 +119,40 @@ func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 	fmt.Println(serial, " ", estatus)
 	err = c.Update(bson.M{"serial": serial}, bson.M{"$set": carnet})
 	if estatus == 3 || estatus == 2 {
-		err = tim.CambiarEstadoMilitar(serial)
+		err = tim.CambiarEstadoMilitar(serial, estatus)
 	}
 	return
 }
 
 //Consultar Carnets
-func (tim *Carnet) CambiarEstadoMilitar(serial string) (err error) {
+func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int) (err error) {
 	var TIM Carnet
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 	err = c.Find(bson.M{"serial": serial}).One(&TIM)
 	if err != nil {
 		return
 	}
+
+	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	if TIM.ID != "" && TIM.IDF == "" {
 		carnet := make(map[string]interface{})
-		coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 		carnet["estatuscarnet"] = 0
 		err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
 		fmt.Println("Cambiando a Cero")
+	}
+
+	if estatus == 3 {
+		timtif := make(map[string]interface{})
+		if TIM.IDF == "" { //Militar
+			// fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " TIT ")
+			timtif["tim"] = TIM
+			err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": timtif})
+		} else { //familiares
+			// fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " FAM")
+			timtif["familiar.$.tif"] = TIM
+			err = coleccion.Update(bson.M{"familiar.persona.datobasico.cedula": TIM.IDF, "id": TIM.ID}, bson.M{"$set": timtif})
+		}
+
 	}
 	return
 }
@@ -155,4 +170,32 @@ func (tim *Carnet) Listar(estatus int, usuario string) (jSon []byte, err error) 
 	}
 	jSon, err = json.Marshal(lst)
 	return
+}
+
+func (tim *Carnet) ProcesarYActualizar() {
+	var lst []Carnet
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
+	err := c.Find(bson.M{"estatus": 3}).All(&lst)
+
+	if err != nil {
+		fmt.Println("No se encontraron registros")
+		return
+	}
+	i := 0
+	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for _, TIM := range lst {
+		i++
+		carnet := make(map[string]interface{})
+		if TIM.IDF == "" { //Militar
+			fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " TIT ")
+			carnet["tim"] = TIM
+			err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
+
+		} else { //familiares
+			fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " FAM")
+			carnet["familiar.$.tif"] = TIM
+			err = coleccion.Update(bson.M{"familiar.persona.datobasico.cedula": TIM.IDF, "id": TIM.ID}, bson.M{"$set": carnet})
+		}
+
+	}
 }
