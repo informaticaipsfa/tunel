@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/sys/web"
 )
@@ -46,8 +45,8 @@ func init() {
 
 func main() {
 
-	var c sssifanb.Carnet
-	c.ProcesarYActualizar()
+	// var c sssifanb.Carnet
+	// c.ProcesarYActualizar()
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 
