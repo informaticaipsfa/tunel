@@ -123,10 +123,24 @@ func (m *Militar) AplicarReglas() {
 	}
 	a, mes, d := util.CalcularTiempoServicio(fechaActual, fecha)
 
-	// fmt.Println("A ", a, "M ", mes, "D ", d)
 	acr := a + m.Fideicomiso.AnoReconocido
-	mcr := int(mes) + m.Fideicomiso.MesReconocido
-	dcr := d + m.Fideicomiso.DiaReconocido
+	mcr := int(mes)
+	dcr := d
+	// fmt.Println("A ", a, "M ", mes, "D ", d)
+
+	if m.Fideicomiso.DiaReconocido > 29 {
+		dcr += m.Fideicomiso.DiaReconocido - 30
+		mcr++
+	} else {
+		dcr += m.Fideicomiso.DiaReconocido
+	}
+
+	if m.Fideicomiso.MesReconocido > 11 {
+		mcr += m.Fideicomiso.MesReconocido - 12
+		acr++
+	} else {
+		mcr += m.Fideicomiso.MesReconocido
+	}
 
 	// fmt.Println("A ", acr, "M ", mcr, "D ", dcr)
 	if m.Fideicomiso.AnoReconocido > 0 || m.Fideicomiso.MesReconocido > 0 || m.Fideicomiso.DiaReconocido > 0 {

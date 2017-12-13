@@ -370,3 +370,20 @@ func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 	return
 
 }
+
+//Estadisticas Actualizando
+func (f *Familiar) Estadisticas() {
+	var militar []Militar
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	err := c.Find(bson.M{"familiar.$.beneficiario": true}).Select(bson.M{"familiar": true}).All(&militar)
+	if err != nil {
+		fmt.Println("Err", err.Error())
+		return
+	}
+	i := 0
+	for _, v := range militar {
+		i++
+		fmt.Println(i, " Familiares Cantidad: ", len(v.Familiar))
+
+	}
+}

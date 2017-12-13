@@ -44,9 +44,10 @@ func init() {
 }
 
 func main() {
+	// var familiar sssifanb.Familiar
+	//
+	// familiar.Estadisticas()
 
-	// var c sssifanb.Carnet
-	// c.ProcesarYActualizar()
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 
