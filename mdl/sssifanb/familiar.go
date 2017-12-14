@@ -36,6 +36,20 @@ type Familiar struct {
 	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
 }
 
+//FamiliarEstadistica Busquedas
+type FamiliarEstadistica struct {
+	ID         string `json:"id" bson:"id"`
+	Componente string `json:"componente,omitempty" bson:"componente"`
+	Grado      string `json:"grado,omitempty" bson:"grado"`         //grado
+	Categoria  string `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Situacion  string `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
+	IDF        string `json:"idf" bson:"idf"`
+	Parentesco string `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
+	EsMilitar  bool   `json:"esmilitar" bson:"esmilitar"`
+	Benficio   bool   `json:"beneficio" bson:"beneficio"` //
+	Condicion  int    `json:"condicion" bson:"condicion"` //Sano o Condicion especial
+}
+
 //AplicarReglasBeneficio OJO SEGUROS HORIZONTES
 func (f *Familiar) AplicarReglasBeneficio() {
 	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
@@ -375,15 +389,37 @@ func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 func (f *Familiar) Estadisticas() {
 	var militar []Militar
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
-	err := c.Find(bson.M{"familiar.$.beneficiario": true}).Select(bson.M{"familiar": true}).All(&militar)
+	buscar := bson.M{"familiar": bson.M{"$elemMatch": bson.M{"esmilitar": false}}}
+	seleccion := bson.M{
+		"id":                          true,
+		"situacion":                   true,
+		"familiar.beneficio":          true,
+		"familiar.persona.datobasico": true}
+
+	err := c.Find(buscar).Select(seleccion).All(&militar)
 	if err != nil {
 		fmt.Println("Err", err.Error())
 		return
 	}
 	i := 0
 	for _, v := range militar {
+		// var cant int
 		i++
-		fmt.Println(i, " Familiares Cantidad: ", len(v.Familiar))
+		for _, val := range v.Familiar {
+
+			// if val.Benficio == true {
+			// 	cant++
+			// }
+			var fam FamiliarEstadistica
+			fam.ID = v.ID
+			fam.Situacion = v.Situacion
+			fam.Benficio = val.Benficio
+			fam.Parentesco = val.Parentesco
+			fam.IDF = val.Persona.DatoBasico.Cedula
+
+			col := sys.MGOSession.DB(sys.CBASE).C(sys.CFAMILIAR)
+			err = col.Insert(fam)
+		}
 
 	}
 }

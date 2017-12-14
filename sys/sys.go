@@ -6,6 +6,7 @@ const (
 	CTIM         string = "tim"
 	CESTADO      string = "estado"
 	CMILITAR     string = "militar"
+	CFAMILIAR    string = "familiar"
 	CPERSONA     string = "persona"
 	CCOMPONENTE  string = "componente"
 	CRECIBO      string = "recibo"
