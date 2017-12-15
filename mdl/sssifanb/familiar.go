@@ -38,16 +38,17 @@ type Familiar struct {
 
 //FamiliarEstadistica Busquedas
 type FamiliarEstadistica struct {
-	ID         string `json:"id" bson:"id"`
-	Componente string `json:"componente,omitempty" bson:"componente"`
-	Grado      string `json:"grado,omitempty" bson:"grado"`         //grado
-	Categoria  string `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
-	Situacion  string `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
-	IDF        string `json:"idf" bson:"idf"`
-	Parentesco string `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
-	EsMilitar  bool   `json:"esmilitar" bson:"esmilitar"`
-	Benficio   bool   `json:"beneficio" bson:"beneficio"` //
-	Condicion  int    `json:"condicion" bson:"condicion"` //Sano o Condicion especial
+	ID              string    `json:"id" bson:"id"`
+	FechaNacimiento time.Time `json:"fechanacimiento" bson:"fechanacimiento"`
+	Componente      string    `json:"componente,omitempty" bson:"componente"`
+	Grado           string    `json:"grado,omitempty" bson:"grado"`         //grado
+	Categoria       string    `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Situacion       string    `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
+	IDF             string    `json:"idf" bson:"idf"`
+	Parentesco      string    `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
+	EsMilitar       bool      `json:"esmilitar" bson:"esmilitar"`
+	Benficio        bool      `json:"beneficio" bson:"beneficio"` //
+	Condicion       int       `json:"condicion" bson:"condicion"` //Sano o Condicion especial
 }
 
 //AplicarReglasBeneficio OJO SEGUROS HORIZONTES
