@@ -86,12 +86,10 @@ func CargarModulosWeb() {
 
 	Enrutador.HandleFunc("/ipsfa/api/wcarta/listar/{id}", wUsuario.ValidarToken(wCisC.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wcarta", wUsuario.ValidarToken(wCisC.Registrar)).Methods("POST")
-	// Enrutador.HandleFunc("/ipsfa/api/wcarta", wCisA.Actualizar).Methods("PUT")
-	// Enrutador.HandleFunc("/ipsfa/api/wcarta/estatus", wCisA.Estatus).Methods("PUT")
+
 	Enrutador.HandleFunc("/ipsfa/api/wcarta", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/wtratamiento", wUsuario.ValidarToken(wtp.Registrar)).Methods("POST")
-
 	Enrutador.HandleFunc("/ipsfa/api/wfedevida", wUsuario.ValidarToken(wfe.Registrar)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wfactura", wUsuario.ValidarToken(wfactura.Consultar)).Methods("POST")

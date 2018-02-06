@@ -32,6 +32,8 @@ type Reduccion struct {
 	FechaNacimiento time.Time `json:"fecha",bson:"fecha"`
 	Parentesco      string    `json:"parentesco",bson:"parentesco"`
 	Situacion       string    `json:"situacion",bson:"situacion"`
+	Grado           string    `json:"grado",bson:"grado"`
+	Componente      string    `json:"componente",bson:"componente"`
 }
 
 func Inferencia() {
@@ -115,6 +117,8 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	seleccion := bson.M{
 		"situacion":                   true,
+		"grado.abreviatura":           true,
+		"componente.abreviatura":      true,
 		"persona.datobasico":          true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
@@ -139,6 +143,8 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		prs.Situacion = mil.Situacion
 		prs.EsMilitar = true
 		prs.Parentesco = "T"
+		prs.Grado = mil.Grado.Abreviatura
+		prs.Componente = mil.Componente.Abreviatura
 		err := creduccion.Insert(prs)
 		if err != nil {
 			fmt.Println("Cedula repetida...")
@@ -156,6 +162,9 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 			prsf.Sexo = Familia.Persona.DatoBasico.Sexo
 			prsf.EsMilitar = Familia.EsMilitar
 			prsf.Parentesco = Familia.Parentesco
+			prsf.Situacion = mil.Situacion
+			prsf.Grado = mil.Grado.Abreviatura
+			prsf.Componente = mil.Componente.Abreviatura
 			if edad > 15 && edad < 27 {
 				ad, _, _ := Familia.Persona.DatoBasico.FechaDefuncion.Date()
 				if ad < 1900 {

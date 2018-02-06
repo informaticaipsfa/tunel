@@ -21,4 +21,5 @@ const (
 	CTRAZACIS    string = "trazacis"
 	CCATEGORIA   string = "categoria"
 	CUSUARIO     string = "usuario"
+	CREDUCCION   string = "reduccion"
 )

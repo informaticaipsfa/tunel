@@ -362,8 +362,11 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 
 	m.Grado.Nombre = comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura)
 
-	fmt.Println(comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura))
-
+	//fmt.Println(comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura))
+	modificar := false
+	if mOriginal.Grado.Abreviatura != m.Grado.Abreviatura {
+		modificar = true
+	}
 	mOriginal.Grado = m.Grado
 	mOriginal.Componente = m.Componente
 	mOriginal.Categoria = m.Categoria
@@ -394,9 +397,31 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
+	//Saman
 	s := ActualizarPersona(m.Persona)
 	x := ActualizarMilitar(mOriginal)
 	go ActualizarPostgresSaman(s + x)
+
+	//Reducción
+	reduc := make(map[string]interface{})
+	cred := sys.MGOSession.DB(sys.CBASE).C(sys.CREDUCCION)
+	reduc["cedula"] = mOriginal.ID
+	reduc["fechanacimiento"] = mOriginal.Persona.DatoBasico.FechaNacimiento
+	reduc["nombre"] = mOriginal.Persona.DatoBasico.ConcatenarNombreApellido()
+	reduc["situacion"] = mOriginal.Situacion
+	err = cred.Update(bson.M{"cedula": mOriginal.ID}, bson.M{"$set": reduc})
+	if err != nil {
+		fmt.Println("Err", err.Error())
+	}
+
+	if modificar {
+		grado := m.Grado.Abreviatura
+		componente := m.Componente.Abreviatura
+		for _, fam := range mOriginal.Familiar {
+			fam.ActualizarPorReduccion(grado, componente)
+		}
+	}
+
 	return
 }
 
@@ -425,6 +450,18 @@ func (m *Militar) SalvarMGO() (err error) {
 
 	s := InsertarMilitarSAMAN(m)
 	go InsertarPostgresSaman(s)
+
+	//Reducción
+	reduc := make(map[string]interface{})
+	cred := sys.MGOSession.DB(sys.CBASE).C(sys.CREDUCCION)
+	reduc["cedula"] = m.ID
+	reduc["fechanacimiento"] = m.Persona.DatoBasico.FechaNacimiento
+	reduc["nombre"] = m.Persona.DatoBasico.ConcatenarNombreApellido()
+	reduc["situacion"] = m.Situacion
+	err = cred.Update(bson.M{"cedula": m.ID}, bson.M{"$set": reduc})
+	if err != nil {
+		fmt.Println("Err", err.Error())
+	}
 	return
 }
 

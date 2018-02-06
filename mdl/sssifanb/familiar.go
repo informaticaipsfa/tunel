@@ -173,7 +173,26 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
 	}
 
+	var mOriginal Militar
+	mOriginal, _ = consultarMongo(f.DocumentoPadre)
+	go f.ActualizarPorReduccion(mOriginal.Grado.Abreviatura, mOriginal.Componente.Abreviatura)
 	return
+}
+
+func (f *Familiar) ActualizarPorReduccion(grado string, componente string) {
+
+	//Reducción
+	reduc := make(map[string]interface{})
+	cred := sys.MGOSession.DB(sys.CBASE).C(sys.CREDUCCION)
+	reduc["cedula"] = f.Persona.DatoBasico.Cedula
+	reduc["fechanacimiento"] = f.Persona.DatoBasico.FechaNacimiento
+	reduc["nombre"] = f.Persona.DatoBasico.ConcatenarNombreApellido()
+	reduc["grado"] = grado
+	reduc["componente"] = componente
+	err := cred.Update(bson.M{"cedula": f.Persona.DatoBasico.Cedula}, bson.M{"$set": reduc})
+	if err != nil {
+		fmt.Println("Err", err.Error())
+	}
 }
 
 //AplicarReglasCarnetHijos Reglas
