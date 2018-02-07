@@ -12,6 +12,28 @@ type WPanel struct {
 	Data string
 }
 
+//ListarPendientes Ver
+func (wp *WPanel) ListarPendientes(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	var Reduccion estadistica.Reduccion
+	Cabecera(w, r)
+	j, _ := Reduccion.ListarPendientes()
+	w.WriteHeader(http.StatusOK)
+	M.Tipo = 0
+	w.Write(j)
+}
+
+//ListarColecciones Ver
+func (wp *WPanel) ListarColecciones(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	var Reduccion estadistica.Reduccion
+	Cabecera(w, r)
+	j, _ := Reduccion.ListarColecciones()
+	w.WriteHeader(http.StatusOK)
+	M.Tipo = 0
+	w.Write(j)
+}
+
 func (wp *WPanel) ValidarReduccion(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var Reduccion estadistica.Reduccion

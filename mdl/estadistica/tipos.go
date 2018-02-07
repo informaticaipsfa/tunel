@@ -1,6 +1,7 @@
 package estadistica
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -44,6 +45,32 @@ func Descriptiva() {
 
 }
 
+//ListarColecciones Listado
+func (r *Reduccion) ListarColecciones() (jSon []byte, err error) {
+
+	db := sys.MGOSession.DB(sys.CBASE)
+	nombres, err := db.CollectionNames()
+	if err != nil {
+		log.Printf("Fallo la conexión para las coleccion: %v", err)
+	}
+	jSon, err = json.Marshal(nombres)
+	return
+}
+
+//ListarPendientes Pendientes
+func (r *Reduccion) ListarPendientes() (jSon []byte, err error) {
+	var tp []TareasPendientes
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTAREASPENDIENDTE)
+	seleccion := bson.M{"estatus": bson.M{"$ne": 2}}
+	err = c.Find(seleccion).All(&tp)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	jSon, err = json.Marshal(tp)
+	return
+}
+
+//ValidarColeccion Validaciones
 func (r *Reduccion) ValidarColeccion(coleccion string) (valor bool) {
 	valor = false
 	db := sys.MGOSession.DB(sys.CBASE)
@@ -83,7 +110,7 @@ func (r *Reduccion) CrearColeccion(coleccion string) {
 	cpendiente := sys.MGOSession.DB(sys.CBASE).C("tareaspendientes")
 	cpendiente.Insert(TP)
 
-	c := sys.MGOSession.DB(sys.CBASE).C("reduccion")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREDUCCION)
 	err := c.Insert(prs)
 	if err != nil {
 		panic(err)
@@ -98,7 +125,7 @@ func (r *Reduccion) CrearColeccion(coleccion string) {
 	}
 	err = c.EnsureIndex(index)
 	if err != nil {
-		panic(err)
+		fmt.Println("No se logró crear el indice de la cedula")
 	}
 	r.MilitarTitular()
 	tarea := make(map[string]interface{})
@@ -106,8 +133,9 @@ func (r *Reduccion) CrearColeccion(coleccion string) {
 	tarea["fechafin"] = time.Now()
 	err = cpendiente.Update(bson.M{"codigo": TP.Codigo}, bson.M{"$set": tarea})
 	if err != nil {
-		panic(err)
+		fmt.Println("Error al finalizar la tarea pendiente")
 	}
+	fmt.Println("Proceso finalizado.")
 }
 
 //MilitarTitular Familiares y Titulares Estadisticas
@@ -130,13 +158,13 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 	if err != nil {
 		fmt.Println(err.Error())
 	}
+	repetidos := 0
 	fmt.Println("Lista la carga...")
-	creduccion := sys.MGOSession.DB(sys.CBASE).C("reduccion")
-	for _, mil := range militar {
-
+	creduccion := sys.MGOSession.DB(sys.CBASE).C(sys.CREDUCCION)
+	for _, mil := range militar { //Introducir Militares
 		var prs Reduccion
 		prs.Cedula = mil.Persona.DatoBasico.Cedula
-		prs.Nombre = mil.Persona.DatoBasico.NombrePrimero + " " + mil.Persona.DatoBasico.ApellidoPrimero
+		prs.Nombre = mil.Persona.DatoBasico.ConcatenarNombreApellido()
 		prs.Tipo = "T"
 		prs.FechaNacimiento = mil.Persona.DatoBasico.FechaNacimiento
 		prs.Sexo = mil.Persona.DatoBasico.Sexo
@@ -147,50 +175,43 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		prs.Componente = mil.Componente.Abreviatura
 		err := creduccion.Insert(prs)
 		if err != nil {
-			fmt.Println("Cedula repetida...")
+			fmt.Println(err.Error())
+			repetidos++
 		}
-
-		for _, Familia := range mil.Familiar {
+	}
+	fmt.Println("Procesando datos militares. Por favor espere.")
+	time.Sleep(time.Minute * 1)
+	fmt.Println("Preparando datos familiares.")
+	for _, mili := range militar {
+		for _, Familia := range mili.Familiar {
 			var prsf Reduccion
-			a, _, _ := Familia.Persona.DatoBasico.FechaNacimiento.Date()
-			au, _, _ := time.Now().Date()
-			edad := au - a
 			prsf.Cedula = Familia.Persona.DatoBasico.Cedula
-			prsf.Nombre = Familia.Persona.DatoBasico.NombrePrimero + " " + Familia.Persona.DatoBasico.ApellidoPrimero
+			prsf.Nombre = Familia.Persona.DatoBasico.ConcatenarNombreApellido()
 			prsf.Tipo = "F"
 			prsf.FechaNacimiento = Familia.Persona.DatoBasico.FechaNacimiento
 			prsf.Sexo = Familia.Persona.DatoBasico.Sexo
 			prsf.EsMilitar = Familia.EsMilitar
 			prsf.Parentesco = Familia.Parentesco
-			prsf.Situacion = mil.Situacion
-			prsf.Grado = mil.Grado.Abreviatura
-			prsf.Componente = mil.Componente.Abreviatura
-			if edad > 15 && edad < 27 {
-				ad, _, _ := Familia.Persona.DatoBasico.FechaDefuncion.Date()
-				if ad < 1900 {
-					err := creduccion.Insert(prsf)
-					if err != nil {
-						fmt.Println("Cedula repetida...")
-					}
-				}
-			} else if Familia.Parentesco != "HJ" {
-				ad, _, _ := Familia.Persona.DatoBasico.FechaDefuncion.Date()
-				if ad < 1900 {
-					err := creduccion.Insert(prsf)
-					if err != nil {
-						fmt.Println("Cedula repetida...")
-					}
+			prsf.Situacion = mili.Situacion
+			prsf.Grado = mili.Grado.Abreviatura
+			prsf.Componente = mili.Componente.Abreviatura
+			ad, _, _ := Familia.Persona.DatoBasico.FechaDefuncion.Date()
+			if ad < 1900 {
+				err := creduccion.Insert(prsf)
+				if err != nil {
+					repetidos++
 				}
 			}
-
-			//fmt.Println(Familia.Persona.DatoBasico.Cedula)
 		}
 	}
-	fmt.Println("Proceso finalizado...")
+
+	fmt.Println("Existen ( ", repetidos, " ) repetidos.")
+	time.Sleep(time.Minute * 1)
+	fmt.Println("Procesando datos familiares. Por favor espere.")
 	return true
 }
 
-//ExportarCSVMilitar Familiares y Titulares Estadisticas
+//ExportarCSV Familiares y Titulares Estadisticas
 func (r *Reduccion) ExportarCSV(tipo string) {
 	var TP TareasPendientes
 	nombrefecha := time.Now().String()[:19]
@@ -213,7 +234,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 		fmt.Println(err.Error())
 	}
 	defer f.Close()
-	c := sys.MGOSession.DB(sys.CBASE).C("reduccion")
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREDUCCION)
 	fmt.Println("Preparando los datos...")
 	cpendiente := sys.MGOSession.DB(sys.CBASE).C("tareaspendientes")
 	cpendiente.Insert(TP)
@@ -223,14 +244,37 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 	}
 	i := 0
 	for _, rd := range reduccion {
-		if rd.Situacion == "FCP" {
-			fmt.Println("PD.-> ", rd.Situacion, rd.Cedula)
-		}
-		i++
-		linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
-		_, e := f.WriteString(linea)
-		if e != nil {
-			fmt.Println("Error en la linea...")
+		if tipo == "F" {
+			a, _, _ := rd.FechaNacimiento.Date()
+			au, _, _ := time.Now().Date()
+			edad := au - a
+			if edad > 15 && edad < 27 {
+
+				i++
+				linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
+				_, e := f.WriteString(linea)
+				if e != nil {
+					fmt.Println("Error en la linea...")
+				}
+
+			} else if rd.Parentesco != "HJ" {
+
+				i++
+				linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
+				_, e := f.WriteString(linea)
+				if e != nil {
+					fmt.Println("Error en la linea...")
+				}
+
+			}
+
+		} else {
+			i++
+			linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
+			_, e := f.WriteString(linea)
+			if e != nil {
+				fmt.Println("Error en la linea...")
+			}
 		}
 
 	}
