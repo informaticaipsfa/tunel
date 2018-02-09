@@ -215,7 +215,6 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 func (r *Reduccion) ExportarCSV(tipo string) {
 	var TP TareasPendientes
 	nombrefecha := time.Now().String()[:19]
-	TP.Codigo = "CSVMIL-" + nombrefecha
 	TP.Estatus = 0
 	TP.FechaInicio = time.Now()
 	buscar := bson.M{"tipo": "T", "situacion": bson.M{"$ne": "FCP"}}
@@ -226,6 +225,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 		buscar = bson.M{"tipo": "F"}
 		nom = "FAM-"
 	}
+	TP.Codigo = "CSV" + nom + "-" + nombrefecha
 
 	fmt.Println("Inciando Creación...")
 	var reduccion []Reduccion

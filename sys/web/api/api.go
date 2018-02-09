@@ -165,6 +165,16 @@ func (p *Militar) EstadisticasPorGrado(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+func (p *Militar) EstadisticasFamiliar(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	// ip := strings.Split(r.RemoteAddr, ":")
+	var militar sssifanb.Militar
+
+	j, _ := militar.EstadisticasFamiliar()
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
 //Opciones Militar
 func (p *Militar) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)

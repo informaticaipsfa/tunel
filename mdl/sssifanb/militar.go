@@ -594,6 +594,24 @@ func (m *Militar) EstadisticasPorGrado(codComponente string) (jSon []byte, err e
 	return
 }
 
+//EstadisticasFamiliar Estadisticas Por Grado
+func (m *Militar) EstadisticasFamiliar() (jSon []byte, err error) {
+	donde := bson.M{"$match": bson.M{"tipo": "F"}}
+	grupo := bson.M{"$group": bson.M{"_id": bson.M{
+		"codigo": "$componente", "situacion": "$situacion"}, "cantidad": bson.M{"$sum": 1}}}
+	orden := bson.M{"$sort": bson.M{"_id": 1}}
+	var rs []interface{}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREDUCCION)
+	err = c.Pipe([]bson.M{donde, grupo, orden}).All(&rs)
+	if err != nil {
+		fmt.Println("Error Familiares ", err.Error())
+		return
+	}
+	jSon, err = json.Marshal(rs)
+
+	return
+}
+
 //ActualizarGradoCodigo Actualizando
 func (m *Militar) ActualizarGradoCodigo() {
 	var militar []Militar
