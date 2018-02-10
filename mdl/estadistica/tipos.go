@@ -21,11 +21,13 @@ type TareasPendientes struct {
 	FechaInicio time.Time `json:"fechainicio",bson:"fechainicio"`
 	FechaFin    time.Time `json:"fechafin",bson:"fechafin"`
 	Estatus     int       `json:"estatus",bson:"estatus"`
+	Tipo        string    `json:"tipo",bson:"tipo"`
 }
 
 //Reduccion de datos de los familiares
 type Reduccion struct {
 	Cedula          string    `json:"cedula",bson:"cedula"`
+	IDT             string    `json:"idt",bson:"idt"`
 	Nombre          string    `json:"nombre",bson:"nombre"`
 	Sexo            string    `json:"sexo",bson:"sexo"`
 	Tipo            string    `json:"tipo",bson:"tipo"` //T Titular Militar | F Familiar
@@ -164,6 +166,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 	for _, mil := range militar { //Introducir Militares
 		var prs Reduccion
 		prs.Cedula = mil.Persona.DatoBasico.Cedula
+		prs.IDT = mil.Persona.DatoBasico.Cedula
 		prs.Nombre = mil.Persona.DatoBasico.ConcatenarNombreApellido()
 		prs.Tipo = "T"
 		prs.FechaNacimiento = mil.Persona.DatoBasico.FechaNacimiento
@@ -186,6 +189,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		for _, Familia := range mili.Familiar {
 			var prsf Reduccion
 			prsf.Cedula = Familia.Persona.DatoBasico.Cedula
+			prsf.IDT = mili.Persona.DatoBasico.Cedula
 			prsf.Nombre = Familia.Persona.DatoBasico.ConcatenarNombreApellido()
 			prsf.Tipo = "F"
 			prsf.FechaNacimiento = Familia.Persona.DatoBasico.FechaNacimiento
@@ -219,13 +223,14 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 	TP.FechaInicio = time.Now()
 	buscar := bson.M{"tipo": "T", "situacion": bson.M{"$ne": "FCP"}}
 	TP.Observacion = "Creando csv de militares"
+	TP.Tipo = "CSV"
 	nom := "MIL-"
 	if tipo == "F" {
 		TP.Observacion = "Creando csv de familiares"
 		buscar = bson.M{"tipo": "F"}
 		nom = "FAM-"
 	}
-	TP.Codigo = "CSV" + nom + "-" + nombrefecha
+	TP.Codigo = nom + nombrefecha
 
 	fmt.Println("Inciando Creación...")
 	var reduccion []Reduccion

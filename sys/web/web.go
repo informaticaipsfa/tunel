@@ -42,6 +42,7 @@ func CargarModulosWeb() {
 	var wfactura api.WFactura
 	var wmedicina api.WMedicina
 	var wpanel api.WPanel
+	var wcsv api.CSV
 
 	Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
@@ -61,6 +62,7 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Actualizar)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Insertar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/csvfamiliar", wUsuario.ValidarToken(wcsv.GCSVSC)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/recibo/crud/{id}", wUsuario.ValidarToken(wrec.Consultar)).Methods("GET")
 	//Enrutador.HandleFunc("/ipsfa/api/recibo/crud", wrec.Actualizar).Methods("PUT")
@@ -156,6 +158,7 @@ func CargarModulosWebDevel() {
 
 	var wfactura api.WFactura
 	var wmedicina api.WMedicina
+	var wcsv api.CSV
 
 	Enrutador.HandleFunc("/devel/api/militar/crud/{id}", per.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Actualizar).Methods("PUT")
@@ -173,6 +176,7 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/familiar/crud", wfam.Actualizar).Methods("PUT")
 	Enrutador.HandleFunc("/devel/api/familiar/crud", wfam.Insertar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/familiar/crud", wfam.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/devel/api/familiar/csvfamiliar", wcsv.GCSVSC).Methods("POST")
 
 	Enrutador.HandleFunc("/devel/api/recibo/crud/{id}", wrec.Consultar).Methods("GET")
 	//Enrutador.HandleFunc("/devel/api/recibo/crud", wrec.Actualizar).Methods("PUT")
