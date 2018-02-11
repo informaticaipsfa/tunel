@@ -432,11 +432,11 @@ func ActualizarPostgresSaman(d string) {
 		fmt.Println("SAMAN: ", err.Error())
 		return
 	}
-	// _, err = sys.PsqlWEB.Exec(d)
-	// if err != nil {
-	// 	fmt.Println("SAMANWEB: ", err.Error())
-	// 	return
-	// }
+	_, err = sys.PsqlWEB.Exec(d)
+	if err != nil {
+		fmt.Println("SAMANWEB: ", err.Error())
+		return
+	}
 }
 
 //SalvarMGO Guardar
