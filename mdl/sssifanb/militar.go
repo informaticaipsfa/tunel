@@ -401,6 +401,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	s := ActualizarPersona(m.Persona)
 	x := ActualizarMilitar(mOriginal)
 	go ActualizarPostgresSaman(s + x)
+	fmt.Println(s, x)
 
 	//Reducción
 	reduc := make(map[string]interface{})
@@ -427,14 +428,15 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 
 func ActualizarPostgresSaman(d string) {
 	_, err := sys.PostgreSQLSAMAN.Exec(d)
-
 	if err != nil {
 		fmt.Println("SAMAN: ", err.Error())
+		return
 	}
-	_, err = sys.PsqlWEB.Exec(d)
-	if err != nil {
-		fmt.Println("SAMANWEB: ", err.Error())
-	}
+	// _, err = sys.PsqlWEB.Exec(d)
+	// if err != nil {
+	// 	fmt.Println("SAMANWEB: ", err.Error())
+	// 	return
+	// }
 }
 
 //SalvarMGO Guardar
