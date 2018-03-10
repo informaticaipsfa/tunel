@@ -192,10 +192,22 @@ func (tim *Carnet) ProcesarYActualizar() {
 			err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
 
 		} else { //familiares
-			fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " FAM")
 			carnet["familiar.$.tif"] = TIM
 			err = coleccion.Update(bson.M{"familiar.persona.datobasico.cedula": TIM.IDF, "id": TIM.ID}, bson.M{"$set": carnet})
 		}
 
 	}
+}
+
+
+
+//Limpiar Carnet Propios
+func (tim *Carnet) Limpiar(estatus int, sucursal string) ( err error) {
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
+	_, err = c.UpdateAll(bson.M{"estatus": estatus, "usuario": sucursal}, bson.M{"$set": bson.M{"estatus" : 5} })
+	if err != nil {
+		fmt.Println("No se lograron actualizar los datos")
+		return
+	}
+	return
 }

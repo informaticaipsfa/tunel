@@ -58,9 +58,7 @@ func (wca *WCarnet) Insertar(w http.ResponseWriter, r *http.Request) {
 	}
 	j, e := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
-
 	w.Write(j)
-	//fmt.Fprintf(w, "Saludos")
 }
 
 //Listar Militares
@@ -71,7 +69,6 @@ func (wca *WCarnet) Listar(w http.ResponseWriter, r *http.Request) {
 	nivel, _ := strconv.Atoi(estatus["id"])
 
 	usuario := UsuarioConectado.Login[:3]
-	fmt.Println(strings.ToUpper(usuario))
 	j, e := Carnet.Listar(nivel, strings.ToUpper(usuario))
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
@@ -90,8 +87,29 @@ func (wca *WCarnet) Aprobar(w http.ResponseWriter, r *http.Request) {
 	var nivel = mux.Vars(r)
 	serial := nivel["serial"]
 	estatus, _ := strconv.Atoi(nivel["estatus"])
-	fmt.Println(nivel, "  NIVEL ", serial)
 	e := Carnet.CambiarEstado(serial, estatus)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+	M.Tipo = 1
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+
+
+//Listar Militares
+func (wca *WCarnet) Limpiar(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	var Carnet sssifanb.Carnet
+	var nivel = mux.Vars(r)
+	estatus, _ := strconv.Atoi(nivel["estatus"])
+	sucursal :=  strings.ToUpper(nivel["sucursal"])
+	e := Carnet.Limpiar(estatus, sucursal)
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))

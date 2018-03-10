@@ -13,7 +13,7 @@ type config struct{}
 
 //Variables del modelo
 var (
-	Version                  string = "V.0.0.1"
+	Version                  string = "V.1.0.2"
 	MySQL                    bool   = false
 	MongoDB                  bool   = false
 	SQLServer                bool   = false
