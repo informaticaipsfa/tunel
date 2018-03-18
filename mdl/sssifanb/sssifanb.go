@@ -64,9 +64,7 @@ func ActualizarPersona(persona Persona) string {
 	fecha := time.Now()
 	convertedDateString := fecha.Format("2006-01-02")
 	fechaSlashActual := strings.Replace(convertedDateString, "-", "/", -1)
-	fs := persona.DatoBasico.FechaNacimiento.UTC()
-	fmt.Println(persona.DatoBasico.FechaNacimiento)
-	fmt.Println(fs)
+
 	convertir := persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
 	fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
 
