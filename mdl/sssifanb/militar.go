@@ -524,7 +524,16 @@ func (m *Militar) ActualizarSaman() {
 	var lstMilitares []Militar
 
 	c := sys.MGOSession.DB(sys.CBASE).C("militar")
-	err := c.Find(bson.M{"situacion": "ACT"}).All(&lstMilitares)
+	seleccion := bson.M{
+		"situacion":                   true,
+		"grado":                       true,
+		"componente":                  true,
+		"persona.datobasico":          true,
+		"familiar.persona.datobasico": true,
+		"familiar.parentesco":         true,
+		"familiar.esmilitar":          true,
+	}
+	err := c.Find(bson.M{"situacion": "ACT"}).Select(seleccion).All(&lstMilitares)
 	if err != nil {
 		return
 	}
