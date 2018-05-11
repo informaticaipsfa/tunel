@@ -119,6 +119,7 @@ func (m *Militar) AplicarReglas() {
 	fecha := m.FechaIngresoComponente.UTC()
 	fechaActual := time.Now()
 	if m.Situacion != "ACT" {
+		m.FechaRetiro = m.FechaResuelto
 		fechaActual = m.FechaRetiro.UTC()
 	}
 	a, mes, d := util.CalcularTiempoServicio(fechaActual, fecha)
@@ -401,7 +402,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	s := ActualizarPersona(m.Persona)
 	x := ActualizarMilitar(mOriginal)
 	go ActualizarPostgresSaman(s + x)
-	fmt.Println(s, x)
+	//fmt.Println(s, x)
 
 	//Reducción
 	reduc := make(map[string]interface{})
