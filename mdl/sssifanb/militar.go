@@ -403,6 +403,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	x := ActualizarMilitar(mOriginal)
 	go ActualizarPostgresSaman(s + x)
 	//fmt.Println(s, x)
+	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal))
 
 	//Reducción
 	reduc := make(map[string]interface{})
@@ -440,6 +441,14 @@ func ActualizarPostgresSaman(d string) {
 	}
 }
 
+func ActualizarMysqlFullText(d string) {
+	_, err := sys.MysqlFullText.Exec(d)
+	if err != nil {
+		fmt.Println("MYSQL FULLTEXT: ", err.Error())
+		return
+	}
+}
+
 //SalvarMGO Guardar
 func (m *Militar) SalvarMGO() (err error) {
 	var comp fanb.Componente
@@ -453,6 +462,7 @@ func (m *Militar) SalvarMGO() (err error) {
 
 	s := InsertarMilitarSAMAN(m)
 	go InsertarPostgresSaman(s)
+	go InsertarMysqlFullText(InsertMysqlFT(m))
 
 	//Reducción
 	reduc := make(map[string]interface{})
@@ -477,6 +487,13 @@ func InsertarPostgresSaman(d string) {
 	_, err = sys.PsqlWEB.Exec(d)
 	if err != nil {
 		fmt.Println("SAMANWEB: ", err.Error())
+	}
+}
+func InsertarMysqlFullText(d string) {
+	_, err := sys.MysqlFullText.Exec(d)
+
+	if err != nil {
+		fmt.Println("INSERT MYSQL FULLTEXT: ", err.Error())
 	}
 }
 
@@ -731,7 +748,7 @@ func QueryMysqlText(contenido string, tipo int) string {
 		parametro = "familiares"
 		break
 	case 4:
-		parametro = "nombre, descripcion, direccion, familiares"
+		parametro = "cedula, nombre, descripcion, direccion, familiares"
 		break
 	}
 	return `SELECT id, cedula, nombre, descripcion, direccion, familiares, MATCH (` + parametro + `) 

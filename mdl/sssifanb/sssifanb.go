@@ -361,3 +361,81 @@ func InsertarMilitarSAMANSN(militar Militar) string {
 `
 
 }
+
+func ActualizarMysqlFT(mil Militar) string {
+
+	dire := obtenerEstado(mil.Persona.Direccion[0].Estado) + " " + mil.Persona.Direccion[0].Ciudad +
+		" " + mil.Persona.Direccion[0].Municipio + " " + mil.Persona.Direccion[0].Parroquia +
+		" " + mil.Persona.Direccion[0].CalleAvenida + " " + mil.Persona.Direccion[0].Casa +
+		" " + strconv.Itoa(mil.Persona.Direccion[0].Numero)
+
+	grad := mil.Grado.Descripcion
+	comp := mil.Componente.Descripcion
+	situ := obtenerSitiacion(mil.Situacion)
+	clas := obtenerClase(mil.Clase)
+	cate := obtenerCategoria(mil.Categoria)
+	telf := mil.Persona.Telefono.Domiciliario + " " + mil.Persona.Telefono.Movil
+	dire += telf + " " +
+		obtenerEstadoCivil(mil.Persona.DatoBasico.EstadoCivil) + " " +
+		obtenerSexo(mil.Persona.DatoBasico.Sexo)
+	fami := ""
+	for _, familiar := range mil.Familiar {
+		var direr string
+		if len(familiar.Persona.Direccion) > 0 {
+			direr = obtenerEstado(familiar.Persona.Direccion[0].Estado) + " " + familiar.Persona.Direccion[0].Ciudad +
+				" " + familiar.Persona.Direccion[0].Municipio + " " + familiar.Persona.Direccion[0].Parroquia +
+				" " + familiar.Persona.Direccion[0].CalleAvenida + " " + familiar.Persona.Direccion[0].Casa +
+				" " + strconv.Itoa(familiar.Persona.Direccion[0].Numero)
+		}
+		fami += " | " + obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo) + " " +
+			familiar.Persona.DatoBasico.Cedula + " " + familiar.Persona.DatoBasico.ConcatenarApellidoNombre() + " " +
+			obtenerEstadoCivil(familiar.Persona.DatoBasico.EstadoCivil) + " " +
+			obtenerSexo(familiar.Persona.DatoBasico.Sexo) + " " + direr
+	}
+
+	body := grad + " " + comp + " " + situ + " " + clas + " " + cate
+
+	return `UPDATE datos SET
+		nombre = '` + mil.Persona.DatoBasico.ConcatenarApellidoNombre() + `',
+		descripcion = '` + body + `',
+		direccion = '` + dire + `',
+		familiares = '` + fami + `'
+		WHERE cedula='` + mil.Persona.DatoBasico.Cedula + `';`
+}
+
+func InsertMysqlFT(mil *Militar) string {
+
+	dire := obtenerEstado(mil.Persona.Direccion[0].Estado) + " " + mil.Persona.Direccion[0].Ciudad +
+		" " + mil.Persona.Direccion[0].Municipio + " " + mil.Persona.Direccion[0].Parroquia +
+		" " + mil.Persona.Direccion[0].CalleAvenida + " " + mil.Persona.Direccion[0].Casa +
+		" " + strconv.Itoa(mil.Persona.Direccion[0].Numero)
+
+	grad := mil.Grado.Descripcion
+	comp := mil.Componente.Descripcion
+	situ := obtenerSitiacion(mil.Situacion)
+	clas := obtenerClase(mil.Clase)
+	cate := obtenerCategoria(mil.Categoria)
+	telf := mil.Persona.Telefono.Domiciliario + " " + mil.Persona.Telefono.Movil
+	dire += telf + " " +
+		obtenerEstadoCivil(mil.Persona.DatoBasico.EstadoCivil) + " " +
+		obtenerSexo(mil.Persona.DatoBasico.Sexo)
+	fami := ""
+	for _, familiar := range mil.Familiar {
+		var direr string
+		if len(familiar.Persona.Direccion) > 0 {
+			direr = obtenerEstado(familiar.Persona.Direccion[0].Estado) + " " + familiar.Persona.Direccion[0].Ciudad +
+				" " + familiar.Persona.Direccion[0].Municipio + " " + familiar.Persona.Direccion[0].Parroquia +
+				" " + familiar.Persona.Direccion[0].CalleAvenida + " " + familiar.Persona.Direccion[0].Casa +
+				" " + strconv.Itoa(familiar.Persona.Direccion[0].Numero)
+		}
+		fami += " | " + obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo) + " " +
+			familiar.Persona.DatoBasico.Cedula + " " + familiar.Persona.DatoBasico.ConcatenarApellidoNombre() + " " +
+			obtenerEstadoCivil(familiar.Persona.DatoBasico.EstadoCivil) + " " +
+			obtenerSexo(familiar.Persona.DatoBasico.Sexo) + " " + direr
+	}
+
+	body := grad + " " + comp + " " + situ + " " + clas + " " + cate
+	return `INSERT INTO datos ( cedula, nombre, descripcion, direccion, familiares ) 
+		VALUES ('` + mil.Persona.DatoBasico.Cedula + `','` + mil.Persona.DatoBasico.ConcatenarApellidoNombre() + `','` + body + `','` + dire + `','` + fami + `')`
+
+}
