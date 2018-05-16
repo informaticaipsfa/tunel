@@ -50,6 +50,7 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Insertar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Eliminar)).Methods("DELETE")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/militar/listado", wUsuario.ValidarToken(per.Listado)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportecomponente", wUsuario.ValidarToken(per.EstadisticasPorComponente)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportegrado", wUsuario.ValidarToken(per.EstadisticasPorGrado)).Methods("POST")
@@ -100,10 +101,12 @@ func CargarModulosWeb() {
 
 	Enrutador.HandleFunc("/ipsfa/api/wmedicina", wUsuario.ValidarToken(wmedicina.Registrar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/vreduccion", wUsuario.ValidarToken(wpanel.ValidarReduccion)).Methods("POST")
+
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/exreduccion", wUsuario.ValidarToken(wpanel.ExtraerReduccion)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/crearreduccion", wUsuario.ValidarToken(wpanel.CrearReduccion)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarcolecciones", wUsuario.ValidarToken(wpanel.ListarColecciones)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarpendientes", wUsuario.ValidarToken(wpanel.ListarPendientes)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/extraerdatosmysql", wUsuario.ValidarToken(wpanel.ExtraerDatosMySQL)).Methods("POST")
 }
 
 func CargarModulosSeguridad() {
@@ -169,6 +172,7 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/militar/reportecomponente", per.EstadisticasPorComponente).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/militar/reportegrado", per.EstadisticasPorGrado).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/militar/reportefamiliar", per.EstadisticasFamiliar).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/listado", per.Listado).Methods("POST")
 
 	Enrutador.HandleFunc("/devel/api/componente/{id}", comp.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/estado", esta.Consultar).Methods("GET")

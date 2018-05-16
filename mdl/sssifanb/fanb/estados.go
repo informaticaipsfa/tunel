@@ -82,3 +82,18 @@ func (e *Estado) ActualizarMGO(donde bson.M, estado map[string]interface{}) (err
 	}
 	return
 }
+
+//ConsultarTodo una persona mediante el metodo de MongoDB
+func (e *Estado) ConsultarTodo() (Estados []Estado) {
+
+	seleccion := bson.M{
+		"nombre": true,
+		"codigo": true,
+	}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CESTADO)
+	err := c.Find(bson.M{}).Select(seleccion).All(&Estados)
+	if err != nil {
+		fmt.Println("Error de estados...")
+	}
+	return
+}

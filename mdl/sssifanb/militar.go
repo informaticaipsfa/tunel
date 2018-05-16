@@ -521,6 +521,7 @@ func (m *Militar) ListarMGO(cedula string) (lst []Militar, err error) {
 	return
 }
 
+//ActualizarSaman Listado General
 func (m *Militar) ActualizarSaman() {
 	var lstMilitares []Militar
 
@@ -648,4 +649,93 @@ func (m *Militar) ActualizarGradoCodigo() {
 			return
 		}
 	}
+}
+
+//InsertarFullText Insertar
+func (m *Militar) InsertarFullText() {
+	var militar []Militar
+	var msj Mensaje
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	seleccionar := bson.M{"persona": true, "componente": true, "grado": true}
+	err := c.Find(bson.M{}).Select(seleccionar).All(&militar)
+	if err != nil {
+		fmt.Println(err.Error())
+		msj.Tipo = 0
+		// jSon, err = json.Marshal(msj)
+	}
+	for _, v := range militar {
+		fmt.Println("Control ", v.Persona.DatoBasico.Cedula)
+
+	}
+}
+
+//InsertMySQL MySQL
+func InsertMySQL(mil Militar) {
+	cedula := mil.Persona.DatoBasico.Cedula
+	direccion := mil.Persona.Direccion
+	cuerpo := `a` + direccion[0].Ciudad
+	cadena := `INSERT INTO militar ('` + cedula + `','','` + cuerpo + `')`
+	fmt.Println(cadena)
+}
+
+//MYSQLFULL DATA
+type MYSQLFULL struct {
+	ID          int    `json:"id,omitempty"`
+	Cedula      string `json:"cedula,omitempty"`
+	Nombre      string `json:"nombre,omitempty"`
+	Descripcion string `json:"descripcion,omitempty"`
+	Direccion   string `json:"direccion,omitempty"`
+	Familiares  string `json:"familiares,omitempty"`
+	Puntuacion  string `json:"puntuacion,omitempty"`
+}
+
+//BusquedaFullText Busqueda Avanzada
+func (m *Militar) BusquedaFullText(contenido string, tipo int) (jSon []byte, err error) {
+
+	fmt.Println(contenido, tipo)
+	fmt.Println(QueryMysqlText(contenido, tipo))
+
+	rows, err := sys.MysqlFullText.Query(QueryMysqlText(contenido, tipo))
+	if err != nil {
+		panic(err.Error())
+	}
+	var lst []interface{}
+	for rows.Next() {
+		var mysqldata MYSQLFULL
+		var id, cedula, nombre, descripcion, direccion, familiares, puntuacion string
+		rows.Scan(&id, &cedula, &nombre, &descripcion, &direccion, &familiares, &puntuacion)
+		mysqldata.ID, _ = strconv.Atoi(id)
+		mysqldata.Cedula = cedula
+		mysqldata.Nombre = nombre
+		mysqldata.Descripcion = descripcion
+		mysqldata.Direccion = direccion
+		mysqldata.Familiares = familiares
+		mysqldata.Puntuacion = puntuacion
+		lst = append(lst, mysqldata)
+	}
+	jSon, err = json.Marshal(lst)
+	return
+}
+
+//QueryMysqlText Consultando
+func QueryMysqlText(contenido string, tipo int) string {
+	parametro := ""
+	switch tipo {
+	case 1:
+		parametro = "nombre"
+		break
+	case 2:
+		parametro = "descripcion"
+		break
+	case 3:
+		parametro = "familiares"
+		break
+	case 4:
+		parametro = "nombre, descripcion, direccion, familiares"
+		break
+	}
+	return `SELECT id, cedula, nombre, descripcion, direccion, familiares, MATCH (` + parametro + `) 
+	AGAINST ('` + contenido + `' IN BOOLEAN MODE) AS puntuacion FROM datos  
+	WHERE MATCH (` + parametro + `) AGAINST ('` + contenido + `'  IN BOOLEAN MODE) 
+	ORDER BY puntuacion DESC LIMIT 50`
 }

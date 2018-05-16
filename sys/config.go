@@ -26,6 +26,7 @@ var (
 	PostgreSQLPENSION        *sql.DB
 	PostgreSQLPENSIONSIGESP  *sql.DB
 	PostgreSQLEMPLEADOSIGESP *sql.DB
+	MysqlFullText            *sql.DB
 	Error                    error
 )
 
@@ -140,6 +141,16 @@ func init() {
 			ConexionPENSIONSIGESP(cad)
 		case "mysql":
 			MySQL = true
+			cad := make(map[string]CadenaDeConexion)
+			cad["mysql"] = CadenaDeConexion{
+				Driver:    valor.Driver,
+				Usuario:   valor.Usuario,
+				Basedatos: valor.Basedatos,
+				Clave:     valor.Clave,
+				Host:      valor.Host,
+				Puerto:    valor.Puerto,
+			}
+			ConexionMYSQL(cad)
 		case "mongodb":
 			MongoDB = true
 			cad := make(map[string]CadenaDeConexion)

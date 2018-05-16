@@ -196,11 +196,13 @@ func (r *WReembolsoReporte) GenerarReporte() (jSon []byte, err error) {
 		coleecion = sys.CAPOYO
 	}
 	Desde := time.Date(anod, time.Month(mesd), diad, 0, 0, 0, 0, time.UTC)
-	Hasta := time.Date(anoh, time.Month(mesh), diah, 0, 0, 0, 0, time.UTC)
+	Hasta := time.Date(anoh, time.Month(mesh), diah, 23, 0, 0, 0, time.UTC)
 	c := sys.MGOSession.DB(sys.CBASE).C(coleecion)
 
-	buscar := bson.M{"$gt": Desde, "$lt": Hasta}
-	err = c.Find(bson.M{"estatus": 4, "fechaaprobado": buscar}).All(&result)
+	buscar := bson.M{"$gte": Desde, "$lte": Hasta}
+	// buscar := bson.M{"$gte": Desde}
+	fmt.Println("DESDE ", Desde, " HASTA ", Hasta)
+	err = c.Find(bson.M{"estatus": 5, "fechaaprobado": buscar}).All(&result)
 
 	if err != nil {
 		fmt.Println("Err. Reporte")

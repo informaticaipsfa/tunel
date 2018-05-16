@@ -51,6 +51,8 @@ func main() {
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 
+	// sssifanb.ExportarMysql()
+
 	srv := &http.Server{
 		Handler:      context.ClearHandler(web.Enrutador),
 		Addr:         ":" + sys.PUERTO,

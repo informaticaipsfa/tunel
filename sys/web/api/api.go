@@ -16,8 +16,12 @@ import (
 var UsuarioConectado seguridad.Usuario
 
 //Militar militares
-type Militar struct{}
+type Militar struct {
+	Frase string
+	Tipo  int
+}
 
+//Componente Control Militar
 type Componente struct {
 	Componente string
 	Grado      string
@@ -171,6 +175,39 @@ func (p *Militar) EstadisticasFamiliar(w http.ResponseWriter, r *http.Request) {
 	var militar sssifanb.Militar
 
 	j, _ := militar.EstadisticasFamiliar()
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//Listado Militares
+func (p *Militar) Listado(w http.ResponseWriter, r *http.Request) {
+	var traza fanb.Traza
+	var M sssifanb.Mensaje
+	var mil Militar
+	var dataJSON sssifanb.Militar
+
+	Cabecera(w, r)
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	// fmt.Println("POST...")
+	err := json.NewDecoder(r.Body).Decode(&mil)
+	if err != nil {
+		fmt.Println(err.Error())
+		//fmt.Println("Estoy en un error al insertar", err.Error())
+		M.Mensaje = err.Error()
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	}
+	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = mil.Frase
+	traza.Documento = "Consultando Militar"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+	j, _ := dataJSON.BusquedaFullText(mil.Frase, mil.Tipo)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }

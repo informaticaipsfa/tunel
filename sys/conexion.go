@@ -7,6 +7,7 @@ import (
 
 	mgo "gopkg.in/mgo.v2"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/informaticaipsfa/tunel/util"
 	_ "github.com/lib/pq"
 )
@@ -90,6 +91,19 @@ func ConexionPENSIONSIGESP(mapa map[string]CadenaDeConexion) {
 		fmt.Println("[Pensiones SIGESP: Error...] ", PostgreSQLPENSIONSIGESP.Ping())
 	} else {
 		fmt.Println("[Pensiones SIGESP: OK...]")
+	}
+	return
+}
+
+//ConexionMYSQL
+func ConexionMYSQL(mapa map[string]CadenaDeConexion) {
+	c := mapa["mysql"]
+	cadena := c.Usuario + ":" + c.Clave + "@tcp(" + c.Host + ":3306)/sssifanb"
+	MysqlFullText, _ = sql.Open("mysql", cadena)
+	if MysqlFullText.Ping() != nil {
+		fmt.Println("[mysql FULLTEXT: Error...] ", MysqlFullText.Ping())
+	} else {
+		fmt.Println("[mysql FULLTEXT: OK...]")
 	}
 	return
 }

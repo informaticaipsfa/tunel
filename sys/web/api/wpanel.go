@@ -83,3 +83,15 @@ func (wp *WPanel) CrearReduccion(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
+
+//ExtraerReduccion Exportar datos
+func (wp *WPanel) ExtraerDatosMySQL(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	go sssifanb.ExportarMysql()
+	M.Tipo = 0
+	M.Mensaje = "Solicitud en proceso"
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
