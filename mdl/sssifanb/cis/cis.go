@@ -95,11 +95,11 @@ func (cuidado *CuidadoIntegral) CrearReembolso(id string, reembolso tramitacion.
 }
 
 // ListarReembolso Actualizando
-func (cuidado *CuidadoIntegral) ListarReembolso(estatus int) (jSon []byte, err error) {
+func (cuidado *CuidadoIntegral) ListarReembolso(estatus int, sucursal string) (jSon []byte, err error) {
 	// var result []tramitacion.ColeccionReembolso
 	var result []interface{}
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CREEMBOLSO)
-	err = c.Find(bson.M{"estatus": estatus}).Select(bson.M{"reembolso": false, "_id": false}).All(&result)
+	err = c.Find(bson.M{"estatus": estatus, "usuario": bson.M{"$regex": sucursal}}).Select(bson.M{"reembolso": false, "_id": false}).All(&result)
 	if err != nil {
 		fmt.Println("Err")
 		//return
@@ -120,7 +120,7 @@ func (cuidado *CuidadoIntegral) ActualizarReembolso(AReembolso tramitacion.Actua
 	M.Tipo = 1
 	seguir := make(map[string]interface{})
 	valor := "cis.serviciomedico.programa.reembolso." + strconv.Itoa(AReembolso.Posicion)
-	fmt.Println(valor)
+	//fmt.Println(valor)
 	seguir[valor] = AReembolso.Reembolso
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": AReembolso.ID}, bson.M{"$set": seguir})
@@ -231,11 +231,11 @@ func (cuidado *CuidadoIntegral) CrearApoyo(id string, apoyo tramitacion.Apoyo, n
 }
 
 // ListarApoyo Actualizando
-func (cuidado *CuidadoIntegral) ListarApoyo(estatus int) (jSon []byte, err error) {
+func (cuidado *CuidadoIntegral) ListarApoyo(estatus int, sucursal string) (jSon []byte, err error) {
 	// var result []tramitacion.ColeccionReembolso
 	var result []interface{}
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CAPOYO)
-	err = c.Find(bson.M{"estatus": estatus}).Select(bson.M{"apoyo": false, "_id": false}).All(&result)
+	err = c.Find(bson.M{"estatus": estatus, "usuario": bson.M{"$regex": sucursal}}).Select(bson.M{"apoyo": false, "_id": false}).All(&result)
 	if err != nil {
 		fmt.Println("Err. Apoyo")
 		//return

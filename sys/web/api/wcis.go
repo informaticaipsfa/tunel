@@ -115,9 +115,10 @@ func (wcis *WCis) ListarReembolso(w http.ResponseWriter, r *http.Request) {
 	var cis cis.CuidadoIntegral
 	var variable = mux.Vars(r)
 	estatus, _ := strconv.Atoi(variable["id"])
+	sucursal := variable["sucursal"]
 	Cabecera(w, r)
 	// fmt.Println("Hola Mundo")
-	jSon, _ := cis.ListarReembolso(estatus)
+	jSon, _ := cis.ListarReembolso(estatus, sucursal)
 	M.Tipo = 0
 
 	w.WriteHeader(http.StatusOK)
@@ -237,9 +238,10 @@ func (wcis *WCisApoyo) ListarApoyo(w http.ResponseWriter, r *http.Request) {
 	var cis cis.CuidadoIntegral
 	var variable = mux.Vars(r)
 	estatus, _ := strconv.Atoi(variable["id"])
+	sucursal := variable["sucursal"]
 	Cabecera(w, r)
 	// fmt.Println("Hola Mundo")
-	jSon, _ := cis.ListarApoyo(estatus)
+	jSon, _ := cis.ListarApoyo(estatus, sucursal)
 	M.Tipo = 0
 
 	w.WriteHeader(http.StatusOK)

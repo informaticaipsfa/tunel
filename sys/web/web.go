@@ -73,7 +73,7 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/carnet/limpiar/{estatus}/{sucursal}", wUsuario.ValidarToken(wcar.Limpiar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/carnet/apro/{estatus}/{serial}", wUsuario.ValidarToken(wcar.Aprobar)).Methods("GET")
 
-	Enrutador.HandleFunc("/ipsfa/api/wreembolso/listar/{id}", wUsuario.ValidarToken(wCis.ListarReembolso)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso/listar/{id}/{sucursal}", wUsuario.ValidarToken(wCis.ListarReembolso)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Registrar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Actualizar)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Opciones)).Methods("OPTIONS")
@@ -82,7 +82,7 @@ func CargarModulosWeb() {
 
 	Enrutador.HandleFunc("/ipsfa/api/wreembolsoreporte", wUsuario.ValidarToken(wCis.ListarReporteFinanzas)).Methods("POST")
 
-	Enrutador.HandleFunc("/ipsfa/api/wapoyo/listar/{id}", wUsuario.ValidarToken(wCisA.ListarApoyo)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo/listar/{id}/{sucursal}", wUsuario.ValidarToken(wCisA.ListarApoyo)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Registrar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Actualizar)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
