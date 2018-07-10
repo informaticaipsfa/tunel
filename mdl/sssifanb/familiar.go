@@ -371,7 +371,7 @@ func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 	layout := "2006-01-02"
 
 	if f.Parentesco == "EA" {
-		AnnoA += 3
+		AnnoA += 10
 		mes = strconv.Itoa(int(MesA))
 		if int(MesA) < 10 {
 			mes = "0" + strconv.Itoa(int(MesA))
