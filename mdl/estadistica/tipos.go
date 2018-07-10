@@ -319,31 +319,40 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 		if e != nil {
 			fmt.Println("Error en la linea...")
 		}
+	} else {
+		cabecera := "#;cedula;nombre;parentesco;sexo;fecha nacimiento;titular"
+		_, e := f.WriteString(cabecera)
+		if e != nil {
+			fmt.Println("Error en la linea...")
+		}
 	}
 	for _, rd := range reduccion {
 		if tipo == "F" {
-			a, _, _ := rd.FechaNacimiento.Date()
-			au, _, _ := time.Now().Date()
-			edad := au - a
-			if edad > 15 && edad < 27 {
+			// a, _, _ := rd.FechaNacimiento.Date()
+			// au, _, _ := time.Now().Date()
+			// edad := au - a
+			// if edad > 15 && edad < 27 {
 
-				i++
-				linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
-				_, e := f.WriteString(linea)
-				if e != nil {
-					fmt.Println("Error en la linea...")
-				}
+			// 	i++
+			// 	linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
+			// 	_, e := f.WriteString(linea)
+			// 	if e != nil {
+			// 		fmt.Println("Error en la linea...")
+			// 	}
 
-			} else if rd.Parentesco != "HJ" {
-
-				i++
-				linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
-				_, e := f.WriteString(linea)
-				if e != nil {
-					fmt.Println("Error en la linea...")
-				}
-
+			// } else if rd.Parentesco != "HJ" {
+			convertir := rd.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
+			fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
+			i++
+			linea := strconv.Itoa(i) + ";" + rd.Cedula + ";" +
+				rd.Nombre + ";" + rd.Parentesco + ";" + rd.Sexo + ";" + fechaSlashNacimiento + ";" + rd.IDT +
+				"\n"
+			_, e := f.WriteString(linea)
+			if e != nil {
+				fmt.Println("Error en la linea...")
 			}
+
+			// }
 
 		} else {
 			ciudad := ""
