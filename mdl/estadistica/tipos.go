@@ -341,7 +341,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			// 	}
 
 			// } else if rd.Parentesco != "HJ" {
-			convertir := rd.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
+			convertir := rd.FechaNacimiento.Format("2006-01-02")
 			fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
 			i++
 			linea := strconv.Itoa(i) + ";" + rd.Cedula + ";" +
