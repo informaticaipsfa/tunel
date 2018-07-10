@@ -367,7 +367,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			}
 
 			i++
-			linea := ";" + strconv.Itoa(i) +
+			linea := strconv.Itoa(i) +
 				";" + rd.Cedula +
 				";" + rd.Persona.DatoBasico.Nacionalidad +
 				";" + rd.Persona.DatoBasico.ApellidoPrimero + ";" + rd.Persona.DatoBasico.ApellidoSegundo +
