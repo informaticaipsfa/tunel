@@ -16,27 +16,38 @@ import (
 
 //TareasPendientes Pendientes
 type TareasPendientes struct {
-	Codigo      string    `json:"codigo",bson:"codigo"`
-	Observacion string    `json:"observacion",bson:"observacion"`
-	FechaInicio time.Time `json:"fechainicio",bson:"fechainicio"`
-	FechaFin    time.Time `json:"fechafin",bson:"fechafin"`
-	Estatus     int       `json:"estatus",bson:"estatus"`
-	Tipo        string    `json:"tipo",bson:"tipo"`
+	Codigo      string    `json:"codigo" bson:"codigo"`
+	Observacion string    `json:"observacion" bson:"observacion"`
+	FechaInicio time.Time `json:"fechainicio" bson:"fechainicio"`
+	FechaFin    time.Time `json:"fechafin" bson:"fechafin"`
+	Estatus     int       `json:"estatus" bson:"estatus"`
+	Tipo        string    `json:"tipo" bson:"tipo"`
 }
 
-//Reduccion de datos de los familiares
+//Reduccion de datos Generales
 type Reduccion struct {
-	Cedula          string    `json:"cedula",bson:"cedula"`
-	IDT             string    `json:"idt",bson:"idt"`
-	Nombre          string    `json:"nombre",bson:"nombre"`
-	Sexo            string    `json:"sexo",bson:"sexo"`
-	Tipo            string    `json:"tipo",bson:"tipo"` //T Titular Militar | F Familiar
-	EsMilitar       bool      `json:"esmilitar",bson:"esmilitar"`
-	FechaNacimiento time.Time `json:"fecha",bson:"fecha"`
-	Parentesco      string    `json:"parentesco",bson:"parentesco"`
-	Situacion       string    `json:"situacion",bson:"situacion"`
-	Grado           string    `json:"grado",bson:"grado"`
-	Componente      string    `json:"componente",bson:"componente"`
+	Cedula                 string           `json:"cedula,omitempty" bson:"cedula"`
+	Persona                sssifanb.Persona `json:"Persona,omitempty" bson:"persona"`
+	IDT                    string           `json:"idt,omitempty" bson:"idt"`
+	Nombre                 string           `json:"nombre,omitempty" bson:"nombre"`
+	Sexo                   string           `json:"sexo,omitempty" bson:"sexo"`
+	Tipo                   string           `json:"tipo,omitempty" bson:"tipo"`           //T Titular Militar | F Familiar
+	EsMilitar              bool             `json:"esmilitar,omitempty" bson:"esmilitar"` //
+	FechaNacimiento        time.Time        `json:"fecha,omitempty" bson:"fecha"`
+	Parentesco             string           `json:"parentesco,omitempty" bson:"parentesco"`
+	Categoria              string           `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
+	Situacion              string           `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
+	Clase                  string           `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	FechaIngresoComponente time.Time        `json:"fingreso,omitempty" bson:"fingreso"`
+	FechaAscenso           time.Time        `json:"fascenso,omitempty" bson:"fascenso"`
+	FechaRetiro            time.Time        `json:"fretiro,omitempty" bson:"fretiro"`
+	AnoReconocido          int              `json:"areconocido" bson:"areconocido"`
+	MesReconocido          int              `json:"mreconocido" bson:"mreconocido"`
+	DiaReconocido          int              `json:"dreconocido" bson:"dreconocido"`
+	NumeroResuelto         string           `json:"nresuelto,omitempty" bson:"nresuelto"`
+	FechaResuelto          time.Time        `json:"fresuelto,omitempty" bson:"fresuelto"`
+	Grado                  string           `json:"grado" bson:"grado"`
+	Componente             string           `json:"componente" bson:"componente"`
 }
 
 func Inferencia() {
@@ -146,10 +157,24 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 	var militar []sssifanb.Militar
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	seleccion := bson.M{
+		"categoria":                   true,
 		"situacion":                   true,
+		"clase":                       true,
+		"fingreso":                    true,
+		"fascenso":                    true,
+		"fretiro":                     true,
+		"areconocido":                 true,
+		"mreconocido":                 true,
+		"dreconocido":                 true,
+		"nresuelto":                   true,
+		"fresuelto":                   true,
 		"grado.abreviatura":           true,
 		"componente.abreviatura":      true,
 		"persona.datobasico":          true,
+		"persona.datofisico":          true,
+		"persona.datofisionomico":     true,
+		"persona.direccion":           true,
+		"persona.telefono.movil":      true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
 		"familiar.esmilitar":          true,
@@ -166,12 +191,26 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 	for _, mil := range militar { //Introducir Militares
 		var prs Reduccion
 		prs.Cedula = mil.Persona.DatoBasico.Cedula
+		prs.Persona.DatoBasico = mil.Persona.DatoBasico
+		prs.Persona.DatoFisico = mil.Persona.DatoFisico
+		prs.Persona.DatoFisionomico = mil.Persona.DatoFisionomico
+		prs.Persona.Direccion = mil.Persona.Direccion
 		prs.IDT = mil.Persona.DatoBasico.Cedula
 		prs.Nombre = mil.Persona.DatoBasico.ConcatenarNombreApellido()
 		prs.Tipo = "T"
 		prs.FechaNacimiento = mil.Persona.DatoBasico.FechaNacimiento
 		prs.Sexo = mil.Persona.DatoBasico.Sexo
+		prs.Categoria = mil.Categoria
 		prs.Situacion = mil.Situacion
+		prs.Clase = mil.Clase
+		prs.FechaIngresoComponente = mil.FechaIngresoComponente
+		prs.FechaAscenso = mil.FechaAscenso
+		prs.FechaRetiro = mil.FechaRetiro
+		prs.AnoReconocido = mil.AnoReconocido
+		prs.MesReconocido = mil.MesReconocido
+		prs.DiaReconocido = mil.DiaReconocido
+		prs.NumeroResuelto = mil.NumeroResuelto
+		prs.FechaResuelto = mil.FechaResuelto
 		prs.EsMilitar = true
 		prs.Parentesco = "T"
 		prs.Grado = mil.Grado.Abreviatura
@@ -275,7 +314,8 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 
 		} else {
 			i++
-			linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
+			linea :=  ";" + strconv.Itoa(i) + rd.Cedula + ";" + rd.Persona.DatoBasico.ApellidoPrimero + 
+			"\n" + " "
 			_, e := f.WriteString(linea)
 			if e != nil {
 				fmt.Println("Error en la linea...")
