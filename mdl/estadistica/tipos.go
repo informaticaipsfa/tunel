@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
@@ -287,6 +288,19 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 		fmt.Println(err.Error())
 	}
 	i := 0
+
+	if tipo == "T" {
+		cabecera := "#;cedula;nacionalidad;apellido primero;apellido segundo;nombre primero;nombre segundo;" +
+			"sexo;fecha nacimiento;fecha defuncion;peso;talla;cabello;ojos;piel;" +
+			//"estatura;" +
+			"grupo sanguineo;sena particular;correo;ciudad;estado;municipio;direccion;" +
+			"categoria;situacion;clase;fecha ingreso;fecha ascenso;fecha resuelto;numero resuelto;" +
+			"fecha retiro;grado;componente"
+		_, e := f.WriteString(cabecera)
+		if e != nil {
+			fmt.Println("Error en la linea...")
+		}
+	}
 	for _, rd := range reduccion {
 		if tipo == "F" {
 			a, _, _ := rd.FechaNacimiento.Date()
@@ -313,9 +327,72 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			}
 
 		} else {
+			ciudad := ""
+			estado := ""
+			municipio := ""
+			direccion := ""
+			if len(rd.Persona.Direccion) > 0 {
+				ciudad = rd.Persona.Direccion[0].Ciudad
+				estado = rd.Persona.Direccion[0].Estado
+				municipio = rd.Persona.Direccion[0].Municipio
+				direccion = rd.Persona.Direccion[0].CalleAvenida + " Casa " + rd.Persona.Direccion[0].Casa
+			}
+
+			convertir := rd.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
+			fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
+
+			a, _, _ := rd.Persona.DatoBasico.FechaDefuncion.Date() // Fecha de Defunción en caso de poseerla
+			fechaSlashDefuncion := ""
+			if a > 1000 {
+				convertirDef := rd.Persona.DatoBasico.FechaDefuncion.Format("2006-01-02")
+				fechaSlashDefuncion = strings.Replace(convertirDef, "-", "/", -1)
+			}
+			fechai := rd.FechaIngresoComponente.Format("2006-01-02") // Fecha de Ingreso al componente
+			fechaIngreso := strings.Replace(fechai, "-", "/", -1)
+			fechaa := rd.FechaAscenso.Format("2006-01-02") // Fecha de Ascenso al componente
+			fechaAscenso := strings.Replace(fechaa, "-", "/", -1)
+
+			aa, _, _ := rd.FechaResuelto.Date() // Fecha de Defunción en caso de poseerla
+			fechaSlashResuelto := ""
+			if aa > 1000 {
+				convertirRes := rd.FechaResuelto.Format("2006-01-02")
+				fechaSlashResuelto = strings.Replace(convertirRes, "-", "/", -1)
+			}
+
+			aaa, _, _ := rd.FechaRetiro.Date() // Fecha de Defunción en caso de poseerla
+			fechaSlashRetiro := ""
+			if aaa > 1000 {
+				convertirRet := rd.FechaRetiro.Format("2006-01-02")
+				fechaSlashRetiro = strings.Replace(convertirRet, "-", "/", -1)
+			}
+
 			i++
-			linea :=  ";" + strconv.Itoa(i) + rd.Cedula + ";" + rd.Persona.DatoBasico.ApellidoPrimero + 
-			"\n" + " "
+			linea := ";" + strconv.Itoa(i) +
+				";" + rd.Cedula +
+				";" + rd.Persona.DatoBasico.Nacionalidad +
+				";" + rd.Persona.DatoBasico.ApellidoPrimero + ";" + rd.Persona.DatoBasico.ApellidoSegundo +
+				";" + rd.Persona.DatoBasico.NombrePrimero + ";" + rd.Persona.DatoBasico.NombreSegundo +
+				";" + rd.Persona.DatoBasico.Sexo +
+				";" + fechaSlashNacimiento +
+				";" + fechaSlashDefuncion +
+				";" + rd.Persona.DatoFisico.Peso + ";" + rd.Persona.DatoFisico.Talla +
+				";" + rd.Persona.DatoFisionomico.ColorCabello + ";" + rd.Persona.DatoFisionomico.ColorOjos +
+				";" + rd.Persona.DatoFisionomico.ColorPiel +
+				//";" + rd.Persona.DatoFisionomico.Estatura +
+				";" + rd.Persona.DatoFisionomico.GrupoSanguineo + ";" + rd.Persona.DatoFisionomico.SenaParticular +
+				";" + rd.Persona.Correo.Principal +
+				";" + ciudad + ";" + estado + ";" + municipio + ";" + direccion +
+				";" + rd.Categoria +
+				";" + rd.Situacion +
+				";" + rd.Clase +
+				";" + fechaIngreso +
+				";" + fechaAscenso +
+				";" + fechaSlashResuelto +
+				";" + rd.NumeroResuelto +
+				";" + fechaSlashRetiro +
+				";" + rd.Grado +
+				";" + rd.Componente +
+				"\n"
 			_, e := f.WriteString(linea)
 			if e != nil {
 				fmt.Println("Error en la linea...")
