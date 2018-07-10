@@ -9,6 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/sys"
 	mgo "gopkg.in/mgo.v2"
@@ -255,13 +257,30 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 	return true
 }
 
+var ListadoEstados []fanb.Estado
+
+func ConsultarEstado(cod string) string {
+	var est string
+	for _, estado := range ListadoEstados {
+		if cod == estado.Codigo {
+			est = estado.Nombre
+		}
+	}
+	return est
+}
+
 //ExportarCSV Familiares y Titulares Estadisticas
 func (r *Reduccion) ExportarCSV(tipo string) {
 	var TP TareasPendientes
+	var Estados fanb.Estado
+
+	ListadoEstados = Estados.ConsultarTodo() //Cargando todos los estados
+
 	nombrefecha := time.Now().String()[:19]
 	TP.Estatus = 0
 	TP.FechaInicio = time.Now()
-	buscar := bson.M{"tipo": "T", "situacion": bson.M{"$ne": "FCP"}}
+	// buscar := bson.M{"tipo": "T", "situacion": bson.M{"$ne": "FCP"}}
+	buscar := bson.M{"tipo": "T"}
 	TP.Observacion = "Creando csv de militares"
 	TP.Tipo = "CSV"
 	nom := "MIL-"
@@ -290,7 +309,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 	i := 0
 
 	if tipo == "T" {
-		cabecera := "#;cedula;nacionalidad;apellido primero;apellido segundo;nombre primero;nombre segundo;" +
+		cabecera := "#;cedula;nacionalidad;apellido;nombre;" +
 			"sexo;fecha nacimiento;fecha defuncion;peso;talla;cabello;ojos;piel;" +
 			//"estatura;" +
 			"grupo sanguineo;sena particular;correo;ciudad;estado;municipio;direccion;" +
@@ -370,8 +389,8 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			linea := strconv.Itoa(i) +
 				";" + rd.Cedula +
 				";" + rd.Persona.DatoBasico.Nacionalidad +
-				";" + rd.Persona.DatoBasico.ApellidoPrimero + ";" + rd.Persona.DatoBasico.ApellidoSegundo +
-				";" + rd.Persona.DatoBasico.NombrePrimero + ";" + rd.Persona.DatoBasico.NombreSegundo +
+				";" + rd.Persona.DatoBasico.ApellidoPrimero +
+				";" + rd.Persona.DatoBasico.NombrePrimero +
 				";" + rd.Persona.DatoBasico.Sexo +
 				";" + fechaSlashNacimiento +
 				";" + fechaSlashDefuncion +
@@ -381,7 +400,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 				//";" + rd.Persona.DatoFisionomico.Estatura +
 				";" + rd.Persona.DatoFisionomico.GrupoSanguineo + ";" + rd.Persona.DatoFisionomico.SenaParticular +
 				";" + rd.Persona.Correo.Principal +
-				";" + ciudad + ";" + estado + ";" + municipio + ";" + direccion +
+				";" + ciudad + ";" + ConsultarEstado(estado) + ";" + municipio + ";" + direccion +
 				";" + rd.Categoria +
 				";" + rd.Situacion +
 				";" + rd.Clase +
