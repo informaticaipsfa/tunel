@@ -751,8 +751,8 @@ func QueryMysqlText(contenido string, tipo int) string {
 		parametro = "cedula, nombre, descripcion, direccion, familiares"
 		break
 	}
-	return `SELECT id, cedula, nombre, descripcion, direccion, familiares, MATCH (` + parametro + `) 
-	AGAINST ('` + contenido + `' IN BOOLEAN MODE) AS puntuacion FROM datos  
-	WHERE MATCH (` + parametro + `) AGAINST ('` + contenido + `'  IN BOOLEAN MODE) 
-	ORDER BY puntuacion DESC LIMIT 50`
+	return `SELECT id, cedula, nombre, descripcion, direccion, familiares, MATCH (` + parametro + `)
+	AGAINST ('` + contenido + `' IN BOOLEAN MODE) AS puntuacion FROM datos
+	WHERE MATCH (` + parametro + `) AGAINST ('` + contenido + `'  IN BOOLEAN MODE)
+	ORDER BY puntuacion DESC LIMIT 2000`
 }
