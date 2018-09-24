@@ -178,6 +178,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		"persona.datofisionomico":     true,
 		"persona.direccion":           true,
 		"persona.telefono":            true,
+		"persona.correo":            	 true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
 		"familiar.esmilitar":          true,
@@ -199,7 +200,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		prs.Persona.DatoFisionomico = mil.Persona.DatoFisionomico
 		prs.Persona.Direccion = mil.Persona.Direccion
 		prs.Persona.Correo = mil.Persona.Correo
-		mil.Persona.Telefono = mil.Persona.Telefono
+		prs.Persona.Telefono = mil.Persona.Telefono
 		prs.IDT = mil.Persona.DatoBasico.Cedula
 		prs.Nombre = mil.Persona.DatoBasico.ConcatenarNombreApellido()
 		prs.Tipo = "T"
