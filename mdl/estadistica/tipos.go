@@ -177,7 +177,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		"persona.datofisico":          true,
 		"persona.datofisionomico":     true,
 		"persona.direccion":           true,
-		"persona.telefono.movil":      true,
+		"persona.telefono":            true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
 		"familiar.esmilitar":          true,
@@ -198,6 +198,8 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		prs.Persona.DatoFisico = mil.Persona.DatoFisico
 		prs.Persona.DatoFisionomico = mil.Persona.DatoFisionomico
 		prs.Persona.Direccion = mil.Persona.Direccion
+		prs.Persona.Correo = mil.Persona.Correo
+		mil.Persona.Telefono = mil.Persona.Telefono
 		prs.IDT = mil.Persona.DatoBasico.Cedula
 		prs.Nombre = mil.Persona.DatoBasico.ConcatenarNombreApellido()
 		prs.Tipo = "T"
@@ -312,7 +314,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 		cabecera := "#;cedula;nacionalidad;apellido;nombre;" +
 			"sexo;fecha nacimiento;fecha defuncion;peso;talla;cabello;ojos;piel;" +
 			//"estatura;" +
-			"grupo sanguineo;sena particular;correo;ciudad;estado;municipio;direccion;" +
+			"grupo sanguineo;sena particular;correo;telefono;ciudad;estado;municipio;direccion;" +
 			"categoria;situacion;clase;fecha ingreso;fecha ascenso;fecha resuelto;numero resuelto;" +
 			"fecha retiro;grado;componente"
 		_, e := f.WriteString(cabecera)
@@ -409,6 +411,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 				//";" + rd.Persona.DatoFisionomico.Estatura +
 				";" + rd.Persona.DatoFisionomico.GrupoSanguineo + ";" + rd.Persona.DatoFisionomico.SenaParticular +
 				";" + rd.Persona.Correo.Principal +
+				";" + rd.Persona.Telefono.Movil + "|" + rd.Persona.Telefono.Domiciliario +
 				";" + ciudad + ";" + ConsultarEstado(estado) + ";" + municipio + ";" + direccion +
 				";" + rd.Categoria +
 				";" + rd.Situacion +
