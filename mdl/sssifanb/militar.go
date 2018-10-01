@@ -274,6 +274,17 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	return
 }
 
+func (m *Militar) ActualizarFoto() {
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	foto := make(map[string]interface{})
+	foto["persona.foto"] = "foto.jpg"
+	er := c.Update(bson.M{"id": m.ID}, bson.M{"$set": foto})
+	fmt.Println(m.ID, "Actualizando sssifanb... x-x", er)
+	if er != nil {
+		fmt.Println(m.ID, er)
+	}
+}
+
 //ConsultarSAMAN Militar
 func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
 	var msj Mensaje
@@ -656,7 +667,7 @@ func (m *Militar) ActualizarGradoCodigo() {
 		var comp fanb.Componente
 
 		v.Grado.Nombre = comp.ObtenerGradoID(v.Componente.Abreviatura, v.Grado.Abreviatura)
-		fmt.Println("ID : ", v.ID, " CODIGO: ", v.Grado.Nombre)
+		//fmt.Println("ID : ", v.ID, " CODIGO: ", v.Grado.Nombre)
 		grado := make(map[string]interface{})
 		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 		grado["grado.nombre"] = v.Grado.Nombre

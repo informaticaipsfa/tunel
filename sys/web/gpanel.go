@@ -180,7 +180,7 @@ func (G *GPanel) IrA(w http.ResponseWriter, r *http.Request) {
 	// }
 }
 
-//Subir archivos al sistema
+//SubirArchivoLoteria archivos al sistema
 func (G *GPanel) SubirArchivoLoteria(w http.ResponseWriter, r *http.Request) {
 
 	// session, e := seguridad.Stores.Get(r, "session-bdse")

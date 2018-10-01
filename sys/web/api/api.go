@@ -3,7 +3,9 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -131,16 +133,7 @@ func (p *Militar) Eliminar(w http.ResponseWriter, r *http.Request) {
 //EstadisticasPorComponente
 func (p *Militar) EstadisticasPorComponente(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
-	// ip := strings.Split(r.RemoteAddr, ":")
 	var militar sssifanb.Militar
-	// err := json.NewDecoder(r.Body).Decode(&militar)
-	// if err != nil {
-	// 	fmt.Println(err.Error())
-	// 	fmt.Println("Estoy en un error ", err.Error())
-	// 	w.WriteHeader(http.StatusForbidden)
-	// 	return
-	// }
-
 	j, _ := militar.EstadisticasPorComponente()
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
@@ -216,6 +209,89 @@ func (p *Militar) Listado(w http.ResponseWriter, r *http.Request) {
 func (p *Militar) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	fmt.Println("OPTIONS...")
-	//fmt.Fprintf(w, "Saludos")
+	//fmt.Println(w, "Saludos")
+
+}
+
+func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var traza fanb.Traza
+	var M sssifanb.Mensaje
+	var militar sssifanb.Militar
+
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+
+	er := r.ParseMultipartForm(32 << 20)
+	if er != nil {
+		fmt.Println(er)
+		return
+	}
+	m := r.MultipartForm
+	files := m.File["archivo"]
+	cedula := r.FormValue("txtFileID")
+	// fmt.Println("CEDULA", r.FormValue("txtFileID"))
+
+	if cedula == "" {
+		M.Mensaje = "Carga fallida"
+		M.Tipo = -1
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusOK)
+		w.Write(j)
+		return
+	}
+
+	directorio := "./public_web/SSSIFANB/afiliacion/temp/" + cedula
+	errr := os.Mkdir(directorio, 0775)
+	if errr != nil {
+		fmt.Println("la carpeta ya existe.")
+		// return
+	}
+	militar.ID = cedula
+	militar.ActualizarFoto()
+	cadena := ""
+	for i, _ := range files {
+		file, errf := files[i].Open()
+		defer file.Close()
+		if errf != nil {
+			fmt.Println(errf)
+			return
+		}
+		out, er := os.Create("./public_web/SSSIFANB/afiliacion/temp/" + cedula + "/" + files[i].Filename)
+		defer out.Close()
+		if er != nil {
+			fmt.Println("No se pudo escribir el archivo verifique los privilegios.")
+			return
+		}
+		_, err := io.Copy(out, file) // file not files[i] !
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		cadena += files[i].Filename + ";"
+		//fmt.Println("Archivo " + files[i].Filename + " enviado..." + "\n")
+
+	}
+
+	fmt.Println("Carga de archivos lista para: ", cedula)
+
+	if UsuarioConectado.Login[:3] != "act" {
+
+		traza.Documento = "Agregando Historial Digital ( " + cedula + " )"
+		traza.Log = cadena
+		traza.CrearHistoricoConsulta("hmilitar")
+		M.Mensaje = "Carga exitosa"
+		M.Tipo = 2
+	} else {
+		M.Mensaje = "Carga fallida"
+		M.Tipo = -1
+	}
+
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 
 }
