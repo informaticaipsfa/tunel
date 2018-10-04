@@ -41,6 +41,7 @@ type Militar struct {
 	NumeroResuelto               string              `json:"nresuelto,omitempty" bson:"nresuelto"`
 	FechaResuelto                time.Time           `json:"fresuelto,omitempty" bson:"fresuelto"`
 	Posicion                     int                 `json:"posicion,omitempty" bson:"posicion"`
+	Condicion                    int                 `json:"condicion,omitempty" bson:"condicion"`
 	DescripcionHistorica         string              `json:"dhistorica,omitempty" bson:"dhistorica"` //codigo
 	Componente                   Componente          `json:"Componente,omitempty" bson:"componente"`
 	Grado                        Grado               `json:"Grado,omitempty" bson:"grado"` //grado
@@ -388,6 +389,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	mOriginal.FechaAscenso = m.FechaAscenso
 	mOriginal.FechaResuelto = m.FechaResuelto
 	mOriginal.Posicion = m.Posicion
+	mOriginal.Condicion = m.Condicion
 	mOriginal.NumeroResuelto = m.NumeroResuelto
 	mOriginal.CodigoComponente = m.CodigoComponente
 	mOriginal.NumeroHistoria = m.NumeroHistoria
