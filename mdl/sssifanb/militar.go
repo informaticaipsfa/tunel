@@ -413,8 +413,9 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	}
 	//Saman
 	s := ActualizarPersona(m.Persona)
-	x := ActualizarMilitar(mOriginal)
-	go ActualizarPostgresSaman(s + x)
+	//x := ActualizarMilitar(mOriginal)
+	//go ActualizarPostgresSaman(s + x)
+	go ActualizarPostgresSaman(s)
 	//fmt.Println(s, x)
 	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal))
 
