@@ -217,10 +217,8 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var traza fanb.Traza
 	var M sssifanb.Mensaje
-	var militar sssifanb.Militar
 
 	ip := strings.Split(r.RemoteAddr, ":")
-
 	traza.IP = ip[0]
 	traza.Time = time.Now()
 	traza.Usuario = UsuarioConectado.Login
@@ -233,7 +231,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 	m := r.MultipartForm
 	files := m.File["archivo"]
 	cedula := r.FormValue("txtFileID")
-	// fmt.Println("CEDULA", r.FormValue("txtFileID"))
+	directorio := "./public_web/SSSIFANB/afiliacion/temp/" + cedula + "/"
 
 	if cedula == "" {
 		M.Mensaje = "Carga fallida"
@@ -242,16 +240,15 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write(j)
 		return
+	} else if cedula == "DESERTOR" {
+		directorio = "./tmp/"
+
 	}
 
-	directorio := "./public_web/SSSIFANB/afiliacion/temp/" + cedula
 	errr := os.Mkdir(directorio, 0775)
 	if errr != nil {
 		fmt.Println("la carpeta ya existe.")
-		// return
 	}
-	militar.ID = cedula
-	militar.ActualizarFoto()
 	cadena := ""
 	for i, _ := range files {
 		file, errf := files[i].Open()
@@ -260,7 +257,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(errf)
 			return
 		}
-		out, er := os.Create("./public_web/SSSIFANB/afiliacion/temp/" + cedula + "/" + files[i].Filename)
+		out, er := os.Create(directorio + files[i].Filename)
 		defer out.Close()
 		if er != nil {
 			fmt.Println("No se pudo escribir el archivo verifique los privilegios.")
@@ -272,11 +269,14 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		cadena += files[i].Filename + ";"
-		//fmt.Println("Archivo " + files[i].Filename + " enviado..." + "\n")
+		if cedula == "DESERTOR" {
+			var desertor sssifanb.Desertor
+			go desertor.LeerDesertores(files[i].Filename)
+		}
 
 	}
 
-	fmt.Println("Carga de archivos lista para: ", cedula)
+	//fmt.Println("Carga de archivos lista para: ", cedula)
 
 	if UsuarioConectado.Login[:3] != "act" {
 

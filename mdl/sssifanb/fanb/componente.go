@@ -60,7 +60,7 @@ func (comp *Componente) Consultar(componente string) (jSon []byte, err error) {
 func (comp *Componente) ConsultarGrado(componente string, grado string) (ComponenteConver Conversion) {
 	// var ComponenteConver Conversion
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CCOMPONENTE)
-	fmt.Println("codigo: ", componente, "Grado.codigo: ", grado)
+	//fmt.Println("codigo: ", componente, "Grado.codigo: ", grado)
 	err := c.Find(bson.M{"codigo": componente}).One(&comp)
 	ComponenteConver.Componente = ComponenteID(comp.Codigo)
 	if err != nil {

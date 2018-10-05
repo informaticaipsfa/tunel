@@ -55,7 +55,7 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportecomponente", wUsuario.ValidarToken(per.EstadisticasPorComponente)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportegrado", wUsuario.ValidarToken(per.EstadisticasPorGrado)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportefamiliar", wUsuario.ValidarToken(per.EstadisticasFamiliar)).Methods("POST")
-	// Enrutador.HandleFunc("/ipsfa/api/militar/subirarchivos", wUsuario.ValidarToken(per.SubirArchivos)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivos", wUsuario.ValidarToken(per.SubirArchivos)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", wUsuario.ValidarToken(comp.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/estado", wUsuario.ValidarToken(esta.Consultar)).Methods("GET")
@@ -175,7 +175,6 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/militar/reportefamiliar", per.EstadisticasFamiliar).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/listado", per.Listado).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/subirarchivos", per.SubirArchivos).Methods("POST")
-	// Enrutador.HandleFunc("/ipsfa/api/militar/subirarchivos", per.SubirArchivos).Methods("GET")
 
 	Enrutador.HandleFunc("/devel/api/componente/{id}", comp.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/estado", esta.Consultar).Methods("GET")

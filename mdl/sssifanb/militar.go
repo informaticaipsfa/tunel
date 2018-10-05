@@ -275,17 +275,6 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	return
 }
 
-func (m *Militar) ActualizarFoto() {
-	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
-	foto := make(map[string]interface{})
-	foto["persona.foto"] = "foto.jpg"
-	er := c.Update(bson.M{"id": m.ID}, bson.M{"$set": foto})
-	fmt.Println(m.ID, "Actualizando sssifanb... x-x", er)
-	if er != nil {
-		fmt.Println(m.ID, er)
-	}
-}
-
 //ConsultarSAMAN Militar
 func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
 	var msj Mensaje

@@ -127,7 +127,7 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 			//var claims jwt.Claims
 			reclamacion := token.Claims.(*seguridad.Reclamaciones)
 			UsuarioConectado = reclamacion.Usuario
-			fmt.Println("Se esta conectando: ", reclamacion.Usuario.Nombre, " Desde: ", reclamacion.Usuario.FirmaDigital.DireccionIP)
+			//fmt.Println("Se esta conectando: ", reclamacion.Usuario.Nombre, " Desde: ", reclamacion.Usuario.FirmaDigital.DireccionIP)
 			return seguridad.LlavePublica, nil
 		})
 
