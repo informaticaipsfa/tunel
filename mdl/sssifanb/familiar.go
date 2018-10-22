@@ -207,10 +207,10 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	switch {
 	case edad < 15:
 		Anio += 5
-	case edad >= 15 && edad <= 18:
+	case edad >= 15 && edad <= 17:
 		Anio += 3
-	case edad > 18 && edad <= 27:
-		Anio += 2
+	case edad > 17 && edad <= 27:
+		Anio += 8
 	case edad > 18 && f.Condicion == 1:
 		Anio += 5
 	}
