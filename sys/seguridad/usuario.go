@@ -102,7 +102,7 @@ type Usuario struct {
 
 //FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
 type FirmaDigital struct {
-	DireccionMac string    `json:"direccionmap,omitempty" bson:"direccionmap"`
+	DireccionMac string    `json:"direccionmac,omitempty" bson:"direccionmac"`
 	DireccionIP  string    `json:"direccionip,omitempty" bson:"direccionip"`
 	Tiempo       time.Time `json:"tiempo,omitempty" bson:"tiempo"`
 }

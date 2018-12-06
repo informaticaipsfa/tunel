@@ -217,6 +217,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var traza fanb.Traza
 	var M sssifanb.Mensaje
+  var militarF sssifanb.Militar
 
 	ip := strings.Split(r.RemoteAddr, ":")
 	traza.IP = ip[0]
@@ -285,6 +286,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 		traza.CrearHistoricoConsulta("hmilitar")
 		M.Mensaje = "Carga exitosa"
 		M.Tipo = 2
+		militarF.ActualizarFoto(cedula)
 	} else {
 		M.Mensaje = "Carga fallida"
 		M.Tipo = -1

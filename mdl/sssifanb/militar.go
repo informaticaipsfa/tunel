@@ -452,6 +452,16 @@ func ActualizarMysqlFullText(d string) {
 	}
 }
 
+func (m *Militar) ActualizarFoto(id string){
+	persona := make(map[string]interface{})
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	persona["persona.foto"] = id
+	err := c.Update(bson.M{"id": id}, bson.M{"$set": persona})
+	if err != nil {
+		fmt.Println("Err", err.Error())
+	}
+}
+
 //SalvarMGO Guardar
 func (m *Militar) SalvarMGO() (err error) {
 	var comp fanb.Componente
