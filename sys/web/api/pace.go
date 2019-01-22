@@ -1,19 +1,24 @@
 package api
 import (
+  "fmt"
   "encoding/json"
 	"net/http"
   "io/ioutil"
 
   "github.com/gorilla/mux"
+  "github.com/informaticaipsfa/tunel/sys"
   "github.com/informaticaipsfa/tunel/mdl/sssifanb"
+
 )
-const IP_PACE = "192.168.11.35"
+
+
 //ConsultarPACE Militar
 func (p *Militar) ConsultarPACE(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
   var M sssifanb.Mensaje
   var cedula = mux.Vars(r)
-  url := "http://" + IP_PACE + "/system/space/index.php/panel/WServer/" + cedula["id"]
+  url := "http://" + sys.HostIPPace + sys.HostUrlPace + cedula["id"]
+  //fmt.Println(url);
   response, err := http.Get(url)
 	 if err != nil {
      M.Mensaje = err.Error()
