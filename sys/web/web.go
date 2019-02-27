@@ -1,4 +1,4 @@
-	package web
+package web
 
 //Copyright Carlos Peña
 //Modulo de negociación WEB
@@ -16,11 +16,15 @@ var (
 	WsEnrutador = mux.NewRouter()
 )
 
+//Cargar los diferentes modulos del sistema
 func Cargar() {
 	CargarModulosWeb()
+	CargarModulosNomina()
 	CargarModulosSeguridad()
+
 	WMAdminLTE()
 	CargarModulosWebDevel()
+
 }
 
 //CargarModulosWeb Cargador de modulos web
@@ -53,7 +57,6 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/listado", wUsuario.ValidarToken(per.Listado)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/militar/pace/{id}", wUsuario.ValidarToken(per.ConsultarPACE)).Methods("GET")
-
 
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportecomponente", wUsuario.ValidarToken(per.EstadisticasPorComponente)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportegrado", wUsuario.ValidarToken(per.EstadisticasPorGrado)).Methods("POST")
@@ -113,6 +116,18 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/extraerdatosmysql", wUsuario.ValidarToken(wpanel.ExtraerDatosMySQL)).Methods("POST")
 }
 
+//CargarModulosNomina Nomina del personal Militar
+func CargarModulosNomina() {
+	var wUsuario api.WUsuario
+	var concepto api.WNomina
+	var medida api.WMedidaJudicial
+
+	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/listar", wUsuario.ValidarToken(concepto.Listar)).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/nomina/medidajudicial", medida.Consultar).Methods("GET")
+}
+
+//CargarModulosSeguridad Y cifrado
 func CargarModulosSeguridad() {
 	var wUsuario api.WUsuario
 	// Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crud/{id}", wUsuario.Consultar).Methods("GET")
@@ -178,7 +193,6 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/militar/reportefamiliar", per.EstadisticasFamiliar).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/listado", per.Listado).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/subirarchivos", per.SubirArchivos).Methods("POST")
-
 
 	Enrutador.HandleFunc("/devel/api/militar/pace/{id}", per.ConsultarPACE).Methods("GET")
 

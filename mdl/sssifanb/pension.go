@@ -55,6 +55,7 @@ type Pension struct {
 	PrimaProfesional       float64                  `json:"pprofesional" bson:"pprofesional"`
 	PrimaNoAscenso         float64                  `json:"pnoascenso" bson:"pnoascenso"`
 	PrimaEspecial          float64                  `json:"pespecial" bson:"pespecial"`
+	MedidaJudicial         MedidaJudicial           `json:"MedidaJudicial" bson:"medidajudicial"`
 }
 
 type HistorialPensionSueldo struct {

@@ -37,14 +37,14 @@ type Carnet struct {
 }
 
 //AplicarReglas Basicas
-func (c *Carnet) AplicarReglas() {
+func (tim *Carnet) AplicarReglas() {
 	//Generar serial
 	//Generar CodigoComponente
 
 }
 
 //GenerarSerial Seriales de Carnet
-func (c *Carnet) GenerarSerial() string {
+func (tim *Carnet) GenerarSerial() string {
 	var Semillero fanb.Semillero
 	i, _ := Semillero.Maximo("semillero")
 	return util.CompletarCeros(strconv.Itoa(i), 0, 8)
@@ -53,7 +53,7 @@ func (c *Carnet) GenerarSerial() string {
 //Salvar Guardar
 func (tim *Carnet) Salvar() (err error) {
 	var militar Militar
-	fmt.Println("Salvar " + tim.Usuario)
+	//fmt.Println("Salvar " + tim.Usuario)
 	militar.ConsultarMGO(tim.ID)
 	militar.TIM.ID = tim.ID
 	militar.TIM.IDF = tim.IDF
@@ -75,19 +75,19 @@ func (tim *Carnet) Salvar() (err error) {
 				switch v.Parentesco {
 				case "PD":
 					TIMS = v.AplicarReglasCarnetPadres()
-					fmt.Println("Entrando, Padre...")
+					//fmt.Println("Entrando, Padre...")
 				case "HJ":
 					TIMS = v.AplicarReglasCarnetHijos()
-					fmt.Println("Entrando, Hijos...")
+					//fmt.Println("Entrando, Hijos...")
 				case "EA":
 					TIMS = v.AplicarReglasCarnetEsposa()
-					fmt.Println("Entrando, Esposa...")
+					//fmt.Println("Entrando, Esposa...")
 				case "VI":
 					TIMS = v.AplicarReglasCarnetEsposa()
-					fmt.Println("Entrando, Esposa...")
+					//fmt.Println("Entrando, Esposa...")
 				case "HO":
 					TIMS = v.AplicarReglasCarnetHermanos()
-					fmt.Println("Entrando, Hermano...")
+					//fmt.Println("Entrando, Hermano...")
 				}
 			}
 		}
@@ -124,7 +124,7 @@ func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 	return
 }
 
-//Consultar Carnets
+//CambiarEstadoMilitar Carnets
 func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int) (err error) {
 	var TIM Carnet
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
@@ -172,6 +172,7 @@ func (tim *Carnet) Listar(estatus int, usuario string) (jSon []byte, err error) 
 	return
 }
 
+//ProcesarYActualizar Carnet Propios
 func (tim *Carnet) ProcesarYActualizar() {
 	var lst []Carnet
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
@@ -187,7 +188,7 @@ func (tim *Carnet) ProcesarYActualizar() {
 		i++
 		carnet := make(map[string]interface{})
 		if TIM.IDF == "" { //Militar
-			fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " TIT ")
+			//fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " TIT ")
 			carnet["tim"] = TIM
 			err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
 
@@ -199,12 +200,10 @@ func (tim *Carnet) ProcesarYActualizar() {
 	}
 }
 
-
-
 //Limpiar Carnet Propios
-func (tim *Carnet) Limpiar(estatus int, sucursal string) ( err error) {
+func (tim *Carnet) Limpiar(estatus int, sucursal string) (err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
-	_, err = c.UpdateAll(bson.M{"estatus": estatus, "usuario": sucursal}, bson.M{"$set": bson.M{"estatus" : 5} })
+	_, err = c.UpdateAll(bson.M{"estatus": estatus, "usuario": sucursal}, bson.M{"$set": bson.M{"estatus": 5}})
 	if err != nil {
 		fmt.Println("No se lograron actualizar los datos")
 		return

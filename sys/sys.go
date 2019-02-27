@@ -23,4 +23,6 @@ const (
 	CUSUARIO          string = "usuario"
 	CREDUCCION        string = "reduccion"
 	CTAREASPENDIENDTE string = "tareaspendientes"
+	CCONCEPTO         string = "conceptos"
+	CMEDIDAJUDICIAL   string = "medidajudicial"
 )
