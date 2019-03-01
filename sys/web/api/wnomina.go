@@ -9,7 +9,18 @@ import (
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 )
 
+type WConcepto struct {
+	Codigo  string `json:"codigo,omitempty" bson:"codigo"`
+	Nombre  string `json:"nombre,omitempty" bson:"nombre"`
+	Partida string `json:"partida,omitempty" bson:"partida"`
+	Formula string `json:"formula,omitempty" bson:"formula"`
+}
+
 type WNomina struct {
+	ID        string      `json:"id,omitempty" bson:"id"`
+	Directiva string      `json:"directiva,omitempty" bson:"directiva"`
+	Fecha     string      `json:"fecha,omitempty" bson:"fecha"`
+	Concepto  []WConcepto `json:"Concepto,omitempty" bson:"Concepto"`
 }
 
 //Agregar un concepto nuevo
