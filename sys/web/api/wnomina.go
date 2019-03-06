@@ -28,7 +28,6 @@ func (N *WNomina) Agregar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var concepto fanb.Concepto
-	fmt.Println("Estoy entrando...")
 	err := json.NewDecoder(r.Body).Decode(&concepto)
 	M.Tipo = 1
 	if err != nil {

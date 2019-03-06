@@ -12,6 +12,8 @@ type Archivo struct {
 	Ruta             string
 	NombreDelArchivo string
 	Codificacion     string
+	CantidadLineas   int
+	Leer             bool
 }
 
 func (a *Archivo) Crear(cadena string) bool {

@@ -62,6 +62,7 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportegrado", wUsuario.ValidarToken(per.EstadisticasPorGrado)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportefamiliar", wUsuario.ValidarToken(per.EstadisticasFamiliar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivos", wUsuario.ValidarToken(per.SubirArchivos)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivostxt", wUsuario.ValidarToken(per.SubirArchivosTXTPensiones)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", wUsuario.ValidarToken(comp.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/estado", wUsuario.ValidarToken(esta.Consultar)).Methods("GET")
@@ -125,12 +126,13 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/listar", wUsuario.ValidarToken(concepto.Listar)).Methods("GET")
-	Enrutador.HandleFunc("/devel/api/nomina/medidajudicial", medida.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva", wUsuario.ValidarToken(M.ConsultarDirectiva)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/detalle/{id}", wUsuario.ValidarToken(M.ConsultarDetalleDirectiva)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/generar", wUsuario.ValidarToken(M.GenerarNomina)).Methods("POST")
-
 	Enrutador.HandleFunc("/devel/api/nomina/generar", M.GenerarNomina).Methods("POST")
+
+	Enrutador.HandleFunc("/devel/api/medidajudicial", wUsuario.ValidarToken(medida.Consultar)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/medidajudicial", wUsuario.ValidarToken(medida.Agregar)).Methods("POST")
 }
 
 //CargarModulosSeguridad Y cifrado

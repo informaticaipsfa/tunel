@@ -82,7 +82,7 @@ func (f *Familiar) ConvertirFechaHumano() {
 
 }
 
-//Actualizar Vida Militar
+//MGOActualizar Vida Militar
 func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 	var msj Mensaje
 	//f.TipoDato = 0
@@ -107,7 +107,7 @@ func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 	return
 }
 
-//MGOActualizar Actualizando en MONGO
+//Actualizar Actualizando en MONGO
 func (f *Familiar) Actualizar() (jSon []byte, err error) {
 
 	id := f.Persona.DatoBasico.Cedula

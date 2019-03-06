@@ -35,6 +35,7 @@ type PensionMilitar struct {
 	Pension                Pension    `json:"Pension,omitempty" bson:"pension"`
 }
 
+//Pension Codición del militar
 type Pension struct {
 	GradoCodigo            string                   `json:"grado" bson:"grado"`
 	ComponenteCodigo       string                   `json:"componente" bson:"componente"`
@@ -55,9 +56,10 @@ type Pension struct {
 	PrimaProfesional       float64                  `json:"pprofesional" bson:"pprofesional"`
 	PrimaNoAscenso         float64                  `json:"pnoascenso" bson:"pnoascenso"`
 	PrimaEspecial          float64                  `json:"pespecial" bson:"pespecial"`
-	MedidaJudicial         MedidaJudicial           `json:"MedidaJudicial" bson:"medidajudicial"`
+	MedidaJudicial         []MedidaJudicial         `json:"MedidaJudicial" bson:"medidajudicial"`
 }
 
+//HistorialPensionSueldo Historico
 type HistorialPensionSueldo struct {
 	Directiva       string  `json:"directiva" bson:"directiva"`
 	Sueldo          float64 `json:"sueldo" bson:"sueldo"`

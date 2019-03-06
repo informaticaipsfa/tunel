@@ -217,7 +217,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var traza fanb.Traza
 	var M sssifanb.Mensaje
-  var militarF sssifanb.Militar
+	var militarF sssifanb.Militar
 
 	ip := strings.Split(r.RemoteAddr, ":")
 	traza.IP = ip[0]
@@ -233,7 +233,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 	files := m.File["archivo"]
 	cedula := r.FormValue("txtFileID")
 	directorio := "./public_web/SSSIFANB/afiliacion/temp/" + cedula + "/"
-
+	fmt.Println(directorio)
 	if cedula == "" {
 		M.Mensaje = "Carga fallida"
 		M.Tipo = -1
@@ -291,6 +291,63 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 		M.Mensaje = "Carga fallida"
 		M.Tipo = -1
 	}
+
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+
+}
+
+//SubirArchivosTXTPensiones Pensionados
+func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var traza fanb.Traza
+	var M sssifanb.Mensaje
+
+	ip := strings.Split(r.RemoteAddr, ":")
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+
+	er := r.ParseMultipartForm(32 << 20)
+	if er != nil {
+		fmt.Println(er)
+		return
+	}
+	m := r.MultipartForm
+	files := m.File["input-folder-2"]
+	//cedula := r.FormValue("txtFileID")
+	directorio := "./public_web/SSSIFANB/pensiones/temp/nomina/"
+	errr := os.Mkdir(directorio, 0777)
+	if errr != nil {
+		fmt.Println(errr.Error())
+	}
+	fmt.Println("Continuando...", files)
+	cadena := ""
+	for i, _ := range files {
+		file, errf := files[i].Open()
+		defer file.Close()
+		if errf != nil {
+			fmt.Println(errf)
+			return
+		}
+		fmt.Println(files[i].Filename)
+		out, er := os.Create(directorio + files[i].Filename)
+		defer out.Close()
+		if er != nil {
+			fmt.Println(er.Error())
+			return
+		}
+		_, err := io.Copy(out, file) // file not files[i] !
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		cadena += files[i].Filename + ";"
+
+	}
+	M.Mensaje = "Carga exitosa"
+	M.Tipo = 2
 
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
