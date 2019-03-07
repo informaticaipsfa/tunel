@@ -931,6 +931,12 @@ func (e *Estructura) ConvertirGradoGN() (jSon []byte, err error) {
 			militar["pension.grado"] = "S1"
 		case "GN":
 			militar["pension.grado"] = "S2"
+		case "CADETE":
+			militar["pension.grado"] = "CADETE"
+		case "ALUMNO":
+			militar["pension.grado"] = "ALUMNO"
+		case "S2ALIST":
+			militar["pension.grado"] = "S2ALIST"
 
 		}
 		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
@@ -969,6 +975,84 @@ func (e *Estructura) ConvertirGradoAV() (jSon []byte, err error) {
 			militar["pension.grado"] = "S1"
 		case "AT":
 			militar["pension.grado"] = "S2"
+		case "CADETE":
+			militar["pension.grado"] = "CADETE"
+		case "ALUMNO":
+			militar["pension.grado"] = "ALUMNO"
+		case "S2ALIST":
+			militar["pension.grado"] = "S2ALIST"
+
+		}
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
+		fmt.Println("Cedula", ced)
+	}
+	return
+}
+
+func (e *Estructura) ConvertirGradoEJ() (jSon []byte, err error) {
+	var msj Mensaje
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionadosAntes2008EJ())
+	if err != nil {
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		var ced string
+		var cod string
+		militar := make(map[string]interface{})
+		sq.Scan(&ced, &cod)
+		//militar["pension.grado"] = "SAY"
+		switch cod {
+		case "C1":
+			militar["pension.grado"] = "SM2"
+		case "C2":
+			militar["pension.grado"] = "SM3"
+		case "DTGDO":
+			militar["pension.grado"] = "S1"
+		case "GN":
+			militar["pension.grado"] = "S2"
+		case "CADETE":
+			militar["pension.grado"] = "CADETE"
+		case "ALUMNO":
+			militar["pension.grado"] = "ALUMNO"
+		case "S2ALIST":
+			militar["pension.grado"] = "S2ALIST"
+
+		}
+		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
+		fmt.Println("Cedula", ced)
+	}
+	return
+}
+
+func (e *Estructura) ConvertirGradoAR() (jSon []byte, err error) {
+	var msj Mensaje
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionadosAntes2008AR())
+	if err != nil {
+		msj.Mensaje = "Err: " + err.Error()
+		msj.Tipo = 1
+		jSon, err = json.Marshal(msj)
+	}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		var ced string
+		var cod string
+		militar := make(map[string]interface{})
+		sq.Scan(&ced, &cod)
+		//militar["pension.grado"] = "SAY"
+		switch cod {
+		case "C1":
+			militar["pension.grado"] = "C1"
+		case "C2":
+			militar["pension.grado"] = "C2"
+		case "CADETE":
+			militar["pension.grado"] = "CADETE"
+		case "ALUMNO":
+			militar["pension.grado"] = "ALUMNO"
+		case "S2ALIST":
+			militar["pension.grado"] = "S2ALIST"
 
 		}
 		err = c.Update(bson.M{"id": ced}, bson.M{"$set": militar})
