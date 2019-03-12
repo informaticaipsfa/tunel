@@ -345,7 +345,7 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": oid}, bson.M{"$set": familiar})
-	fmt.Println("ACtualizando", familiar)
+	fmt.Println("Actualizando", familiar)
 	if err != nil {
 		fmt.Println("Error: " + oid + " -> " + err.Error())
 		return

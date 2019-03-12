@@ -1,10 +1,40 @@
 package sssifanb
 
-import (
-	// "fmt"
-	// "strconv"
-	// "strings"
+/*
+DROP TABLE space.medidajudicial;
 
+CREATE TABLE space.medidajudicial
+(
+  oid serial NOT NULL,
+  nume character varying(128) NOT NULL,
+  expe character varying(256) NOT NULL,
+  tipo integer,
+  obse character varying(256) NOT NULL,
+  tpag integer,
+  fnxm character varying(512) NOT NULL,
+  fpag character varying(32) NOT NULL,
+  inst character varying(256) NOT NULL,
+  tcue character varying(2) NOT NULL,
+  ncue character varying(20) NOT NULL,
+  autoridad character varying(256) NOT NULL,
+  esta character varying(256) NOT NULL,
+  ciud character varying(256) NOT NULL,
+  muni character varying(256) NOT NULL,
+  dins character varying(256) NOT NULL,
+  cben character varying(256) NOT NULL,
+  bene character varying(256) NOT NULL,
+  pare character varying(256) NOT NULL,
+  caut character varying(256) NOT NULL,
+  auto character varying(128) NOT NULL,
+  creado timestamp without time zone,
+  ffin timestamp without time zone,
+  usua character varying(128) NOT NULL,
+  estatus integer,
+  cedula character varying(32) NOT NULL,
+  CONSTRAINT medidajudicial_pkey PRIMARY KEY (oid)
+)
+*/
+import (
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -12,9 +42,6 @@ import (
 
 	"github.com/informaticaipsfa/tunel/sys"
 	"gopkg.in/mgo.v2/bson"
-	//"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
-	// "github.com/informaticaipsfa/tunel/sys"
-	// "gopkg.in/mgo.v2/bson"
 )
 
 //MedidaJudicial militares
@@ -42,6 +69,7 @@ type MedidaJudicial struct {
 	CedulaAutorizado       string    `json:"cedautorizado,omitempty" bson:"cedautorizado"`
 	Autorizado             string    `json:"autorizado,omitempty" bson:"autorizado"`
 	Fecha                  time.Time `json:"fecha,omitempty" bson:"fecha"`
+	FechaFin               time.Time `json:"fechafin,omitempty" bson:"fechafin"`
 	Usuario                string    `json:"usuario,omitempty" bson:"usuario"`
 }
 
@@ -77,17 +105,17 @@ func InsertarPension(CMJ *MedidaJudicial) {
 		tpag, fnxm,
 		fpag, inst, tcue, ncue, autoridad, esta,
 		ciud, muni, dins, cben,	bene, pare,
-		caut, auto, creado, usua, estatus, cedula
+		caut, auto, creado, ffin, usua, estatus, cedula
 	) VALUES `
 	query += `('` + CMJ.Numero + `','` + CMJ.Expediente + `',` + strconv.Itoa(CMJ.Tipo) + `,'` + CMJ.Observacion + `',
 						'` + CMJ.TipoPago + `','` + CMJ.Formula + `','` + CMJ.FormaPago + `','` + CMJ.Institucion + `',
 						'` + CMJ.TipoCuenta + `','` + CMJ.NumeroCuenta + `',
 						'` + CMJ.Autoridad + `','` + CMJ.Estado + `','` + CMJ.Ciudad + `','` + CMJ.Municipio + `',
 						'` + CMJ.DescripcionInstitucion + `','` + CMJ.CedulaBeneficiario + `','` + CMJ.Beneficiario + `','` + CMJ.Parentesco + `',
-						'` + CMJ.CedulaAutorizado + `','` + CMJ.Autorizado + `','` + CMJ.Fecha.String()[:10] + `','` + CMJ.Usuario + `',1,
+						'` + CMJ.CedulaAutorizado + `','` + CMJ.Autorizado + `','` + CMJ.Fecha.String()[:10] + `','` + CMJ.FechaFin.String()[:10] + `','` + CMJ.Usuario + `',1,
 						'` + CMJ.ID + `')`
 
-	fmt.Println(query)
+	//fmt.Println(query)
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query: ", err.Error())
