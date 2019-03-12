@@ -176,13 +176,29 @@ func obtenerPrimaEspecial() string {
 func obtenerPensionadosAntes2008GN() string {
 	return `SELECT pr.codnip, pen.gradocod FROM pension AS pen
 	JOIN personas AS pr ON pen.nropersona=pr.nropersona
-	WHERE gradocod IN ('SAY','S1','S2','C1','C2','DTGDO','GN')  AND  componentecod = 'GN'`
+	WHERE gradocod IN ('SAY','S1','S2','C1','C2','DTGDO','GN','CADETE','ALUMNO',
+	'S2ALIST')  AND  componentecod = 'GN'`
 }
 
 func obtenerPensionadosAntes2008AV() string {
 	return `SELECT pr.codnip, pen.gradocod FROM pension AS pen
 	JOIN personas AS pr ON pen.nropersona=pr.nropersona
-	WHERE gradocod IN ('ATG','ATA','ATM','AT1','AT2','AT3','AT')  AND  componentecod = 'AV'`
+	WHERE gradocod IN ('ATG','ATA','ATM','AT1','AT2','AT3','AT','CADETE','ALUMNO',
+	'S2ALIST','C1','C2','SD')  AND  componentecod = 'AV'`
+}
+
+func obtenerPensionadosAntes2008EJ() string {
+	return `SELECT pr.codnip, pen.gradocod FROM pension AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE gradocod IN ('CADETE','ALUMNO',
+	'S2ALIST','C1','C2','SD')  AND  componentecod = 'EJ'`
+}
+
+func obtenerPensionadosAntes2008AR() string {
+	return `SELECT pr.codnip, pen.gradocod FROM pension AS pen
+	JOIN personas AS pr ON pen.nropersona=pr.nropersona
+	WHERE gradocod IN ('CADETE','ALUMNO',
+	'S2ALIST','C1','C2','SD')  AND  componentecod = 'AR'`
 }
 
 func obtenerFechaVencimiento() string {
