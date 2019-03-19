@@ -707,7 +707,7 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 	//var Pension sssifanb.Pension
 	for sq.Next() {
 		var cedulaAux string
-		var vigente, direc, finsc sql.NullString
+		var vigente, direc, fretiro, finsc sql.NullString
 		var sueldob, ptransporte, pdescenc, pannoserv sql.NullFloat64
 		var pnoascenso, ppnoascenso, pespecial, pprofesional, ppprof, subtotal, pprestacion, pasignada sql.NullFloat64
 		var bonovac, bonovacaguinaldo sql.NullFloat64
@@ -715,7 +715,7 @@ func (e *Estructura) CargarPensiones() (jSon []byte, err error) {
 		var historialpension sssifanb.HistorialPensionSueldo
 		err = sq.Scan(&cedulaAux, &vigente, &direc, &finsc, &sueldob, &ptransporte, &pdescenc, &pannoserv,
 			&pnoascenso, &ppnoascenso, &pespecial, &pprofesional, &ppprof, &subtotal, &pprestacion, &pasignada,
-			&bonovac, &bonovacaguinaldo)
+			&bonovac, &bonovacaguinaldo, &fretiro)
 		if err != nil {
 			fmt.Println(err.Error())
 			return

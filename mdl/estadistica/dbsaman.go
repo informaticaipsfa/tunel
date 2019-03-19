@@ -247,81 +247,17 @@ func obtenerMunicipiosParroquia() string { //MySQL
 			ORDER BY estado,municipio,parroquia`
 }
 
-// func InsertarPace(militar sssifanb.Militar) string {
-// 	return ""
-// 	// \'' . $this->fecha_ingreso . '\',
-// 	// \'' . $this->fecha_ultimo_ascenso . '\',
-// 	// \'' . $this->fecha_ingreso_sistema . '\',
-// 	// \'' . $this->fecha_retiro . '\',
-// 	// \'' . $this->fecha_retiro_efectiva . '\',
-// 	// \'' . $this->fecha_creacion . '\',
-// 	// \'' . $this->fecha_ultima_modificacion . '\',
-// 	// \'' . $this->fecha_reincorporacion . '\'
-//
-// 	// return `INSERT INTO hist_beneficiario (
-// 	// 		status_id,
-// 	// 		componente_id,
-// 	// 		grado_id,
-// 	// 		cedula,
-// 	// 		nombres,
-// 	// 		apellidos,
-// 	// 		tiempo_servicio,
-// 	// 		fecha_ingreso,
-// 	// 		edo_civil,
-// 	// 		n_hijos,
-// 	// 		f_ult_ascenso,
-// 	// 		anio_reconocido,
-// 	// 		mes_reconocido,
-// 	// 		dia_reconocido,
-// 	// 		f_ingreso_sistema,
-// 	// 		f_retiro,
-// 	// 		f_retiro_efectiva,
-// 	// 		st_no_ascenso,
-// 	// 		numero_cuenta,
-// 	// 		st_profesion,
-// 	// 		sexo,
-// 	// 		f_creacion,
-// 	// 		usr_creacion,
-// 	// 		f_ult_modificacion,
-// 	// 		usr_modificacion,
-// 	// 		observ_ult_modificacion,
-// 	// 		motivo_paralizacion,
-// 	// 		f_reincorporacion
-// 	// 	) VALUES ';
-// 	//
-// 	// 	$sInsertar .= '(
-// 	// 		\'' . $this->estatus_activo . '\',
-// 	// 		` + militar.Fideicomiso.ComponenteCodigo + `,
-// 	// 		` + militar.Fideicomiso.GradoCodigo + `,
-// 	// 		'` + militar.Persona.DatoBasico.Cedula + `',
-// 	// 		'` + militar.Persona.DatoBasico.ConcatenarNombre() + `',
-// 	// 		'` + militar.Persona.DatoBasico.ConcatenarApellido() + `',
-// 	// 		'` + militar.TiempoSevicio + `',
-// 	//
-// 	// 		'` + militar.Persona.DatoBasico.EstadoCivil + `'',
-// 	// 		` + strconv.Itoa(militar.NumeroHijos()) + `,
-// 	//
-// 	// 		` + strconv.Itoa(militar.AnoReconocido) + ` ,
-// 	// 	  ` + strconv.Itoa(militar.MesReconocido) + `,
-// 	// 	 	` + strconv.Itoa(militar.DiaReconocido) + `,
-// 	//
-// 	//
-// 	//
-// 	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusNoAscenso) + `,
-// 	// 		'` + militar.Fideicomiso.CuentaBancaria + `',
-// 	// 		` + strconv.Itoa(militar.Fideicomiso.EstatusProfesion) + `,
-// 	// 		'` + militar.Persona.DatoBasico.Sexo + `',
-// 	//
-// 	// 		'tunel',
-// 	//
-// 	// 	 	'tunel',
-// 	// 	 	'INSERCION POR TUNELES',
-// 	// 		'` + militar.Fideicomiso.MotivoParalizacion + `',
-// 	//
-// 	// 	)';`
-//
-// 	//echo $sInsertar;
-// 	//<<<<<<< HEAD
-//
+func obtenerPensionados2019() string {
+	return `SELECT p.codnip,pensionvigente, direcsalcod, fchinicpension,  sueldobasico, primatransporte,primadescenc,primaannoserv,
+				primanoascenso,porcprimanoascenso,primaespecial,primaprofesional,porcprimaprof,subtotal, porcprestmonto,pensionasignada,
+				bonovac,bonovacaguinaldo, pm.fchegreso
+			FROM pension_calc pc
+			JOIN personas p ON pc.nropersona=p.nropersona
+			JOIN pers_dat_militares pm ON p.nropersona=pm.nropersona
+			JOIN pers_cta_bancarias pc ON p.nropersona=pc.nropersona
+			--WHERE p.codnip='63596'
+			ORDER BY p.codnip,pc.auditfechacambio
 
-//
+
+	`
+}

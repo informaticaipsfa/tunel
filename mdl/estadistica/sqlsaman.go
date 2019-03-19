@@ -5,9 +5,11 @@ func HistoriaPension() string { //
 	return `
 	SELECT p.codnip,pensionvigente, direcsalcod, fchinicpension,  sueldobasico, primatransporte,primadescenc,primaannoserv,
 				primanoascenso,porcprimanoascenso,primaespecial,primaprofesional,porcprimaprof,subtotal, porcprestmonto,pensionasignada,
-				bonovac,bonovacaguinaldo
-	FROM pension_calc pc JOIN personas p ON pc.nropersona=p.nropersona
-	-- WHERE p.codnip='9150043'
+				bonovac,bonovacaguinaldo, pm.fchegreso
+	FROM pension_calc pc
+	JOIN personas p ON pc.nropersona=p.nropersona
+	JOIN pers_dat_militares pm ON p.nropersona=pm.nropersona
+	WHERE p.codnip='9150043'
 	ORDER BY p.codnip,pc.auditfechacambio ASC --limit 10;`
 }
 

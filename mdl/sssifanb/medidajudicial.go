@@ -115,7 +115,7 @@ func InsertarPension(CMJ *MedidaJudicial) {
 						'` + CMJ.CedulaAutorizado + `','` + CMJ.Autorizado + `','` + CMJ.Fecha.String()[:10] + `','` + CMJ.FechaFin.String()[:10] + `','` + CMJ.Usuario + `',1,
 						'` + CMJ.ID + `')`
 
-	//fmt.Println(query)
+	//3fmt.Println(query)
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query: ", err.Error())
