@@ -327,11 +327,6 @@ type WDirectivaActualizar struct {
 	Monto  float64 `json:"monto"`
 }
 
-type WDActualizar struct {
-	ID                   string                 `json:"json"`
-	WDirectivaActualizar []WDirectivaActualizar `json:"directivas"`
-}
-
 //ActualizarDirectiva Militar
 func (p *Militar) ActualizarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
