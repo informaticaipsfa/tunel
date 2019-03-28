@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -16,10 +17,12 @@ func (p *Militar) ConsultarPACE(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var cedula = mux.Vars(r)
 	url := "http://" + sys.HostIPPace + sys.HostUrlPace + cedula["id"]
-	//fmt.Println(url);
+
+	fmt.Println(url)
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
+		fmt.Println(err.Error())
 		M.Tipo = 0
 		w.WriteHeader(http.StatusForbidden)
 		j, _ := json.Marshal(M)
@@ -30,6 +33,7 @@ func (p *Militar) ConsultarPACE(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusForbidden)
 			M.Mensaje = err.Error()
+			fmt.Println(err.Error())
 			M.Tipo = 0
 			j, _ := json.Marshal(M)
 			w.Write(j)

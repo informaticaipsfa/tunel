@@ -340,7 +340,7 @@ func (m *Militar) Actualizar(usuario string, ip string) (jSon []byte, err error)
 	return
 }
 
-//ActualizarMGO Actualizar
+//ActualizarMGO Actualizar familiares del militar con mongodb
 func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (err error) {
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
@@ -353,7 +353,7 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 	return
 }
 
-//MGOActualizar Actualizando en MONGO
+//MGOActualizar Actualizando datos principales del militar
 func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	var comp fanb.Componente
 	var mOriginal Militar
@@ -502,6 +502,7 @@ func InsertarPostgresSaman(d string) {
 		fmt.Println("SAMANWEB: ", err.Error())
 	}
 }
+
 func InsertarMysqlFullText(d string) {
 	_, err := sys.MysqlFullText.Exec(d)
 

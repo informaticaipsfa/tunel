@@ -16,8 +16,8 @@ type DatoBasico struct {
 	ApellidoSegundo string    `json:"apellidosegundo" bson:"apellidosegundo"`
 	FechaNacimiento time.Time `json:"fechanacimiento" bson:"fechanacimiento"` //POR DEFINIR TIPO DE CAMPO
 	Sexo            string    `json:"sexo" bson:"sexo"`
-	EstadoCivil     string    `json:"estadocivil,omitempty" bson:"estadocivil"`
-	FechaDefuncion  time.Time `json:"fechadefuncion,omitempty" bson:"fechadefuncion"`
+	EstadoCivil     string    `json:"estadocivil" bson:"estadocivil"`
+	FechaDefuncion  time.Time `json:"fechadefuncion" bson:"fechadefuncion"`
 }
 
 //AplicarReglas Politicas

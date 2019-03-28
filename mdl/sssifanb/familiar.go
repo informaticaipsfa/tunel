@@ -113,6 +113,8 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	id := f.Persona.DatoBasico.Cedula
 	familiar := make(map[string]interface{})
 	familiar["familiar.$.persona"] = f.Persona
+	fmt.Println(f.Persona.DatoBasico.FechaDefuncion)
+
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	if f.ID != id {
 		fmt.Println("Cambio de Cedula de un familiar: ", id)

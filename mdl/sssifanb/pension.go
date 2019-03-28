@@ -57,6 +57,7 @@ type Pension struct {
 	PrimaNoAscenso         float64                  `json:"pnoascenso" bson:"pnoascenso"`
 	PrimaEspecial          float64                  `json:"pespecial" bson:"pespecial"`
 	MedidaJudicial         []MedidaJudicial         `json:"MedidaJudicial" bson:"medidajudicial"`
+	Descuentos             []Descuentos             `json:"Descuentos" bson:"descuentos"`
 }
 
 //HistorialPensionSueldo Historico
@@ -81,77 +82,11 @@ type Prima struct {
 type Beneficiario struct {
 	Persona Persona
 	Pension Pension
-
-	// Cedula             string
-	// Nombre             string
-	// Apellido           string
-	// Componente         int
-	// Grado              int
-	// FechaIngreso       string
-	// FechaUltimoAscenso string
-	// FechaRetiro        string
-	// Estatus            int
-	// AnoRecoconocido    int
-	// MesReconocido      int
-	// DiaReconocido      int
-	// NumeroHijos        int
-	// Sueldo             float64
 }
 
 //Listado de Componentes Por Grados
 var lstMilitares []PensionMilitar
 var lstComponente []fanb.Componente
-
-func (P *Pension) Exportar() {
-	fmt.Println("Cargando Componente")
-	consultarComponentes()
-	fmt.Println("Cargando Militares")
-	consultarPensionados()
-	//
-	i := 0
-	coma := ""
-	cuerpo := ""
-	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
-		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, porcentaje)	VALUES `
-	fmt.Println("Creando lote...")
-	for _, v := range lstMilitares {
-		if i > 0 {
-			coma = ","
-		}
-
-		grado, componente := obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
-		np := v.Persona.DatoBasico.NombrePrimero
-		ap := v.Persona.DatoBasico.ApellidoPrimero
-		porcentaje := strconv.FormatFloat(v.Pension.PorcentajePrestaciones, 'f', 2, 64)
-		pprofesional := strconv.FormatFloat(v.Pension.PrimaProfesional, 'f', 2, 64)
-		pnoascenso := strconv.FormatFloat(v.Pension.PrimaNoAscenso, 'f', 2, 64)
-		pespecial := strconv.FormatFloat(v.Pension.PrimaEspecial, 'f', 2, 64)
-		cuerpo += coma + `(
-				'` + v.Persona.DatoBasico.Cedula + `',
-				'` + strings.Replace(np, "'", " ", -1) + `',
-				'` + strings.Replace(ap, "'", " ", -1) + `',
-				` + grado + `,` + strconv.Itoa(componente) + `,
-				'` + v.FechaIngresoComponente.String()[0:10] + `',
-				'` + v.FechaAscenso.String()[0:10] + `',
-				'` + v.FechaRetiro.String()[0:10] + `',
-				'` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] + `',
-				` + pnoascenso + `,
-				` + pprofesional + `,
-				` + pespecial + `,
-				` + porcentaje + `)`
-		i++
-
-		// fmt.Println(" Situacion: ", v.Situacion, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
-	}
-	fmt.Println("Preparando para insertar: ", i)
-	query := insert + cuerpo
-	// fmt.Println("Consultar ", query)
-	_, err := sys.PostgreSQLPENSION.Exec(query)
-	if err != nil {
-		fmt.Println("Error en el query: ", err.Error())
-	}
-
-}
 
 func consultarPensionados() {
 	//Listado de Militares Pensionados
@@ -178,6 +113,63 @@ func consultarPensionados() {
 	if err != nil {
 		fmt.Println("Error en la consulta de Pensionados Militares")
 		//return
+	}
+
+}
+
+func (P *Pension) Exportar() {
+	fmt.Println("Cargando Componente")
+	consultarComponentes()
+	fmt.Println("Cargando Militares")
+	consultarPensionados()
+	//
+	i := 0
+	coma := ""
+	cuerpo := ""
+	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
+		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, porcentaje, numero_cuenta, tipo, banco)	VALUES `
+	fmt.Println("Creando lote...")
+	for _, v := range lstMilitares {
+		if i > 0 {
+			coma = ","
+		}
+
+		grado, componente := obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
+		np := v.Persona.DatoBasico.NombrePrimero
+		ap := v.Persona.DatoBasico.ApellidoPrimero
+		porcentaje := strconv.FormatFloat(v.Pension.PorcentajePrestaciones, 'f', 2, 64)
+		pprofesional := strconv.FormatFloat(v.Pension.PrimaProfesional, 'f', 2, 64)
+		pnoascenso := strconv.FormatFloat(v.Pension.PrimaNoAscenso, 'f', 2, 64)
+		pespecial := strconv.FormatFloat(v.Pension.PrimaEspecial, 'f', 2, 64)
+		numero := v.Pension.DatoFinanciero.Cuenta
+		cuenta := v.Pension.DatoFinanciero.Institucion
+		tipo := v.Pension.DatoFinanciero.Tipo
+		cuerpo += coma + `(
+				'` + v.Persona.DatoBasico.Cedula + `',
+				'` + strings.Replace(np, "'", " ", -1) + `',
+				'` + strings.Replace(ap, "'", " ", -1) + `',
+				` + grado + `,` + strconv.Itoa(componente) + `,
+				'` + v.FechaIngresoComponente.String()[0:10] + `',
+				'` + v.FechaAscenso.String()[0:10] + `',
+				'` + v.FechaRetiro.String()[0:10] + `',
+				'` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] + `',
+				` + pnoascenso + `,
+				` + pprofesional + `,
+				` + pespecial + `,
+				` + porcentaje + `,
+				` + numero + `,
+				` + cuenta + `,
+				` + tipo + `)`
+		i++
+
+		// fmt.Println(" Situacion: ", v.Situacion, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
+	}
+	fmt.Println("Preparando para insertar: ", i)
+	query := insert + cuerpo
+	// fmt.Println("Consultar ", query)
+	_, err := sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query: ", err.Error())
 	}
 
 }

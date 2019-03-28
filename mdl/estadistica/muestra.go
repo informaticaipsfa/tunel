@@ -60,8 +60,8 @@ func (e *Estructura) Reduccion() (jSon []byte, err error) {
 func (e *Estructura) ActualizarMilitaresPACE() (jSon []byte, err error) {
 	var msj Mensaje
 	sq, err := sys.PostgreSQLPACE.Query(personaMilitarPACE())
-	if err != nil {
 
+	if err != nil {
 		msj.Mensaje = "Err: " + err.Error()
 		msj.Tipo = 1
 		jSon, err = json.Marshal(msj)

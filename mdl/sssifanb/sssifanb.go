@@ -1,12 +1,15 @@
 package sssifanb
 
 import (
+	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/util"
+	"gopkg.in/mgo.v2/bson"
 )
 
 func Sincronizar(militar Militar) {
@@ -435,7 +438,89 @@ func InsertMysqlFT(mil *Militar) string {
 	}
 
 	body := grad + " " + comp + " " + situ + " " + clas + " " + cate
-	return `INSERT INTO datos ( cedula, nombre, descripcion, direccion, familiares ) 
+	return `INSERT INTO datos ( cedula, nombre, descripcion, direccion, familiares )
 		VALUES ('` + mil.Persona.DatoBasico.Cedula + `','` + mil.Persona.DatoBasico.ConcatenarApellidoNombre() + `','` + body + `','` + dire + `','` + fami + `')`
 
+}
+
+func obtenerPensionados() string {
+	return `
+		SELECT per.nropersona, per.tipnip, per.codnip,
+			per.nombreprimero, per.nombresegundo, per.apellidoprimero, per.apellidosegundo,
+			per.sexocod, per.edocivilcod, per.fechanacimiento,
+			pdm.componentecod, pdm.gradocod, pdm.perscategcod, pdm.perssituaccod, pdm.persclasecod,
+			pdm.fchingcomponente,pdm.fchultimoascenso,pdm.fchpromocion,pdm.fchegreso,
+			pdm.annoreconocido,pdm.mesreconocido,pdm.diareconocido,
+			pen.nrohijos,pen.tipcuentacod,pen.instfinancod,pen.nrocuenta, pcal.porcentaje,
+			pen.estpencod,pen.razestpencod
+		FROM personas per
+		JOIN pers_dat_militares pdm ON  per.nropersona=pdm.nropersona
+		JOIN pension pen ON pdm.nropersona=pen.nropersona
+		JOIN (
+						SELECT nropersona, MAX(porcprestmonto) AS porcentaje  FROM
+							pension_calc
+						GROUP BY nropersona
+					) pcal ON pen.nropersona=pcal.nropersona
+
+		-- where
+		-- codnip='9150043'
+		-- pdm.perssituaccod='ACT'`
+}
+
+//MGOActualizarPensionados Actualizando datos principales del militar
+func (m *Militar) MGOActualizarPensionados() (err error) {
+
+	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionados())
+	if err != nil {
+		return
+	}
+
+	for sq.Next() {
+		var militar Militar
+		var nropersona, tipnip, codnip, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo sql.NullString
+		var sexocod, edocivilcod sql.NullString
+		var componentecod, gradocod, perscategcod, perssituaccod, persclasecod sql.NullString
+		var fchingcomponente, fchultimoascenso, fchpromocion, fchegreso, fechanacimiento sql.NullString
+		var annoreconocido, mesreconocido, diareconocido sql.NullString
+		var nrohijos, tipcuentacod, instfinancod, nrocuenta sql.NullString
+		var porcentaje sql.NullFloat64
+		var estpencod, razestpencod sql.NullString
+
+		sq.Scan(&nropersona, &tipnip, &codnip, &nombreprimero, &nombresegundo,
+			&apellidoprimero, &apellidosegundo, &sexocod, &edocivilcod, &fechanacimiento,
+			&componentecod, &gradocod, &perscategcod, &perssituaccod, &persclasecod,
+			&fchingcomponente, &fchultimoascenso, &fchpromocion, &fchegreso,
+			&annoreconocido, &mesreconocido, &diareconocido,
+			&nrohijos, &tipcuentacod, &instfinancod, &nrocuenta, &porcentaje,
+			&estpencod, &razestpencod)
+
+		militar.Pension.GradoCodigo = util.ValidarNullString(gradocod)
+		militar.Pension.ComponenteCodigo = util.ValidarNullString(componentecod)
+		militar.Pension.Categoria = util.ValidarNullString(perscategcod)
+		militar.Pension.Clase = util.ValidarNullString(persclasecod)
+		militar.Pension.Situacion = util.ValidarNullString(perssituaccod)
+
+		// militar.Pension.AnoServicio, _ = strconv.Atoi(util.ValidarNullString(annototservicio))
+		// militar.Pension.MesServicio, _ = strconv.Atoi(util.ValidarNullString(mestotservicio))
+		// militar.Pension.DiaServicio, _ = strconv.Atoi(util.ValidarNullString(diatotservicio))
+		// militar.Pension.PensionAsignada = util.ValidarNullFloat64(pensionasignada)
+		militar.Pension.PorcentajePrestaciones = util.ValidarNullFloat64(porcentaje)
+		militar.Pension.FechaPromocion = util.ValidarNullString(fchpromocion)
+		militar.Pension.FechaUltimoAscenso = util.ValidarNullString(fchultimoascenso)
+
+		militar.Pension.DatoFinanciero.Cuenta = util.ValidarNullString(nrocuenta)
+		militar.Pension.DatoFinanciero.Tipo = util.ValidarNullString(tipcuentacod)
+		militar.Pension.DatoFinanciero.Institucion = util.ValidarNullString(instfinancod)
+		militar.Pension.NumeroHijos, _ = strconv.Atoi(util.ValidarNullString(nrohijos))
+		pension := make(map[string]interface{})
+		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+		pension["pension"] = militar.Pension
+		err = c.Update(bson.M{"id": util.ValidarNullString(codnip)}, bson.M{"$set": pension})
+		if err != nil {
+			fmt.Println("Err", err.Error())
+			return
+		}
+	}
+
+	return
 }

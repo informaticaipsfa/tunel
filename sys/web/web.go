@@ -122,6 +122,7 @@ func CargarModulosNomina() {
 	var wUsuario api.WUsuario
 	var concepto api.WNomina
 	var medida api.WMedidaJudicial
+	var descuentos api.WDescuentos
 	var M api.Militar
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
@@ -138,8 +139,11 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/nomina/generar", wUsuario.ValidarToken(M.GenerarNomina)).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/nomina/generar", M.GenerarNomina).Methods("POST")
 
-	Enrutador.HandleFunc("/devel/api/medidajudicial", wUsuario.ValidarToken(medida.Consultar)).Methods("GET")
+	//Enrutador.HandleFunc("/devel/api/medidajudicial", wUsuario.ValidarToken(medida.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/medidajudicial", wUsuario.ValidarToken(medida.Agregar)).Methods("POST")
+
+	//Enrutador.HandleFunc("/devel/api/descuentos", wUsuario.ValidarToken(medida.Consultar)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/descuentos", wUsuario.ValidarToken(descuentos.Agregar)).Methods("POST")
 }
 
 //CargarModulosSeguridad Y cifrado

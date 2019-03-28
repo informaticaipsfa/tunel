@@ -13,35 +13,35 @@ import (
 
 //TareasPendientes Pendientes
 type TareasPendientes struct {
-	Codigo      string    `json:"codigo",bson:"codigo"`
-	Observacion string    `json:"observacion",bson:"observacion"`
-	FechaInicio time.Time `json:"fechainicio",bson:"fechainicio"`
-	FechaFin    time.Time `json:"fechafin",bson:"fechafin"`
-	Estatus     int       `json:"estatus",bson:"estatus"`
-	Tipo        string    `json:"tipo",bson:"tipo"`
+	Codigo      string    `json:"codigo" bson:"codigo"`
+	Observacion string    `json:"observacion" bson:"observacion"`
+	FechaInicio time.Time `json:"fechainicio" bson:"fechainicio"`
+	FechaFin    time.Time `json:"fechafin" bson:"fechafin"`
+	Estatus     int       `json:"estatus" bson:"estatus"`
+	Tipo        string    `json:"tipo" bson:"tipo"`
 }
 
 //Reduccion de datos de los familiares
 type Reduccion struct {
-	Cedula          string    `json:"cedula",bson:"cedula"`
-	IDT             string    `json:"idt",bson:"idt"`
-	Nombre          string    `json:"nombre",bson:"nombre"`
-	Sexo            string    `json:"sexo",bson:"sexo"`
-	Tipo            string    `json:"tipo",bson:"tipo"` //T Titular Militar | F Familiar
-	EsMilitar       bool      `json:"esmilitar",bson:"esmilitar"`
-	FechaNacimiento time.Time `json:"fecha",bson:"fecha"`
-	Parentesco      string    `json:"parentesco",bson:"parentesco"`
-	Situacion       string    `json:"situacion",bson:"situacion"`
-	Grado           string    `json:"grado",bson:"grado"`
-	Componente      string    `json:"componente",bson:"componente"`
+	Cedula          string    `json:"cedula" bson:"cedula"`
+	IDT             string    `json:"idt" bson:"idt"`
+	Nombre          string    `json:"nombre" bson:"nombre"`
+	Sexo            string    `json:"sexo" bson:"sexo"`
+	Tipo            string    `json:"tipo" bson:"tipo"` //T Titular Militar | F Familiar
+	EsMilitar       bool      `json:"esmilitar" bson:"esmilitar"`
+	FechaNacimiento time.Time `json:"fecha" bson:"fecha"`
+	Parentesco      string    `json:"parentesco" bson:"parentesco"`
+	Situacion       string    `json:"situacion" bson:"situacion"`
+	Grado           string    `json:"grado" bson:"grado"`
+	Componente      string    `json:"componente" bson:"componente"`
 }
 
 //GArchivo Generar CSV
 type GArchivo struct {
-	Codigo     string `json:"codigo",bson:"codigo"`
-	Tipo       string `json:"tipo",bson:"tipo"`
-	Situacion  string `json:"situacion",bson:"situacion"`
-	Componente string `json:"componente",bson:"componente"`
+	Codigo     string `json:"codigo" bson:"codigo"`
+	Tipo       string `json:"tipo" bson:"tipo"`
+	Situacion  string `json:"situacion" bson:"situacion"`
+	Componente string `json:"componente" bson:"componente"`
 }
 
 //ExportarCSV Familiares y Titulares Estadisticas
