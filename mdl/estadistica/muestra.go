@@ -204,7 +204,7 @@ func (e *Estructura) Migracion() (jSon []byte, err error) {
 		militar.AppSaman = true
 		militar.AppPace = true
 		fecharetiro := util.ValidarNullString(fegr)
-		if fechaultimo != VNULL {
+		if fecharetiro != VNULL {
 			dateString := strings.Replace(fecharetiro, "/", "-", -1)
 			dateStamp, er := time.Parse(layOut, dateString)
 			if er == nil {

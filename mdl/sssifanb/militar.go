@@ -42,6 +42,7 @@ type Militar struct {
 	FechaResuelto                time.Time           `json:"fresuelto,omitempty" bson:"fresuelto"`
 	Posicion                     int                 `json:"posicion,omitempty" bson:"posicion"`
 	Condicion                    int                 `json:"condicion,omitempty" bson:"condicion"`
+	PorcentajePrestaciones       float64             `json:"pprestaciones,omitempty" bson:"pprestaciones"`
 	DescripcionHistorica         string              `json:"dhistorica,omitempty" bson:"dhistorica"` //codigo
 	Componente                   Componente          `json:"Componente,omitempty" bson:"componente"`
 	Grado                        Grado               `json:"Grado,omitempty" bson:"grado"` //grado
@@ -97,9 +98,9 @@ type Componente struct {
 
 //Grado Rango / Jerarquia
 type Grado struct {
-	Nombre      string `json:"nombre" bson:"nombre"`
-	Descripcion string `json:"descripcion" bson:"descripcion"`
-	Abreviatura string `json:"abreviatura" bson:"abreviatura"`
+	Nombre      string `json:"nombre,omitempty" bson:"nombre"`
+	Descripcion string `json:"descripcion,omitempty" bson:"descripcion"`
+	Abreviatura string `json:"abreviatura,omitempty" bson:"abreviatura"`
 }
 
 //Listar sistemas
@@ -114,13 +115,42 @@ type Mensaje struct {
 	Pgsql   string `json:"pgsql,omitempty"`
 }
 
+//Consultar una persona mediante el metodo de MongoDB
+func (m *Militar) Consultar() (jSon []byte, err error) {
+	var militar Militar
+	var msj Mensaje
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		msj.Tipo = 0
+		jSon, err = json.Marshal(msj)
+	} else {
+		fmt.Println(m.Pension.GradoCodigo, " OJO ")
+		if militar.Persona.DatoBasico.Cedula == "" {
+			msj.Tipo = 0
+			jSon, err = json.Marshal(msj)
+		} else {
+			militar.AplicarReglas()
+			jSon, err = json.Marshal(militar)
+		}
+	}
+	return
+}
+
 //AplicarReglas Reglas Generales
 func (m *Militar) AplicarReglas() {
-	m.Conversion()
+	if m.Situacion != "ACT" {
+		m.Conversion()
+	}
 	fecha := m.FechaIngresoComponente.UTC()
 	fechaActual := time.Now()
 	if m.Situacion != "ACT" {
-		m.FechaRetiro = m.FechaResuelto
+		if m.FechaRetiro.String() == "" {
+			m.FechaRetiro = m.FechaResuelto
+		}
 		fechaActual = m.FechaRetiro.UTC()
 	}
 	a, mes, d := util.CalcularTiempoServicio(fechaActual, fecha)
@@ -178,29 +208,6 @@ func (m *Militar) Conversion() {
 	conver := comp.ConsultarGrado(m.Componente.Abreviatura, m.Grado.Abreviatura)
 	m.Pension.ComponenteCodigo = conver.Componente
 	m.Pension.GradoCodigo = conver.GradoPace
-}
-
-//Consultar una persona mediante el metodo de MongoDB
-func (m *Militar) Consultar() (jSon []byte, err error) {
-	var militar Militar
-	var msj Mensaje
-	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
-
-	err = c.Find(bson.M{"id": m.Persona.DatoBasico.Cedula}).One(&militar)
-	if err != nil {
-		fmt.Println(err.Error())
-		msj.Tipo = 0
-		jSon, err = json.Marshal(msj)
-	} else {
-		if militar.Persona.DatoBasico.Cedula == "" {
-			msj.Tipo = 0
-			jSon, err = json.Marshal(msj)
-		} else {
-			militar.AplicarReglas()
-			jSon, err = json.Marshal(militar)
-		}
-	}
-	return
 }
 
 // ConsultarCIS una persona mediante el metodo de MongoDB
@@ -401,11 +408,15 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		return
 	}
 	//Saman
-	s := ActualizarPersona(m.Persona)
+	//s := ActualizarPersona(m.Persona)
 	//x := ActualizarMilitar(mOriginal)
 	//go ActualizarPostgresSaman(s + x)
-	go ActualizarPostgresSaman(s)
+	//go ActualizarPostgresSaman(s)
 	//fmt.Println(s, x)
+	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "I" {
+		var pension Pension
+		pension.Exportar(mOriginal.ID, 1)
+	}
 	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal))
 
 	//Reducción
@@ -519,7 +530,6 @@ func consultarMongo(cedula string) (m Militar, err error) {
 		fmt.Println(err.Error())
 		return
 	}
-
 	return
 }
 

@@ -13,8 +13,8 @@ type Grado struct {
 	Rango       string `json:"rango" bson:"rango"`
 	Nombre      string `json:"nombre" bson:"nombre"`
 	Descripcion string `json:"descripcion" bson:"descripcion"`
-	Cpace       string `json:"cpace" bson:"cpace"`
-	nompace     string `json:"nompace" bson:"nompace"`
+	Cpace       int    `json:"cpace" bson:"cpace"`
+	Nompace     string `json:"nompace" bson:"nompace"`
 }
 
 //Mensaje del sistema

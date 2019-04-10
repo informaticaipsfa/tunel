@@ -9,29 +9,33 @@ import (
 
 	"gopkg.in/mgo.v2/bson"
 
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis/investigacion"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/util"
 )
 
 //Familiar Busquedas
 type Familiar struct {
-	ID              string    `json:"id" bson:"id"`
-	Persona         Persona   `json:"Persona" bson:"persona"`
-	FechaAfiliacion time.Time `json:"fechaafiliacion" bson:"fechaafiliacion"`
-	Parentesco      string    `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
-	EsMilitar       bool      `json:"esmilitar" bson:"esmilitar"`
-	Condicion       int       `json:"condicion" bson:"condicion"` //Sano o Condicion especial
-	Estudia         int       `json:"estudia" bson:"estudia"`
-	Benficio        bool      `json:"beneficio" bson:"beneficio"` //
-	Documento       int       `json:"documento" bson:"documento"`
-	Adoptado        bool      `json:"adoptado" bson:"adoptado"`
-	DocumentoPadre  string    `json:"documentopadre" bson:"documentopadre"`
-	HistoriaMedica  string    `json:"historiamedica" bson:"historiamedica"`
-	Donante         string    `json:"donante" bson:"donante"`
-	EstatusCarnet   int       `json:"estatuscarnet" bson:"estatuscarnet"`
-	GrupoSanguineo  string    `json:"gruposanguineo" bson:"gruposanguineo"`
-	TIF             Carnet    `json:"Tif" bson:"tif"`
-
+	ID                     string                 `json:"id" bson:"id"`
+	Persona                Persona                `json:"Persona" bson:"persona"`
+	FechaAfiliacion        time.Time              `json:"fechaafiliacion" bson:"fechaafiliacion"`
+	Parentesco             string                 `json:"parentesco" bson:"parentesco"` //0:Mama, 1:papa, 2: Esposa  3: hijo
+	EsMilitar              bool                   `json:"esmilitar" bson:"esmilitar"`
+	Condicion              int                    `json:"condicion" bson:"condicion"` //Sano o Condicion especial
+	Estudia                int                    `json:"estudia" bson:"estudia"`
+	Benficio               bool                   `json:"beneficio" bson:"beneficio"` //
+	Documento              int                    `json:"documento" bson:"documento"`
+	Adoptado               bool                   `json:"adoptado" bson:"adoptado"`
+	DocumentoPadre         string                 `json:"documentopadre" bson:"documentopadre"`
+	HistoriaMedica         string                 `json:"historiamedica" bson:"historiamedica"`
+	Donante                string                 `json:"donante" bson:"donante"`
+	EstatusCarnet          int                    `json:"estatuscarnet" bson:"estatuscarnet"`
+	GrupoSanguineo         string                 `json:"gruposanguineo" bson:"gruposanguineo"`
+	PorcentajePrestaciones float64                `json:"pprestaciones,omitempty" bson:"pprestaciones"`
+	TIF                    Carnet                 `json:"Tif" bson:"tif"`
+	FeDeVida               investigacion.FeDeVida `json:"FeDeVida" bson:"fedevida"`
+	EstatusDePension       bool                   `json:"estatuspension" bson:"estatuspension"`
+	CondicionPago          string                 `json:"condicionpago" bson:"condicionpago"` //Para ver si es Cheque o Banco
 	// EstatusAfiliacion string `json:"estatus" bson:"adoptado"`
 	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
 }
@@ -114,7 +118,10 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	familiar := make(map[string]interface{})
 	familiar["familiar.$.persona"] = f.Persona
 	fmt.Println(f.Persona.DatoBasico.FechaDefuncion)
-
+	a, _, _ := f.Persona.DatoBasico.FechaDefuncion.Date()
+	if a > 1900 {
+		f.Benficio = false
+	}
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	if f.ID != id {
 		fmt.Println("Cambio de Cedula de un familiar: ", id)
@@ -144,7 +151,7 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 
 	beneficio := make(map[string]interface{})
 	beneficio["familiar.$.beneficio"] = f.Benficio
-	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": beneficio})
+	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": beneficio})
 	if err != nil {
 		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
 	}
@@ -158,21 +165,21 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	donante["familiar.$.donante"] = f.Donante
 	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": donante})
 	if err != nil {
-		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+		fmt.Println("Donante (Cedula): " + id + " -> " + err.Error())
 	}
 
 	documentopadre := make(map[string]interface{})
 	documentopadre["familiar.$.documentopadre"] = f.DocumentoPadre
 	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": documentopadre})
 	if err != nil {
-		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+		fmt.Println("Parentesco (Cedula): " + id + " -> " + err.Error())
 	}
 
 	condicion := make(map[string]interface{})
 	condicion["familiar.$.condicion"] = f.Condicion
 	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": condicion})
 	if err != nil {
-		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+		fmt.Println("Condicion (Cedula): " + id + " -> " + err.Error())
 	}
 
 	var mOriginal Militar
@@ -181,6 +188,7 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	return
 }
 
+//ActualizarPorReduccion Control de Reduccion de datos
 func (f *Familiar) ActualizarPorReduccion(grado string, componente string) {
 
 	//Reducción
@@ -208,11 +216,11 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 
 	switch {
 	case edad < 15:
-		Anio += 5
+		Anio += 18 - edad
 	case edad >= 15 && edad <= 17:
-		Anio += 3
-	case edad > 17 && edad <= 27:
-		Anio += 8
+		Anio += 18 - edad
+	case edad > 17 && edad <= 27 && f.Estudia == 1:
+		Anio += 26 - edad
 	case edad > 18 && f.Condicion == 1:
 		Anio += 5
 	}
@@ -363,7 +371,7 @@ func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 
 }
 
-//AplicarReglasCarnetPadres Reglas
+//AplicarReglasCarnetEsposa Reglas
 func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 	carnet := make(map[string]interface{})
 	var mes, dia string

@@ -37,27 +37,29 @@ type PensionMilitar struct {
 
 //Pension Codición del militar
 type Pension struct {
-	GradoCodigo            string                   `json:"grado" bson:"grado"`
-	ComponenteCodigo       string                   `json:"componente" bson:"componente"`
-	Clase                  string                   `json:"clase" bson:"clase"`
-	Categoria              string                   `json:"categoria" bson:"categoria"`
-	Situacion              string                   `json:"situacion" bson:"situacion"`
-	Tipo                   string                   `json:"tipo" bson:"tipo"`
-	FechaPromocion         string                   `json:"fpromocion" bson:"fpromocion"`
-	FechaUltimoAscenso     string                   `json:"fultimoascenso" bson:"fultimoascenso"`
-	AnoServicio            int                      `json:"aservicio" bson:"aservicio"`
-	MesServicio            int                      `json:"mservicio" bson:"mservicio"`
-	DiaServicio            int                      `json:"dservicio" bson:"dservicio"`
-	NumeroHijos            int                      `json:"numerohijos" bson:"numerohijos"`
-	DatoFinanciero         DatoFinanciero           `json:"DatoFinanciero" bson:"datofinanciero"`
-	PensionAsignada        float64                  `json:"pensionasignada" bson:"pensionasignada"`
-	HistorialSueldo        []HistorialPensionSueldo `json:"HistorialSueldo" bson:"historialsueldo"`
-	PorcentajePrestaciones float64                  `json:"pprestaciones" bson:"pprestaciones"`
-	PrimaProfesional       float64                  `json:"pprofesional" bson:"pprofesional"`
-	PrimaNoAscenso         float64                  `json:"pnoascenso" bson:"pnoascenso"`
-	PrimaEspecial          float64                  `json:"pespecial" bson:"pespecial"`
-	MedidaJudicial         []MedidaJudicial         `json:"MedidaJudicial" bson:"medidajudicial"`
-	Descuentos             []Descuentos             `json:"Descuentos" bson:"descuentos"`
+	GradoCodigo            string                   `json:"grado,omitempty" bson:"grado"`
+	ComponenteCodigo       string                   `json:"componente,omitempty" bson:"componente"`
+	Clase                  string                   `json:"clase,omitempty" bson:"clase"`
+	Categoria              string                   `json:"categoria,omitempty" bson:"categoria"`
+	Situacion              string                   `json:"situacion,omitempty" bson:"situacion"`
+	Tipo                   string                   `json:"tipo,omitempty" bson:"tipo"`
+	Estatus                string                   `json:"estatus,omitempty" bson:"estatus"`
+	Razon                  string                   `json:"razon,omitempty" bson:"razon"`
+	FechaPromocion         string                   `json:"fpromocion,omitempty" bson:"fpromocion"`
+	FechaUltimoAscenso     string                   `json:"fultimoascenso,omitempty" bson:"fultimoascenso"`
+	AnoServicio            int                      `json:"aservicio,omitempty" bson:"aservicio"`
+	MesServicio            int                      `json:"mservicio,omitempty" bson:"mservicio"`
+	DiaServicio            int                      `json:"dservicio,omitempty" bson:"dservicio"`
+	NumeroHijos            int                      `json:"numerohijos,omitempty" bson:"numerohijos"`
+	DatoFinanciero         DatoFinanciero           `json:"DatoFinanciero,omitempty" bson:"datofinanciero"`
+	PensionAsignada        float64                  `json:"pensionasignada,omitempty" bson:"pensionasignada"`
+	HistorialSueldo        []HistorialPensionSueldo `json:"HistorialSueldo,omitempty" bson:"historialsueldo"`
+	PorcentajePrestaciones float64                  `json:"pprestaciones,omitempty" bson:"pprestaciones"`
+	PrimaProfesional       float64                  `json:"pprofesional,omitempty" bson:"pprofesional"`
+	PrimaNoAscenso         float64                  `json:"pnoascenso,omitempty" bson:"pnoascenso"`
+	PrimaEspecial          float64                  `json:"pespecial,omitempty" bson:"pespecial"`
+	MedidaJudicial         []MedidaJudicial         `json:"MedidaJudicial,omitempty" bson:"medidajudicial"`
+	Descuentos             []Descuentos             `json:"Descuentos,omitempty" bson:"descuentos"`
 }
 
 //HistorialPensionSueldo Historico
@@ -88,6 +90,34 @@ type Beneficiario struct {
 var lstMilitares []PensionMilitar
 var lstComponente []fanb.Componente
 
+//ActulizarPensionadosID Por Cedula
+func ActulizarPensionadosID(id string) {
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	seleccion := bson.M{
+		"persona.datobasico":      true,
+		"fascenso":                true,
+		"fingreso":                true,
+		"fretiro":                 true,
+		"situacion":               true,
+		"pension.pensionasignada": true,
+		"pension.grado":           true,
+		"pension.componente":      true,
+		"pension.numerohijo":      true,
+		"pension.datofinanciero":  true,
+		"pension.areconocido":     true,
+		"pension.pprestaciones":   true,
+		"pension.pprofesional":    true,
+		"pension.pnoascenso":      true,
+		"pension.pespecial":       true,
+	}
+	buscar := bson.M{"id": id}
+	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
+	if err != nil {
+		fmt.Println("Error en la consulta de Pensionados Militares")
+	}
+
+}
+
 func consultarPensionados() {
 	//Listado de Militares Pensionados
 	// var lst []Militar{}
@@ -109,7 +139,9 @@ func consultarPensionados() {
 		"pension.pnoascenso":      true,
 		"pension.pespecial":       true,
 	}
-	err := c.Find(bson.M{"pension.pensionasignada": bson.M{"$gt": 0}}).Select(seleccion).All(&lstMilitares)
+
+	buscar := bson.M{"situacion": "RCP"}
+	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
 	if err != nil {
 		fmt.Println("Error en la consulta de Pensionados Militares")
 		//return
@@ -117,17 +149,23 @@ func consultarPensionados() {
 
 }
 
-func (P *Pension) Exportar() {
+//Exportar Controlando Datos
+func (P *Pension) Exportar(cedula string, tipo int32) {
 	fmt.Println("Cargando Componente")
 	consultarComponentes()
+
 	fmt.Println("Cargando Militares")
-	consultarPensionados()
+	if tipo == 0 {
+		consultarPensionados()
+	} else {
+		ActulizarPensionadosID(cedula)
+	}
 	//
 	i := 0
 	coma := ""
 	cuerpo := ""
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
-		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, porcentaje, numero_cuenta, tipo, banco)	VALUES `
+		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje, numero_cuenta, tipo, banco)	VALUES `
 	fmt.Println("Creando lote...")
 	for _, v := range lstMilitares {
 		if i > 0 {
@@ -144,6 +182,15 @@ func (P *Pension) Exportar() {
 		numero := v.Pension.DatoFinanciero.Cuenta
 		cuenta := v.Pension.DatoFinanciero.Institucion
 		tipo := v.Pension.DatoFinanciero.Tipo
+		fRetiro := v.FechaRetiro.String()[0:10]
+		fAscenso := v.FechaAscenso.String()[0:10]
+		if len(fRetiro) < 10 {
+			fRetiro = fAscenso
+		}
+		if len(fAscenso) < 10 {
+			fAscenso = fRetiro
+		}
+
 		cuerpo += coma + `(
 				'` + v.Persona.DatoBasico.Cedula + `',
 				'` + strings.Replace(np, "'", " ", -1) + `',
@@ -151,19 +198,22 @@ func (P *Pension) Exportar() {
 				` + grado + `,` + strconv.Itoa(componente) + `,
 				'` + v.FechaIngresoComponente.String()[0:10] + `',
 				'` + v.FechaAscenso.String()[0:10] + `',
-				'` + v.FechaRetiro.String()[0:10] + `',
+				'` + fRetiro + `',
 				'` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] + `',
 				` + pnoascenso + `,
 				` + pprofesional + `,
 				` + pespecial + `,
+				201,
+				` + strconv.Itoa(v.Pension.NumeroHijos) + `,
 				` + porcentaje + `,
-				` + numero + `,
-				` + cuenta + `,
-				` + tipo + `)`
+				'` + numero + `',
+				'` + cuenta + `',
+				'` + tipo + `')`
 		i++
 
-		// fmt.Println(" Situacion: ", v.Situacion, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
+		fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
 	}
+
 	fmt.Println("Preparando para insertar: ", i)
 	query := insert + cuerpo
 	// fmt.Println("Consultar ", query)
@@ -190,10 +240,13 @@ func obtenerGrado(codigo string, gradocodigo string) (grado string, componente i
 
 	for c, v := range lstComponente {
 		componente = c + 1
+
 		if v.Codigo == codigo {
 			for _, g := range v.Grado {
+
 				if g.Codigo == gradocodigo {
-					grado = g.Cpace
+
+					grado = strconv.Itoa(g.Cpace)
 					return
 				}
 			}
@@ -201,3 +254,32 @@ func obtenerGrado(codigo string, gradocodigo string) (grado string, componente i
 	}
 	return "0", 0
 }
+
+//
+// func (P *Pension) CargarCodigoPace() {
+// 	var componenteCodigo fanb.Componente
+// 	sq, err := sys.PostgreSQLPENSION.Query(`
+// 		select c.descripcion, g.nombre, g.id, g.codigo from componente c
+// 		JOIN grado g ON c.id=g.componente_id
+// 		ORDER BY c.id
+// 	`)
+//
+// 	if err != nil {
+// 		fmt.Println(err.Error())
+// 	}
+// 	for sq.Next() {
+// 		var des, nom string
+// 		var id, cod int
+// 		sq.Scan(&des, &nom, &id, &cod)
+// 		c := sys.MGOSession.DB(sys.CBASE).C(sys.CCOMPONENTE)
+// 		fmt.Println(componenteCodigo.ComponenteCodigo(des), nom)
+// 		comp := make(map[string]interface{})
+// 		comp["Grado.$.cpace"] = cod
+// 		buscar := bson.M{"codigo": componenteCodigo.ComponenteCodigo(des), "Grado.codigo": nom}
+// 		err = c.Update(buscar, bson.M{"$set": comp})
+// 		if err != nil {
+// 			fmt.Println("Err", err.Error())
+// 			//return
+// 		}
+// 	}
+// }

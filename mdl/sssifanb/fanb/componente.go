@@ -3,16 +3,18 @@ package fanb
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/informaticaipsfa/tunel/sys"
 	"gopkg.in/mgo.v2/bson"
 )
 
 type Componente struct {
-	Codigo string  `json:"codigo" bson:"codigo"`
-	Nombre string  `json:"nombre" bson:"nombre"`
-	Siglas string  `json:"siglas" bson:"siglas"`
-	Grado  []Grado `json:"Grado" bson:"Grado"`
+	Codigo string `json:"codigo" bson:"codigo"`
+	Nombre string `json:"nombre" bson:"nombre"`
+	Siglas string `json:"siglas" bson:"siglas"`
+	//Cpace  int     `json:"cpace" bson:"cpace"`
+	Grado []Grado `json:"Grado" bson:"Grado"`
 }
 
 //Mensaje del sistema
@@ -69,7 +71,7 @@ func (comp *Componente) ConsultarGrado(componente string, grado string) (Compone
 		for _, v := range comp.Grado {
 			if v.Codigo == grado {
 				//fmt.Println(v.Codigo, "   ", grado, " --> ", v.Cpace)
-				ComponenteConver.GradoPace = v.Cpace
+				ComponenteConver.GradoPace = strconv.Itoa(v.Cpace)
 			}
 		}
 	}
@@ -89,6 +91,24 @@ func ComponenteID(abreviatura string) (codigo string) {
 		break
 	case "GN":
 		codigo = "4"
+		break
+	}
+	return
+}
+
+func (P *Componente) ComponenteCodigo(abreviatura string) (codigo string) {
+	switch abreviatura {
+	case "EJB":
+		codigo = "EJ"
+		break
+	case "ARB":
+		codigo = "AR"
+		break
+	case "AVB":
+		codigo = "AV"
+		break
+	case "GNB":
+		codigo = "GN"
 		break
 	}
 	return

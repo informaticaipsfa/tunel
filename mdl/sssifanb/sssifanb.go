@@ -12,6 +12,8 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
+const layout string = "2006-01-02"
+
 func Sincronizar(militar Militar) {
 	s := `SELECT p.nropersona FROM personas p
 		JOIN pers_dat_militares m on p.nropersona=m.nropersona
@@ -65,16 +67,16 @@ func SincronizarTest(militar Militar) {
 
 func ActualizarPersona(persona Persona) string {
 	fecha := time.Now()
-	convertedDateString := fecha.Format("2006-01-02")
+	convertedDateString := fecha.Format(layout)
 	fechaSlashActual := strings.Replace(convertedDateString, "-", "/", -1)
 
-	convertir := persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
+	convertir := persona.DatoBasico.FechaNacimiento.Format(layout)
 	fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
 
 	a, _, _ := persona.DatoBasico.FechaDefuncion.Date()
 	fechaSlashDefuncion := ""
 	if a > 1000 {
-		convertirDef := persona.DatoBasico.FechaDefuncion.Format("2006-01-02")
+		convertirDef := persona.DatoBasico.FechaDefuncion.Format(layout)
 		fechaSlashDefuncion = strings.Replace(convertirDef, "-", "/", -1)
 	}
 
@@ -104,19 +106,19 @@ func ActualizarPersona(persona Persona) string {
 //ActualizarMilitar Militares
 func ActualizarMilitar(militar Militar) string {
 	fecha := time.Now()
-	convertedDateString := fecha.Format("2006-01-02")
+	convertedDateString := fecha.Format(layout)
 	fechaSlashActual := strings.Replace(convertedDateString, "-", "/", -1)
 
-	convertir := militar.FechaResuelto.Format("2006-01-02")
+	convertir := militar.FechaResuelto.Format(layout)
 	fechaSlashResuelto := strings.Replace(convertir, "-", "/", -1)
 
-	convertirC := militar.FechaIngresoComponente.Format("2006-01-02")
+	convertirC := militar.FechaIngresoComponente.Format(layout)
 	fechaSlashComponente := strings.Replace(convertirC, "-", "/", -1)
 
-	convertirU := militar.FechaAscenso.Format("2006-01-02")
+	convertirU := militar.FechaAscenso.Format(layout)
 	fechaSlashUltimoAsc := strings.Replace(convertirU, "-", "/", -1)
 
-	convertirE := militar.FechaRetiro.Format("2006-01-02")
+	convertirE := militar.FechaRetiro.Format(layout)
 	fechaSlashRetiro := strings.Replace(convertirE, "-", "/", -1)
 
 	return `
@@ -177,16 +179,16 @@ func ActualizarPace(militar Militar) string {
 //InsertarMilitarSAMAN Control
 func InsertarMilitarSAMAN(militar *Militar) string {
 	fecha := time.Now()
-	convertedDateString := fecha.Format("2006-01-02")
+	convertedDateString := fecha.Format(layout)
 	fechaSlashActual := strings.Replace(convertedDateString, "-", "/", -1)
 
-	convertir := militar.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
+	convertir := militar.Persona.DatoBasico.FechaNacimiento.Format(layout)
 	fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
 
-	convertirC := militar.FechaIngresoComponente.Format("2006-01-02")
+	convertirC := militar.FechaIngresoComponente.Format(layout)
 	fechaSlashComponente := strings.Replace(convertirC, "-", "/", -1)
 
-	convertirU := militar.FechaAscenso.Format("2006-01-02")
+	convertirU := militar.FechaAscenso.Format(layout)
 	fechaSlashUltimoAsc := strings.Replace(convertirU, "-", "/", -1)
 	return `
 		INSERT INTO personas
@@ -272,16 +274,16 @@ func InsertarMilitarSAMAN(militar *Militar) string {
 
 func InsertarMilitarSAMANSN(militar Militar) string {
 	fecha := time.Now()
-	convertedDateString := fecha.Format("2006-01-02")
+	convertedDateString := fecha.Format(layout)
 	fechaSlashActual := strings.Replace(convertedDateString, "-", "/", -1)
 
-	convertir := militar.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
+	convertir := militar.Persona.DatoBasico.FechaNacimiento.Format(layout)
 	fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
 
-	convertirC := militar.FechaIngresoComponente.Format("2006-01-02")
+	convertirC := militar.FechaIngresoComponente.Format(layout)
 	fechaSlashComponente := strings.Replace(convertirC, "-", "/", -1)
 
-	convertirU := militar.FechaAscenso.Format("2006-01-02")
+	convertirU := militar.FechaAscenso.Format(layout)
 	fechaSlashUltimoAsc := strings.Replace(convertirU, "-", "/", -1)
 	return `
 		INSERT INTO personas
@@ -445,26 +447,33 @@ func InsertMysqlFT(mil *Militar) string {
 
 func obtenerPensionados() string {
 	return `
-		SELECT per.nropersona, per.tipnip, per.codnip,
-			per.nombreprimero, per.nombresegundo, per.apellidoprimero, per.apellidosegundo,
-			per.sexocod, per.edocivilcod, per.fechanacimiento,
-			pdm.componentecod, pdm.gradocod, pdm.perscategcod, pdm.perssituaccod, pdm.persclasecod,
-			pdm.fchingcomponente,pdm.fchultimoascenso,pdm.fchpromocion,pdm.fchegreso,
-			pdm.annoreconocido,pdm.mesreconocido,pdm.diareconocido,
-			pen.nrohijos,pen.tipcuentacod,pen.instfinancod,pen.nrocuenta, pcal.porcentaje,
-			pen.estpencod,pen.razestpencod
-		FROM personas per
-		JOIN pers_dat_militares pdm ON  per.nropersona=pdm.nropersona
-		JOIN pension pen ON pdm.nropersona=pen.nropersona
-		JOIN (
-						SELECT nropersona, MAX(porcprestmonto) AS porcentaje  FROM
-							pension_calc
-						GROUP BY nropersona
-					) pcal ON pen.nropersona=pcal.nropersona
 
-		-- where
-		-- codnip='9150043'
-		-- pdm.perssituaccod='ACT'`
+	SELECT per.nropersona, per.tipnip, per.codnip,
+		per.nombreprimero, per.nombresegundo, per.apellidoprimero, per.apellidosegundo,
+		per.sexocod, per.edocivilcod, per.fechanacimiento,
+		pdm.componentecod, pdm.gradocod, pdm.perscategcod, pdm.perssituaccod, pdm.persclasecod,
+		pdm.fchingcomponente,pdm.fchultimoascenso,pdm.fchpromocion,pdm.fchegreso,
+		pdm.annoreconocido,pdm.mesreconocido,pdm.diareconocido,
+		pen.nrohijos,pen.tipcuentacod,pen.instfinancod,pen.nrocuenta, pcal.porcentaje,
+		pen.estpencod,pen.razestpencod, per.fechadefuncion
+	FROM personas per
+	JOIN pers_dat_militares pdm ON  per.nropersona=pdm.nropersona
+	JOIN pension pen ON pdm.nropersona=pen.nropersona
+	JOIN (
+		SELECT nropersona, MAX(porcprestmonto) AS porcentaje  FROM
+			pension_calc
+		GROUP BY nropersona
+	) pcal ON pen.nropersona=pcal.nropersona
+	-- LIMIT 1
+	WHERE
+	-- pdm.fchultimoascenso = '//'
+	-- codnip='10230700'
+	-- AND
+	pen.estpencod = 'ACT'
+	AND
+	pen.razestpencod ='INI'
+	AND
+	pdm.perssituaccod IN ('RCP', 'FCP', 'I')`
 }
 
 //MGOActualizarPensionados Actualizando datos principales del militar
@@ -474,36 +483,61 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 	if err != nil {
 		return
 	}
-
+	i := 0
+	log := ""
 	for sq.Next() {
 		var militar Militar
 		var nropersona, tipnip, codnip, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo sql.NullString
 		var sexocod, edocivilcod sql.NullString
 		var componentecod, gradocod, perscategcod, perssituaccod, persclasecod sql.NullString
-		var fchingcomponente, fchultimoascenso, fchpromocion, fchegreso, fechanacimiento sql.NullString
+		var fchingcomponente, fchultimoascenso, fchpromocion, fchegreso, fechanacimiento, fechadefuncion sql.NullString
 		var annoreconocido, mesreconocido, diareconocido sql.NullString
 		var nrohijos, tipcuentacod, instfinancod, nrocuenta sql.NullString
 		var porcentaje sql.NullFloat64
 		var estpencod, razestpencod sql.NullString
-
-		sq.Scan(&nropersona, &tipnip, &codnip, &nombreprimero, &nombresegundo,
+		i++
+		er := sq.Scan(&nropersona, &tipnip, &codnip, &nombreprimero, &nombresegundo,
 			&apellidoprimero, &apellidosegundo, &sexocod, &edocivilcod, &fechanacimiento,
 			&componentecod, &gradocod, &perscategcod, &perssituaccod, &persclasecod,
 			&fchingcomponente, &fchultimoascenso, &fchpromocion, &fchegreso,
 			&annoreconocido, &mesreconocido, &diareconocido,
 			&nrohijos, &tipcuentacod, &instfinancod, &nrocuenta, &porcentaje,
-			&estpencod, &razestpencod)
+			&estpencod, &razestpencod, &fechadefuncion)
+		if er != nil {
+			fmt.Println("Scan ", i, er.Error())
+			return
+		}
+		militar.Persona.DatoBasico.Cedula = util.ValidarNullString(codnip)
+		militar.Persona.DatoBasico.Nacionalidad = "V"
+		militar.Persona.DatoBasico.NombrePrimero = strings.ToUpper(util.ValidarNullString(nombreprimero)) + " " + strings.ToUpper(util.ValidarNullString(nombresegundo))
+		militar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apellidoprimero)) + " " + strings.ToUpper(util.ValidarNullString(apellidosegundo))
+		militar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexocod)
+		militar.Persona.DatoBasico.EstadoCivil = util.ValidarNullString(edocivilcod)
+		militar.Persona.DatoBasico.FechaDefuncion = getFechaConvert(fechadefuncion)
+		//
+		militar.Grado.Abreviatura = util.ValidarNullString(gradocod)
+		militar.Componente.Abreviatura = util.ValidarNullString(componentecod)
+		militar.Categoria = util.ValidarNullString(perscategcod)
+		militar.Clase = util.ValidarNullString(persclasecod)
+		militar.Situacion = util.ValidarNullString(perssituaccod)
+
+		militar.AnoReconocido, _ = strconv.Atoi(util.ValidarNullString(annoreconocido))
+		militar.MesReconocido, _ = strconv.Atoi(util.ValidarNullString(mesreconocido))
+		militar.DiaReconocido, _ = strconv.Atoi(util.ValidarNullString(diareconocido))
 
 		militar.Pension.GradoCodigo = util.ValidarNullString(gradocod)
 		militar.Pension.ComponenteCodigo = util.ValidarNullString(componentecod)
 		militar.Pension.Categoria = util.ValidarNullString(perscategcod)
 		militar.Pension.Clase = util.ValidarNullString(persclasecod)
 		militar.Pension.Situacion = util.ValidarNullString(perssituaccod)
+		militar.Pension.Estatus = util.ValidarNullString(estpencod)
+		militar.Pension.Razon = util.ValidarNullString(razestpencod)
 
-		// militar.Pension.AnoServicio, _ = strconv.Atoi(util.ValidarNullString(annototservicio))
-		// militar.Pension.MesServicio, _ = strconv.Atoi(util.ValidarNullString(mestotservicio))
-		// militar.Pension.DiaServicio, _ = strconv.Atoi(util.ValidarNullString(diatotservicio))
-		// militar.Pension.PensionAsignada = util.ValidarNullFloat64(pensionasignada)
+		militar.Pension.AnoServicio, _ = strconv.Atoi(util.ValidarNullString(annoreconocido))
+		militar.Pension.MesServicio, _ = strconv.Atoi(util.ValidarNullString(mesreconocido))
+		militar.Pension.DiaServicio, _ = strconv.Atoi(util.ValidarNullString(diareconocido))
+
+		militar.Pension.PensionAsignada = 0
 		militar.Pension.PorcentajePrestaciones = util.ValidarNullFloat64(porcentaje)
 		militar.Pension.FechaPromocion = util.ValidarNullString(fchpromocion)
 		militar.Pension.FechaUltimoAscenso = util.ValidarNullString(fchultimoascenso)
@@ -512,15 +546,201 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 		militar.Pension.DatoFinanciero.Tipo = util.ValidarNullString(tipcuentacod)
 		militar.Pension.DatoFinanciero.Institucion = util.ValidarNullString(instfinancod)
 		militar.Pension.NumeroHijos, _ = strconv.Atoi(util.ValidarNullString(nrohijos))
-		pension := make(map[string]interface{})
-		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
-		pension["pension"] = militar.Pension
-		err = c.Update(bson.M{"id": util.ValidarNullString(codnip)}, bson.M{"$set": pension})
-		if err != nil {
-			fmt.Println("Err", err.Error())
-			return
-		}
-	}
 
+		reduc := make(map[string]interface{})
+		cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+		reduc["persona.datobasico.fechadefuncion"] = militar.Persona.DatoBasico.FechaDefuncion
+		reduc["fingreso"] = getFechaConvert(fchingcomponente)
+		reduc["fretiro"] = getFechaConvert(fchegreso)
+		reduc["fascenso"] = getFechaConvert(fchultimoascenso)
+
+		reduc["areconocido"] = militar.Pension.AnoServicio
+		reduc["mreconocido"] = militar.Pension.MesServicio
+		reduc["dreconocido"] = militar.Pension.DiaServicio
+		reduc["categoria"] = militar.Pension.Categoria
+		reduc["situacion"] = militar.Pension.Situacion
+		reduc["clase"] = militar.Pension.Clase
+		reduc["pension"] = militar.Pension
+
+		err = cred.Update(bson.M{"id": util.ValidarNullString(codnip)}, bson.M{"$set": reduc})
+		if err != nil {
+			fmt.Println("Update ALL ", err.Error(), i, " UFF -> ", codnip)
+			c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+			err = c.Insert(militar)
+			if err != nil {
+				fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
+				log += m.Persona.DatoBasico.Cedula + " Descripción: " + err.Error()
+			} else {
+				fmt.Println("Insertando cedula ", m.Persona.DatoBasico.Cedula)
+			}
+		}
+
+		// pension := make(map[string]interface{})
+		// pension["pension"] = militar.Pension
+		//
+		// err = cred.Update(bson.M{"id": util.ValidarNullString(codnip)}, bson.M{"$set": pension})
+		// if err != nil {
+		// 	fmt.Println("Update Pension", err.Error())
+		// 	//return
+		// }
+		// //fmt.Println(" # ", util.ValidarNullString(codnip))
+	}
+	fmt.Println("Cantidad ", i, "  LOG \n", log)
 	return
+}
+
+func getFechaConvert(f sql.NullString) (dateStamp time.Time) {
+	fecha := util.ValidarNullString(f)
+	if fecha != "null" {
+		dateString := strings.Replace(fecha, "/", "-", -1)
+		dateStamp, _ = time.Parse(layout, dateString)
+	}
+	return
+}
+
+func sqlSobrevivientes() string {
+	return `
+
+SELECT b.codnip, pq.tipcuentacod, pq.nrocuenta, pq.instfinancod, pq.benefporcentaje, pq.canalliquidcod,
+		pq.tipnip, pq.familia, pq.nombreprimero, pq.nombresegundo, pq.apellidoprimero, pq.apellidosegundo, pq.sexocod,
+		pq.edocivilcod, pq.fechanacimiento
+FROM personas b JOIN (
+	SELECT tb.nropersonatitular, tb.tipcuentacod, tb.nrocuenta, tb.instfinancod, tb.benefporcentaje, tb.canalliquidcod,
+		tipnip, codnip as familia, nombreprimero,nombresegundo, apellidoprimero,apellidosegundo,sexocod,edocivilcod,fechanacimiento
+	FROM (
+		SELECT nropersona,nropersonatitular,
+			tipcuentacod,nrocuenta,instfinancod, benefporcentaje, canalliquidcod
+		FROM benef_montos -- limit 1
+		WHERE
+			estbenefmoncod is null
+			AND
+			benefconcepcod = 'PS'
+			OR
+			estbenefmoncod = 'ACT'
+		) tb
+	JOIN personas p ON tb.nropersona=p.nropersona ) AS pq ON pq.nropersonatitular=b.nropersona
+	WHERE b.codnip='10230700'
+	`
+}
+
+//MGOActualizarSobrevivientes Actualizando datos principales del militar
+func (m *Militar) MGOActualizarSobrevivientes() (err error) {
+
+	sq, err := sys.PostgreSQLSAMAN.Query(sqlSobrevivientes())
+	if err != nil {
+		return
+	}
+	// i := 0
+	// log := ""
+	for sq.Next() {
+		var f Familiar
+		var codnip, tipcuentacod, nrocuenta, instfinancod, canalliquidcod sql.NullString
+		var tipnip, familia, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo, sexocod sql.NullString
+		var edocivilcod, fechanacimiento sql.NullString
+		var porcentaje sql.NullFloat64
+		var direc DatoFinanciero
+		err = sq.Scan(&codnip, &tipcuentacod, &nrocuenta, &instfinancod,
+			&porcentaje, &canalliquidcod, &tipnip, &familia, &nombreprimero, &nombresegundo,
+			&apellidoprimero, &apellidosegundo, &sexocod, &edocivilcod, &fechanacimiento,
+		)
+		obtenerErr(err, "")
+		f.DocumentoPadre = util.ValidarNullString(codnip)
+		f.Persona.DatoBasico.Cedula = util.ValidarNullString(familia)
+		f.PorcentajePrestaciones = util.ValidarNullFloat64(porcentaje)
+		f.Persona.DatoBasico.FechaNacimiento = getFechaConvert(fechanacimiento)
+		f.CondicionPago = util.ValidarNullString(canalliquidcod)
+
+		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+		familiar := make(map[string]interface{})
+		if f.CondicionPago == "null" {
+			f.CondicionPago = "CHQ"
+		} else if f.CondicionPago == "BANCO" {
+
+			direc.Cuenta = util.ValidarNullString(nrocuenta)
+			direc.Institucion = util.ValidarNullString(instfinancod)
+			direc.Tipo = util.ValidarNullString(tipcuentacod)
+		}
+
+		familiar["familiar.$.pprestaciones"] = f.PorcentajePrestaciones
+		familiar["familiar.$.condicionpago"] = f.CondicionPago
+		if direc.Cuenta != "" {
+			familiar["familiar.$.persona.datofinanciero.0"] = direc
+		}
+		err = c.Update(bson.M{"familiar.persona.datobasico.cedula": f.Persona.DatoBasico.Cedula, "id": f.DocumentoPadre}, bson.M{"$set": familiar})
+		obtenerErr(err, " id: "+f.Persona.DatoBasico.Cedula+" PADRE: "+f.DocumentoPadre)
+
+		mil := make(map[string]interface{})
+		mil["pprestaciones"] = f.PorcentajePrestaciones
+		err = c.Update(bson.M{"id": f.Persona.DatoBasico.Cedula}, bson.M{"$set": mil})
+		fmt.Println("Cedula ", f.Persona.DatoBasico.Cedula, " PADRE ", f.DocumentoPadre, " PORC: ", f.PorcentajePrestaciones, f.CondicionPago)
+	}
+	return
+}
+
+func sqlFideicomitentesSssifanb() string {
+	return `
+		SELECT
+			cedula, fecha_ingreso, f_ult_ascenso, f_retiro, anio_reconocido,mes_reconocido, dia_reconocido
+  	FROM beneficiario
+		-- WHERE cedula='12517973'
+	`
+}
+
+//MGOActualizarSobrevivientesFideicomiso Actualizar segun Fideicomiso
+func (m *Militar) MGOActualizarSobrevivientesFideicomiso() (err error) {
+
+	sq, err := sys.PostgreSQLPACE.Query(sqlFideicomitentesSssifanb())
+	if err != nil {
+		return
+	}
+	i := 0
+	j := 0
+	for sq.Next() {
+		var cedula, ingreso, ascenso, retiro, anio, mes, dia sql.NullString
+		i++
+		err = sq.Scan(&cedula, &ingreso, &ascenso, &retiro, &anio, &mes, &dia)
+		obtenerErr(err, "")
+		reduc := make(map[string]interface{})
+		cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+		reduc["fingreso"] = getFechaConvertGuiones(ingreso)
+		reduc["fascenso"] = getFechaConvertGuiones(ascenso)
+
+		f_retiro := util.ValidarNullString(retiro)
+		if f_retiro != "" {
+			reduc["fretiro"] = getFechaConvertGuiones(retiro)
+		}
+
+		reduc["areconocido"], _ = strconv.Atoi(util.ValidarNullString(anio))
+		reduc["mreconocido"], _ = strconv.Atoi(util.ValidarNullString(mes))
+		reduc["dreconocido"], _ = strconv.Atoi(util.ValidarNullString(dia))
+		err = cred.Update(bson.M{"id": util.ValidarNullString(cedula)}, bson.M{"$set": reduc})
+		if err != nil {
+			j++
+			fmt.Println("Update ALL ", err.Error(), i, " UFF -> ", util.ValidarNullString(cedula))
+		} else {
+			fmt.Println(i, " -> ", util.ValidarNullString(cedula), "Insertado")
+		}
+
+	}
+	fmt.Println("Insertados: ", i, " Errados: ", j)
+	return
+}
+
+//getFechaConvertGuiones Con guioness
+func getFechaConvertGuiones(f sql.NullString) (dateStamp time.Time) {
+	fecha := util.ValidarNullString(f)
+	if fecha != "null" {
+		dateString := fecha[0:10]
+		dateStamp, _ = time.Parse(layout, dateString)
+	}
+	return
+}
+
+func obtenerErr(r error, msj string) bool {
+	if r != nil {
+		fmt.Println(msj, " : ", r.Error())
+	}
+	return true
 }
