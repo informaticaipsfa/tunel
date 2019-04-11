@@ -9,11 +9,25 @@ import (
 )
 
 type Archivo struct {
+	Responsable      int
 	Ruta             string
 	NombreDelArchivo string
 	Codificacion     string
-	CantidadLineas   int
+	Cabecera         string
 	Leer             bool
+	Salvar           bool
+	Fecha            string
+	CantidadLineas   int
+	Registros        int
+	PostgreSQL       *sql.DB
+	Canal            chan []byte
+}
+
+func (a *Archivo) iniciarVariable() {
+	a.Cabecera = "INSERT INTO space.nomina_archivo (cedu,conc,mont,tipo,fech) VALUES "
+	a.CantidadLineas = 0
+	a.Leer = false
+	a.Salvar = false
 }
 
 func (a *Archivo) Crear(cadena string) bool {
@@ -71,23 +85,6 @@ func (a *Archivo) LeerPorLinea(excelFileName string, PostgreSQLPENSIONSIGESP *sq
 	fmt.Println(excelFileName[4:7])
 	return true
 }
-
-// func (a *Archivo) LeerPorLinea(excelFileName string) bool {
-// 	var cedula string
-// 	xlFile, err := xlsx.OpenFile(excelFileName)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 	}
-// 	Leer Archivos de XLS del Tratamiento Prolongado
-// 	for _, sheet := range xlFile.Sheets {
-//
-// 		for _, row := range sheet.Rows {
-// 			fmt.Println(row)
-// 			cedula = row.Cells
-// 		}
-// 	}
-// 	return true
-// }
 
 func (a *Archivo) LeerTodo() (f []byte, err error) {
 	f, err = ioutil.ReadFile(a.NombreDelArchivo)

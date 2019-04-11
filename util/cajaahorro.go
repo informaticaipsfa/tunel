@@ -2,46 +2,53 @@ package util
 
 import (
 	"bufio"
+	"database/sql"
+	"fmt"
 	"os"
+	"strconv"
 	"strings"
 )
 
-//LeerCA Archivos de Loteria
-func (a *Archivo) LeerCA() bool {
-
+//LeerCA Leer archivos de la caja de ahorro
+func (a *Archivo) LeerCA(PostPension *sql.DB) bool {
+	var coma string
+	a.iniciarVariable()
+	insertar := a.Cabecera
 	archivo, err := os.Open(a.Ruta)
 	Error(err)
 	scan := bufio.NewScanner(archivo)
 
 	for scan.Scan() {
-		linea := strings.Fields(scan.Text())
+		linea := strings.Split(scan.Text(), "|")
 		l := len(linea)
+		a.CantidadLineas++
+		//fmt.Println("Linea -> ", linea)
 		if l > 3 {
-			if "c" == strings.Trim(linea[0], " ") {
-				a.Leer = true
-				a.CantidadLineas++
-			}
-			if a.Leer {
-				if a.CantidadLineas > 2 && strings.Trim(linea[0], " ") != "TOTALES:" && strings.Trim(linea[0], " ") != "" {
-					// coma = ","
-				} else {
-					// coma = ""
-				}
-				// insertar += coma
-				if a.CantidadLineas > 1 && "TOTALES:" != strings.Trim(linea[0], " ") && strings.Trim(linea[0], " ") != "" {
 
-					// re := regexp.MustCompile(`[-()]`)
-					// agen := re.Split(linea[0], -1)
-					// agencia, venta := agen[1], RComaXPunto(linea[l-3])
-					// premio, comision := RComaXPunto(linea[l-1]), RComaXPunto(linea[l-2])
-					// insertar += "('" + agencia + "'," + venta + "," + premio + ","
-					// insertar += comision + ",1,'" + a.Fecha + "',Now(),"
-					// insertar += strconv.Itoa(posicionarchivo) + "," + strconv.Itoa(oid) + ")"
-					// a.Salvar = true
-				}
-				a.CantidadLineas++
+			if a.CantidadLineas > 2 {
+				coma = ","
+			} else {
+				coma = ""
 			}
+			insertar += coma
+			if a.CantidadLineas > 1 {
+
+				//re := regexp.MustCompile(`[-().]`)
+				concepto := strings.Split(linea[0], ".")
+				cedula, _ := strconv.Atoi(strings.Split(linea[1], ".")[0])
+				monto := linea[2]
+				// premio, comision := RComaXPunto(linea[l-1]), RComaXPunto(linea[l-2])
+				insertar += "('" + strconv.Itoa(cedula) + "','" + concepto[0] + "'," + monto + ", 2, Now() )"
+
+			}
+
 		}
+	}
+	//fmt.Println(insertar)
+	_, err = PostPension.Exec(insertar)
+	if err != nil {
+		fmt.Println("ERR. CAJA DE AHORRO ", err.Error())
+		return false
 	}
 	return true
 }

@@ -12,7 +12,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/sys/seguridad"
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 var UsuarioConectado seguridad.Usuario
@@ -344,13 +346,25 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 			return
 		}
 		cadena += files[i].Filename + ";"
+		ProcesarTxt(files[i].Filename)
 
-	}
+	} // Fin de archivos
 	M.Mensaje = "Carga exitosa"
 	M.Tipo = 2
 
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
+
+}
+
+//ProcesarTxt Proceso de archivo
+func ProcesarTxt(doc string) {
+	var a util.Archivo
+
+	a.Ruta = "./public_web/SSSIFANB/pensiones/temp/nomina/" + doc
+
+	a.LeerCA(sys.PostgreSQLPENSION)
+	fmt.Println(a.Ruta)
 
 }
