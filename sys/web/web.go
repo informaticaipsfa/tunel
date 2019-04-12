@@ -126,6 +126,7 @@ func CargarModulosNomina() {
 	var M api.Militar
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/{id}", wUsuario.ValidarToken(concepto.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/listar", wUsuario.ValidarToken(concepto.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva", wUsuario.ValidarToken(M.ConsultarDirectiva)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/detalle/{id}", wUsuario.ValidarToken(M.ConsultarDetalleDirectiva)).Methods("GET")

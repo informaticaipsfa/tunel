@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 )
@@ -49,6 +50,16 @@ func (N *WNomina) Agregar(w http.ResponseWriter, r *http.Request) {
 func (N *WNomina) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
+	var concepto fanb.Concepto
+	var codigo = mux.Vars(r)
+	concepto.Codigo = codigo["id"]
+	_, e := concepto.Consultar()
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
 	M.Tipo = 1
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)

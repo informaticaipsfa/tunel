@@ -90,6 +90,17 @@ type Beneficiario struct {
 var lstMilitares []PensionMilitar
 var lstComponente []fanb.Componente
 
+//NumeroHijos Contando numero de hijos
+func (m *PensionMilitar) NumeroHijos() int {
+	cantidad := 0
+	for _, v := range m.Familiar {
+		if v.Parentesco == "HJ" && v.Benficio == true {
+			cantidad++
+		}
+	}
+	return cantidad
+}
+
 //ActulizarPensionadosID Por Cedula
 func ActulizarPensionadosID(id string) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
@@ -109,6 +120,7 @@ func ActulizarPensionadosID(id string) {
 		"pension.pprofesional":    true,
 		"pension.pnoascenso":      true,
 		"pension.pespecial":       true,
+		"familiar":                true,
 	}
 	buscar := bson.M{"id": id}
 	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
@@ -138,9 +150,11 @@ func consultarPensionados() {
 		"pension.pprofesional":    true,
 		"pension.pnoascenso":      true,
 		"pension.pespecial":       true,
+		"familiar":                true,
 	}
 
 	buscar := bson.M{"situacion": "RCP"}
+	// buscar := bson.M{"id": "9248676"}
 	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
 	if err != nil {
 		fmt.Println("Error en la consulta de Pensionados Militares")
@@ -204,7 +218,7 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 				` + pprofesional + `,
 				` + pespecial + `,
 				201,
-				` + strconv.Itoa(v.Pension.NumeroHijos) + `,
+				` + strconv.Itoa(v.NumeroHijos()) + `,
 				` + porcentaje + `,
 				'` + numero + `',
 				'` + cuenta + `',
