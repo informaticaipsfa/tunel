@@ -134,6 +134,8 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/clonar", wUsuario.ValidarToken(M.ClonarDirectiva)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/eliminar/{id}", wUsuario.ValidarToken(M.ConsultarDetalleDirectiva)).Methods("GET")
 
+	Enrutador.HandleFunc("/ipsfa/api/nomina/ccpensionados", wUsuario.ValidarToken(M.ConsultarCantidadPensionados)).Methods("GET")
+
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/prima", wUsuario.ValidarToken(M.ActualizarPrima)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/actualizar", wUsuario.ValidarToken(M.ActualizarDirectiva)).Methods("POST")
 

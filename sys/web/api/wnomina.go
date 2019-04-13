@@ -18,10 +18,13 @@ type WConcepto struct {
 }
 
 type WNomina struct {
-	ID        string      `json:"id,omitempty" bson:"id"`
-	Directiva string      `json:"directiva,omitempty" bson:"directiva"`
-	Fecha     string      `json:"fecha,omitempty" bson:"fecha"`
-	Concepto  []WConcepto `json:"Concepto,omitempty" bson:"Concepto"`
+	ID          string      `json:"id,omitempty" bson:"id"`
+	Nombre      string      `json:"nombre,omitempty" bson:"nombre"`
+	Tipo        string      `json:"tipo,omitempty" bson:"tipo"`
+	Directiva   string      `json:"directiva,omitempty" bson:"directiva"`
+	FechaInicio string      `json:"fechainicio,omitempty" bson:"fechainicio"`
+	FechaFin    string      `json:"fechafin,omitempty" bson:"fechafin"`
+	Concepto    []WConcepto `json:"Concepto,omitempty" bson:"Concepto"`
 }
 
 //Agregar un concepto nuevo

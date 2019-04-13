@@ -110,6 +110,8 @@ func ActulizarPensionadosID(id string) {
 		"fingreso":                true,
 		"fretiro":                 true,
 		"situacion":               true,
+		"grado.abreviatura":       true,
+		"componente.abreviatura":  true,
 		"pension.pensionasignada": true,
 		"pension.grado":           true,
 		"pension.componente":      true,
@@ -139,6 +141,8 @@ func consultarPensionados() {
 		"fascenso":                true,
 		"fingreso":                true,
 		"fretiro":                 true,
+		"grado.abreviatura":       true,
+		"componente.abreviatura":  true,
 		"situacion":               true,
 		"pension.pensionasignada": true,
 		"pension.grado":           true,
@@ -154,7 +158,7 @@ func consultarPensionados() {
 	}
 
 	buscar := bson.M{"situacion": "RCP"}
-	// buscar := bson.M{"id": "9248676"}
+	// buscar := bson.M{"id": "26419599"}
 	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
 	if err != nil {
 		fmt.Println("Error en la consulta de Pensionados Militares")
@@ -178,15 +182,21 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 	i := 0
 	coma := ""
 	cuerpo := ""
+	linea := ""
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
-		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje, numero_cuenta, tipo, banco)	VALUES `
+		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje, numero_cuenta, tipo, banco, situacion)	VALUES `
 	fmt.Println("Creando lote...")
+	j := 0
 	for _, v := range lstMilitares {
 		if i > 0 {
 			coma = ","
 		}
 
-		grado, componente := obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
+		grado, componente := obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
+		if grado > "" {
+			j++
+			linea += strconv.Itoa(j) + " : " + v.Persona.DatoBasico.Cedula + ": " + grado + " -- \n"
+		}
 		np := v.Persona.DatoBasico.NombrePrimero
 		ap := v.Persona.DatoBasico.ApellidoPrimero
 		porcentaje := strconv.FormatFloat(v.Pension.PorcentajePrestaciones, 'f', 2, 64)
@@ -222,15 +232,17 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 				` + porcentaje + `,
 				'` + numero + `',
 				'` + cuenta + `',
-				'` + tipo + `')`
+				'` + tipo + `',
+				'` + v.Situacion + `')`
 		i++
 
-		fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
+		//fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
 	}
 
 	fmt.Println("Preparando para insertar: ", i)
 	query := insert + cuerpo
 	// fmt.Println("Consultar ", query)
+	fmt.Println(linea)
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query: ", err.Error())

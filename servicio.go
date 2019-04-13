@@ -48,7 +48,7 @@ func main() {
 	// pension.CargarCodigoPace()
 	var pension sssifanb.Pension
 	pension.Exportar("", 0)
-	//
+
 	// fmt.Println("Inciando la carga del sistema")
 	// web.Cargar()
 	//
