@@ -466,9 +466,9 @@ func obtenerPensionados() string {
 	) pcal ON pen.nropersona=pcal.nropersona
 	-- LIMIT 1
 	WHERE
-	-- pdm.fchultimoascenso = '//'
-	-- codnip='10230700'
-	-- AND
+	-- pdm.fchultimoascenso = '//' '2759874' "15236250"
+	codnip='3194226'
+  AND
 	pen.estpencod = 'ACT'
 	AND
 	pen.razestpencod ='INI'
@@ -551,9 +551,9 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 		cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 
 		reduc["persona.datobasico.fechadefuncion"] = militar.Persona.DatoBasico.FechaDefuncion
-		reduc["fingreso"] = getFechaConvert(fchingcomponente)
-		reduc["fretiro"] = getFechaConvert(fchegreso)
-		reduc["fascenso"] = getFechaConvert(fchultimoascenso)
+		// reduc["fingreso"] = getFechaConvert(fchingcomponente)
+		// reduc["fretiro"] = getFechaConvert(fchegreso)
+		// reduc["fascenso"] = getFechaConvert(fchultimoascenso)
 
 		reduc["areconocido"] = militar.Pension.AnoServicio
 		reduc["mreconocido"] = militar.Pension.MesServicio
@@ -569,22 +569,13 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 			c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 			err = c.Insert(militar)
 			if err != nil {
-				fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
-				log += m.Persona.DatoBasico.Cedula + " Descripción: " + err.Error()
+				fmt.Println("Err: Insertando cedula ", militar.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
+				log += militar.Persona.DatoBasico.Cedula + " Descripción: " + err.Error()
 			} else {
-				fmt.Println("Insertando cedula ", m.Persona.DatoBasico.Cedula)
+				fmt.Println("Insertando cedula ", militar.Persona.DatoBasico.Cedula)
 			}
 		}
-
-		// pension := make(map[string]interface{})
-		// pension["pension"] = militar.Pension
-		//
-		// err = cred.Update(bson.M{"id": util.ValidarNullString(codnip)}, bson.M{"$set": pension})
-		// if err != nil {
-		// 	fmt.Println("Update Pension", err.Error())
-		// 	//return
-		// }
-		// //fmt.Println(" # ", util.ValidarNullString(codnip))
+		fmt.Println(i, " : ", militar.Persona.DatoBasico.Cedula)
 	}
 	fmt.Println("Cantidad ", i, "  LOG \n", log)
 	return
@@ -602,25 +593,26 @@ func getFechaConvert(f sql.NullString) (dateStamp time.Time) {
 func sqlSobrevivientes() string {
 	return `
 
-SELECT b.codnip, pq.tipcuentacod, pq.nrocuenta, pq.instfinancod, pq.benefporcentaje, pq.canalliquidcod,
-		pq.tipnip, pq.familia, pq.nombreprimero, pq.nombresegundo, pq.apellidoprimero, pq.apellidosegundo, pq.sexocod,
-		pq.edocivilcod, pq.fechanacimiento
-FROM personas b JOIN (
-	SELECT tb.nropersonatitular, tb.tipcuentacod, tb.nrocuenta, tb.instfinancod, tb.benefporcentaje, tb.canalliquidcod,
-		tipnip, codnip as familia, nombreprimero,nombresegundo, apellidoprimero,apellidosegundo,sexocod,edocivilcod,fechanacimiento
-	FROM (
-		SELECT nropersona,nropersonatitular,
-			tipcuentacod,nrocuenta,instfinancod, benefporcentaje, canalliquidcod
-		FROM benef_montos -- limit 1
-		WHERE
-			estbenefmoncod is null
-			AND
-			benefconcepcod = 'PS'
-			OR
-			estbenefmoncod = 'ACT'
-		) tb
-	JOIN personas p ON tb.nropersona=p.nropersona ) AS pq ON pq.nropersonatitular=b.nropersona
-	WHERE b.codnip='10230700'
+	SELECT *, cb.cedula_autoriz FROM (
+	SELECT b.codnip, pq.tipcuentacod, pq.nrocuenta, pq.instfinancod, pq.benefporcentaje, pq.canalliquidcod,
+			pq.tipnip, pq.familia, pq.nombreprimero, pq.nombresegundo, pq.apellidoprimero, pq.apellidosegundo, pq.sexocod,
+			pq.edocivilcod, pq.fechanacimiento
+	FROM personas b JOIN (
+		SELECT tb.nropersonatitular, tb.tipcuentacod, tb.nrocuenta, tb.instfinancod, tb.benefporcentaje, tb.canalliquidcod,
+			tipnip, codnip as familia, nombreprimero,nombresegundo, apellidoprimero,apellidosegundo,sexocod,edocivilcod,fechanacimiento
+		FROM (
+			SELECT nropersona,nropersonatitular,
+				tipcuentacod,nrocuenta,instfinancod, benefporcentaje, canalliquidcod
+			FROM benef_montos -- limit 1
+			WHERE
+				estbenefmoncod is null
+				AND
+				benefconcepcod = 'PS'
+				OR
+				estbenefmoncod = 'ACT'
+			) tb
+	JOIN personas p ON tb.nropersona=p.nropersona ) AS pq ON pq.nropersonatitular=b.nropersona ) prin
+	LEFT JOIN cuentas_bancarias cb on prin.nrocuenta=cb.nrocuenta AND prin.familia=cb.cedula_familiar
 	`
 }
 
@@ -639,10 +631,11 @@ func (m *Militar) MGOActualizarSobrevivientes() (err error) {
 		var tipnip, familia, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo, sexocod sql.NullString
 		var edocivilcod, fechanacimiento sql.NullString
 		var porcentaje sql.NullFloat64
+		var cautoriz sql.NullString
 		var direc DatoFinanciero
 		err = sq.Scan(&codnip, &tipcuentacod, &nrocuenta, &instfinancod,
 			&porcentaje, &canalliquidcod, &tipnip, &familia, &nombreprimero, &nombresegundo,
-			&apellidoprimero, &apellidosegundo, &sexocod, &edocivilcod, &fechanacimiento,
+			&apellidoprimero, &apellidosegundo, &sexocod, &edocivilcod, &fechanacimiento, &cautoriz,
 		)
 		obtenerErr(err, "")
 		f.DocumentoPadre = util.ValidarNullString(codnip)

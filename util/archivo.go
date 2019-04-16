@@ -95,6 +95,12 @@ func (a *Archivo) EscribirLinea(linea string) bool {
 	return true
 }
 
+//Cerrar Archivos
 func (a *Archivo) Cerrar() bool {
+	return true
+}
+
+//ObtenerDatosSQL Consultar los archivos sql
+func (a *Archivo) ObtenerDatosSQL(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	return true
 }

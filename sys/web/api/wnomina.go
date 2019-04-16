@@ -71,6 +71,7 @@ func (N *WNomina) Consultar(w http.ResponseWriter, r *http.Request) {
 
 //Listar Ver
 func (N *WNomina) Listar(w http.ResponseWriter, r *http.Request) {
+
 	var concepto fanb.Concepto
 	Cabecera(w, r)
 	j, _ := concepto.Listar()
@@ -80,6 +81,7 @@ func (N *WNomina) Listar(w http.ResponseWriter, r *http.Request) {
 
 //Opciones Militar
 func (N *WNomina) Opciones(w http.ResponseWriter, r *http.Request) {
+
 	Cabecera(w, r)
 	fmt.Println("OPTIONS...")
 	//fmt.Println(w, "Saludos")

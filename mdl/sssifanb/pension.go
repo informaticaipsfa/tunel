@@ -187,15 +187,26 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje, numero_cuenta, tipo, banco, situacion)	VALUES `
 	fmt.Println("Creando lote...")
 	j := 0
+	k := 0
+	l := 0
 	for _, v := range lstMilitares {
 		if i > 0 {
 			coma = ","
 		}
 
 		grado, componente := obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
-		if grado > "" {
+		if grado == "0" {
+			l++
 			j++
-			linea += strconv.Itoa(j) + " : " + v.Persona.DatoBasico.Cedula + ": " + grado + " -- \n"
+			linea += strconv.Itoa(j) + " : " + v.Persona.DatoBasico.Cedula
+			grado, componente = obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
+			if grado == "0" {
+				k++
+				linea += "  --->  " + strconv.Itoa(k) + ": " + grado + " :: " + strconv.Itoa(componente)
+			} else {
+				linea += "  --->  OK => Resuelto... " + v.Pension.ComponenteCodigo + "|" + v.Pension.GradoCodigo + " == " + grado + " :: " + strconv.Itoa(componente)
+			}
+			linea += " -- \n"
 		}
 		np := v.Persona.DatoBasico.NombrePrimero
 		ap := v.Persona.DatoBasico.ApellidoPrimero
@@ -221,7 +232,7 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 				'` + strings.Replace(ap, "'", " ", -1) + `',
 				` + grado + `,` + strconv.Itoa(componente) + `,
 				'` + v.FechaIngresoComponente.String()[0:10] + `',
-				'` + v.FechaAscenso.String()[0:10] + `',
+				'` + fAscenso + `',
 				'` + fRetiro + `',
 				'` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] + `',
 				` + pnoascenso + `,
@@ -243,6 +254,7 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 	query := insert + cuerpo
 	// fmt.Println("Consultar ", query)
 	fmt.Println(linea)
+	fmt.Println("Cantidad de errores .-> ", l)
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query: ", err.Error())
@@ -250,6 +262,132 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 
 }
 
+// consultarPensionadosFamiliares Familiares
+func consultarPensionadosFamiliares() {
+	//Listado de Militares Pensionados
+	// var lst []Militar{}
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	seleccion := bson.M{
+		"persona.datobasico":      true,
+		"fascenso":                true,
+		"fingreso":                true,
+		"fretiro":                 true,
+		"grado.abreviatura":       true,
+		"componente.abreviatura":  true,
+		"situacion":               true,
+		"pension.pensionasignada": true,
+		"pension.grado":           true,
+		"pension.componente":      true,
+		"pension.numerohijo":      true,
+		"pension.datofinanciero":  true,
+		"pension.areconocido":     true,
+		"pension.pprestaciones":   true,
+		"pension.pprofesional":    true,
+		"pension.pnoascenso":      true,
+		"pension.pespecial":       true,
+		"familiar":                true,
+	}
+
+	buscar := bson.M{"situacion": "FCP"}
+	// buscar := bson.M{"id": "26419599"}
+	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
+	if err != nil {
+		fmt.Println("Error en la consulta de Pensionados Militares")
+		//return
+	}
+
+}
+
+//ExportarFamiliares Controlando Datos
+func (P *Pension) ExportarFamiliares() {
+	fmt.Println("Cargando Componente")
+	consultarComponentes()
+
+	fmt.Println("Cargando Militares")
+	consultarPensionadosFamiliares()
+
+	i := 0
+	coma := ""
+	cuerpo := ""
+	linea := ""
+	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
+		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje, numero_cuenta, tipo, banco, situacion)	VALUES `
+
+	familiar := `INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,fecha_nacimiento,edo_civil,f_defuncion,
+		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_reincorporacion, porcentaje)	VALUES `
+	fmt.Println("Creando lote...")
+	j := 0
+	k := 0
+	l := 0
+	for _, v := range lstMilitares {
+		if i > 0 {
+			coma = ","
+		}
+
+		grado, componente := obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
+		if grado == "0" {
+			l++
+			j++
+			linea += strconv.Itoa(j) + " : " + v.Persona.DatoBasico.Cedula
+			grado, componente = obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
+			if grado == "0" {
+				k++
+				linea += "  --->  " + strconv.Itoa(k) + ": " + grado + " :: " + strconv.Itoa(componente)
+			} else {
+				linea += "  --->  OK => Resuelto... " + v.Pension.ComponenteCodigo + "|" + v.Pension.GradoCodigo + " == " + grado + " :: " + strconv.Itoa(componente)
+			}
+			linea += " -- \n"
+		}
+		np := v.Persona.DatoBasico.NombrePrimero
+		ap := v.Persona.DatoBasico.ApellidoPrimero
+		porcentaje := strconv.FormatFloat(v.Pension.PorcentajePrestaciones, 'f', 2, 64)
+		pprofesional := strconv.FormatFloat(v.Pension.PrimaProfesional, 'f', 2, 64)
+		pnoascenso := strconv.FormatFloat(v.Pension.PrimaNoAscenso, 'f', 2, 64)
+		pespecial := strconv.FormatFloat(v.Pension.PrimaEspecial, 'f', 2, 64)
+		numero := v.Pension.DatoFinanciero.Cuenta
+		cuenta := v.Pension.DatoFinanciero.Institucion
+		tipo := v.Pension.DatoFinanciero.Tipo
+		fRetiro := v.FechaRetiro.String()[0:10]
+		fAscenso := v.FechaAscenso.String()[0:10]
+		if len(fRetiro) < 10 {
+			fRetiro = fAscenso
+		}
+		if len(fAscenso) < 10 {
+			fAscenso = fRetiro
+		}
+		estatus := "201" //ACTIVO PARA GENERAR LA PENSION A SUS SOBREVIVIENTES
+		if len(v.Familiar) == 0 {
+			estatus = "202" //DESACTIVANDO PENSION Y CALCULOS DE LA PENSION SIN FAMILIARES
+		}
+		cuerpo += coma + `('` + v.Persona.DatoBasico.Cedula + `',
+				'` + strings.Replace(np, "'", " ", -1) + `','` + strings.Replace(ap, "'", " ", -1) + `',
+				` + grado + `,` + strconv.Itoa(componente) + `,'` + v.FechaIngresoComponente.String()[0:10] + `',
+				'` + fAscenso + `','` + fRetiro + `','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] + `',
+				` + pnoascenso + `,` + pprofesional + `,` + pespecial + `,` + estatus + `,` + strconv.Itoa(v.NumeroHijos()) + `,
+				` + porcentaje + `,'` + numero + `','` + cuenta + `','` + tipo + `','` + v.Situacion + `')`
+		i++
+		familiar += coma + insertFamiliares(v.Familiar)
+		//fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
+	}
+
+	fmt.Println("Preparando para insertar: ", i)
+	query := insert + cuerpo
+	// fmt.Println("Consultar ", query)
+	fmt.Println(linea)
+	fmt.Println("Cantidad de errores .-> ", l)
+	_, err := sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query: ", err.Error())
+	}
+
+}
+
+func insertFamiliares(f []Familiar) (linea string) {
+	for _, v := range f {
+		linea = v.Persona.DatoBasico.Cedula
+	}
+	return
+}
 func InsertPension() {
 
 }

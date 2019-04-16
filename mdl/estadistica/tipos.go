@@ -51,6 +51,8 @@ type Reduccion struct {
 	FechaResuelto          time.Time        `json:"fresuelto,omitempty" bson:"fresuelto"`
 	Grado                  string           `json:"grado" bson:"grado"`
 	Componente             string           `json:"componente" bson:"componente"`
+	FechaCreacion          time.Time        `json:"fcreacion,omitempty" bson:"fcreacion"`
+	FechaVencimiento       time.Time        `json:"fvencimiento,omitempty" bson:"fvencimiento"`
 }
 
 func Inferencia() {
@@ -178,10 +180,12 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		"persona.datofisionomico":     true,
 		"persona.direccion":           true,
 		"persona.telefono":            true,
-		"persona.correo":            	 true,
+		"persona.correo":              true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
 		"familiar.esmilitar":          true,
+		"tim.fechacreacion":           true,
+		"tim.fechavencimiento":        true,
 	}
 	// err := c.Find(bson.M{}).Select(seleccion).Limit(4).All(&militar)
 	fmt.Println("Preparando los datos...")
@@ -221,6 +225,8 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		prs.Parentesco = "T"
 		prs.Grado = mil.Grado.Abreviatura
 		prs.Componente = mil.Componente.Abreviatura
+		prs.FechaCreacion = mil.TIM.FechaCreacion
+		prs.FechaVencimiento = mil.TIM.FechaVencimiento
 		err := creduccion.Insert(prs)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -317,13 +323,13 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			//"estatura;" +
 			"grupo sanguineo;sena particular;correo;telefono;ciudad;estado;municipio;direccion;" +
 			"categoria;situacion;clase;fecha ingreso;fecha ascenso;fecha resuelto;numero resuelto;" +
-			"fecha retiro;grado;componente"
+			"fecha retiro;grado;componente;fecha creacion;fecha vencimiento\n"
 		_, e := f.WriteString(cabecera)
 		if e != nil {
 			fmt.Println("Error en la linea...")
 		}
 	} else {
-		cabecera := "#;cedula;nombre;parentesco;sexo;fecha nacimiento;titular"
+		cabecera := "#;cedula;nombre;parentesco;sexo;fecha nacimiento;titular\n"
 		_, e := f.WriteString(cabecera)
 		if e != nil {
 			fmt.Println("Error en la linea...")
@@ -396,6 +402,16 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 				convertirRet := rd.FechaRetiro.Format("2006-01-02")
 				fechaSlashRetiro = strings.Replace(convertirRet, "-", "/", -1)
 			}
+			fechaCreacion := ""
+			if aaa > 1000 {
+				convertirRet := rd.FechaCreacion.Format("2006-01-02")
+				fechaCreacion = strings.Replace(convertirRet, "-", "/", -1)
+			}
+			fechaVencimiento := ""
+			if aaa > 1000 {
+				convertirRet := rd.FechaVencimiento.Format("2006-01-02")
+				fechaVencimiento = strings.Replace(convertirRet, "-", "/", -1)
+			}
 
 			i++
 			linea := strconv.Itoa(i) +
@@ -424,6 +440,8 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 				";" + fechaSlashRetiro +
 				";" + rd.Grado +
 				";" + rd.Componente +
+				";" + fechaCreacion +
+				";" + fechaVencimiento +
 				"\n"
 			_, e := f.WriteString(linea)
 			if e != nil {

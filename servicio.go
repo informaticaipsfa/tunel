@@ -9,9 +9,9 @@ una implementación de un sistema de mensajes de empresa que permita a los
 expertos en integración explotar el valor del envío de mensajes sin tener que
 escribir código. Al contrario que sucede con la clásica integración de
 aplicaciones de empresa (IAE) que se basa en una pila monolítica sobre una
+implantación distribuida cuando se hace necesario, de modo que trabajen
 arquitectura hub and spoke, un bus de servicio de empresa se construye sobre
 unas funciones base que se dividen en sus partes constituyentes, con una
-implantación distribuida cuando se hace necesario, de modo que trabajen
 armoniosamente según la demanda.
 */
 package main
@@ -40,14 +40,14 @@ func init() {
 }
 
 func main() {
-	// var militar sssifanb.Militar
-	// militar.MGOActualizarPensionados()
+	var militar sssifanb.Militar
+	militar.MGOActualizarPensionados()
 	// militar.MGOActualizarSobrevivientes()
 	// militar.MGOActualizarSobrevivientesFideicomiso()
 	// var pension sssifanb.Pension
 	// pension.CargarCodigoPace()
-	var pension sssifanb.Pension
-	pension.Exportar("", 0)
+	// var pension sssifanb.Pension
+	// pension.Exportar("", 0)
 
 	// fmt.Println("Inciando la carga del sistema")
 	// web.Cargar()
