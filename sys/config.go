@@ -28,8 +28,9 @@ var (
 	PostgreSQLEMPLEADOSIGESP *sql.DB
 	MysqlFullText            *sql.DB
 	Error                    error
-	HostIPPace						   string = ""
-	HostUrlPace						   string = ""
+	HostIPPace               string = ""
+	HostUrlPace              string = ""
+	HostUrlPension           string = ""
 )
 
 //Constantes del sistema
@@ -47,7 +48,6 @@ const (
 	CODIFCACION_DE_ARCHIVOS       string = "UTF-8"
 	MAXIMO_LIMITE_DE_USUARIO      int    = 100
 	MAXIMO_LIMITE_DE_CONSULTAS    int    = 10
-
 )
 
 //BaseDatos Estructuras
@@ -63,7 +63,7 @@ type CadenaDeConexion struct {
 	Clave     string
 	Host      string
 	Puerto    string
-	StrUrl		string
+	StrUrl    string
 }
 
 //Conexiones 0: PostgreSQL, 1: MySQL, 2: MongoDB
@@ -120,7 +120,7 @@ func init() {
 				Host:      valor.Host,
 				Puerto:    valor.Puerto,
 			}
-			HostIPPace = valor.Host;
+			HostIPPace = valor.Host
 			HostUrlPace = valor.StrUrl
 			ConexionPACE(cad)
 		case "pension":
@@ -133,7 +133,7 @@ func init() {
 				Host:      valor.Host,
 				Puerto:    valor.Puerto,
 			}
-
+			HostUrlPension = valor.StrUrl
 			ConexionPENSION(cad)
 		case "pensiones":
 			cad := make(map[string]CadenaDeConexion)

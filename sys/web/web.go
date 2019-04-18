@@ -20,6 +20,7 @@ var (
 func Cargar() {
 	CargarModulosWeb()
 	CargarModulosNomina()
+	CargarModulosBanco()
 	CargarModulosSeguridad()
 
 	WMAdminLTE()
@@ -121,6 +122,7 @@ func CargarModulosWeb() {
 func CargarModulosNomina() {
 	var wUsuario api.WUsuario
 	var concepto api.WNomina
+	var wNomina api.WNomina
 	var medida api.WMedidaJudicial
 	var descuentos api.WDescuentos
 	var M api.Militar
@@ -135,8 +137,14 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/clonar", wUsuario.ValidarToken(M.ClonarDirectiva)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/eliminar/{id}", wUsuario.ValidarToken(M.ConsultarDetalleDirectiva)).Methods("GET")
 
+	Enrutador.HandleFunc("/ipsfa/api/nomina/cerrar/{id}/{estatus}", wUsuario.ValidarToken(wNomina.Gestionar)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/procesar", wUsuario.ValidarToken(wNomina.Procesar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/verpartida/{id}", wUsuario.ValidarToken(wNomina.VerPartidas)).Methods("GET")
+
 	Enrutador.HandleFunc("/ipsfa/api/nomina/ccpensionados", wUsuario.ValidarToken(M.ConsultarCantidadPensionados)).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpendientes", wUsuario.ValidarToken(M.ListarPendientes)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpendientes/{id}", wUsuario.ValidarToken(wNomina.ListarPendientes)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpagos", wUsuario.ValidarToken(wNomina.ListarPagos)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/cuadrebanco/{id}", wUsuario.ValidarToken(wNomina.CuadreBanco)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/prima", wUsuario.ValidarToken(M.ActualizarPrima)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/actualizar", wUsuario.ValidarToken(M.ActualizarDirectiva)).Methods("POST")
@@ -149,6 +157,13 @@ func CargarModulosNomina() {
 
 	//Enrutador.HandleFunc("/devel/api/descuentos", wUsuario.ValidarToken(medida.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/descuentos", wUsuario.ValidarToken(descuentos.Agregar)).Methods("POST")
+}
+
+func CargarModulosBanco() {
+	var wUsuario api.WUsuario
+	var wNom api.WNomina
+	Enrutador.HandleFunc("/ipsfa/api/nomina/metodobanco/{id}/{cant}", wUsuario.ValidarToken(wNom.CrearTxt)).Methods("GET")
+
 }
 
 //CargarModulosSeguridad Y cifrado

@@ -10,13 +10,14 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/sys"
 )
 
 //ConsultarDirectiva Militar
 func (p *Militar) ConsultarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
-	url := "http://localhost/CI-3.1.10/index.php/WServer/directiva"
+	url := sys.HostUrlPension + "directiva"
 	//fmt.Println(url);
 	response, err := http.Get(url)
 	if err != nil {
@@ -48,7 +49,7 @@ func (p *Militar) ConsultarDetalleDirectiva(w http.ResponseWriter, r *http.Reque
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var cedula = mux.Vars(r)
-	url := "http://localhost/CI-3.1.10/index.php/WServer/dtdirectiva/" + cedula["id"]
+	url := sys.HostUrlPension + "dtdirectiva/" + cedula["id"]
 	//fmt.Println(url);
 	response, err := http.Get(url)
 	if err != nil {
@@ -80,7 +81,7 @@ func (p *Militar) ListarDetalleDirectiva(w http.ResponseWriter, r *http.Request)
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := "http://localhost/CI-3.1.10/index.php/WServer/ldirectiva/" + id["id"]
+	url := sys.HostUrlPension + "ldirectiva/" + id["id"]
 	//fmt.Println(url);
 	response, err := http.Get(url)
 	if err != nil {
@@ -111,37 +112,7 @@ func (p *Militar) ListarDetalleDirectiva(w http.ResponseWriter, r *http.Request)
 func (p *Militar) ConsultarCantidadPensionados(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
-	url := "http://localhost/CI-3.1.10/index.php/WServer/ccpensionados/"
-	response, err := http.Get(url)
-	if err != nil {
-		M.Mensaje = err.Error()
-		M.Tipo = 0
-		w.WriteHeader(http.StatusForbidden)
-		j, _ := json.Marshal(M)
-		w.Write(j)
-		return
-	} else {
-		body, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			w.WriteHeader(http.StatusForbidden)
-			M.Mensaje = err.Error()
-			M.Tipo = 0
-			j, _ := json.Marshal(M)
-			w.Write(j)
-			return
-		}
-		defer response.Body.Close()
-		w.WriteHeader(http.StatusOK)
-		w.Write(body)
-		return
-	}
-}
-
-//ListarPendientes Militar
-func (p *Militar) ListarPendientes(w http.ResponseWriter, r *http.Request) {
-	Cabecera(w, r)
-	var M sssifanb.Mensaje
-	url := "http://localhost/CI-3.1.10/index.php/WServer/listartpendientes/"
+	url := sys.HostUrlPension + "ccpensionados/"
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -186,7 +157,7 @@ func (p *Militar) ClonarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wDirectiva WDirectivaClonar //Modulo de WNomina en API
-	url := "http://localhost/CI-3.1.10/index.php/WServer/clonardirectiva"
+	url := sys.HostUrlPension + "clonardirectiva"
 
 	errx := json.NewDecoder(r.Body).Decode(&wDirectiva)
 	M.Tipo = 1
@@ -242,7 +213,7 @@ func (p *Militar) GenerarNomina(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wNomina WNomina //Modulo de WNomina en API
-	url := "http://localhost/CI-3.1.10/index.php/WServer/gnomina"
+	url := sys.HostUrlPension + "gnomina"
 
 	errx := json.NewDecoder(r.Body).Decode(&wNomina)
 	M.Tipo = 1
@@ -295,7 +266,7 @@ func (p *Militar) EliminarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := "http://localhost/CI-3.1.10/index.php/WServer/eliminardirectiva/" + id["id"]
+	url := sys.HostUrlPension + "eliminardirectiva/" + id["id"]
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -335,7 +306,7 @@ func (p *Militar) ActualizarPrima(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wDirectivaPrima WDirectivaPrima //Modulo de WNomina en API
-	url := "http://localhost/CI-3.1.10/index.php/WServer/actualizarprima"
+	url := sys.HostUrlPension + "actualizarprima"
 
 	errx := json.NewDecoder(r.Body).Decode(&wDirectivaPrima)
 	M.Tipo = 1
@@ -392,7 +363,7 @@ func (p *Militar) ActualizarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wDirectivaActualizar []WDirectivaActualizar //Modulo de WNomina en API
-	url := "http://localhost/CI-3.1.10/index.php/WServer/actualizardirectiva"
+	url := sys.HostUrlPension + "actualizardirectiva"
 
 	errx := json.NewDecoder(r.Body).Decode(&wDirectivaActualizar)
 	M.Tipo = 1

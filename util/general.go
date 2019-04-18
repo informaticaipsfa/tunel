@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -134,6 +135,11 @@ func GenerarHash256(password []byte) (encry string) {
 	encry = hex.EncodeToString(h.Sum(nil))
 	return
 
+}
+
+//EliminarPuntoDecimal Reemplazando coma por puntos
+func EliminarPuntoDecimal(cadena string) string {
+	return strings.Replace(strings.Trim(cadena, " "), ".", "", -1)
 }
 
 //Error Procesa errores del sistema
