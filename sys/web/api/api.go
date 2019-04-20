@@ -121,8 +121,8 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 		M.Mensaje = "Su cuenta no poseé acceso para ingresar nuevos militares"
 		M.Tipo = 2
 	}
-
-	j, _ := json.Marshal(M)
+	j, _ := militar.Consultar()
+	//j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }

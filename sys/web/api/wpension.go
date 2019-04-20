@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys"
 )
 
@@ -406,4 +408,31 @@ func (p *Militar) ActualizarDirectiva(w http.ResponseWriter, r *http.Request) {
 		w.Write(body)
 		return
 	}
+}
+
+//ConsultarNeto Militar
+func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
+	var traza fanb.Traza
+	Cabecera(w, r)
+	var pension sssifanb.Pension
+	var cedula = mux.Vars(r)
+
+	j, e := pension.ConsultarNetos(cedula["id"])
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = cedula["id"]
+	traza.Documento = "Consultando Militar"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 }

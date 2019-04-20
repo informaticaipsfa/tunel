@@ -513,7 +513,7 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 		militar.Persona.DatoBasico.ApellidoPrimero = strings.ToUpper(util.ValidarNullString(apellidoprimero)) + " " + strings.ToUpper(util.ValidarNullString(apellidosegundo))
 		militar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexocod)
 		militar.Persona.DatoBasico.EstadoCivil = util.ValidarNullString(edocivilcod)
-		militar.Persona.DatoBasico.FechaDefuncion = getFechaConvert(fechadefuncion)
+		militar.Persona.DatoBasico.FechaDefuncion = util.GetFechaConvert(fechadefuncion)
 		//
 		militar.Grado.Abreviatura = util.ValidarNullString(gradocod)
 		militar.Componente.Abreviatura = util.ValidarNullString(componentecod)
@@ -581,15 +581,6 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 	return
 }
 
-func getFechaConvert(f sql.NullString) (dateStamp time.Time) {
-	fecha := util.ValidarNullString(f)
-	if fecha != "null" {
-		dateString := strings.Replace(fecha, "/", "-", -1)
-		dateStamp, _ = time.Parse(layout, dateString)
-	}
-	return
-}
-
 func sqlSobrevivientes() string {
 	return `
 
@@ -641,7 +632,7 @@ func (m *Militar) MGOActualizarSobrevivientes() (err error) {
 		f.DocumentoPadre = util.ValidarNullString(codnip)
 		f.Persona.DatoBasico.Cedula = util.ValidarNullString(familia)
 		f.PorcentajePrestaciones = util.ValidarNullFloat64(porcentaje)
-		f.Persona.DatoBasico.FechaNacimiento = getFechaConvert(fechanacimiento)
+		f.Persona.DatoBasico.FechaNacimiento = util.GetFechaConvert(fechanacimiento)
 		f.CondicionPago = util.ValidarNullString(canalliquidcod)
 
 		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
@@ -650,7 +641,7 @@ func (m *Militar) MGOActualizarSobrevivientes() (err error) {
 			f.CondicionPago = "CHQ"
 		} else if f.CondicionPago == "BANCO" {
 
-			direc.Cuenta = util.ValidarNullString(nrocuenta)
+			direc.Cuenta = util.EliminarGuionesFecha(util.ValidarNullString(nrocuenta))
 			direc.Institucion = util.ValidarNullString(instfinancod)
 			direc.Tipo = util.ValidarNullString(tipcuentacod)
 		}

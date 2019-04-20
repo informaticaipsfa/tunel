@@ -8,6 +8,8 @@ import (
 	"log"
 	"strings"
 	"time"
+
+	"github.com/gesaodin/bdse/util"
 )
 
 type Mensajes struct {
@@ -22,6 +24,8 @@ type NullTime struct {
 	Time  time.Time
 	Valid bool
 }
+
+const layout string = "2006-01-02"
 
 //ValidarNullFloat64 los campos nulos de la base de datos y retornar su valor original
 func ValidarNullFloat64(b sql.NullFloat64) (f float64) {
@@ -52,6 +56,15 @@ func ValidarNullString(b sql.NullString) (s string) {
 	return
 }
 
+func GetFechaConvert(f sql.NullString) (dateStamp time.Time) {
+	fecha := util.ValidarNullString(f)
+	if fecha != "null" {
+		dateString := strings.Replace(fecha, "/", "-", -1)
+		dateStamp, _ = time.Parse(layout, dateString)
+	}
+	return
+}
+
 //ConvertirFechaSlash de (YYYY-MM-DD) a (DD/MM/YYYY) Humano
 func ConvertirFechaSlash(fecha string) string {
 	return "23/07/2016"
@@ -78,6 +91,23 @@ func CompletarCeros(cadena string, orientacion int, cantidad int) string {
 	return result
 }
 
+//CompletarEspacios llenar con ceros antes y despues de una cadena
+func CompletarEspacios(cadena string, orientacion int, cantidad int) string {
+	var result string
+	cant := len(cadena)
+	total := cantidad - cant
+	for i := 0; i < total; i++ {
+		result += " "
+	}
+	if orientacion == 0 {
+		result += cadena
+	} else {
+		result = cadena + result
+	}
+	return result
+}
+
+//Fatal Error
 func Fatal(e error) {
 	if e != nil {
 		log.Fatal(e)
@@ -140,6 +170,16 @@ func GenerarHash256(password []byte) (encry string) {
 //EliminarPuntoDecimal Reemplazando coma por puntos
 func EliminarPuntoDecimal(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ".", "", -1)
+}
+
+//EliminarEspacioBlanco Reemplazando coma por puntos
+func EliminarEspacioBlanco(cadena string) string {
+	return strings.Replace(strings.Trim(cadena, " "), " ", "", -1)
+}
+
+//EliminarGuionesFecha Reemplazando coma por puntos
+func EliminarGuionesFecha(cadena string) string {
+	return strings.Replace(strings.Trim(cadena, " "), "-", "", -1)
 }
 
 //Error Procesa errores del sistema

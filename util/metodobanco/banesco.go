@@ -1,5 +1,8 @@
 package metodobanco
 
-func (M *MetodoBanco) BanescoProcesar() {
+type Banesco struct {
+}
+
+func (M *Banesco) BanescoProcesar() {
 
 }

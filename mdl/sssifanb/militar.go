@@ -195,7 +195,9 @@ func (m *Militar) AplicarReglas() {
 func (m *Militar) NumeroHijos() int {
 	cantidad := 0
 	for _, v := range m.Familiar {
-		if v.Parentesco == "HJ" && v.Condicion == 1 {
+		if v.Parentesco == "HJ" && v.Benficio == true {
+			cantidad++
+		} else if v.Condicion == 1 {
 			cantidad++
 		}
 	}
@@ -371,11 +373,12 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 
 	m.Grado.Nombre = comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura)
 
-	//fmt.Println(comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura))
+	fmt.Println("Analizando los datos")
 	modificar := false
 	if mOriginal.Grado.Abreviatura != m.Grado.Abreviatura {
 		modificar = true
 	}
+
 	mOriginal.Grado = m.Grado
 	mOriginal.Componente = m.Componente
 	mOriginal.Categoria = m.Categoria
@@ -390,9 +393,20 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	mOriginal.CodigoComponente = m.CodigoComponente
 	mOriginal.NumeroHistoria = m.NumeroHistoria
 	mOriginal.PaseARetiro = m.PaseARetiro
+	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "I" {
+		mOriginal.FechaRetiro = m.FechaResuelto
+		mOriginal.Pension.DatoFinanciero.Tipo = m.Persona.DatoFinanciero[0].Tipo
+		mOriginal.Pension.DatoFinanciero.Cuenta = m.Persona.DatoFinanciero[0].Cuenta
+		mOriginal.Pension.DatoFinanciero.Institucion = m.Persona.DatoFinanciero[0].Institucion
+	}
+
 	mOriginal.PrimaPorNoAscenso = m.PrimaPorNoAscenso
 	mOriginal.PrimaEspecialAntiguedadGrado = m.PrimaEspecialAntiguedadGrado
 	mOriginal.PrimaProfesionalizacion = m.PrimaProfesionalizacion
+
+	mOriginal.Pension.PorcentajePrestaciones = m.Pension.PorcentajePrestaciones
+	mOriginal.Pension.GradoCodigo = mOriginal.Grado.Abreviatura
+	mOriginal.Pension.ComponenteCodigo = mOriginal.Componente.Abreviatura
 	traza.Time = time.Now()
 	traza.Usuario = usuario
 	traza.IP = ip
@@ -407,16 +421,13 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
-	//Saman
-	//s := ActualizarPersona(m.Persona)
-	//x := ActualizarMilitar(mOriginal)
-	//go ActualizarPostgresSaman(s + x)
-	//go ActualizarPostgresSaman(s)
-	//fmt.Println(s, x)
 	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "I" {
 		var pension Pension
-		pension.Exportar(mOriginal.ID, 1)
+		mOriginal.FechaRetiro = m.FechaResuelto
+
+		pension.InsertarPensionado(mOriginal)
 	}
+
 	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal))
 
 	//Reducción
@@ -484,8 +495,8 @@ func (m *Militar) SalvarMGO() (err error) {
 		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
 	}
 
-	s := InsertarMilitarSAMAN(m)
-	go InsertarPostgresSaman(s)
+	//s := InsertarMilitarSAMAN(m)
+	//go InsertarPostgresSaman(s)
 	go InsertarMysqlFullText(InsertMysqlFT(m))
 
 	//Reducción

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
@@ -210,16 +211,23 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var banfan metodobanco.Banfan
+	var archivos metodobanco.Archivos
+
 	var id = mux.Vars(r)
-	fmt.Println("E", id)
+	llave := id["id"]
 	banfan.CodigoEmpresa = "0026"
 	banfan.NumeroEmpresa = "01770006571100173915"
-	banfan.Firma = id["id"]
-	banfan.Cantidad = "500" //id["cant"]
+	banfan.Firma = llave
+	banfan.Cantidad, _ = strconv.Atoi(id["cant"])
 
 	banfan.Generar(sys.PostgreSQLPENSION)
 	// banfan.Terceros(sys.PostgreSQLPENSION, id["id"])
-	M.Mensaje = "Finalizo"
+	M.Mensaje = "Generacion de archivos exitosa "
+
+	if !archivos.ComprimirTxt(llave) {
+		M.Mensaje = "La compresion de los archivos presenta problemas"
+	}
+
 	M.Tipo = 0
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)

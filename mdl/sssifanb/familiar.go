@@ -89,21 +89,6 @@ func (f *Familiar) ConvertirFechaHumano() {
 //MGOActualizar Vida Militar
 func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 	var msj Mensaje
-	//f.TipoDato = 0
-
-	// s := `UPDATE personas SET nombreprimero='` +
-	// 	m.Persona.DatoBasico.NombrePrimero +
-	// 	`', nombresegundo='` +
-	// 	m.Persona.DatoBasico.NombreSegundo +
-	// 	`' WHERE codnip='` + m.Persona.DatoBasico.Cedula + `'`
-	// _, err = sys.PostgreSQLSAMAN.Exec(s)
-	// if err != nil {
-	// 	msj.Mensaje = "Error: Consulta ya existe."
-	// 	msj.Tipo = 2
-	// 	msj.Pgsql = err.Error()
-	// 	jSon, err = json.Marshal(msj)
-	// 	return
-	// }
 	msj.Mensaje = "Su data ha sido actualizada."
 	msj.Tipo = 2
 	jSon, err = json.Marshal(msj)

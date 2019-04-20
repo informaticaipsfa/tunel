@@ -20,6 +20,7 @@ var (
 func Cargar() {
 	CargarModulosWeb()
 	CargarModulosNomina()
+	CargarPensionados()
 	CargarModulosBanco()
 	CargarModulosSeguridad()
 
@@ -152,13 +153,15 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/nomina/generar", wUsuario.ValidarToken(M.GenerarNomina)).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/nomina/generar", M.GenerarNomina).Methods("POST")
 
-	//Enrutador.HandleFunc("/devel/api/medidajudicial", wUsuario.ValidarToken(medida.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/medidajudicial", wUsuario.ValidarToken(medida.Agregar)).Methods("POST")
-
-	//Enrutador.HandleFunc("/devel/api/descuentos", wUsuario.ValidarToken(medida.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/descuentos", wUsuario.ValidarToken(descuentos.Agregar)).Methods("POST")
 }
 
+func CargarPensionados() {
+	var wUsuario api.WUsuario
+	var wPensionado api.Militar
+	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarneto/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNeto)).Methods("GET")
+}
 func CargarModulosBanco() {
 	var wUsuario api.WUsuario
 	var wNom api.WNomina
