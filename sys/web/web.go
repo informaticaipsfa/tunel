@@ -154,6 +154,8 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/devel/api/nomina/generar", M.GenerarNomina).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/medidajudicial", wUsuario.ValidarToken(medida.Agregar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/medidajudicial/{id}", wUsuario.ValidarToken(medida.Actualizar)).Methods("PUT")
+
 	Enrutador.HandleFunc("/ipsfa/api/descuentos", wUsuario.ValidarToken(descuentos.Agregar)).Methods("POST")
 }
 
@@ -161,6 +163,7 @@ func CargarPensionados() {
 	var wUsuario api.WUsuario
 	var wPensionado api.Militar
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarneto/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNeto)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/pensionado/derechoacrecer", wUsuario.ValidarToken(wPensionado.AplicarDerechoACrecer)).Methods("POST")
 }
 func CargarModulosBanco() {
 	var wUsuario api.WUsuario

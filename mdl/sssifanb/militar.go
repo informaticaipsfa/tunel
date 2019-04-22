@@ -36,6 +36,7 @@ type Militar struct {
 	MesReconocido                int                 `json:"mreconocido" bson:"mreconocido"`
 	DiaReconocido                int                 `json:"dreconocido" bson:"dreconocido"`
 	PrimaPorNoAscenso            int                 `json:"pxnoascenso" bson:"pxnoascenso"`
+	SituacionPago                string              `json:"situacionpago" bson:"situacionpago"` //Este estatus permite habilitar un pago en pensiones 201 | 202 o paralizar
 	PrimaProfesionalizacion      int                 `json:"pprof" bson:"pprof"`
 	PrimaEspecialAntiguedadGrado int                 `json:"pespecial" bson:"pespecial"`
 	NumeroResuelto               string              `json:"nresuelto,omitempty" bson:"nresuelto"`
@@ -389,6 +390,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	mOriginal.FechaResuelto = m.FechaResuelto
 	mOriginal.Posicion = m.Posicion
 	mOriginal.Condicion = m.Condicion
+	mOriginal.SituacionPago = m.SituacionPago
 	mOriginal.NumeroResuelto = m.NumeroResuelto
 	mOriginal.CodigoComponente = m.CodigoComponente
 	mOriginal.NumeroHistoria = m.NumeroHistoria
@@ -405,6 +407,9 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	mOriginal.PrimaProfesionalizacion = m.PrimaProfesionalizacion
 
 	mOriginal.Pension.PorcentajePrestaciones = m.Pension.PorcentajePrestaciones
+	mOriginal.Pension.Causal = m.Pension.Causal
+	mOriginal.Pension.Situacion = m.Pension.Situacion
+
 	mOriginal.Pension.GradoCodigo = mOriginal.Grado.Abreviatura
 	mOriginal.Pension.ComponenteCodigo = mOriginal.Componente.Abreviatura
 	traza.Time = time.Now()
@@ -421,7 +426,8 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		fmt.Println("Cedula: " + m.ID + " -> " + err.Error())
 		return
 	}
-	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "I" {
+
+	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "I" || mOriginal.Situacion == "PG" {
 		var pension Pension
 		mOriginal.FechaRetiro = m.FechaResuelto
 

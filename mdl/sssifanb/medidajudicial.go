@@ -115,17 +115,67 @@ func InsertarPension(CMJ *MedidaJudicial) {
 						'` + CMJ.CedulaAutorizado + `','` + CMJ.Autorizado + `','` + CMJ.Fecha.String()[:10] + `','` + CMJ.FechaFin.String()[:10] + `','` + CMJ.Usuario + `',1,
 						'` + CMJ.ID + `')`
 
-	//3fmt.Println(query)
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query: ", err.Error())
 	}
-
-	//jSon, err = json.Marshal(msj)
 }
 
-//Actualizar Nomina
-func (MJ *MedidaJudicial) Actualizar() {
-	fmt.Println("09876")
+//Actualizar Sistema
+func (MJ *MedidaJudicial) Actualizar(pos string) (jSon []byte, err error) {
+	var msj Mensaje
 
+	medida := make(map[string]interface{})
+	modulo := "pension.medidajudicial." + pos
+	medida[modulo] = MJ
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	err = c.Update(bson.M{"id": MJ.ID}, bson.M{"$set": medida})
+	msj.Tipo = 0
+	if err != nil {
+		fmt.Println("Fallo insertar Medida Judicial")
+		msj.Tipo = 313
+		jSon, err = json.Marshal(msj)
+		return
+	}
+	ModificarPension(MJ)
+	msj.Mensaje = "Proceso exitoso"
+	msj.Tipo = 1
+	jSon, err = json.Marshal(msj)
+
+	return
+}
+
+//ModificarPension Cargar medidas
+func ModificarPension(CMJ *MedidaJudicial) {
+	query := `
+	UPDATE space.medidajudicial SET
+		nume='` + CMJ.Numero + `',
+		expe='` + CMJ.Expediente + `',
+		tipo=` + strconv.Itoa(CMJ.Tipo) + `,
+		obse='` + CMJ.Observacion + `',
+		tpag='` + CMJ.TipoPago + `',
+		fnxm='` + CMJ.Formula + `',
+		fpag='` + CMJ.FormaPago + `',
+		inst='` + CMJ.Institucion + `',
+		tcue='` + CMJ.TipoCuenta + `',
+		ncue='` + CMJ.NumeroCuenta + `',
+		autoridad='` + CMJ.Autoridad + `',
+		esta='` + CMJ.Estado + `',
+		ciud='` + CMJ.Ciudad + `',
+		muni='` + CMJ.Municipio + `',
+		dins='` + CMJ.DescripcionInstitucion + `',
+		cben='` + CMJ.CedulaBeneficiario + `',
+		bene='` + CMJ.Beneficiario + `',
+		pare='` + CMJ.Parentesco + `',
+		caut='` + CMJ.CedulaAutorizado + `',
+		auto='` + CMJ.Autorizado + `',
+		creado='` + CMJ.Fecha.String()[:10] + `',
+		ffin='` + CMJ.FechaFin.String()[:10] + `',
+		usua='` + CMJ.Usuario + `',
+		estatus=1, cedula='` + CMJ.ID + `' WHERE expe='` + CMJ.Expediente + `'`
+
+	_, err := sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query Actualizar Medida: ", err.Error())
+	}
 }

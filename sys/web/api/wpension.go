@@ -322,7 +322,7 @@ func (p *Militar) ActualizarPrima(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("JSON : --> ", UsuarioConectado.Login)
+	//fmt.Println("JSON : --> ", UsuarioConectado.Login)
 	wDirectivaPrima.Usuario = UsuarioConectado.Login
 
 	jsonW, ex := json.Marshal(wDirectivaPrima)
@@ -433,6 +433,46 @@ func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
 	traza.Log = cedula["id"]
 	traza.Documento = "Consultando Militar"
 	traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//AplicarDerechoACrecer Militar
+func (p *Militar) AplicarDerechoACrecer(w http.ResponseWriter, r *http.Request) {
+	//var traza fanb.Traza
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	var wderecho sssifanb.WDerechoACrecer
+	var pension sssifanb.Pension
+
+	errx := json.NewDecoder(r.Body).Decode(&wderecho)
+	M.Tipo = 1
+	if errx != nil {
+		M.Mensaje = errx.Error()
+		M.Tipo = 0
+		fmt.Println(M.Mensaje)
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+
+	j, e := pension.AplicarDerechoACrecer(wderecho)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
+	// ip := strings.Split(r.RemoteAddr, ":")
+	//
+	// traza.IP = ip[0]
+	// traza.Time = time.Now()
+	// traza.Usuario = UsuarioConectado.Login
+	// traza.Log = ""
+	// traza.Documento = "Consultando Militar"
+	// traza.CrearHistoricoConsulta("historicoconsultas")
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }

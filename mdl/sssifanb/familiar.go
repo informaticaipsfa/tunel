@@ -167,6 +167,13 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 		fmt.Println("Condicion (Cedula): " + id + " -> " + err.Error())
 	}
 
+	derecho := make(map[string]interface{})
+	derecho["familiar.$.condicion"] = f.PorcentajePrestaciones
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": derecho})
+	if err != nil {
+		fmt.Println("Condicion (Cedula): " + id + " -> " + err.Error())
+	}
+
 	var mOriginal Militar
 	mOriginal, _ = consultarMongo(f.DocumentoPadre)
 	go f.ActualizarPorReduccion(mOriginal.Grado.Abreviatura, mOriginal.Componente.Abreviatura)

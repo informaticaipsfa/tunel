@@ -61,6 +61,7 @@ type Pension struct {
 	PrimaProfesional       float64                  `json:"pprofesional,omitempty" bson:"pprofesional"`
 	PrimaNoAscenso         float64                  `json:"pnoascenso,omitempty" bson:"pnoascenso"`
 	PrimaEspecial          float64                  `json:"pespecial,omitempty" bson:"pespecial"`
+	Causal                 string                   `json:"causal,omitempty" bson:"causal"`
 	MedidaJudicial         []MedidaJudicial         `json:"MedidaJudicial,omitempty" bson:"medidajudicial"`
 	Descuentos             []Descuentos             `json:"Descuentos,omitempty" bson:"descuentos"`
 }
@@ -430,7 +431,6 @@ func obtenerGrado(codigo string, gradocodigo string) (grado string, componente i
 //InsertPensionado Insertando Militar a Pension
 func (P *Pension) InsertarPensionado(v Militar) {
 	consultarComponentes()
-	fmt.Println(v.Familiar[0].Persona.DatoBasico.Cedula)
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
 		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje,
 		numero_cuenta, banco, tipo, situacion)	VALUES `
@@ -468,7 +468,7 @@ func (P *Pension) InsertarPensionado(v Militar) {
 		` + pnoascenso + `,
 		` + pprofesional + `,
 		` + pespecial + `,
-		201,
+		'` + v.SituacionPago + `',
 		` + strconv.Itoa(v.NumeroHijos()) + `,
 		` + porcentaje + `,
 		'` + numero + `',
@@ -481,17 +481,17 @@ func (P *Pension) InsertarPensionado(v Militar) {
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query por : ", err.Error())
-		P.ActualizarPensionado(v, "201")
+		P.ActualizarPensionado(v)
 	}
 }
 
 //ActualizarPensionado Insertando Militar a Pension
-func (P *Pension) ActualizarPensionado(v Militar, estatus string) {
+func (P *Pension) ActualizarPensionado(v Militar) {
 	grado, componente := obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
 	if grado == "0" {
 		grado, componente = obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
 	}
-	fmt.Println(grado, componente, " ------> ")
+
 	np := v.Persona.DatoBasico.NombrePrimero
 	ap := v.Persona.DatoBasico.ApellidoPrimero
 	porcentaje := strconv.FormatFloat(v.Pension.PorcentajePrestaciones, 'f', 2, 64)
@@ -509,7 +509,6 @@ func (P *Pension) ActualizarPensionado(v Militar, estatus string) {
 	if len(fAscenso) < 10 {
 		fAscenso = fRetiro
 	}
-	fmt.Println(v.NumeroHijos(), " --- > Hijos")
 	query := `UPDATE beneficiario SET
 		cedula ='` + v.Persona.DatoBasico.Cedula + `',
 		nombres ='` + strings.Replace(np, "'", " ", -1) + `',
@@ -523,7 +522,7 @@ func (P *Pension) ActualizarPensionado(v Militar, estatus string) {
 		st_no_ascenso=` + pnoascenso + `,
 		st_profesion=` + pprofesional + `,
 		monto_especial=` + pespecial + `,
-		status_id=201,
+		status_id=` + v.SituacionPago + `,
 		n_hijos=` + strconv.Itoa(v.NumeroHijos()) + `,
 		porcentaje=` + porcentaje + `,
 		numero_cuenta='` + numero + `',
@@ -578,4 +577,87 @@ func (P *Pension) ConsultarNetos(cedula string) (jSon []byte, err error) {
 	}
 	jSon, err = json.Marshal(lst)
 	return
+}
+
+//WDerecho Militar
+type WDerecho struct {
+	Posicion   int     `json:"pos"`
+	Cedula     string  `json:"cedula"`
+	Porcentaje float64 `json:"porcentaje"`
+}
+
+//WDerechoACrecer Militar
+type WDerechoACrecer struct {
+	Cedula  string     `json:"cedula"`
+	Derecho []WDerecho `json:"acrecer"`
+}
+
+//AplicarDerechoACrecer Insertando Militar a Pension
+func (P *Pension) AplicarDerechoACrecer(wdr WDerechoACrecer) (jSon []byte, err error) {
+	var M Mensaje
+	M.Mensaje = "Hola"
+	var count = len(wdr.Derecho)
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for i := 0; i < count; i++ {
+		//fmt.Println(wdr.Derecho[i].Posicion, " ", wdr.Derecho[i].Cedula, " ", wdr.Derecho[i].Porcentaje)
+		drch := make(map[string]interface{})
+		drch["familiar.$.pprestaciones"] = wdr.Derecho[i].Porcentaje
+		err = c.Update(bson.M{"familiar.persona.datobasico.cedula": wdr.Derecho[i].Cedula, "id": wdr.Cedula}, bson.M{"$set": drch})
+		if err != nil {
+			fmt.Println("Incluyendo parentesco eRR Cedula: " + wdr.Cedula + " -> " + err.Error())
+		}
+	}
+	P.ActualizarSobreviviente(wdr.Cedula)
+
+	jSon, err = json.Marshal(M)
+	return
+}
+
+//ActualizarSobreviviente Generar Sobrevivientes
+func (P *Pension) ActualizarSobreviviente(cedula string) {
+
+	var mil Militar
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	seleccion := bson.M{
+		"id":                 true,
+		"persona.datobasico": true,
+		"familiar":           true,
+	}
+	buscar := bson.M{"id": cedula}
+	err := c.Find(buscar).Select(seleccion).One(&mil)
+	if err != nil {
+		fmt.Println("Error en la consulta de Pensionados Militares")
+		return
+	}
+	fm := mil.Familiar
+	count := len(fm)
+	cabecera := `INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,fecha_nacimiento,edo_civil,parentesco,f_defuncion,
+		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje)	VALUES `
+	cuerpo := ""
+	autorizado := ""
+	tipo := ""
+	cuenta := ""
+	coma := ""
+	estatuspago := "201"
+	fmt.Println(cabecera)
+	for i := 0; i < count; i++ {
+		if i > 0 {
+			coma = ","
+		}
+		var v = fm[i]
+		if fm[i].PorcentajePrestaciones > 0 {
+			fmt.Println(v.Persona.DatoBasico.Cedula, "", v.PorcentajePrestaciones)
+			if len(v.Persona.DatoFinanciero) > 0 {
+				autorizado = v.Persona.DatoFinanciero[0].Autorizado
+				tipo = v.Persona.DatoFinanciero[0].Tipo
+				cuenta = v.Persona.DatoFinanciero[0].Cuenta
+			}
+			cuerpo += coma + `('` + cedula + `','` + v.Persona.DatoBasico.Cedula + `','` + v.Persona.DatoBasico.NombrePrimero +
+				`','` + v.Persona.DatoBasico.ApellidoPrimero + `','` + v.Persona.DatoBasico.Sexo + `','` + v.Persona.DatoBasico.FechaNacimiento.String()[0:10] +
+				`','` + v.Persona.DatoBasico.EstadoCivil + `','` + v.Parentesco + `','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] +
+				`','` + autorizado + `','` + tipo + `','` + cuenta +
+				`','` + estatuspago + `','REGISTRADO','` + v.FechaAfiliacion.String()[0:10] + `',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `)`
+		}
+	}
+	fmt.Println(cabecera + cuerpo)
 }
