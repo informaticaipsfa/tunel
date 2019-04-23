@@ -613,7 +613,7 @@ func (P *Pension) AplicarDerechoACrecer(wdr WDerechoACrecer) (jSon []byte, err e
 	return
 }
 
-//ActualizarSobreviviente Generar Sobrevivientes
+//ActualizarSobreviviente Generar Distribución del porcentaje
 func (P *Pension) ActualizarSobreviviente(cedula string) {
 
 	var mil Militar
@@ -631,33 +631,44 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 	}
 	fm := mil.Familiar
 	count := len(fm)
-	cabecera := `INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,fecha_nacimiento,edo_civil,parentesco,f_defuncion,
+	cabecera := `DELETE FROM familiar WHERE titular='` + cedula + `';
+	INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,f_nacimiento,edo_civil,parentesco,f_defuncion,
 		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje)	VALUES `
-	cuerpo := ""
-	autorizado := ""
-	tipo := ""
-	cuenta := ""
-	coma := ""
+	cuerpo, autorizado, tipo, banco, cuenta, coma := "", "", "", "", "", ""
 	estatuspago := "201"
-	fmt.Println(cabecera)
+
 	for i := 0; i < count; i++ {
 		if i > 0 {
 			coma = ","
 		}
 		var v = fm[i]
 		if fm[i].PorcentajePrestaciones > 0 {
-			fmt.Println(v.Persona.DatoBasico.Cedula, "", v.PorcentajePrestaciones)
+			//fmt.Println(v.Persona.DatoBasico.Cedula, "", v.PorcentajePrestaciones, "  : ", v.Persona.DatoFinanciero)
+
 			if len(v.Persona.DatoFinanciero) > 0 {
 				autorizado = v.Persona.DatoFinanciero[0].Autorizado
 				tipo = v.Persona.DatoFinanciero[0].Tipo
+				banco = v.Persona.DatoFinanciero[0].Institucion
 				cuenta = v.Persona.DatoFinanciero[0].Cuenta
 			}
 			cuerpo += coma + `('` + cedula + `','` + v.Persona.DatoBasico.Cedula + `','` + v.Persona.DatoBasico.NombrePrimero +
-				`','` + v.Persona.DatoBasico.ApellidoPrimero + `','` + v.Persona.DatoBasico.Sexo + `','` + v.Persona.DatoBasico.FechaNacimiento.String()[0:10] +
-				`','` + v.Persona.DatoBasico.EstadoCivil + `','` + v.Parentesco + `','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] +
-				`','` + autorizado + `','` + tipo + `','` + cuenta +
-				`','` + estatuspago + `','REGISTRADO','` + v.FechaAfiliacion.String()[0:10] + `',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `)`
+				`','` + v.Persona.DatoBasico.ApellidoPrimero + `','` + v.Persona.DatoBasico.Sexo +
+				`','` + v.Persona.DatoBasico.FechaNacimiento.String()[0:10] +
+				`','` + v.Persona.DatoBasico.EstadoCivil +
+				`','` + v.Parentesco +
+				`','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] +
+				`','` + autorizado +
+				`','` + tipo +
+				`','` + banco +
+				`','` + cuenta +
+				`', 'DERECHO',` + estatuspago +
+				`,'REGISTRADO','` + v.FechaAfiliacion.String()[0:10] +
+				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `)`
 		}
 	}
-	fmt.Println(cabecera + cuerpo)
+	query := cabecera + cuerpo
+	_, err = sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error actualizando sobreviviente: ", err.Error())
+	}
 }

@@ -102,7 +102,7 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	id := f.Persona.DatoBasico.Cedula
 	familiar := make(map[string]interface{})
 	familiar["familiar.$.persona"] = f.Persona
-	fmt.Println(f.Persona.DatoBasico.FechaDefuncion)
+	//fmt.Println(f.Persona.DatoFinanciero)
 	a, _, _ := f.Persona.DatoBasico.FechaDefuncion.Date()
 	if a > 1900 {
 		f.Benficio = false

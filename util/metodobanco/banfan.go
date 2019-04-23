@@ -100,7 +100,7 @@ func (b *Banfan) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	return true
 }
 
-//Tercero Generando pago a terceros
+//Tercero Generando pago
 func (b *Banfan) Tercero(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL(" IN ('0134', '0175', '0105', '0108')"))
 	util.Error(err)

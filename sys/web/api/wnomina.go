@@ -211,6 +211,8 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var banfan metodobanco.Banfan
+	var bicentenario metodobanco.Bicentenario
+
 	var archivos metodobanco.Archivos
 
 	var id = mux.Vars(r)
@@ -219,11 +221,17 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfan.NumeroEmpresa = "01770006571100173915"
 	banfan.Firma = llave
 	banfan.Cantidad, _ = strconv.Atoi(id["cant"])
-
 	banfan.Generar(sys.PostgreSQLPENSION)
 	// banfan.Terceros(sys.PostgreSQLPENSION, id["id"])
-	M.Mensaje = "Generacion de archivos exitosa "
 
+	bicentenario.CodigoEmpresa = "0651"
+	bicentenario.NumeroEmpresa = "01750044980000016735"
+	bicentenario.Firma = llave
+	bicentenario.Cantidad, _ = strconv.Atoi(id["cant"])
+	bicentenario.Generar(sys.PostgreSQLPENSION)
+
+	//Comprimir todos los archivos en uno para su descarga
+	M.Mensaje = "Generacion de archivos exitosa "
 	if !archivos.ComprimirTxt(llave) {
 		M.Mensaje = "La compresion de los archivos presenta problemas"
 	}

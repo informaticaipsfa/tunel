@@ -1,5 +1,6 @@
 package sssifanb
 
+//DatoFinanciero Establecer un modulo de datos bancarios
 type DatoFinanciero struct {
 	Tipo        string `json:"tipo" bson:"tipo"`
 	Institucion string `json:"institucion" bson:"institucion"`
