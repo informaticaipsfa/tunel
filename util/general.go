@@ -65,11 +65,6 @@ func GetFechaConvert(f sql.NullString) (dateStamp time.Time) {
 	return
 }
 
-//ConvertirFechaSlash de (YYYY-MM-DD) a (DD/MM/YYYY) Humano
-func ConvertirFechaSlash(fecha string) string {
-	return "23/07/2016"
-}
-
 //DiasDelMes los dias de un mes
 func DiasDelMes(fecha time.Time) int {
 	return 0
@@ -180,6 +175,11 @@ func EliminarEspacioBlanco(cadena string) string {
 //EliminarGuionesFecha Reemplazando coma por puntos
 func EliminarGuionesFecha(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), "-", "", -1)
+}
+
+//ReemplazarGuionesPorSlah Reemplazando coma por puntos
+func ReemplazarGuionesPorSlah(cadena string) string {
+	return strings.Replace(strings.Trim(cadena, " "), "-", "/", -1)
 }
 
 //Error Procesa errores del sistema

@@ -7,4 +7,5 @@ type DatoFinanciero struct {
 	Cuenta      string `json:"cuenta" bson:"cuenta"`
 	Prioridad   string `json:"prioridad" bson:"prioridad"`
 	Autorizado  string `json:"autorizado" bson:"autorizado"`
+	Titular     string `json:"titular" bson:"titular"`
 }

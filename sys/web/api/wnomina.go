@@ -212,6 +212,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var banfan metodobanco.Banfan
 	var bicentenario metodobanco.Bicentenario
+	var venzuela metodobanco.Venezuela
 
 	var archivos metodobanco.Archivos
 
@@ -229,6 +230,12 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	bicentenario.Firma = llave
 	bicentenario.Cantidad, _ = strconv.Atoi(id["cant"])
 	bicentenario.Generar(sys.PostgreSQLPENSION)
+
+	venzuela.CodigoEmpresa = "0"
+	venzuela.NumeroEmpresa = "01020488720000002147"
+	venzuela.Firma = llave
+	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
+	venzuela.Generar(sys.PostgreSQLPENSION)
 
 	//Comprimir todos los archivos en uno para su descarga
 	M.Mensaje = "Generacion de archivos exitosa "

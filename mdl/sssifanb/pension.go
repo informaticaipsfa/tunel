@@ -636,15 +636,15 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje)	VALUES `
 	cuerpo, autorizado, tipo, banco, cuenta, coma := "", "", "", "", "", ""
 	estatuspago := "201"
-
+	j := 0
 	for i := 0; i < count; i++ {
-		if i > 0 {
+		if j > 0 {
 			coma = ","
 		}
 		var v = fm[i]
 		if fm[i].PorcentajePrestaciones > 0 {
 			//fmt.Println(v.Persona.DatoBasico.Cedula, "", v.PorcentajePrestaciones, "  : ", v.Persona.DatoFinanciero)
-
+			j++
 			if len(v.Persona.DatoFinanciero) > 0 {
 				autorizado = v.Persona.DatoFinanciero[0].Autorizado
 				tipo = v.Persona.DatoFinanciero[0].Tipo
@@ -667,6 +667,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 		}
 	}
 	query := cabecera + cuerpo
+	fmt.Println(query)
 	_, err = sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error actualizando sobreviviente: ", err.Error())
