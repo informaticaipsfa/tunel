@@ -163,7 +163,7 @@ func consultarPensionados() {
 		"familiar":                true,
 	}
 
-	buscar := bson.M{"situacion": "I"}
+	buscar := bson.M{"situacion": "RCP"}
 	// buscar := bson.M{"id": "26419599"}
 	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
 	if err != nil {

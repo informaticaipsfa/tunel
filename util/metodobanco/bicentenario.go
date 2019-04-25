@@ -31,7 +31,6 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
 
 //Generar Archivo
 func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
-
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0175'"))
 	util.Error(err)
 
@@ -66,7 +65,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\n"
 		if i == b.Cantidad {
 			arch++
-			banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan " + strconv.Itoa(arch) + ".txt")
+			banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/bicentenario " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
 			sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 			sumas = util.CompletarCeros(sumas, 0, 17)
@@ -85,7 +84,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	}
 	if i > 0 {
 		arch++
-		banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan " + strconv.Itoa(arch) + ".txt")
+		banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/bicentenario " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 		fecha := ""

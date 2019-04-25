@@ -31,7 +31,11 @@ func (b *Venezuela) CabeceraSQL(bancos string) string {
 
 //Generar Generando pago
 func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
-
+	fecha := time.Now()
+	dd := fecha.String()[8:10]
+	mm := fecha.String()[5:7]
+	aa := fecha.String()[2:4]
+	fechas := dd + "/" + mm + "/" + aa
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0102'"))
 	util.Error(err)
 
@@ -50,27 +54,28 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		var neto sql.NullFloat64
 		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto)
 		util.Error(e)
-
+		//1
 		stipo := "0"
 		if util.ValidarNullString(tipo) == "CA" {
 			stipo = "1"
 		}
+		//20
 		numerocuenta := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
 		monto := util.ValidarNullFloat64(neto)
-		montoapagar := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
-		nombrecompleto := util.CompletarEspacios(util.ValidarNullString(nombre), 1, 29)
-		cedu := util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+		pagar := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
+		montoapagar := util.CompletarCeros(pagar, 0, 11)
+		nombrecompleto := util.CompletarEspacios(util.ValidarNullString(nombre), 1, 40)
+		cedu := util.CompletarCeros(util.ValidarNullString(cedula), 0, 11)
 		sumatotal += monto
 		sumaparcial += monto
-		linea += stipo + numerocuenta + montoapagar + "0770" + nombrecompleto + cedu + "03291"
+		linea += stipo + numerocuenta + montoapagar + "0770" + nombrecompleto + cedu + "03291\n"
 		if i == b.Cantidad {
 			arch++
 			venz, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/venezuela " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
 			sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-			sumas = util.CompletarCeros(sumas, 0, 12)
-			fecha := time.Now()
-			fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
+			sumas = util.CompletarCeros(sumas, 0, 13)
+
 			registros := "03291" //util.CompletarCeros(strconv.Itoa(i), 0, 4)
 			cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa + "01" + fechas + sumas + registros + "\n"
 			fmt.Fprintf(venz, cabecera)
@@ -88,11 +93,10 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		venz, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/venezuela " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-		sumas = util.CompletarCeros(sumas, 0, 12)
-		fecha := time.Now()
-		fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
+		sumas = util.CompletarCeros(sumas, 0, 13)
+		fechas := dd + "/" + mm + "/" + aa
 		registros := "03291" //util.CompletarCeros(strconv.Itoa(i), 0, 4)
-		cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa + "01" + fechas + sumas + registros + "\n"
+		cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa + "01" + fechas + sumas + registros + " \n"
 		fmt.Fprintf(venz, cabecera)
 		fmt.Fprintf(venz, linea)
 		venz.Close()

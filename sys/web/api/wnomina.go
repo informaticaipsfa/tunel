@@ -210,7 +210,7 @@ func (N *WNomina) VerPartidas(w http.ResponseWriter, r *http.Request) {
 func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
-	var banfan metodobanco.Banfan
+	var banfanb metodobanco.Banfanb
 	var bicentenario metodobanco.Bicentenario
 	var venzuela metodobanco.Venezuela
 
@@ -218,12 +218,12 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 
 	var id = mux.Vars(r)
 	llave := id["id"]
-	banfan.CodigoEmpresa = "0026"
-	banfan.NumeroEmpresa = "01770006571100173915"
-	banfan.Firma = llave
-	banfan.Cantidad, _ = strconv.Atoi(id["cant"])
-	banfan.Generar(sys.PostgreSQLPENSION)
-	// banfan.Terceros(sys.PostgreSQLPENSION, id["id"])
+	banfanb.CodigoEmpresa = "0026"
+	banfanb.NumeroEmpresa = "01770006571100173915"
+	banfanb.Firma = llave
+	banfanb.Cantidad, _ = strconv.Atoi(id["cant"])
+	banfanb.Generar(sys.PostgreSQLPENSION)
+	banfanb.Tercero(sys.PostgreSQLPENSION)
 
 	bicentenario.CodigoEmpresa = "0651"
 	bicentenario.NumeroEmpresa = "01750044980000016735"

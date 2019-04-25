@@ -10,7 +10,8 @@ import (
 	"github.com/informaticaipsfa/tunel/util"
 )
 
-type Banfan struct {
+//Banfan Control de Banco
+type Banfanb struct {
 	Firma         string
 	Cantidad      int
 	CodigoEmpresa string
@@ -19,7 +20,7 @@ type Banfan struct {
 }
 
 //CabeceraSQL Creando consulta para archivos
-func (b *Banfan) CabeceraSQL(bancos string) string {
+func (b *Banfanb) CabeceraSQL(bancos string) string {
 	return `
   SELECT
     pg.cedu, pg.nomb, pg.nume, pg.tipo, pg.banc, pg.neto
@@ -30,7 +31,7 @@ func (b *Banfan) CabeceraSQL(bancos string) string {
 }
 
 //Generar Archivo
-func (b *Banfan) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
+func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0177'"))
 	util.Error(err)
@@ -101,23 +102,67 @@ func (b *Banfan) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 }
 
 //Tercero Generando pago
-func (b *Banfan) Tercero(PostgreSQLPENSIONSIGESP *sql.DB) bool {
+func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB) bool {
+	fecha := time.Now()
+	dd := fecha.String()[8:10]
+	mm := fecha.String()[5:7]
+	aa := fecha.String()[2:4]
+	fechas := dd + mm + aa
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL(" IN ('0134', '0175', '0105', '0108')"))
 	util.Error(err)
 
 	i := 0
-	// var sumatotal float64
-	// var sumaparcial float64
-	// arch := 0
-	// linea := ""
+	var sumatotal float64
+	var sumaparcial float64
+	arch := 0
+	linea := ""
 	for sq.Next() {
 		i++
 		var cedula, nombre, numero, tipo, banco sql.NullString
-
 		var neto sql.NullFloat64
 		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto)
 		util.Error(e)
+		ordenante := util.CompletarEspacios("02G200036923", 1, 16)
+		nombreordenante := util.CompletarEspacios("IPSFA", 1, 30)
+		monto := util.ValidarNullFloat64(neto)
+		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 
+		montos = util.CompletarCeros(montos, 0, 12)
+		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
+		cedu := util.CompletarEspacios(util.ValidarNullString(cedula), 1, 10)
+		nombrecompleto := util.CompletarEspacios(util.ValidarNullString(nombre), 1, 35)
+		cuatro := "    "
+		cinco := "     "
+		sesentayocho := util.CompletarEspacios(" ", 1, 68)
+
+		linea += ordenante + nombreordenante + cuatro + montos + b.NumeroEmpresa + "V" + cedu + cinco
+		linea += nombrecompleto + bancos + "transferenci" + sesentayocho + "0212905452300000000000mediosdepago"
+		linea += sesentayocho + "2\n"
+
+		sumatotal += monto
+		sumaparcial += monto
+		if i == b.Cantidad {
+			arch++
+			banftercero, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan terceros " + strconv.Itoa(arch) + ".txt")
+			util.Error(e)
+			cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\n"
+			fmt.Fprintf(banftercero, cabecera)
+			fmt.Fprintf(banftercero, linea)
+			banftercero.Close()
+			sumaparcial = 0
+			linea = ""
+			i = 0
+		}
+
+	}
+	if i > 0 {
+		arch++
+		banftercero, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan terceros " + strconv.Itoa(arch) + ".txt")
+		util.Error(e)
+		cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\n"
+		fmt.Fprintf(banftercero, cabecera)
+		fmt.Fprintf(banftercero, linea)
+		banftercero.Close()
 	}
 
 	return true
