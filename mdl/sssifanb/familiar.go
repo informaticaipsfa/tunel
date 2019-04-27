@@ -29,6 +29,8 @@ type Familiar struct {
 	DocumentoPadre         string                 `json:"documentopadre" bson:"documentopadre"`
 	HistoriaMedica         string                 `json:"historiamedica" bson:"historiamedica"`
 	Donante                string                 `json:"donante" bson:"donante"`
+	SituacionPago          string                 `json:"situacionpago" bson:"situacionpago"` //Este estatus permite habilitar un pago en pensiones 201 | 202 o paralizar
+	RazonPago              string                 `json:"razonpago" bson:"razonpago"`         //Razon de Pago
 	EstatusCarnet          int                    `json:"estatuscarnet" bson:"estatuscarnet"`
 	GrupoSanguineo         string                 `json:"gruposanguineo" bson:"gruposanguineo"`
 	PorcentajePrestaciones float64                `json:"pprestaciones,omitempty" bson:"pprestaciones"`

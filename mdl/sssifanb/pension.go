@@ -21,7 +21,8 @@ type PensionMilitar struct {
 	Persona                Persona    `json:"Persona,omitempty" bson:"persona"`
 	Categoria              string     `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
 	Situacion              string     `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
-	Clase                  string     `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	SituacionPago          string     `json:"situacionpago" bson:"situacionpago"`
+	Clase                  string     `json:"clase,omitempty" bson:"clase"` //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
 	FechaIngresoComponente time.Time  `json:"fingreso,omitempty" bson:"fingreso"`
 	FechaAscenso           time.Time  `json:"fascenso,omitempty" bson:"fascenso"`
 	FechaRetiro            time.Time  `json:"fretiro,omitempty" bson:"fretiro"`
@@ -116,6 +117,7 @@ func ActulizarPensionadosID(id string) {
 		"fingreso":                true,
 		"fretiro":                 true,
 		"situacion":               true,
+		"situacionpago":           true,
 		"grado.abreviatura":       true,
 		"componente.abreviatura":  true,
 		"pension.pensionasignada": true,
@@ -150,6 +152,7 @@ func consultarPensionados() {
 		"grado.abreviatura":       true,
 		"componente.abreviatura":  true,
 		"situacion":               true,
+		"situacionpago":           true,
 		"pension.pensionasignada": true,
 		"pension.grado":           true,
 		"pension.componente":      true,
@@ -162,10 +165,12 @@ func consultarPensionados() {
 		"pension.pespecial":       true,
 		"familiar":                true,
 	}
-
-	buscar := bson.M{"situacion": "RCP"}
-	// buscar := bson.M{"id": "26419599"}
+	//26419599
+	// buscar := bson.M{"situacion": "RCP"}
+	buscar := bson.M{"situacion": "I"}
+	// buscar := bson.M{"id": "6056"}
 	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
+	//err := c.Find(buscar).Select(seleccion).Limit(3).All(&lstMilitares)
 	if err != nil {
 		fmt.Println("Error en la consulta de Pensionados Militares")
 		//return
@@ -188,13 +193,13 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 	i := 0
 	coma := ""
 	cuerpo := ""
-	linea := ""
+	//linea := ""
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
 		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje,
 		numero_cuenta, banco, tipo, situacion)	VALUES `
 	fmt.Println("Creando lote...")
 	j := 0
-	k := 0
+	//k := 0
 	l := 0
 	for _, v := range lstMilitares {
 		if i > 0 {
@@ -205,15 +210,15 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 		if grado == "0" {
 			l++
 			j++
-			linea += strconv.Itoa(j) + " : " + v.Persona.DatoBasico.Cedula
+			//linea += strconv.Itoa(j) + " : " + v.Persona.DatoBasico.Cedula
 			grado, componente = obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
-			if grado == "0" {
-				k++
-				linea += "  --->  " + strconv.Itoa(k) + ": " + grado + " :: " + strconv.Itoa(componente)
-			} else {
-				linea += "  --->  OK => Resuelto... " + v.Pension.ComponenteCodigo + "|" + v.Pension.GradoCodigo + " == " + grado + " :: " + strconv.Itoa(componente)
-			}
-			linea += " -- \n"
+			// if grado == "0" {
+			// 	k++
+			// 	//linea += "  --->  " + strconv.Itoa(k) + ": " + grado + " :: " + strconv.Itoa(componente)
+			// } else {
+			// 	//linea += "  --->  OK => Resuelto... " + v.Pension.ComponenteCodigo + "|" + v.Pension.GradoCodigo + " == " + grado + " :: " + strconv.Itoa(componente)
+			// }
+			// linea += " -- \n"
 		}
 		np := v.Persona.DatoBasico.NombrePrimero
 		ap := v.Persona.DatoBasico.ApellidoPrimero
@@ -245,7 +250,7 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 				` + pnoascenso + `,
 				` + pprofesional + `,
 				` + pespecial + `,
-				201,
+				` + v.SituacionPago + `,
 				` + strconv.Itoa(v.NumeroHijos()) + `,
 				` + porcentaje + `,
 				'` + numero + `',
@@ -253,14 +258,15 @@ func (P *Pension) Exportar(cedula string, tipo int32) {
 				'` + tipo + `',
 				'` + v.Situacion + `')`
 		i++
-
+		fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula)
 		//fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
 	}
 
 	fmt.Println("Preparando para insertar: ", i)
 	query := insert + cuerpo
-	// fmt.Println("Consultar ", query)
-	fmt.Println(linea)
+	//fmt.Println("Consultar ", query)
+
+	//fmt.Println(linea)
 	fmt.Println("Cantidad de errores .-> ", l)
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
@@ -283,6 +289,7 @@ func consultarPensionadosFamiliares() {
 		"grado.abreviatura":       true,
 		"componente.abreviatura":  true,
 		"situacion":               true,
+		"situacionpago":           true,
 		"pension.pensionasignada": true,
 		"pension.grado":           true,
 		"pension.componente":      true,
@@ -296,8 +303,8 @@ func consultarPensionadosFamiliares() {
 		"familiar":                true,
 	}
 
-	buscar := bson.M{"situacion": "FCP"}
-	// buscar := bson.M{"id": "26419599"}
+	buscar := bson.M{"situacion": "FCP", "situacionpago": "201"}
+	//buscar := bson.M{"id": "15236250"}
 	err := c.Find(buscar).Select(seleccion).All(&lstMilitares)
 	if err != nil {
 		fmt.Println("Error en la consulta de Pensionados Militares")
@@ -315,22 +322,18 @@ func (P *Pension) ExportarFamiliares() {
 	consultarPensionadosFamiliares()
 
 	i := 0
-	coma := ""
 	cuerpo := ""
 	linea := ""
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
 		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje, numero_cuenta, tipo, banco, situacion)	VALUES `
-
-	familiar := `INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,fecha_nacimiento,edo_civil,parentesco,f_defuncion,
+	countFamiliar := false
+	familiarcuerpo := `INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,f_nacimiento,edo_civil,parentesco,f_defuncion,
 		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje)	VALUES `
 	fmt.Println("Creando lote...")
 	j := 0
 	k := 0
 	l := 0
 	for _, v := range lstMilitares {
-		if i > 0 {
-			coma = ","
-		}
 
 		grado, componente := obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
 		if grado == "0" {
@@ -363,39 +366,88 @@ func (P *Pension) ExportarFamiliares() {
 		if len(fAscenso) < 10 {
 			fAscenso = fRetiro
 		}
-		estatus := "201" //ACTIVO PARA GENERAR LA PENSION A SUS SOBREVIVIENTES
+		estatus := v.SituacionPago //ACTIVO PARA GENERAR LA PENSION A SUS SOBREVIVIENTES
 		if len(v.Familiar) == 0 {
 			estatus = "202" //DESACTIVANDO PENSION Y CALCULOS DE LA PENSION SIN FAMILIARES
 		}
-		cuerpo += coma + `('` + v.Persona.DatoBasico.Cedula + `',
+		cuerpo = `('` + v.Persona.DatoBasico.Cedula + `',
 				'` + strings.Replace(np, "'", " ", -1) + `','` + strings.Replace(ap, "'", " ", -1) + `',
 				` + grado + `,` + strconv.Itoa(componente) + `,'` + v.FechaIngresoComponente.String()[0:10] + `',
 				'` + fAscenso + `','` + fRetiro + `','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] + `',
 				` + pnoascenso + `,` + pprofesional + `,` + pespecial + `,` + estatus + `,` + strconv.Itoa(v.NumeroHijos()) + `,
 				` + porcentaje + `,'` + numero + `','` + cuenta + `','` + tipo + `','` + v.Situacion + `')`
 		i++
-		familiar += coma + insertFamiliares(v.ID, v.Familiar)
-		//fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula, " Componente: ", v.Pension.ComponenteCodigo, " Grado Codigo: ", v.Pension.GradoCodigo)
-	}
+		familiar := ""
 
-	fmt.Println("Preparando para insertar: ", i)
-	query := insert + cuerpo
-	_, err := sys.PostgreSQLPENSION.Exec(query)
-	if err != nil {
-		fmt.Println("Error en el query: ", err.Error())
+		if len(v.Familiar) > 0 {
+			countFamiliar = true
+			familiar, j = insertFamiliares(v.ID, v.Familiar)
+			if j == 0 {
+				countFamiliar = false
+			}
+		}
+
+		fmt.Println("#", strconv.Itoa(i), " Cedula: ", v.Persona.DatoBasico.Cedula)
+		query := insert + cuerpo
+		_, err := sys.PostgreSQLPENSION.Exec(query)
+		if err != nil {
+			fmt.Println("Beneficiario: ", v.Persona.DatoBasico.Cedula, err.Error())
+		}
+		if countFamiliar == true {
+			queryfam := familiarcuerpo + familiar
+			//fmt.Println(queryfam)
+			_, err := sys.PostgreSQLPENSION.Exec(queryfam)
+			if err != nil {
+				fmt.Println("Familiar: ", v.Persona.DatoBasico.Cedula, err.Error())
+			}
+		}
+		countFamiliar = false
+
 	}
+	fmt.Println("Preparando para insertar: ", i)
 
 }
 
-func insertFamiliares(cedula string, f []Familiar) (linea string) {
-	for _, v := range f {
-		linea = `('` + cedula + `','` + v.Persona.DatoBasico.Cedula + `','` + v.Persona.DatoBasico.NombrePrimero +
-			`','` + v.Persona.DatoBasico.ApellidoPrimero + `','` + v.Persona.DatoBasico.Sexo + `','` + v.Persona.DatoBasico.FechaNacimiento.String()[0:10] +
-			`','` + v.Persona.DatoBasico.EstadoCivil + `','` + v.Parentesco + `','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] +
-			`','`
+func insertFamiliares(cedula string, fm []Familiar) (linea string, j int) {
+	coma := ""
+	count := len(fm)
+	autorizado, tipo, banco, cuenta := "", "", "", ""
+	estatuspago := "201"
+	j = 0
+	for i := 0; i < count; i++ {
+		//fmt.Println("Entrando ", fm[i].Persona.DatoBasico.Cedula, " ", fm[i].PorcentajePrestaciones)
+		if j > 0 {
+			coma = ","
+		}
+		var v = fm[i]
+		if fm[i].PorcentajePrestaciones > 0 {
+			j++
+			if len(v.Persona.DatoFinanciero) > 0 {
+				autorizado = v.Persona.DatoFinanciero[0].Autorizado
+				tipo = v.Persona.DatoFinanciero[0].Tipo
+				banco = v.Persona.DatoFinanciero[0].Institucion
+				cuenta = v.Persona.DatoFinanciero[0].Cuenta
+			}
+			linea += coma + `('` + cedula + `','` + v.Persona.DatoBasico.Cedula + `','` + v.Persona.DatoBasico.NombrePrimero +
+				`','` + v.Persona.DatoBasico.ApellidoPrimero + `','` + v.Persona.DatoBasico.Sexo +
+				`','` + v.Persona.DatoBasico.FechaNacimiento.String()[0:10] +
+				`','` + v.Persona.DatoBasico.EstadoCivil +
+				`','` + v.Parentesco +
+				`','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] +
+				`','` + autorizado +
+				`','` + tipo +
+				`','` + banco +
+				`','` + cuenta +
+				`', 'DERECHO',` + estatuspago +
+				`,'REGISTRADO','` + v.FechaAfiliacion.String()[0:10] +
+				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `)`
+			//fmt.Println(linea)
+		}
 	}
 	return
+
 }
+
 func InsertPension() {
 
 }
@@ -672,4 +724,29 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 	if err != nil {
 		fmt.Println("Error actualizando sobreviviente: ", err.Error())
 	}
+}
+
+//WActualizarPension Pension actulizada para pago
+type WActualizarPension struct {
+	Cedula    string `json:"cedula"`
+	Familiar  string `json:"familiar"`
+	Situacion string `json:"situacion"`
+}
+
+//ActualizarSituacion Situacion de pago
+func (P *Pension) ActualizarSituacion(wa WActualizarPension) (err error) {
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	drch := make(map[string]interface{})
+	drch["familiar.$.situacionpago"] = wa.Situacion
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": wa.Familiar, "id": wa.Cedula}, bson.M{"$set": drch})
+	if err != nil {
+		fmt.Println("Incluyendo parentesco eRR Cedula: " + wa.Cedula + " -> " + err.Error())
+	}
+	query := `UPDATE familiar SET estatus=` + wa.Situacion + ` WHERE cedula='` + wa.Familiar + `'`
+	//fmt.Println(query)
+	_, err = sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error actualizando pensionado: ", err.Error())
+	}
+	return
 }

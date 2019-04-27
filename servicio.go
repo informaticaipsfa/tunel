@@ -46,12 +46,14 @@ func init() {
 func main() {
 	// var militar sssifanb.Militar
 	// militar.MGOActualizarPensionados()
-	// militar.MGOActualizarSobrevivientes()
+	// militar.MGOActualizarSobrevivientes() //Evalua y carga los porcentajes de los familiares
 	// militar.MGOActualizarSobrevivientesFideicomiso()
+	// militar.MGOActualizarFEVIDA()
 	// var pension sssifanb.Pension
 	// pension.CargarCodigoPace()
 	// var pension sssifanb.Pension
 	// pension.Exportar("", 0)
+	// pension.ExportarFamiliares() //Pagar a los familiares
 
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()

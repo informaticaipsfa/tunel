@@ -410,6 +410,38 @@ func (p *Militar) ActualizarDirectiva(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//Calculos Militar
+func (p *Militar) Calculo(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var id = mux.Vars(r)
+	url := sys.HostUrlPension + "calculo/" + id["id"]
+	//fmt.Println(url)
+	response, err := http.Get(url)
+	if err != nil {
+		M.Mensaje = err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			M.Mensaje = err.Error()
+			M.Tipo = 0
+			j, _ := json.Marshal(M)
+			w.Write(j)
+			return
+		}
+		defer response.Body.Close()
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+		return
+	}
+}
+
 //ConsultarNeto Militar
 func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
 	var traza fanb.Traza
@@ -424,7 +456,6 @@ func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
 	ip := strings.Split(r.RemoteAddr, ":")
 
 	traza.IP = ip[0]
@@ -473,6 +504,40 @@ func (p *Militar) AplicarDerechoACrecer(w http.ResponseWriter, r *http.Request) 
 	// traza.Log = ""
 	// traza.Documento = "Consultando Militar"
 	// traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//SituacionPago Militar
+func (p *Militar) SituacionPago(w http.ResponseWriter, r *http.Request) {
+	//var traza fanb.Traza
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	var wact sssifanb.WActualizarPension
+	var pension sssifanb.Pension
+
+	errx := json.NewDecoder(r.Body).Decode(&wact)
+	M.Tipo = 1
+	if errx != nil {
+		M.Mensaje = errx.Error()
+		M.Tipo = 0
+		fmt.Println(M.Mensaje)
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+
+	e := pension.ActualizarSituacion(wact)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	M.Mensaje = "Proceso exitoso"
+	M.Tipo = 1
+	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }

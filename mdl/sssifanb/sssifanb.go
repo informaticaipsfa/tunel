@@ -467,16 +467,16 @@ func obtenerPensionados() string {
 	-- LIMIT 1
 	WHERE
 	-- pdm.fchultimoascenso = '//' '2759874' "15236250"
-	codnip='3194226'
+	codnip='18554859'
   AND
 	pen.estpencod = 'ACT'
 	AND
 	pen.razestpencod ='INI'
 	AND
-	pdm.perssituaccod IN ('RCP', 'FCP', 'I')`
+	pdm.perssituaccod IN ('FCP')`
 }
 
-//MGOActualizarPensionados Actualizando datos principales del militar
+//MGOActualizarPensionados Actualizando datos principales del militar desde SAMAN
 func (m *Militar) MGOActualizarPensionados() (err error) {
 
 	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionados())
@@ -533,6 +533,20 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 		militar.Pension.Estatus = util.ValidarNullString(estpencod)
 		militar.Pension.Razon = util.ValidarNullString(razestpencod)
 
+		switch militar.Pension.Estatus {
+		case "ACT":
+			militar.SituacionPago = "201"
+			break
+		case "INACT":
+			if militar.Pension.Razon == "VIDA" {
+				militar.SituacionPago = "207"
+			} else if militar.Pension.Razon == "FA" {
+				militar.SituacionPago = "209"
+			} else {
+				militar.SituacionPago = "210"
+			}
+		}
+
 		militar.Pension.AnoServicio, _ = strconv.Atoi(util.ValidarNullString(annoreconocido))
 		militar.Pension.MesServicio, _ = strconv.Atoi(util.ValidarNullString(mesreconocido))
 		militar.Pension.DiaServicio, _ = strconv.Atoi(util.ValidarNullString(diareconocido))
@@ -560,20 +574,23 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 		reduc["dreconocido"] = militar.Pension.DiaServicio
 		reduc["categoria"] = militar.Pension.Categoria
 		reduc["situacion"] = militar.Pension.Situacion
+		reduc["situacionpago"] = militar.SituacionPago
+
 		reduc["clase"] = militar.Pension.Clase
 		reduc["pension"] = militar.Pension
 
 		err = cred.Update(bson.M{"id": util.ValidarNullString(codnip)}, bson.M{"$set": reduc})
 		if err != nil {
-			fmt.Println("Update ALL ", err.Error(), i, " UFF -> ", codnip)
+			fmt.Println("# ", i, codnip)
 			c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 			err = c.Insert(militar)
 			if err != nil {
-				fmt.Println("Err: Insertando cedula ", militar.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
+				//fmt.Println("Err: Insertando cedula ", militar.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
 				log += militar.Persona.DatoBasico.Cedula + " Descripción: " + err.Error()
-			} else {
-				fmt.Println("Insertando cedula ", militar.Persona.DatoBasico.Cedula)
 			}
+			// else {
+			// 	fmt.Println("Insertando cedula ", militar.Persona.DatoBasico.Cedula)
+			// }
 		}
 		fmt.Println(i, " : ", militar.Persona.DatoBasico.Cedula)
 	}
@@ -584,26 +601,31 @@ func (m *Militar) MGOActualizarPensionados() (err error) {
 func sqlSobrevivientes() string {
 	return `
 
-	SELECT *, cb.cedula_autoriz FROM (
-	SELECT b.codnip, pq.tipcuentacod, pq.nrocuenta, pq.instfinancod, pq.benefporcentaje, pq.canalliquidcod,
-			pq.tipnip, pq.familia, pq.nombreprimero, pq.nombresegundo, pq.apellidoprimero, pq.apellidosegundo, pq.sexocod,
-			pq.edocivilcod, pq.fechanacimiento
-	FROM personas b JOIN (
-		SELECT tb.nropersonatitular, tb.tipcuentacod, tb.nrocuenta, tb.instfinancod, tb.benefporcentaje, tb.canalliquidcod,
-			tipnip, codnip as familia, nombreprimero,nombresegundo, apellidoprimero,apellidosegundo,sexocod,edocivilcod,fechanacimiento
-		FROM (
-			SELECT nropersona,nropersonatitular,
-				tipcuentacod,nrocuenta,instfinancod, benefporcentaje, canalliquidcod
-			FROM benef_montos -- limit 1
-			WHERE
-				estbenefmoncod is null
-				AND
-				benefconcepcod = 'PS'
-				OR
-				estbenefmoncod = 'ACT'
-			) tb
-	JOIN personas p ON tb.nropersona=p.nropersona ) AS pq ON pq.nropersonatitular=b.nropersona ) prin
-	LEFT JOIN cuentas_bancarias cb on prin.nrocuenta=cb.nrocuenta AND prin.familia=cb.cedula_familiar
+		SELECT codnip, tipcuentacod, prin.nrocuenta, instfinancod, benefporcentaje, canalliquidcod,
+				tipnip, familia, nombreprimero, nombresegundo,apellidoprimero,apellidosegundo, sexocod,
+				edocivilcod, fechanacimiento, cedula_autoriz FROM (
+		SELECT b.codnip, pq.tipcuentacod, pq.nrocuenta, pq.instfinancod, pq.benefporcentaje, pq.canalliquidcod,
+				pq.tipnip, pq.familia, pq.nombreprimero, pq.nombresegundo, pq.apellidoprimero, pq.apellidosegundo, pq.sexocod,
+				pq.edocivilcod, pq.fechanacimiento
+		FROM personas b JOIN (
+			SELECT tb.nropersonatitular, tb.tipcuentacod, tb.nrocuenta, tb.instfinancod, tb.benefporcentaje, tb.canalliquidcod,
+				tipnip, codnip as familia, nombreprimero,nombresegundo, apellidoprimero,apellidosegundo,sexocod,edocivilcod,fechanacimiento
+			FROM (
+				SELECT nropersona,nropersonatitular,
+					tipcuentacod,nrocuenta,instfinancod, benefporcentaje, canalliquidcod
+				FROM benef_montos -- limit 1
+				WHERE
+
+					estbenefmoncod is null
+					AND
+					benefconcepcod = 'PS'
+					OR
+					estbenefmoncod IN ('ACT', 'INIAC')
+				) tb
+		JOIN personas p ON tb.nropersona=p.nropersona ) AS pq ON pq.nropersonatitular=b.nropersona ) prin
+		LEFT JOIN cuentas_bancarias cb on prin.nrocuenta=cb.nrocuenta AND prin.familia=cb.cedula_familiar
+		ORDER BY codnip
+		--WHERE codnip='15236250'
 	`
 }
 
@@ -658,6 +680,49 @@ func (m *Militar) MGOActualizarSobrevivientes() (err error) {
 		mil["pprestaciones"] = f.PorcentajePrestaciones
 		err = c.Update(bson.M{"id": f.Persona.DatoBasico.Cedula}, bson.M{"$set": mil})
 		fmt.Println("Cedula ", f.Persona.DatoBasico.Cedula, " PADRE ", f.DocumentoPadre, " PORC: ", f.PorcentajePrestaciones, f.CondicionPago)
+	}
+	return
+}
+
+func sqlFeDeVida() string {
+	return `SELECT codnip, A.familiar, razestbenefcod FROM (
+		select p.codnip AS familiar, pf.nropersonatitular, pf.nropersonaautor, pf.razestbenefcod from pers_dat_benef pf
+		JOIN personas p ON p.nropersona=pf.nropersona
+		 WHERE pf.estbenefcod ='INACT' --AND pf.razestbenefcod IN ('VIDA', 'MAY26', 'FA', 'CAR')
+		) AS A
+		JOIN personas ON personas.nropersona=A.nropersonatitular
+		-- where codnip='5216292'
+		ORDER BY codnip`
+}
+
+//MGOActualizarFEVIDA Control de la fe de vida
+func (m *Militar) MGOActualizarFEVIDA() (err error) {
+	sq, err := sys.PostgreSQLSAMAN.Query(sqlFeDeVida())
+	util.Error(err)
+	i := 0
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		var codnip, familiar, razon sql.NullString
+		i++
+		err = sq.Scan(&codnip, &familiar, &razon)
+		obtenerErr(err, "")
+		ced := util.ValidarNullString(codnip)
+		fam := util.ValidarNullString(familiar)
+		raz := util.ValidarNullString(razon)
+		situacionpago := make(map[string]interface{})
+		situa := "299"
+		if raz == "CAR" {
+			situa = "206"
+		} else if raz == "VIDA" {
+			situa = "207"
+		}
+		situacionpago["familiar.$.situacionpago"] = situa
+		situacionpago["familiar.$.razonpago"] = raz
+
+		err = c.Update(bson.M{"familiar.persona.datobasico.cedula": fam, "id": ced}, bson.M{"$set": situacionpago})
+		util.Error(err)
+		fmt.Println("#", i, "(Cedula): "+ced)
+
 	}
 	return
 }

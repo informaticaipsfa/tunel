@@ -129,7 +129,7 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 		msj.Tipo = 0
 		jSon, err = json.Marshal(msj)
 	} else {
-		fmt.Println(m.Pension.GradoCodigo, " OJO ")
+		//fmt.Println(m.Pension.GradoCodigo, " OJO ")
 		if militar.Persona.DatoBasico.Cedula == "" {
 			msj.Tipo = 0
 			jSon, err = json.Marshal(msj)
