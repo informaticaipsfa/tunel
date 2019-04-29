@@ -10,44 +10,60 @@ import (
 )
 
 //LeerCA Leer archivos de la caja de ahorro
-func (a *Archivo) LeerCA(PostPension *sql.DB) bool {
+func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 	var coma string
 	a.iniciarVariable()
 	insertar := a.Cabecera
 	archivo, err := os.Open(a.Ruta)
 	Error(err)
 	scan := bufio.NewScanner(archivo)
-
+	i := 0
 	for scan.Scan() {
 		linea := strings.Split(scan.Text(), "|")
 		l := len(linea)
 		a.CantidadLineas++
-		//fmt.Println("Linea -> ", linea)
-		if l > 3 {
-
-			if a.CantidadLineas > 2 {
+		tipo := "2"
+		if l > 4 {
+			if a.CantidadLineas > 1 {
 				coma = ","
 			} else {
 				coma = ""
 			}
-			insertar += coma
-			if a.CantidadLineas > 1 {
 
-				//re := regexp.MustCompile(`[-().]`)
-				concepto := strings.Split(linea[0], ".")
+			if l > 3 {
+				tipo = linea[4]
+			}
+			concepto := linea[0]
+			cedula, _ := strconv.Atoi(strings.Split(linea[1], ".")[0])
+			familiar, _ := strconv.Atoi(strings.Split(linea[2], ".")[0])
+			monto := linea[3]
+			insertar += coma + "('" + strconv.Itoa(cedula) + "','" + strconv.Itoa(familiar) + "','" + codigo + "','" + concepto + "'," + monto + ", " + tipo + ", Now() )"
+		} else { //DE LO CONTRARIO ARCHIVO DE SOBREVIVIENTES
+			tipo := "2"
+			if l > 3 {
+				tipo = linea[3]
+			}
+			if l > 2 {
+				if a.CantidadLineas > 1 {
+					coma = ","
+				} else {
+					coma = ""
+				}
+				concepto := linea[0]
 				cedula, _ := strconv.Atoi(strings.Split(linea[1], ".")[0])
 				monto := linea[2]
-				// premio, comision := RComaXPunto(linea[l-1]), RComaXPunto(linea[l-2])
-				insertar += "('" + strconv.Itoa(cedula) + "','" + concepto[0] + "'," + monto + ", 2, Now() )"
+				insertar += coma + "('" + strconv.Itoa(cedula) + "','','" + codigo + "','" + concepto + "'," + monto + ", " + tipo + ", Now() )"
 
 			}
-
 		}
+
+		i++
 	}
-	//fmt.Println(insertar)
+
+	fmt.Println("procesando ", i)
 	_, err = PostPension.Exec(insertar)
 	if err != nil {
-		fmt.Println("ERR. CAJA DE AHORRO ", err.Error())
+		fmt.Println("ERR. AL PROCESAR ARCHIVO TXT ", err.Error())
 		return false
 	}
 	return true

@@ -318,13 +318,13 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 	}
 	m := r.MultipartForm
 	files := m.File["input-folder-2"]
-	//cedula := r.FormValue("txtFileID")
+	codigo := r.FormValue("txtFileID")
 	directorio := "./public_web/SSSIFANB/pensiones/temp/nomina/"
 	errr := os.Mkdir(directorio, 0777)
 	if errr != nil {
-		fmt.Println(errr.Error())
+		fmt.Println("El directorio ya existe!")
 	}
-	fmt.Println("Continuando...", files)
+	//fmt.Println("Continuando...", files)
 	cadena := ""
 	for i, _ := range files {
 		file, errf := files[i].Open()
@@ -333,7 +333,7 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 			fmt.Println(errf)
 			return
 		}
-		fmt.Println(files[i].Filename)
+		//fmt.Println(files[i].Filename)
 		out, er := os.Create(directorio + files[i].Filename)
 		defer out.Close()
 		if er != nil {
@@ -346,10 +346,10 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 			return
 		}
 		cadena += files[i].Filename + ";"
-		ProcesarTxt(files[i].Filename)
+		ProcesarTxt(files[i].Filename, codigo)
 
 	} // Fin de archivos
-	M.Mensaje = "Carga exitosa"
+	M.Mensaje = cadena
 	M.Tipo = 2
 
 	j, _ := json.Marshal(M)
@@ -359,12 +359,12 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 }
 
 //ProcesarTxt Proceso de archivo
-func ProcesarTxt(doc string) {
+func ProcesarTxt(doc string, codigo string) {
 	var a util.Archivo
 
 	a.Ruta = "./public_web/SSSIFANB/pensiones/temp/nomina/" + doc
 
-	a.LeerCA(sys.PostgreSQLPENSION)
+	a.LeerCA(sys.PostgreSQLPENSION, codigo)
 	fmt.Println(a.Ruta)
 
 }
