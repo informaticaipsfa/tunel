@@ -157,6 +157,8 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/medidajudicial/{id}", wUsuario.ValidarToken(medida.Actualizar)).Methods("PUT")
 
 	Enrutador.HandleFunc("/ipsfa/api/descuentos", wUsuario.ValidarToken(descuentos.Agregar)).Methods("POST")
+
+	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpagosdetalles", wUsuario.ValidarToken(wNomina.ListarPagosDetalle)).Methods("POST")
 }
 
 //CargarPensionados Pensionados en general

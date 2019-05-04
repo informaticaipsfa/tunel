@@ -8,8 +8,6 @@ import (
 	"log"
 	"strings"
 	"time"
-
-	"github.com/gesaodin/bdse/util"
 )
 
 type Mensajes struct {
@@ -57,7 +55,7 @@ func ValidarNullString(b sql.NullString) (s string) {
 }
 
 func GetFechaConvert(f sql.NullString) (dateStamp time.Time) {
-	fecha := util.ValidarNullString(f)
+	fecha := ValidarNullString(f)
 	if fecha != "null" {
 		dateString := strings.Replace(fecha, "/", "-", -1)
 		dateStamp, _ = time.Parse(layout, dateString)

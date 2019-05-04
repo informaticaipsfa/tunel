@@ -175,6 +175,61 @@ func (N *WNomina) Procesar(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type WLstPagoDetalle struct {
+	Llave  string `json:"llave"`
+	Codigo string `json:"codigo"`
+	Tipo   string `json:"tipo"` //Cuenta de ahorro (CA) y Corriente (CC) o Cheque ()
+}
+
+//ListarPagosDetalle un concepto nuevo
+func (N *WNomina) ListarPagosDetalle(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var wProcesar WLstPagoDetalle
+	url := sys.HostUrlPension + "listarpagosdetalles"
+	errx := json.NewDecoder(r.Body).Decode(&wProcesar)
+	M.Tipo = 1
+	if errx != nil {
+		M.Mensaje = errx.Error()
+		M.Tipo = 0
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+	jsonW, ex := json.Marshal(wProcesar)
+	if ex != nil {
+		fmt.Println(ex.Error())
+	}
+
+	response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonW))
+	if err != nil {
+
+		M.Mensaje = err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusOK)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+
+		if err != nil {
+
+			w.WriteHeader(http.StatusOK)
+			M.Mensaje = err.Error()
+			M.Tipo = 0
+			j, _ := json.Marshal(M)
+			w.Write(j)
+			return
+		}
+		defer response.Body.Close()
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+		return
+	}
+}
+
 //VerPartidas Militar
 func (N *WNomina) VerPartidas(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
@@ -224,19 +279,41 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.Firma = llave
 	banfanb.Cantidad, _ = strconv.Atoi(id["cant"])
 	banfanb.Generar(sys.PostgreSQLPENSION)
-	banfanb.Tercero(sys.PostgreSQLPENSION)
 
+	banfanb.CodigoEmpresa = "0026"
+	banfanb.NumeroEmpresa = "01770001421100683232"
+	banfanb.Tercero(sys.PostgreSQLPENSION, "0134") //BANESCO
+
+	banfanb.CodigoEmpresa = "0026"
+	banfanb.NumeroEmpresa = "01770001441100683245"
+	banfanb.Tercero(sys.PostgreSQLPENSION, "0108") //PROVINCIAL
+
+	banfanb.CodigoEmpresa = "0026"
+	banfanb.NumeroEmpresa = "01770001411100683238" //TESORO
+	banfanb.Tercero(sys.PostgreSQLPENSION, "0163")
+
+	banfanb.CodigoEmpresa = "0026"
+	banfanb.NumeroEmpresa = "01770001411100683233"
+	banfanb.Tercero(sys.PostgreSQLPENSION, "0105") // MERCANTIL
+	//
 	bicentenario.CodigoEmpresa = "0651"
-	bicentenario.NumeroEmpresa = "01750044980000016735"
+	bicentenario.NumeroEmpresa = "0175048310076626369"
 	bicentenario.Firma = llave
 	bicentenario.Cantidad, _ = strconv.Atoi(id["cant"])
 	bicentenario.Generar(sys.PostgreSQLPENSION)
+	//
+	venzuela.CodigoEmpresa = "0"
+
+	venzuela.NumeroEmpresa = "01020488720000002147"
+	venzuela.Firma = llave
+	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
+	venzuela.Generar(sys.PostgreSQLPENSION, "CA")
 
 	venzuela.CodigoEmpresa = "0"
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave
 	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
-	venzuela.Generar(sys.PostgreSQLPENSION)
+	venzuela.Generar(sys.PostgreSQLPENSION, "CC")
 
 	//Comprimir todos los archivos en uno para su descarga
 	M.Mensaje = "Generacion de archivos exitosa "

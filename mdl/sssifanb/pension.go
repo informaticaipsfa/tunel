@@ -496,9 +496,15 @@ func (P *Pension) InsertarPensionado(v Militar) {
 	pprofesional := strconv.FormatFloat(v.Pension.PrimaProfesional, 'f', 2, 64)
 	pnoascenso := strconv.FormatFloat(v.Pension.PrimaNoAscenso, 'f', 2, 64)
 	pespecial := strconv.FormatFloat(v.Pension.PrimaEspecial, 'f', 2, 64)
+
 	numero := util.EliminarGuionesFecha(v.Pension.DatoFinanciero.Cuenta)
 	cuenta := v.Pension.DatoFinanciero.Institucion
 	tipo := v.Pension.DatoFinanciero.Tipo
+	if numero == "" {
+		numero = util.EliminarGuionesFecha(v.Persona.DatoFinanciero[0].Cuenta)
+		cuenta = v.Persona.DatoFinanciero[0].Institucion
+		tipo = v.Persona.DatoFinanciero[0].Tipo
+	}
 	fRetiro := v.FechaRetiro.String()[0:10]
 	fAscenso := v.FechaAscenso.String()[0:10]
 	if len(fRetiro) < 10 {
@@ -506,6 +512,9 @@ func (P *Pension) InsertarPensionado(v Militar) {
 	}
 	if len(fAscenso) < 10 {
 		fAscenso = fRetiro
+	}
+	if v.SituacionPago == "" {
+		v.SituacionPago = "201"
 	}
 
 	cuerpo := `(
@@ -520,7 +529,7 @@ func (P *Pension) InsertarPensionado(v Militar) {
 		` + pnoascenso + `,
 		` + pprofesional + `,
 		` + pespecial + `,
-		'` + v.SituacionPago + `',
+		` + v.SituacionPago + `,
 		` + strconv.Itoa(v.NumeroHijos()) + `,
 		` + porcentaje + `,
 		'` + numero + `',
@@ -529,7 +538,6 @@ func (P *Pension) InsertarPensionado(v Militar) {
 		'` + v.Situacion + `')`
 
 	query := insert + cuerpo
-	//fmt.Println(query)
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query por : ", err.Error())
@@ -719,7 +727,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 		}
 	}
 	query := cabecera + cuerpo
-	fmt.Println(query)
+	//fmt.Println(query)
 	_, err = sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error actualizando sobreviviente: ", err.Error())

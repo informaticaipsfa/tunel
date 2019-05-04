@@ -22,11 +22,12 @@ type Banfanb struct {
 //CabeceraSQL Creando consulta para archivos
 func (b *Banfanb) CabeceraSQL(bancos string) string {
 	return `
-  SELECT
-    pg.cedu, pg.nomb, pg.nume, pg.tipo, pg.banc, pg.neto
-  FROM
-    space.nomina nom
-  JOIN space.pagos pg ON nom.oid=pg.nomi
+	  SELECT
+			pg.cedu, regexp_replace(pg.nomb, '[^a-zA-Y0-9 ]', '', 'g') AS nomb, pg.nume, pg.tipo, pg.banc, pg.neto,
+			pg.cfam, pg.caut, regexp_replace(pg.naut, '[^a-zA-Y0-9 ]', '', 'g') AS autor
+	  FROM
+	    space.nomina nom
+	  JOIN space.pagos pg ON nom.oid=pg.nomi
   WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
 }
 
@@ -40,31 +41,39 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	directorio := "./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
-
+	b.Cantidad = 30000
 	var sumatotal float64
 	var sumaparcial float64
 	arch := 0
 	linea := ""
 	for sq.Next() {
 		i++
-		var cedula, nombre, numero, tipo, banco sql.NullString
+		var cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
 
 		var neto sql.NullFloat64
-		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto)
+		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto, &familia, &ceddante, &ndante)
 		util.Error(e)
 
 		monto := util.ValidarNullFloat64(neto)
+		//montocondecimale := strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64)
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 
 		montos = util.CompletarCeros(montos, 0, 12)
 		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
-		cedu := util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+
+		cedu := ""
+		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
+			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)
+		} else {
+			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+		}
+
 		cerocinco := "00000"
 		tipos := "0" // 0: ABONO 1: DEBITO
 		filler := "00"
 		sumatotal += monto
 		sumaparcial += monto
-		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\n"
+		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\r\n"
 		if i == b.Cantidad {
 			arch++
 			banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan " + strconv.Itoa(arch) + ".txt")
@@ -74,7 +83,7 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 			fecha := time.Now()
 			fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
 			registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)
-			cabecera := b.NumeroEmpresa + fechas + sumas + registros + "\n"
+			cabecera := b.NumeroEmpresa + fechas + sumas + registros + "\r\n"
 			fmt.Fprintf(banf, cabecera)
 			fmt.Fprintf(banf, linea)
 			banf.Close()
@@ -89,26 +98,28 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-		fecha := ""
+		sumas = util.CompletarCeros(sumas, 0, 17)
+		fecha := time.Now()
+		fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
 		registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)
-		cabecera := b.NumeroEmpresa + b.NumeroEmpresa + fecha + sumas + registros + "\n"
+		cabecera := b.NumeroEmpresa + fechas + sumas + registros + "\r\n"
 		fmt.Fprintf(banf, cabecera)
 		fmt.Fprintf(banf, linea)
 		banf.Close()
-
 	}
 
 	return true
 }
 
 //Tercero Generando pago
-func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB) bool {
+func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 	fecha := time.Now()
+	b.Cantidad = 40000
 	dd := fecha.String()[8:10]
 	mm := fecha.String()[5:7]
 	aa := fecha.String()[2:4]
 	fechas := dd + mm + aa
-	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL(" IN ('0134', '0175', '0105', '0108')"))
+	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='" + cuenta + "'"))
 	util.Error(err)
 
 	i := 0
@@ -118,34 +129,42 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	linea := ""
 	for sq.Next() {
 		i++
-		var cedula, nombre, numero, tipo, banco sql.NullString
+		var cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
 		var neto sql.NullFloat64
-		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto)
+		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto, &familia, &ceddante, &ndante)
 		util.Error(e)
-		ordenante := util.CompletarEspacios("02G200036923", 1, 16)
-		nombreordenante := util.CompletarEspacios("IPSFA", 1, 30)
+		ordenante := util.CompletarEspacios("02G200036923", 1, 18)
+		nombreordenante := util.CompletarEspacios("IPSFA", 1, 30)[:30]
 		monto := util.ValidarNullFloat64(neto)
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 
-		montos = util.CompletarCeros(montos, 0, 12)
-		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
-		cedu := util.CompletarEspacios(util.ValidarNullString(cedula), 1, 10)
-		nombrecompleto := util.CompletarEspacios(util.ValidarNullString(nombre), 1, 35)
+		montos = util.CompletarCeros(montos, 0, 15)
+		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)[:20]
+		nombrecompleto := ""
+		cedu := ""
+		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
+			cedu = util.CompletarEspacios(util.ValidarNullString(ceddante), 1, 10)[:10]
+			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(ndante), 1, 30)[:30]
+		} else {
+			cedu = util.CompletarEspacios(util.ValidarNullString(cedula), 1, 10)[:10]
+			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(nombre), 1, 30)[:30]
+		}
+
 		cuatro := "    "
 		cinco := "     "
 		sesentayocho := util.CompletarEspacios(" ", 1, 68)
 
-		linea += ordenante + nombreordenante + cuatro + montos + b.NumeroEmpresa + "V" + cedu + cinco
-		linea += nombrecompleto + bancos + "transferenci" + sesentayocho + "0212905452300000000000mediosdepago"
-		linea += sesentayocho + "2\n"
+		linea += ordenante + nombreordenante + cuatro + montos + b.NumeroEmpresa + "V" + cedu + cuatro
+		linea += nombrecompleto + cinco + bancos + "transferenci" + sesentayocho + "0212905452300000000000mediosdepago"
+		linea += sesentayocho + "2\r\n"
 
 		sumatotal += monto
 		sumaparcial += monto
 		if i == b.Cantidad {
 			arch++
-			banftercero, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan terceros " + strconv.Itoa(arch) + ".txt")
+			banftercero, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
-			cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\n"
+			cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\r\n"
 			fmt.Fprintf(banftercero, cabecera)
 			fmt.Fprintf(banftercero, linea)
 			banftercero.Close()
@@ -157,9 +176,9 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	}
 	if i > 0 {
 		arch++
-		banftercero, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan terceros " + strconv.Itoa(arch) + ".txt")
+		banftercero, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
-		cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\n"
+		cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\r\n"
 		fmt.Fprintf(banftercero, cabecera)
 		fmt.Fprintf(banftercero, linea)
 		banftercero.Close()

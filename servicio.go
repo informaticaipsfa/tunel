@@ -61,8 +61,8 @@ func main() {
 	srv := &http.Server{
 		Handler:      context.ClearHandler(web.Enrutador),
 		Addr:         ":" + sys.PUERTO,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 120 * time.Second,
+		ReadTimeout:  120 * time.Second,
 	}
 	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
 	go srv.ListenAndServe()
@@ -71,8 +71,8 @@ func main() {
 	server := &http.Server{
 		Handler:      context.ClearHandler(web.Enrutador),
 		Addr:         ":" + sys.PUERTO_SSL,
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 120 * time.Second,
+		ReadTimeout:  120 * time.Second,
 	}
 	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
 	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
