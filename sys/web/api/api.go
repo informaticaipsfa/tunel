@@ -256,11 +256,13 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 			fmt.Println("No se pudo escribir el archivo verifique los privilegios.")
 			return
 		}
+		fmt.Println("Subiendo Archivo")
 		_, err := io.Copy(out, file) // file not files[i] !
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("Entrando en un Erro...", err)
 			return
 		}
+		fmt.Println("Instertando....")
 		cadena += files[i].Filename + ";"
 		if cedula == "DESERTOR" {
 			var desertor sssifanb.Desertor
