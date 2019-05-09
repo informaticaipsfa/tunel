@@ -27,7 +27,9 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
   FROM
     space.nomina nom
   JOIN space.pagos pg ON nom.oid=pg.nomi
-  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
+  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' AND cfam != '' AND cedu!=cfam AND naut ='' ORDER BY banc, pg.cedu;`
+
+	//WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
 }
 
 //Generar Archivo
@@ -36,7 +38,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	util.Error(err)
 
 	i := 0
-	directorio := "./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma
+	directorio := URLBanco + b.Firma
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 
@@ -54,14 +56,17 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 
 		monto := util.ValidarNullFloat64(neto)
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
-
 		montos = util.CompletarCeros(montos, 0, 12)
 		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
+
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
 			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)
 		} else {
 			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+			if util.ValidarNullString(familia) != "" {
+				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)
+			}
 		}
 
 		cerocinco := "00000"
@@ -70,28 +75,11 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		sumatotal += monto
 		sumaparcial += monto
 		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\r\n"
-		// if i == b.Cantidad {
-		// 	arch++
-		// 	banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/bicentenario " + strconv.Itoa(arch) + ".txt")
-		// 	util.Error(e)
-		// 	sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-		// 	sumas = util.CompletarCeros(sumas, 0, 17)
-		// 	fecha := time.Now()
-		// 	fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
-		// 	registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)
-		// 	cabecera := b.NumeroEmpresa + fechas + sumas + registros + "\n"
-		// 	fmt.Fprintf(banf, cabecera)
-		// 	fmt.Fprintf(banf, linea)
-		// 	banf.Close()
-		// 	sumaparcial = 0
-		// 	linea = ""
-		// 	i = 0
-		// }
 
 	}
 	// if i > 0 {
 	arch++
-	banf, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/bicentenario " + strconv.Itoa(arch) + ".txt")
+	banf, e := os.Create(URLBanco + b.Firma + "/bicentenario " + strconv.Itoa(arch) + ".txt")
 	util.Error(e)
 	sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 	sumas = util.CompletarCeros(sumas, 0, 17)

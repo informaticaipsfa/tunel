@@ -45,10 +45,7 @@ func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
-
-	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
 	ip := strings.Split(r.RemoteAddr, ":")
-
 	traza.IP = ip[0]
 	traza.Time = time.Now()
 	traza.Usuario = UsuarioConectado.Login
@@ -92,7 +89,6 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	traza.Time = time.Now()
 	traza.Usuario = UsuarioConectado.Login
 
-	// fmt.Println("POST...")
 	err := json.NewDecoder(r.Body).Decode(&militar)
 	M.Tipo = 1
 	if err != nil {
@@ -149,7 +145,6 @@ type ComponenteDecode struct {
 //EstadisticasPorGrado EstadisticasPorGrado
 func (p *Militar) EstadisticasPorGrado(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
-	// ip := strings.Split(r.RemoteAddr, ":")
 	var militar sssifanb.Militar
 	var componente ComponenteDecode
 	err := json.NewDecoder(r.Body).Decode(&componente)
@@ -184,18 +179,15 @@ func (p *Militar) Listado(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	ip := strings.Split(r.RemoteAddr, ":")
 
-	// fmt.Println("POST...")
 	err := json.NewDecoder(r.Body).Decode(&mil)
 	if err != nil {
 		fmt.Println(err.Error())
-		//fmt.Println("Estoy en un error al insertar", err.Error())
 		M.Mensaje = err.Error()
 		w.WriteHeader(http.StatusForbidden)
 		j, _ := json.Marshal(M)
 		w.Write(j)
 		return
 	}
-	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
 	traza.IP = ip[0]
 	traza.Time = time.Now()
 	traza.Usuario = UsuarioConectado.Login
@@ -211,7 +203,6 @@ func (p *Militar) Listado(w http.ResponseWriter, r *http.Request) {
 func (p *Militar) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	fmt.Println("OPTIONS...")
-	//fmt.Println(w, "Saludos")
 
 }
 
@@ -235,7 +226,6 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 	files := m.File["archivo"]
 	cedula := r.FormValue("txtFileID")
 	directorio := "./public_web/SSSIFANB/afiliacion/temp/" + cedula + "/"
-	fmt.Println(directorio)
 	if cedula == "" {
 		M.Mensaje = "Carga fallida"
 		M.Tipo = -1
@@ -279,10 +269,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	//fmt.Println("Carga de archivos lista para: ", cedula)
-
 	if UsuarioConectado.Login[:3] != "act" {
-
 		traza.Documento = "Agregando Historial Digital ( " + cedula + " )"
 		traza.Log = cadena
 		traza.CrearHistoricoConsulta("hmilitar")
@@ -324,7 +311,6 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 	if errr != nil {
 		fmt.Println("El directorio ya existe!")
 	}
-	//fmt.Println("Continuando...", files)
 	cadena := ""
 	for i, _ := range files {
 		file, errf := files[i].Open()
@@ -333,7 +319,6 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 			fmt.Println(errf)
 			return
 		}
-		//fmt.Println(files[i].Filename)
 		out, er := os.Create(directorio + files[i].Filename)
 		defer out.Close()
 		if er != nil {
@@ -365,6 +350,5 @@ func ProcesarTxt(doc string, codigo string) {
 	a.Ruta = "./public_web/SSSIFANB/pensiones/temp/nomina/" + doc
 
 	a.LeerCA(sys.PostgreSQLPENSION, codigo)
-	fmt.Println(a.Ruta)
 
 }

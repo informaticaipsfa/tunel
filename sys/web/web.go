@@ -167,6 +167,7 @@ func CargarPensionados() {
 	var wPensionado api.Militar
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/calculo/{id}", wUsuario.ValidarToken(wPensionado.Calculo)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarneto/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNeto)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarsobreviviente/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNetoSobreviviente)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/derechoacrecer", wUsuario.ValidarToken(wPensionado.AplicarDerechoACrecer)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/situacionpago", wUsuario.ValidarToken(wPensionado.SituacionPago)).Methods("POST")
 }

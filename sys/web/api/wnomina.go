@@ -30,6 +30,7 @@ type WNomina struct {
 	FechaInicio string      `json:"fechainicio" bson:"fechainicio"`
 	FechaFin    string      `json:"fechafin" bson:"fechafin"`
 	Codigo      string      `json:"codigo" bson:"codigo"`
+	Mes         string      `json:"mes" bson:"mes"`
 	Concepto    []WConcepto `json:"Concepto,omitempty" bson:"Concepto"`
 }
 
@@ -91,8 +92,8 @@ func (N *WNomina) Gestionar(w http.ResponseWriter, r *http.Request) {
 	var codigo = mux.Vars(r)
 	oid := codigo["id"]
 	estatus := codigo["estatus"]
-	url := sys.HostUrlPension + "nominacerrar/" + oid + "/" + estatus
-	fmt.Println(url)
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "nominacerrar/" + oid + "/" + estatus
+
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -130,7 +131,7 @@ func (N *WNomina) Procesar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wProcesar []WProcesarNomina
-	url := sys.HostUrlPension + "nominaprocesar"
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "nominaprocesar"
 	errx := json.NewDecoder(r.Body).Decode(&wProcesar)
 	M.Tipo = 1
 	if errx != nil {
@@ -186,7 +187,7 @@ func (N *WNomina) ListarPagosDetalle(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wProcesar WLstPagoDetalle
-	url := sys.HostUrlPension + "listarpagosdetalles"
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listarpagosdetalles"
 	errx := json.NewDecoder(r.Body).Decode(&wProcesar)
 	M.Tipo = 1
 	if errx != nil {
@@ -235,8 +236,7 @@ func (N *WNomina) VerPartidas(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := sys.HostUrlPension + "verpartida/" + id["id"]
-	//fmt.Println(url)
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "verpartida/" + id["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -278,7 +278,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.NumeroEmpresa = "01770006571100173915"
 	banfanb.Firma = llave
 	banfanb.Cantidad, _ = strconv.Atoi(id["cant"])
-	banfanb.Generar(sys.PostgreSQLPENSION)
+	// banfanb.Generar(sys.PostgreSQLPENSION)
 
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770001421100683232"
@@ -291,7 +291,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770001411100683238" //TESORO
 	banfanb.Tercero(sys.PostgreSQLPENSION, "0163")
-
+	//
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770001411100683233"
 	banfanb.Tercero(sys.PostgreSQLPENSION, "0105") // MERCANTIL
@@ -301,19 +301,19 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	bicentenario.Firma = llave
 	bicentenario.Cantidad, _ = strconv.Atoi(id["cant"])
 	bicentenario.Generar(sys.PostgreSQLPENSION)
+
 	//
 	venzuela.CodigoEmpresa = "0"
-
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave
 	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
-	venzuela.Generar(sys.PostgreSQLPENSION, "CA")
+	//venzuela.Generar(sys.PostgreSQLPENSION, "CA")
 
 	venzuela.CodigoEmpresa = "0"
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave
 	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
-	venzuela.Generar(sys.PostgreSQLPENSION, "CC")
+	// venzuela.Generar(sys.PostgreSQLPENSION, "CC")
 
 	//Comprimir todos los archivos en uno para su descarga
 	M.Mensaje = "Generacion de archivos exitosa "
@@ -333,7 +333,7 @@ func (N *WNomina) ListarPendientes(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := sys.HostUrlPension + "listartpendientes/" + id["id"]
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listartpendientes/" + id["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -364,7 +364,7 @@ func (N *WNomina) ListarPagos(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := sys.HostUrlPension + "listarpagos/" + id["id"]
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listarpagos/" + id["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -395,7 +395,7 @@ func (N *WNomina) CuadreBanco(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := sys.HostUrlPension + "cuadrebanco/" + id["id"]
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "cuadrebanco/" + id["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()

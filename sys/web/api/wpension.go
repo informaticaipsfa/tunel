@@ -19,8 +19,7 @@ import (
 func (p *Militar) ConsultarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
-	url := sys.HostUrlPension + "directiva"
-	//fmt.Println(url);
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "directiva"
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -51,8 +50,7 @@ func (p *Militar) ConsultarDetalleDirectiva(w http.ResponseWriter, r *http.Reque
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var cedula = mux.Vars(r)
-	url := sys.HostUrlPension + "dtdirectiva/" + cedula["id"]
-	//fmt.Println(url);
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "dtdirectiva/" + cedula["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -83,8 +81,7 @@ func (p *Militar) ListarDetalleDirectiva(w http.ResponseWriter, r *http.Request)
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := sys.HostUrlPension + "ldirectiva/" + id["id"]
-	//fmt.Println(url);
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "ldirectiva/" + id["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -114,7 +111,7 @@ func (p *Militar) ListarDetalleDirectiva(w http.ResponseWriter, r *http.Request)
 func (p *Militar) ConsultarCantidadPensionados(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
-	url := sys.HostUrlPension + "ccpensionados/"
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "ccpensionados/"
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -159,7 +156,7 @@ func (p *Militar) ClonarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wDirectiva WDirectivaClonar //Modulo de WNomina en API
-	url := sys.HostUrlPension + "clonardirectiva"
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "clonardirectiva"
 
 	errx := json.NewDecoder(r.Body).Decode(&wDirectiva)
 	M.Tipo = 1
@@ -173,7 +170,6 @@ func (p *Militar) ClonarDirectiva(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("JSON : --> ", wDirectiva.FechaInicio, UsuarioConectado.Login)
 	wDirectiva.Usuario = UsuarioConectado.Login
 
 	jsonW, ex := json.Marshal(wDirectiva)
@@ -182,8 +178,6 @@ func (p *Militar) ClonarDirectiva(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonW))
-	//fmt.Println(url)
-
 	if err != nil {
 		M.Mensaje = err.Error()
 		M.Tipo = 0
@@ -215,7 +209,7 @@ func (p *Militar) GenerarNomina(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wNomina WNomina //Modulo de WNomina en API
-	url := sys.HostUrlPension + "gnomina"
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "gnomina"
 
 	errx := json.NewDecoder(r.Body).Decode(&wNomina)
 	M.Tipo = 1
@@ -227,9 +221,6 @@ func (p *Militar) GenerarNomina(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		return
 	}
-
-	//fmt.Println("JSON : --> ", wNomina.ID, wNomina.Concepto)
-
 	jsonW, ex := json.Marshal(wNomina)
 	if ex != nil {
 		fmt.Println(ex.Error())
@@ -268,7 +259,7 @@ func (p *Militar) EliminarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := sys.HostUrlPension + "eliminardirectiva/" + id["id"]
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "eliminardirectiva/" + id["id"]
 
 	response, err := http.Get(url)
 	if err != nil {
@@ -308,7 +299,7 @@ func (p *Militar) ActualizarPrima(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wDirectivaPrima WDirectivaPrima //Modulo de WNomina en API
-	url := sys.HostUrlPension + "actualizarprima"
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "actualizarprima"
 
 	errx := json.NewDecoder(r.Body).Decode(&wDirectivaPrima)
 	M.Tipo = 1
@@ -321,10 +312,7 @@ func (p *Militar) ActualizarPrima(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		return
 	}
-
-	//fmt.Println("JSON : --> ", UsuarioConectado.Login)
 	wDirectivaPrima.Usuario = UsuarioConectado.Login
-
 	jsonW, ex := json.Marshal(wDirectivaPrima)
 	if ex != nil {
 		fmt.Println(ex.Error())
@@ -365,7 +353,7 @@ func (p *Militar) ActualizarDirectiva(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var wDirectivaActualizar []WDirectivaActualizar //Modulo de WNomina en API
-	url := sys.HostUrlPension + "actualizardirectiva"
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "actualizardirectiva"
 
 	errx := json.NewDecoder(r.Body).Decode(&wDirectivaActualizar)
 	M.Tipo = 1
@@ -415,8 +403,7 @@ func (p *Militar) Calculo(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := sys.HostUrlPension + "calculo/" + id["id"]
-	//fmt.Println(url)
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "calculo/" + id["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -449,7 +436,32 @@ func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
 	var pension sssifanb.Pension
 	var cedula = mux.Vars(r)
 
-	j, e := pension.ConsultarNetos(cedula["id"])
+	j, e := pension.ConsultarNetos(cedula["id"], true)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = cedula["id"]
+	traza.Documento = "Consultando Militar"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+func (p *Militar) ConsultarNetoSobreviviente(w http.ResponseWriter, r *http.Request) {
+	var traza fanb.Traza
+	Cabecera(w, r)
+	var pension sssifanb.Pension
+	var cedula = mux.Vars(r)
+
+	j, e := pension.ConsultarNetos(cedula["id"], false)
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))
@@ -494,16 +506,6 @@ func (p *Militar) AplicarDerechoACrecer(w http.ResponseWriter, r *http.Request) 
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
-
-	//fmt.Println("El usuario ", UsuarioConectado.Nombre, " Esta consultado el documento: ", cedula["id"])
-	// ip := strings.Split(r.RemoteAddr, ":")
-	//
-	// traza.IP = ip[0]
-	// traza.Time = time.Now()
-	// traza.Usuario = UsuarioConectado.Login
-	// traza.Log = ""
-	// traza.Documento = "Consultando Militar"
-	// traza.CrearHistoricoConsulta("historicoconsultas")
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }

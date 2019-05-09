@@ -30,6 +30,7 @@ var (
 	Error                    error
 	HostIPPace               string = ""
 	HostUrlPace              string = ""
+	HostIPPension            string = ""
 	HostUrlPension           string = ""
 )
 
@@ -133,19 +134,10 @@ func init() {
 				Host:      valor.Host,
 				Puerto:    valor.Puerto,
 			}
+			HostIPPension = valor.Host
 			HostUrlPension = valor.StrUrl
 			ConexionPENSION(cad)
-		case "pensiones":
-			cad := make(map[string]CadenaDeConexion)
-			cad["pensiones"] = CadenaDeConexion{
-				Driver:    valor.Driver,
-				Usuario:   valor.Usuario,
-				Basedatos: valor.Basedatos,
-				Clave:     valor.Clave,
-				Host:      valor.Host,
-				Puerto:    valor.Puerto,
-			}
-			ConexionPENSIONSIGESP(cad)
+
 		case "mysql":
 			MySQL = true
 			cad := make(map[string]CadenaDeConexion)

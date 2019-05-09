@@ -40,7 +40,7 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0102'", tipocuenta))
 	util.Error(err)
 
-	directorio := "./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma
+	directorio := URLBanco + b.Firma
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 	i := 0
@@ -75,6 +75,10 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 		} else {
 			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(nombre), 1, 40)[:40]
 			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+			if util.ValidarNullString(familia) != "" {
+				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)
+			}
+
 		}
 
 		sumatotal += monto
@@ -82,7 +86,7 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 		linea += stipo + numerocuenta + montoapagar + codigocuenta + nombrecompleto + cedu + "003291  \r\n"
 		if i == b.Cantidad {
 			arch++
-			venz, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
+			venz, e := os.Create(URLBanco + b.Firma + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
 			sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 			sumas = util.CompletarCeros(sumas, 0, 13)
@@ -101,7 +105,7 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 
 	if i > 0 {
 		arch++
-		venz, e := os.Create("./public_web/SSSIFANB/afiliacion/temp/banco/" + b.Firma + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
+		venz, e := os.Create(URLBanco + b.Firma + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 		sumas = util.CompletarCeros(sumas, 0, 13)

@@ -20,6 +20,7 @@ type Descuentos struct {
 	FechaInicio time.Time `json:"fechainicio,omitempty" bson:"fechainicio"`
 	FechaFin    time.Time `json:"fechafin,omitempty" bson:"fechafin"`
 	Usuario     string    `json:"usuario,omitempty" bson:"usuario"`
+	Familiar    string    `json:"familiar,omitempty" bson:"familiar"`
 }
 
 //Agregar Sistema
@@ -49,14 +50,14 @@ func (DC *Descuentos) Agregar() (jSon []byte, err error) {
 //InsertarPensionDescuento Cargar medidas
 func InsertarPensionDescuento(CD *Descuentos) {
 	query := `
-	INSERT INTO space.descuentos (
+	INSERT INTO space.asig_deduc (
 		tipo, conc, fnxc, obse,
 		fini, ffin,
-		usua, crea, esta, cedula
+		usua, crea, esta, cedula, familiar
 	) VALUES `
 	query += `('` + CD.Tipo + `','` + CD.Concepto + `','` + CD.Formula + `','` + CD.Observacion + `'
 						,'` + CD.FechaInicio.String()[:10] + `','` + CD.FechaFin.String()[:10] + `','` + CD.Usuario + `',Now()
-						,'` + strconv.Itoa(CD.Estatus) + `','` + CD.ID + `')`
+						,'` + strconv.Itoa(CD.Estatus) + `','` + CD.ID + `','` + CD.Familiar + `')`
 
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {

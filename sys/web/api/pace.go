@@ -17,8 +17,6 @@ func (p *Militar) ConsultarPACE(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var cedula = mux.Vars(r)
 	url := "http://" + sys.HostIPPace + sys.HostUrlPace + cedula["id"]
-
-	fmt.Println(url)
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()

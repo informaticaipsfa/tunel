@@ -14,38 +14,39 @@ import (
 
 const layout string = "2006-01-02"
 
-func Sincronizar(militar Militar) {
-	s := `SELECT p.nropersona FROM personas p
-		JOIN pers_dat_militares m on p.nropersona=m.nropersona
-		WHERE p.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1`
-	sq, err := sys.PostgreSQLSAMAN.Query(s)
-	if err != nil {
-		return
-	}
-	existe := 0
-	for sq.Next() {
-		existe = 1
-	}
-	if existe == 0 {
-		m := InsertarMilitarSAMANSN(militar)
-		_, e := sys.PostgreSQLSAMAN.Exec(m)
-		if e != nil {
-			fmt.Println(e.Error())
-			return
-		}
-		fmt.Println("INSERTADO: ", militar.Persona.DatoBasico.Cedula)
-	} else {
-		p := ActualizarPersona(militar.Persona)
-		m := ActualizarMilitar(militar)
-		_, e := sys.PostgreSQLSAMAN.Exec(p + m)
-		if e != nil {
-			fmt.Println(e.Error())
-			return
-		}
-		fmt.Println("ACTUALIZADO: ", militar.Persona.DatoBasico.Cedula)
-	}
-
-}
+//
+// func Sincronizar(militar Militar) {
+// 	s := `SELECT p.nropersona FROM personas p
+// 		JOIN pers_dat_militares m on p.nropersona=m.nropersona
+// 		WHERE p.codnip='` + militar.Persona.DatoBasico.Cedula + `' LIMIT 1`
+// 	sq, err := sys.PostgreSQLSAMAN.Query(s)
+// 	if err != nil {
+// 		return
+// 	}
+// 	existe := 0
+// 	for sq.Next() {
+// 		existe = 1
+// 	}
+// 	if existe == 0 {
+// 		m := InsertarMilitarSAMANSN(militar)
+// 		_, e := sys.PostgreSQLSAMAN.Exec(m)
+// 		if e != nil {
+// 			fmt.Println(e.Error())
+// 			return
+// 		}
+// 		fmt.Println("INSERTADO: ", militar.Persona.DatoBasico.Cedula)
+// 	} else {
+// 		p := ActualizarPersona(militar.Persona)
+// 		m := ActualizarMilitar(militar)
+// 		_, e := sys.PostgreSQLSAMAN.Exec(p + m)
+// 		if e != nil {
+// 			fmt.Println(e.Error())
+// 			return
+// 		}
+// 		fmt.Println("ACTUALIZADO: ", militar.Persona.DatoBasico.Cedula)
+// 	}
+//
+// }
 
 func SincronizarTest(militar Militar) {
 	s := `SELECT personas.nropersona FROM personas JOIN pers_dat_militares on personas.nropersona=pers_dat_militares.nropersona

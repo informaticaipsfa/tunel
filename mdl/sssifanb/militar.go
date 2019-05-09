@@ -1,7 +1,6 @@
 package sssifanb
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strconv"
@@ -285,60 +284,6 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	return
 }
 
-//ConsultarSAMAN Militar
-func (m *Militar) ConsultarSAMAN() (jSon []byte, err error) {
-	var msj Mensaje
-	var lst []Militar
-	var estatus bool
-	s := `SELECT codnip,tipnip, nropersona,nombreprimero, nombresegundo,apellidoprimero,apellidosegundo,sexocod
-	FROM personas
-	WHERE codnip='` + m.Persona.DatoBasico.Cedula + `' AND tipnip != 'P'`
-	sq, err := sys.PostgreSQLSAMAN.Query(s)
-	if err != nil {
-		msj.Mensaje = "Error: Consulta ya existe."
-		msj.Tipo = 2
-		msj.Pgsql = err.Error()
-		jSon, err = json.Marshal(msj)
-		fmt.Println(err.Error())
-		return
-	}
-	estatus = true
-	for sq.Next() {
-		var m Militar
-		var cedula, tipnip string
-		var nombp, nombs, apellp, apells, sexo sql.NullString
-		var numero int
-
-		sq.Scan(&cedula, &tipnip, &numero, &nombp, &nombs, &apellp, &apells, &sexo)
-		m.Persona.DatoBasico.Cedula = cedula
-		m.Persona.DatoBasico.NroPersona = numero
-		m.Persona.DatoBasico.NombrePrimero = util.ValidarNullString(nombp)
-		m.Persona.DatoBasico.NombreSegundo = util.ValidarNullString(nombs)
-		m.Persona.DatoBasico.ApellidoPrimero = util.ValidarNullString(apellp)
-		m.Persona.DatoBasico.ApellidoSegundo = util.ValidarNullString(apells)
-		m.Persona.DatoBasico.Nacionalidad = tipnip
-		m.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
-		if m.Persona.DatoBasico.NombrePrimero != "null" {
-			estatus = false
-		} else {
-			estatus = true
-		}
-
-		lst = append(lst, m)
-
-	}
-	if estatus == true {
-		msj.Mensaje = "Afiliado no existe."
-		msj.Tipo = 0
-		jSon, err = json.Marshal(msj)
-	} else {
-		jSon, err = json.Marshal(lst)
-	}
-
-	return
-
-}
-
 //Actualizar Vida Militar
 func (m *Militar) Actualizar(usuario string, ip string) (jSon []byte, err error) {
 	var msj Mensaje
@@ -459,19 +404,6 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	return
 }
 
-func ActualizarPostgresSaman(d string) {
-	_, err := sys.PostgreSQLSAMAN.Exec(d)
-	if err != nil {
-		fmt.Println("SAMAN: ", err.Error())
-		return
-	}
-	_, err = sys.PsqlWEB.Exec(d)
-	if err != nil {
-		fmt.Println("SAMANWEB: ", err.Error())
-		return
-	}
-}
-
 func ActualizarMysqlFullText(d string) {
 	_, err := sys.MysqlFullText.Exec(d)
 	if err != nil {
@@ -501,8 +433,6 @@ func (m *Militar) SalvarMGO() (err error) {
 		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
 	}
 
-	//s := InsertarMilitarSAMAN(m)
-	//go InsertarPostgresSaman(s)
 	go InsertarMysqlFullText(InsertMysqlFT(m))
 
 	//Reducción
@@ -517,18 +447,6 @@ func (m *Militar) SalvarMGO() (err error) {
 		fmt.Println("Err", err.Error())
 	}
 	return
-}
-
-func InsertarPostgresSaman(d string) {
-	_, err := sys.PostgreSQLSAMAN.Exec(d)
-
-	if err != nil {
-		fmt.Println("SAMAN: ", err.Error())
-	}
-	_, err = sys.PsqlWEB.Exec(d)
-	if err != nil {
-		fmt.Println("SAMANWEB: ", err.Error())
-	}
 }
 
 func InsertarMysqlFullText(d string) {
@@ -577,32 +495,6 @@ func (m *Militar) ListarMGO(cedula string) (lst []Militar, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C("persona")
 	err = c.Find(bson.M{}).All(&lst)
 	return
-}
-
-//ActualizarSaman Listado General
-func (m *Militar) ActualizarSaman() {
-	var lstMilitares []Militar
-
-	c := sys.MGOSession.DB(sys.CBASE).C("militar")
-	seleccion := bson.M{
-		"situacion":                   true,
-		"grado":                       true,
-		"componente":                  true,
-		"persona.datobasico":          true,
-		"familiar.persona.datobasico": true,
-		"familiar.parentesco":         true,
-		"familiar.esmilitar":          true,
-	}
-	err := c.Find(bson.M{"situacion": "ACT"}).Select(seleccion).All(&lstMilitares)
-	if err != nil {
-		return
-	}
-	i := 0
-	for _, militar := range lstMilitares {
-		i++
-		Sincronizar(militar)
-	}
-	fmt.Println("Cantidad : ", i)
 }
 
 //EstadisticasPorComponente Estadisticas Por Componente

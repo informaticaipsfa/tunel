@@ -598,40 +598,58 @@ func (P *Pension) ActualizarPensionado(v Militar) {
 
 //WNetos Pago de los militares pensionados
 type WNetos struct {
-	Cedula    string    `json:"cedula"`
-	Calculos  string    `json:"calculos"`
-	Fecha     time.Time `json:"fecha"`
-	Banco     string    `json:"banco"`
-	Tipo      string    `json:"tipo"`
-	Numero    string    `json:"numero"`
-	Situacion string    `json:"situacion"`
-	Estatus   string    `json:"estatus"`
-	Neto      float64   `json:"neto"`
+	Cedula    string  `json:"cedula"`
+	Calculos  string  `json:"calculos"`
+	Fecha     string  `json:"fecha"`
+	Desde     string  `json:"desde"`
+	Hasta     string  `json:"hasta"`
+	Banco     string  `json:"banco"`
+	Tipo      string  `json:"tipo"`
+	Numero    string  `json:"numero"`
+	Situacion string  `json:"situacion"`
+	Estatus   string  `json:"estatus"`
+	Neto      float64 `json:"neto"`
+	Nomina    string  `json:"nomina"`
+	Mes       string  `json:"mes"`
 }
 
 //ConsultarNetos Insertando Militar a Pension
-func (P *Pension) ConsultarNetos(cedula string) (jSon []byte, err error) {
+func (P *Pension) ConsultarNetos(cedula string, vive bool) (jSon []byte, err error) {
 	var lst []WNetos
-	s := `SELECT cedu, calc, fech, banc, tipo, nume, situ, esta, neto FROM space.pagos
-		WHERE cedu='` + cedula + `'`
+	s := `SELECT pg.cedu, pg.calc, pg.fech, pg.banc, pg.tipo, pg.nume, pg.situ, pg.esta,
+	pg.neto, sn.obse, sn.desd, sn.hast, sn.mes
+	FROM space.pagos pg
+	JOIN space.nomina AS sn ON pg.nomi=sn.oid `
+
+	if vive == true {
+		s += `WHERE pg.cedu='` + cedula + `' ORDER BY fech DESC`
+	} else {
+		s += `WHERE pg.cfam='` + cedula + `' ORDER BY fech DESC`
+	}
+	fmt.Println(s)
 	sq, err := sys.PostgreSQLPENSION.Query(s)
 	util.Error(err)
-	fmt.Println(s)
+
 	for sq.Next() {
-		var cedu, calc, fech, banc, tipo, nume, situ, esta sql.NullString
+		var cedu, calc, fech, banc, tipo, nume, situ, esta, nomina, desde, hasta, mes sql.NullString
 		var neto sql.NullFloat64
 		var netos WNetos
-		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto)
+		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto, &nomina, &desde, &hasta, &mes)
 		util.Error(err)
+		//		fmt.Println(desde, hasta)
 		netos.Cedula = util.ValidarNullString(cedu)
 		netos.Calculos = util.ValidarNullString(calc)
-		netos.Fecha = util.GetFechaConvert(fech)
+		netos.Fecha = util.ValidarNullString(fech)[:10]
 		netos.Banco = util.ValidarNullString(banc)
 		netos.Tipo = util.ValidarNullString(tipo)
 		netos.Numero = util.ValidarNullString(nume)
 		netos.Situacion = util.ValidarNullString(cedu)
 		netos.Estatus = util.ValidarNullString(cedu)
 		netos.Neto = util.ValidarNullFloat64(neto)
+		netos.Nomina = util.ValidarNullString(nomina)
+		netos.Mes = util.ValidarNullString(mes)
+		netos.Desde = util.ValidarNullString(desde)[:10]
+		netos.Hasta = util.ValidarNullString(hasta)[:10]
 
 		lst = append(lst, netos)
 	}
