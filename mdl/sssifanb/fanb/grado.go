@@ -3,6 +3,7 @@ package fanb
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	"github.com/informaticaipsfa/tunel/sys"
 	"gopkg.in/mgo.v2/bson"
@@ -65,4 +66,33 @@ func obtenerGradoFideicomiso() string {
 		FROM ipsfa_grados AS g JOIN ipsfa_componentes AS c ON g.componentecod=c.componentecod
 		ORDER BY c.componentepriorpt,g.gradocodrangoid
 	`
+}
+
+// RetornarCodigo una persona mediante el metodo de MongoDB
+func (grad *Grado) RetornarCodigo(codigo string, gradocodigo string) (grado string, componente int) {
+	var lstComponente []Componente
+	comp := sys.MGOSession.DB(sys.CBASE).C(sys.CCOMPONENTE)
+	err := comp.Find(bson.M{}).All(&lstComponente)
+	if err != nil {
+		fmt.Println("Err. Cargando Componentes")
+		//
+	}
+
+	for c, v := range lstComponente {
+		componente = c + 1
+
+		if v.Codigo == codigo {
+			for _, g := range v.Grado {
+
+				if g.Codigo == gradocodigo {
+
+					grado = strconv.Itoa(g.Cpace)
+					return
+				}
+			}
+		}
+	}
+	//
+	return "0", 0
+
 }

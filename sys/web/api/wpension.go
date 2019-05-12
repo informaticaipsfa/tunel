@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -542,4 +543,74 @@ func (p *Militar) SituacionPago(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
+}
+
+//WRetroactivo Militar
+type WRetroactivo struct {
+	FechaIngreso       string `json:"fingreso"`
+	FechaUltimoAscenso string `json:"fascenso"`
+	FechaRetiro        string `json:"fretiro"`
+	Grado              string `json:"grado"`
+	CodigoGrado        string `json:"codigo"`
+	Componente         string `json:"componente"`
+	AntiguedadGrado    string `json:"antiguedad"`
+	TiempoServicio     string `json:"tiempo"`
+	NumeroHijos        string `json:"hijos"`
+	Porcentaje         string `json:"porcentaje"`
+	FechaInicio        string `json:"inicio"`
+	FechaFin           string `json:"fin"`
+	Usuario            string `json:"usuario"`
+}
+
+//CalcularRetroactivo Militar
+func (p *Militar) CalcularRetroactivo(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var wGrado fanb.Grado
+	var wRetroactivo WRetroactivo
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "calcularretroactivo"
+
+	errx := json.NewDecoder(r.Body).Decode(&wRetroactivo)
+	M.Tipo = 1
+	if errx != nil {
+		M.Mensaje = errx.Error()
+		M.Tipo = 0
+		fmt.Println(M.Mensaje)
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+
+	grad, comp := wGrado.RetornarCodigo(wRetroactivo.Componente, wRetroactivo.CodigoGrado)
+	wRetroactivo.Componente = strconv.Itoa(comp)
+	wRetroactivo.CodigoGrado = grad
+	wRetroactivo.Usuario = UsuarioConectado.Login
+
+	jsonW, ex := json.Marshal(wRetroactivo)
+	if ex != nil {
+		fmt.Println(ex.Error())
+	}
+
+	response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonW))
+	if err != nil {
+		M.Mensaje = err.Error()
+		w.WriteHeader(http.StatusOK)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusOK)
+			M.Mensaje = err.Error()
+			j, _ := json.Marshal(M)
+			w.Write(j)
+			return
+		}
+		defer response.Body.Close()
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+		return
+	}
 }

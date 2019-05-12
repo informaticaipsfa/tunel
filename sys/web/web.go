@@ -170,6 +170,8 @@ func CargarPensionados() {
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarsobreviviente/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNetoSobreviviente)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/derechoacrecer", wUsuario.ValidarToken(wPensionado.AplicarDerechoACrecer)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/situacionpago", wUsuario.ValidarToken(wPensionado.SituacionPago)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/pensionado/calcularretroactivo", wUsuario.ValidarToken(wPensionado.CalcularRetroactivo)).Methods("POST")
+
 }
 
 //CargarModulosBanco Modulos de txt y reportes de banco

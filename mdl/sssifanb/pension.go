@@ -480,7 +480,7 @@ func obtenerGrado(codigo string, gradocodigo string) (grado string, componente i
 	return "0", 0
 }
 
-//InsertPensionado Insertando Militar a Pension
+//InsertarPensionado Insertando Militar a Pension
 func (P *Pension) InsertarPensionado(v Militar) {
 	consultarComponentes()
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
