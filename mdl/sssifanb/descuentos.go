@@ -21,17 +21,24 @@ type Descuentos struct {
 	FechaFin    time.Time `json:"fechafin,omitempty" bson:"fechafin"`
 	Usuario     string    `json:"usuario,omitempty" bson:"usuario"`
 	Familiar    string    `json:"familiar,omitempty" bson:"familiar"`
+	Modifica    string    `json:"modifica,omitempty" bson:"modifica"`
 }
 
 //Agregar Sistema
 func (DC *Descuentos) Agregar() (jSon []byte, err error) {
 	var msj Mensaje
-
+	strupdate := "$push"
 	descuento := make(map[string]interface{})
+	if DC.Modifica == "X" {
+		descuento["pension.descuentos"] = DC
+		InsertarPensionDescuento(DC)
+	} else {
+		descuento["pension.descuentos."+DC.Modifica] = DC
+		strupdate = "$set"
+	}
 
-	descuento["pension.descuentos"] = DC
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
-	err = c.Update(bson.M{"id": DC.ID}, bson.M{"$push": descuento})
+	err = c.Update(bson.M{"id": DC.ID}, bson.M{strupdate: descuento})
 	msj.Tipo = 0
 	if err != nil {
 		fmt.Println("Fallo insertar el descuento")
@@ -39,7 +46,7 @@ func (DC *Descuentos) Agregar() (jSon []byte, err error) {
 		jSon, err = json.Marshal(msj)
 		return
 	}
-	InsertarPensionDescuento(DC)
+
 	msj.Mensaje = "Proceso exitoso"
 	msj.Tipo = 1
 	jSon, err = json.Marshal(msj)
@@ -58,6 +65,31 @@ func InsertarPensionDescuento(CD *Descuentos) {
 	query += `('` + CD.Tipo + `','` + CD.Concepto + `','` + CD.Formula + `','` + CD.Observacion + `'
 						,'` + CD.FechaInicio.String()[:10] + `','` + CD.FechaFin.String()[:10] + `','` + CD.Usuario + `',Now()
 						,'` + strconv.Itoa(CD.Estatus) + `','` + CD.ID + `','` + CD.Familiar + `')`
+
+	_, err := sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query: ", err.Error())
+	}
+
+	//jSon, err = json.Marshal(msj)
+}
+
+//ActualizarPensionDescuento Cargar medidas
+func ActualizarPensionDescuento(CD *Descuentos) {
+	query := `
+	UPDATE space.asig_deduc SET
+		tipo='` + CD.Tipo + `',
+		conc='` + CD.Concepto + `',
+		fnxc='` + CD.Formula + `',
+		obse='` + CD.Observacion + `',
+		fini='` + CD.FechaInicio.String()[:10] + `',
+		ffin='` + CD.FechaFin.String()[:10] + `',
+		usua='` + CD.Usuario + `',
+		crea=Now(),
+		esta='` + strconv.Itoa(CD.Estatus) + `',
+		cedula='` + CD.ID + `',
+		familiar='` + CD.Familiar + `'
+	WHERE cedula='` + CD.ID + `' AND familiar='` + CD.Familiar + `'`
 
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
