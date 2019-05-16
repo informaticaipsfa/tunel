@@ -28,7 +28,8 @@ func (b *Banfanb) CabeceraSQL(bancos string) string {
 	  FROM
 	    space.nomina nom
 	  JOIN space.pagos pg ON nom.oid=pg.nomi
-  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' AND cfam != '' AND cedu!=cfam AND naut ='' ORDER BY banc, pg.cedu ;`
+  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu ;`
+	//AND cfam != '' AND cedu!=cfam AND naut =''
 }
 
 //Generar Archivo

@@ -278,7 +278,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.NumeroEmpresa = "01770006571100173915"
 	banfanb.Firma = llave
 	banfanb.Cantidad, _ = strconv.Atoi(id["cant"])
-	// banfanb.Generar(sys.PostgreSQLPENSION)
+	banfanb.Generar(sys.PostgreSQLPENSION)
 
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770001421100683232"
@@ -307,13 +307,13 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave
 	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
-	//venzuela.Generar(sys.PostgreSQLPENSION, "CA")
+	venzuela.Generar(sys.PostgreSQLPENSION, "CA")
 
 	venzuela.CodigoEmpresa = "0"
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave
 	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
-	// venzuela.Generar(sys.PostgreSQLPENSION, "CC")
+	venzuela.Generar(sys.PostgreSQLPENSION, "CC")
 
 	//Comprimir todos los archivos en uno para su descarga
 	M.Mensaje = "Generacion de archivos exitosa "
