@@ -170,10 +170,16 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	}
 
 	derecho := make(map[string]interface{})
-	derecho["familiar.$.condicion"] = f.PorcentajePrestaciones
+	derecho["familiar.$.pprestaciones"] = f.PorcentajePrestaciones
 	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": derecho})
 	if err != nil {
 		fmt.Println("Condicion (Cedula): " + id + " -> " + err.Error())
+	}
+	estudia := make(map[string]interface{})
+	estudia["familiar.$.estudia"] = f.Estudia
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": estudia})
+	if err != nil {
+		fmt.Println("Estudia (Cedula): " + id + " -> " + err.Error())
 	}
 
 	var mOriginal Militar
@@ -209,14 +215,21 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	layOut := "2006-01-02"
 
 	switch {
-	case edad < 15:
+	case edad < 13:
+		Anio += 5
+		break
+	case edad >= 13 && edad <= 15:
 		Anio += 18 - edad
+		break
 	case edad >= 15 && edad <= 17:
 		Anio += 18 - edad
+		break
 	case edad > 17 && edad <= 27 && f.Estudia == 1:
 		Anio += 26 - edad
+		break
 	case edad > 18 && f.Condicion == 1:
 		Anio += 5
+		break
 	}
 
 	mes = strconv.Itoa(int(Mes))
