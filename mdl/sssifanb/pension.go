@@ -776,3 +776,139 @@ func (P *Pension) ActualizarSituacion(wa WActualizarPension) (err error) {
 	}
 	return
 }
+
+func sqlPensionesSssifanb() string {
+	return `
+		SELECT
+			cedula, fecha_ingreso, f_ult_ascenso, f_retiro
+  	FROM beneficiario
+		WHERE
+	`
+}
+
+//MGOActualizarPensioanadosBeneficiarios Actualizar segun Postgres Pensiones
+func (m *Militar) MGOActualizarPensioanadosBeneficiarios() (err error) {
+
+	sq, err := sys.PostgreSQLPENSION.Query(sqlPensionesSssifanb())
+	if err != nil {
+		return
+	}
+	i := 0
+	j := 0
+	for sq.Next() {
+		var cedula, ingreso, ascenso, retiro sql.NullString
+		i++
+		err = sq.Scan(&cedula, &ingreso, &ascenso, &retiro)
+		obtenerErr(err, "")
+		reduc := make(map[string]interface{})
+		cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+		reduc["fingreso"] = getFechaConvertGuiones(ingreso)
+		reduc["fascenso"] = getFechaConvertGuiones(ascenso)
+
+		f_retiro := util.ValidarNullString(retiro)
+		if f_retiro != "" {
+			reduc["fretiro"] = getFechaConvertGuiones(retiro)
+		}
+
+		// reduc["areconocido"], _ = strconv.Atoi(util.ValidarNullString(anio))
+		// reduc["mreconocido"], _ = strconv.Atoi(util.ValidarNullString(mes))
+		// reduc["dreconocido"], _ = strconv.Atoi(util.ValidarNullString(dia))
+		err = cred.Update(bson.M{"id": util.ValidarNullString(cedula)}, bson.M{"$set": reduc})
+		if err != nil {
+			j++
+			fmt.Println("Update ALL ", err.Error(), i, " UFF -> ", util.ValidarNullString(cedula))
+		} else {
+			fmt.Println(i, " -> ", util.ValidarNullString(cedula), "Insertado")
+		}
+
+	}
+	fmt.Println("Insertados: ", i, " Errados: ", j)
+	return
+}
+
+func sqlPensionesGracia() string {
+	return `
+		SELECT
+			cedula,nombres,apellidos,b.grado_id, g.nombre, g.descripcion,c.nombre,c.descripcion,fecha_ingreso,
+			sexo,f_ult_ascenso,f_retiro,
+			b.status_id,tipo,banco,situacion,numero_cuenta,porcentaje
+		FROM beneficiario b
+		JOIN grado g ON b.grado_id=g.codigo AND b.componente_id=g.componente_id
+		JOIN componente c ON c.id=g.componente_id
+		WHERE situacion='PG'`
+
+}
+
+//ActualizarsqlPensionesGracia Actualizar segun Postgres Pensiones
+func (p *Pension) ActualizarsqlPensionesGracia() (err error) {
+	var militar Militar
+	var m Militar
+	sq, err := sys.PostgreSQLPENSION.Query(sqlPensionesGracia())
+	if err != nil {
+		return
+	}
+	j, i := 0, 0
+	cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		var cedula, nombres, apellidos, gid, gnomb, gdesc, cnom, cdesc sql.NullString
+		var sexo, ascenso, retiro, ingreso sql.NullString
+		var status, tipo, banco, situacion, cuenta, porcentaje sql.NullString
+		var dfinaciero DatoFinanciero
+		err = sq.Scan(&cedula, &nombres, &apellidos, &gid, &gnomb, &gdesc, &cnom, &cdesc, &ingreso,
+			&sexo, &ascenso, &retiro, &status, &tipo, &banco, &situacion, &cuenta, &porcentaje)
+		obtenerErr(err, "")
+
+		militar.ID = util.ValidarNullString(cedula)
+		militar.Persona.DatoBasico.Cedula = util.ValidarNullString(cedula)
+		militar.Persona.DatoBasico.NombrePrimero = util.ValidarNullString(nombres)
+		militar.Persona.DatoBasico.ApellidoPrimero = util.ValidarNullString(apellidos)
+		militar.Persona.DatoBasico.EstadoCivil = "S"
+		militar.Persona.DatoBasico.Sexo = util.ValidarNullString(sexo)
+		militar.Persona.DatoBasico.FechaNacimiento = getFechaConvertGuiones(ingreso)
+		dfinaciero.Institucion = util.ValidarNullString(banco)
+		dfinaciero.Cuenta = util.ValidarNullString(cuenta)
+		dfinaciero.Tipo = util.ValidarNullString(tipo)
+
+		militar.Persona.DatoFinanciero = append(militar.Persona.DatoFinanciero, dfinaciero)
+
+		militar.FechaRetiro = getFechaConvertGuiones(retiro)
+		militar.FechaAscenso = getFechaConvertGuiones(ascenso)
+		militar.FechaResuelto = getFechaConvertGuiones(retiro)
+		militar.FechaIngresoComponente = getFechaConvertGuiones(ingreso)
+		militar.Clase = "TPROF"
+		militar.Situacion = "PG"
+		militar.SituacionPago = "201"
+		militar.Categoria = "TRP"
+		militar.PorcentajePrestaciones = 0
+		militar.Pension.PorcentajePrestaciones = 100
+		militar.NumeroResuelto = "000"
+		militar.Posicion = 100
+		militar.Componente.Descripcion = util.ValidarNullString(cnom)
+		militar.Componente.Abreviatura = util.ValidarNullString(cdesc)[:2]
+
+		militar.Grado.Nombre = util.ValidarNullString(gid)
+		militar.Grado.Abreviatura = util.ValidarNullString(gnomb)
+		militar.Grado.Descripcion = util.ValidarNullString(gdesc)
+
+		militar.Pension.Causal = "ITP100"
+		militar.Pension.DatoFinanciero.Tipo = util.ValidarNullString(tipo)
+		militar.Pension.DatoFinanciero.Cuenta = util.ValidarNullString(cuenta)
+		militar.Pension.DatoFinanciero.Institucion = util.ValidarNullString(banco)
+		militar.Pension.GradoCodigo = util.ValidarNullString(gnomb)
+		militar.Pension.ComponenteCodigo = util.ValidarNullString(cdesc)
+
+		err = cred.Find(bson.M{"id": militar.ID}).One(&m)
+
+		if err != nil {
+			i++
+			err = cred.Insert(&militar)
+		} else {
+			j++
+			err = cred.Update(bson.M{"id": militar.ID}, &militar)
+		}
+
+	}
+	fmt.Println("Insertados: ", i, " Actualizados: ", j)
+	return
+}
