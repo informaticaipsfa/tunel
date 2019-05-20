@@ -167,6 +167,7 @@ func CargarPensionados() {
 	var wPensionado api.Militar
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/calculo/{id}", wUsuario.ValidarToken(wPensionado.Calculo)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarneto/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNeto)).Methods("GET")
+
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarsobreviviente/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNetoSobreviviente)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/derechoacrecer", wUsuario.ValidarToken(wPensionado.AplicarDerechoACrecer)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/situacionpago", wUsuario.ValidarToken(wPensionado.SituacionPago)).Methods("POST")
@@ -236,6 +237,7 @@ func CargarModulosWebDevel() {
 
 	var wfactura api.WFactura
 	var wmedicina api.WMedicina
+	var wPensionado api.Militar
 	var wcsv api.CSV
 
 	Enrutador.HandleFunc("/devel/api/militar/crud/{id}", per.Consultar).Methods("GET")
@@ -298,4 +300,5 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wfedevida", wfe.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wfactura", wfactura.Consultar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wmedicina", wmedicina.Registrar).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/pensionado/consultarneto/{id}", wPensionado.ConsultarNeto).Methods("GET")
 }

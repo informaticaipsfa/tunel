@@ -780,14 +780,19 @@ func (P *Pension) ActualizarSituacion(wa WActualizarPension) (err error) {
 func sqlPensionesSssifanb() string {
 	return `
 		SELECT
-			cedula, fecha_ingreso, f_ult_ascenso, f_retiro
-  	FROM beneficiario
-		WHERE
+			cedula, fecha_ingreso, f_ult_ascenso, f_retiro,
+			b.status_id, b.tipo, banco, numero_cuenta, situacion, porcentaje,
+			b.grado_id, g.nombre, g.descripcion,c.nombre,c.descripcion
+  	FROM beneficiario b
+		JOIN grado g ON b.grado_id=g.codigo AND b.componente_id=g.componente_id
+		JOIN componente c ON c.id=g.componente_id
+		WHERE situacion='RCP' AND cedula='8837400'
+
 	`
 }
 
-//MGOActualizarPensioanadosBeneficiarios Actualizar segun Postgres Pensiones
-func (m *Militar) MGOActualizarPensioanadosBeneficiarios() (err error) {
+//PensioanadosBeneficiarios Actualizar segun Postgres Pensiones
+func (p *Pension) PensioanadosBeneficiarios() (err error) {
 
 	sq, err := sys.PostgreSQLPENSION.Query(sqlPensionesSssifanb())
 	if err != nil {
@@ -796,24 +801,34 @@ func (m *Militar) MGOActualizarPensioanadosBeneficiarios() (err error) {
 	i := 0
 	j := 0
 	for sq.Next() {
-		var cedula, ingreso, ascenso, retiro sql.NullString
+		var cedula, ingreso, ascenso, retiro, estatus, tipo, banco, numero, situacion sql.NullString
+		var gid, gnom, gdes, cnom, cdes sql.NullString
+
+		var porcentaje sql.NullFloat64
+		//var militar Militar
+		var dfinaciero DatoFinanciero
 		i++
-		err = sq.Scan(&cedula, &ingreso, &ascenso, &retiro)
+		err = sq.Scan(&cedula, &ingreso, &ascenso, &retiro, &estatus, &tipo, &banco, &numero, &situacion, &porcentaje,
+			&gid, &gnom, &gdes, &cnom, &cdes)
 		obtenerErr(err, "")
 		reduc := make(map[string]interface{})
 		cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 
 		reduc["fingreso"] = getFechaConvertGuiones(ingreso)
 		reduc["fascenso"] = getFechaConvertGuiones(ascenso)
+		reduc["fretiro"] = getFechaConvertGuiones(retiro)
 
-		f_retiro := util.ValidarNullString(retiro)
-		if f_retiro != "" {
-			reduc["fretiro"] = getFechaConvertGuiones(retiro)
-		}
+		dfinaciero.Institucion = util.ValidarNullString(banco)
+		dfinaciero.Cuenta = util.ValidarNullString(numero)
+		dfinaciero.Tipo = util.ValidarNullString(tipo)
 
-		// reduc["areconocido"], _ = strconv.Atoi(util.ValidarNullString(anio))
-		// reduc["mreconocido"], _ = strconv.Atoi(util.ValidarNullString(mes))
-		// reduc["dreconocido"], _ = strconv.Atoi(util.ValidarNullString(dia))
+		reduc["situacion"] = util.ValidarNullString(situacion)
+		reduc["situacionpago"] = util.ValidarNullString(estatus)
+
+		reduc["pension.grado"] = util.ValidarNullString(gnom)
+		reduc["pension.componente"] = util.ValidarNullString(cdes)[:2]
+		//militar.Persona.DatoFinanciero = append(militar.Persona.DatoFinanciero, dfinaciero)
+
 		err = cred.Update(bson.M{"id": util.ValidarNullString(cedula)}, bson.M{"$set": reduc})
 		if err != nil {
 			j++
