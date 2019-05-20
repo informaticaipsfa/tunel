@@ -842,7 +842,7 @@ func sqlPensionesGracia() string {
 
 //ActualizarsqlPensionesGracia Actualizar segun Postgres Pensiones
 func (p *Pension) ActualizarsqlPensionesGracia() (err error) {
-	var militar Militar
+
 	var m Militar
 	sq, err := sys.PostgreSQLPENSION.Query(sqlPensionesGracia())
 	if err != nil {
@@ -851,6 +851,7 @@ func (p *Pension) ActualizarsqlPensionesGracia() (err error) {
 	j, i := 0, 0
 	cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	for sq.Next() {
+		var militar Militar
 		var cedula, nombres, apellidos, gid, gnomb, gdesc, cnom, cdesc sql.NullString
 		var sexo, ascenso, retiro, ingreso sql.NullString
 		var status, tipo, banco, situacion, cuenta, porcentaje sql.NullString
