@@ -786,7 +786,7 @@ func sqlPensionesSssifanb() string {
   	FROM beneficiario b
 		JOIN grado g ON b.grado_id=g.codigo AND b.componente_id=g.componente_id
 		JOIN componente c ON c.id=g.componente_id
-		WHERE situacion='RCP' --AND cedula='8837400'
+		WHERE situacion='FCP' --AND cedula='8837400'
 
 	`
 }
