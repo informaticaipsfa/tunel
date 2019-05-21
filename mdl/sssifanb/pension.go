@@ -626,7 +626,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool) (jSon []byte, err err
 	} else {
 		s += `WHERE pg.cfam='` + cedula + `' ORDER BY fech DESC`
 	}
-	fmt.Println(s)
+	//fmt.Println(s)
 	sq, err := sys.PostgreSQLPENSION.Query(s)
 	util.Error(err)
 
@@ -786,7 +786,9 @@ func sqlPensionesSssifanb() string {
   	FROM beneficiario b
 		JOIN grado g ON b.grado_id=g.codigo AND b.componente_id=g.componente_id
 		JOIN componente c ON c.id=g.componente_id
-		WHERE situacion='FCP' --AND cedula='8837400'
+		WHERE situacion='FCP'
+		LIMIT 2
+		 --AND cedula='8837400'
 
 	`
 }
@@ -834,12 +836,109 @@ func (p *Pension) PensioanadosBeneficiarios() (err error) {
 			j++
 			fmt.Println("Update ALL ", err.Error(), i, " UFF -> ", util.ValidarNullString(cedula))
 		} else {
-			fmt.Println(i, " -> ", util.ValidarNullString(cedula), "Insertado")
+			//p.ActualizarSobrevivienteNEW(util.ValidarNullString(cedula))
+
+			fmt.Println(i, " -> ", util.ValidarNullString(cedula), " Actualizado ")
 		}
 
 	}
 	fmt.Println("Insertados: ", i, " Errados: ", j)
 	return
+}
+
+//ActualizarSobrevivienteNEW Generar Distribución del porcentaje y la situacion
+func (P *Pension) ActualizarSobrevivienteNEW(cedula string) {
+
+	var mil Militar
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	seleccion := bson.M{
+		"id":                 true,
+		"persona.datobasico": true,
+		"familiar":           true,
+		"situacionpago":      true,
+	}
+	buscar := bson.M{"id": cedula}
+	err := c.Find(buscar).Select(seleccion).One(&mil)
+	if err != nil {
+		fmt.Println("Error en la consulta de Pensionados Militares")
+		return
+	}
+	fm := mil.Familiar
+	count := len(fm)
+	cabecera := `DELETE FROM familiar WHERE titular='` + cedula + `';
+	INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,f_nacimiento,edo_civil,parentesco,f_defuncion,
+		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje)	VALUES `
+	cuerpo, autorizado, tipo, banco, cuenta, coma := "", "", "", "", "", ""
+	// estatuspago := "201"
+	j := 0
+	for i := 0; i < count; i++ {
+		if j > 0 {
+			coma = ","
+		}
+		var v = fm[i]
+		if fm[i].PorcentajePrestaciones > 0 {
+			//fmt.Println(v.Persona.DatoBasico.Cedula, "", v.PorcentajePrestaciones, "  : ", v.Persona.DatoFinanciero)
+			j++
+			fmt.Println(fm[i].SituacionPago)
+			estatuspago := fm[i].SituacionPago
+			if len(v.Persona.DatoFinanciero) > 0 {
+				autorizado = v.Persona.DatoFinanciero[0].Autorizado
+				tipo = v.Persona.DatoFinanciero[0].Tipo
+				banco = v.Persona.DatoFinanciero[0].Institucion
+				cuenta = v.Persona.DatoFinanciero[0].Cuenta
+			}
+			cuerpo += coma + `('` + cedula + `','` + v.Persona.DatoBasico.Cedula + `','` + v.Persona.DatoBasico.NombrePrimero +
+				`','` + v.Persona.DatoBasico.ApellidoPrimero + `','` + v.Persona.DatoBasico.Sexo +
+				`','` + v.Persona.DatoBasico.FechaNacimiento.String()[0:10] +
+				`','` + v.Persona.DatoBasico.EstadoCivil +
+				`','` + v.Parentesco +
+				`','` + v.Persona.DatoBasico.FechaDefuncion.String()[0:10] +
+				`','` + autorizado +
+				`','` + tipo +
+				`','` + banco +
+				`','` + cuenta +
+				`', 'DERECHO',` + estatuspago +
+				`,'REGISTRADO','` + v.FechaAfiliacion.String()[0:10] +
+				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `)`
+		}
+	}
+	query := cabecera + cuerpo
+	//fmt.Println(query)
+	_, err = sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error actualizando sobreviviente: ", err.Error())
+	}
+}
+
+//ActualizarSobrevivientesPension ActualizarDatos
+func (p *Pension) ActualizarSobrevivientesPension() {
+
+	sq, err := sys.PostgreSQLPENSION.Query("SELECT titular, cedula, estatus, porcentaje FROM familiar WHERE estatus=201 ORDER BY titular")
+	obtenerErr(err, "")
+	cred := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	for sq.Next() {
+		var titular, cedula, estatus sql.NullString
+		var porcentaje sql.NullFloat64
+		err = sq.Scan(&titular, &cedula, &estatus, &porcentaje)
+		obtenerErr(err, "")
+
+		drch := make(map[string]interface{})
+		tit := util.ValidarNullString(titular)
+		ced := util.ValidarNullString(cedula)
+		est := util.ValidarNullString(estatus)
+
+		drch["familiar.$.pprestaciones"] = util.ValidarNullFloat64(porcentaje)
+		drch["familiar.$.situacionpago"] = est
+
+		err = cred.Update(bson.M{"familiar.persona.datobasico.cedula": ced, "id": tit}, bson.M{"$set": drch})
+		if err != nil {
+			fmt.Println("Incluyendo parentesco eRR Cedula: " + tit + " -> " + err.Error())
+		} else {
+			fmt.Println("Cedula Actualizada: " + tit + " -> Familiar " + ced)
+		}
+
+	}
+
 }
 
 func sqlPensionesGracia() string {

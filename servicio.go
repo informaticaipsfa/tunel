@@ -51,7 +51,8 @@ func main() {
 	// pension.Exportar("", 0)
 	// pension.ExportarFamiliares() //Pagar a los familiares
 	var pension sssifanb.Pension
-	pension.PensioanadosBeneficiarios()
+	//pension.PensioanadosBeneficiarios()
+	pension.ActualizarSobrevivientesPension()
 	//
 	// fmt.Println("Inciando la carga del sistema")
 	// web.Cargar()
