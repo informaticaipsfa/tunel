@@ -85,6 +85,36 @@ func (N *WNomina) Listar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+//ListarDetalleDirectiva Militar
+func (N *WNomina) ListarPHP(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listarconceptos/"
+	response, err := http.Get(url)
+	if err != nil {
+		M.Mensaje = err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			M.Mensaje = err.Error()
+			M.Tipo = 0
+			j, _ := json.Marshal(M)
+			w.Write(j)
+			return
+		}
+		defer response.Body.Close()
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+		return
+	}
+}
+
 //Gestionar un concepto nuevo
 func (N *WNomina) Gestionar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
