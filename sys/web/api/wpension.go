@@ -437,7 +437,7 @@ func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
 	var pension sssifanb.Pension
 	var cedula = mux.Vars(r)
 
-	j, e := pension.ConsultarNetos(cedula["id"], true)
+	j, e := pension.ConsultarNetos(cedula["id"], true, "")
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))
@@ -456,13 +456,14 @@ func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+//ConsultarNetoSobreviviente Sobrevientes
 func (p *Militar) ConsultarNetoSobreviviente(w http.ResponseWriter, r *http.Request) {
 	var traza fanb.Traza
 	Cabecera(w, r)
 	var pension sssifanb.Pension
 	var cedula = mux.Vars(r)
 
-	j, e := pension.ConsultarNetos(cedula["id"], false)
+	j, e := pension.ConsultarNetos(cedula["id"], false, cedula["fam"])
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))

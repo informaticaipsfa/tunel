@@ -598,43 +598,52 @@ func (P *Pension) ActualizarPensionado(v Militar) {
 
 //WNetos Pago de los militares pensionados
 type WNetos struct {
-	Cedula    string  `json:"cedula"`
-	Calculos  string  `json:"calculos"`
-	Fecha     string  `json:"fecha"`
-	Desde     string  `json:"desde"`
-	Hasta     string  `json:"hasta"`
-	Banco     string  `json:"banco"`
-	Tipo      string  `json:"tipo"`
-	Numero    string  `json:"numero"`
-	Situacion string  `json:"situacion"`
-	Estatus   string  `json:"estatus"`
-	Neto      float64 `json:"neto"`
-	Nomina    string  `json:"nomina"`
-	Mes       string  `json:"mes"`
+	Cedula     string  `json:"cedula"`
+	Calculos   string  `json:"calculos"`
+	Fecha      string  `json:"fecha"`
+	Desde      string  `json:"desde"`
+	Hasta      string  `json:"hasta"`
+	Banco      string  `json:"banco"`
+	Tipo       string  `json:"tipo"`
+	Numero     string  `json:"numero"`
+	Situacion  string  `json:"situacion"`
+	Estatus    string  `json:"estatus"`
+	Neto       float64 `json:"neto"`
+	Nomina     string  `json:"nomina"`
+	Mes        string  `json:"mes"`
+	Familiar   string  `json:"familiar"`
+	Porcentaje string  `json:"porcentaje"`
 }
 
 //ConsultarNetos Insertando Militar a Pension
-func (P *Pension) ConsultarNetos(cedula string, vive bool) (jSon []byte, err error) {
+func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSon []byte, err error) {
 	var lst []WNetos
 	s := `SELECT pg.cedu, pg.calc, pg.fech, pg.banc, pg.tipo, pg.nume, pg.situ, pg.esta,
-	pg.neto, sn.obse, sn.desd, sn.hast, sn.mes
-	FROM space.pagos pg
-	JOIN space.nomina AS sn ON pg.nomi=sn.oid `
+	pg.neto, sn.obse, sn.desd, sn.hast, sn.mes,
+	`
 
 	if vive == true {
-		s += `WHERE pg.cedu='` + cedula + `' ORDER BY fech DESC`
+		s += `pg.situ, pg.base
+		FROM space.pagos pg
+		JOIN space.nomina AS sn ON pg.nomi=sn.oid
+		WHERE pg.cedu='` + cedula + `' ORDER BY fech DESC`
 	} else {
-		s += `WHERE pg.cfam='` + cedula + `' ORDER BY fech DESC`
+		s += `
+		 pg.cfam, fami.porcentaje
+		FROM space.pagos pg
+		JOIN space.nomina AS sn ON pg.nomi=sn.oid
+		JOIN familiar fami ON pg.cedu=fami.titular AND pg.cfam=fami.cedula
+		WHERE pg.cedu='` + cedula + `' AND pg.cfam='` + familiar + `' ORDER BY fech DESC`
 	}
 	//fmt.Println(s)
 	sq, err := sys.PostgreSQLPENSION.Query(s)
 	util.Error(err)
 
 	for sq.Next() {
-		var cedu, calc, fech, banc, tipo, nume, situ, esta, nomina, desde, hasta, mes sql.NullString
+		var cedu, calc, fech, banc, tipo, nume, situ, esta, nomina, desde, hasta, mes, fam, porc sql.NullString
 		var neto sql.NullFloat64
 		var netos WNetos
-		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto, &nomina, &desde, &hasta, &mes)
+		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto, &nomina, &desde, &hasta, &mes, &fam, &porc)
 		util.Error(err)
 		//		fmt.Println(desde, hasta)
 		netos.Cedula = util.ValidarNullString(cedu)
@@ -650,6 +659,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool) (jSon []byte, err err
 		netos.Mes = util.ValidarNullString(mes)
 		netos.Desde = util.ValidarNullString(desde)[:10]
 		netos.Hasta = util.ValidarNullString(hasta)[:10]
+		netos.Porcentaje = util.ValidarNullString(porc)
 
 		lst = append(lst, netos)
 	}
