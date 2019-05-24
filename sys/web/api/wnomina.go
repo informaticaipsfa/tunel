@@ -339,6 +339,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
 	venzuela.Generar(sys.PostgreSQLPENSION, "CA")
 
+	//
 	venzuela.CodigoEmpresa = "0"
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave
