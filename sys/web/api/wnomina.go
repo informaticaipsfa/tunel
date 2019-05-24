@@ -327,7 +327,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.Tercero(sys.PostgreSQLPENSION, "0105") // MERCANTIL
 	//
 	bicentenario.CodigoEmpresa = "0651"
-	bicentenario.NumeroEmpresa = "0175048310076626369"
+	bicentenario.NumeroEmpresa = "01750484310076626369"
 	bicentenario.Firma = llave
 	bicentenario.Cantidad, _ = strconv.Atoi(id["cant"])
 	bicentenario.Generar(sys.PostgreSQLPENSION)
