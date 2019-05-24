@@ -170,6 +170,11 @@ func EliminarEspacioBlanco(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), " ", "", -1)
 }
 
+//EliminarUnderScore Reemplazando UnderScore por 0
+func EliminarUnderScore(cadena string) string {
+	return strings.Replace(strings.Trim(cadena, " "), "_", "0", -1)
+}
+
 //EliminarGuionesFecha Reemplazando coma por puntos
 func EliminarGuionesFecha(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), "-", "", -1)

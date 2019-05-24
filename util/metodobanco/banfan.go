@@ -60,15 +60,17 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 
 		montos = util.CompletarCeros(montos, 0, 12)
-		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
+		numerocuenta := util.ValidarNullString(numero)
+
+		bancos := util.CompletarCeros(util.EliminarUnderScore(numerocuenta), 0, 20)
 
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
-			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)
+			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
 		} else {
-			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
 			if util.ValidarNullString(familia) != "" {
-				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)
+				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)[:10]
 			}
 		}
 
@@ -148,7 +150,9 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 
 		montos = util.CompletarCeros(montos, 0, 15)
-		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)[:20]
+		numerocuenta := util.ValidarNullString(numero)
+
+		bancos := util.CompletarCeros(util.EliminarUnderScore(numerocuenta), 0, 20)[:20]
 		nombrecompleto := ""
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
