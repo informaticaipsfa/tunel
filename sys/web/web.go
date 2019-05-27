@@ -171,7 +171,6 @@ func CargarPensionados() {
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarneto/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNeto)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/consultarsobreviviente/{id}/{fam}", wUsuario.ValidarToken(wPensionado.ConsultarNetoSobreviviente)).Methods("GET")
 
-
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/derechoacrecer", wUsuario.ValidarToken(wPensionado.AplicarDerechoACrecer)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/situacionpago", wUsuario.ValidarToken(wPensionado.SituacionPago)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/calcularretroactivo", wUsuario.ValidarToken(wPensionado.CalcularRetroactivo)).Methods("POST")
@@ -305,4 +304,5 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wmedicina", wmedicina.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/pensionado/consultarneto/{id}", wPensionado.ConsultarNeto).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/pensionado/consultarsobreviviente/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/nomina/conceptos/listar/", concepto.ListarPHP).Methods("GET")
 }

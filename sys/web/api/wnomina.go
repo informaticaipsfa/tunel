@@ -49,8 +49,8 @@ func (N *WNomina) Agregar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//fmt.Println(UsuarioConectado.Login)
-
-	j, _ := concepto.Agregar(UsuarioConectado.Login)
+	concepto.Usuario = UsuarioConectado.Login
+	j, _ := concepto.Agregar()
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 
