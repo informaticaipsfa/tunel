@@ -11,12 +11,13 @@ import (
 
 //Concepto : Control de variables
 type Concepto struct {
-	Codigo      string `json:"codigo,omitempty" bson:"codigo"`
-	Descripcion string `json:"descripcion,omitempty" bson:"descripcion"`
-	Formula     string `json:"formula,omitempty" bson:"formula"`
-	Tipo        int    `json:"tipo,omitempty" bson:"tipo"`
-	Partida     string `json:"partida,omitempty" bson:"partida"`
-	Estatus     int    `json:"estatus,omitempty" bson:"estatus"`
+	Codigo      string `json:"codigo" bson:"codigo"`
+	Descripcion string `json:"descripcion" bson:"descripcion"`
+	Formula     string `json:"formula" bson:"formula"`
+	Tipo        int    `json:"tipo" bson:"tipo"`
+	Partida     string `json:"partida" bson:"partida"`
+	Cuenta      string `json:"cuenta" bson:"cuenta"`
+	Estatus     int    `json:"estatus" bson:"estatus"`
 	Componente  string `json:"componente,omitempty" bson:"componente"`
 	Grado       string `json:"grado,omitempty" bson:"grado"`
 }
@@ -35,12 +36,13 @@ func (Cp *Concepto) Agregar(user string) (jSon []byte, err error) {
 		return
 	}
 
-	query := `INSERT INTO space.conceptos (codigo, descripcion, forumula, partida, tipo, estatus,
+	query := `INSERT INTO space.conceptos (codigo, descripcion, forumula, partida, cuenta, tipo, estatus,
   componente, grado, usuario, creado)	VALUES (
     '` + Cp.Codigo + `',
     '` + Cp.Descripcion + `',
     '` + Cp.Formula + `',
     '` + Cp.Partida + `',
+		'` + Cp.Cuenta + `',
     ` + strconv.Itoa(Cp.Tipo) + `,
     '` + strconv.Itoa(Cp.Estatus) + `',
     '` + Cp.Componente + `',
@@ -81,7 +83,8 @@ func (Cp *Concepto) Actualizar() (jSon []byte, err error) {
 	concepto["descripcion"] = Cp.Descripcion
 	concepto["formula"] = Cp.Formula
 	concepto["tipo"] = Cp.Tipo
-	concepto["partido"] = Cp.Partida
+	concepto["cuenta"] = Cp.Cuenta
+	concepto["partida"] = Cp.Partida
 	concepto["estatus"] = Cp.Estatus
 
 	err = c.Update(seleccion, bson.M{"$set": concepto})
