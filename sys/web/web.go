@@ -236,7 +236,7 @@ func CargarModulosWebDevel() {
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
 	var wtp api.WTratamiento
-
+	var concepto api.WNomina
 	var wfactura api.WFactura
 	var wmedicina api.WMedicina
 	var wPensionado api.Militar
