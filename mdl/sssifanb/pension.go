@@ -485,7 +485,7 @@ func (P *Pension) InsertarPensionado(v Militar) {
 	consultarComponentes()
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
 		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje,
-		numero_cuenta, banco, tipo, situacion)	VALUES `
+		numero_cuenta, banco, tipo, situacion, modificaciones)	VALUES `
 	grado, componente := obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
 	if grado == "0" {
 		grado, componente = obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
@@ -535,7 +535,7 @@ func (P *Pension) InsertarPensionado(v Militar) {
 		'` + numero + `',
 		'` + cuenta + `',
 		'` + tipo + `',
-		'` + v.Situacion + `')`
+		'` + v.Situacion + `', Now())`
 
 	query := insert + cuerpo
 	_, err := sys.PostgreSQLPENSION.Exec(query)
@@ -588,7 +588,9 @@ func (P *Pension) ActualizarPensionado(v Militar) {
 		numero_cuenta='` + numero + `',
 		banco='` + cuenta + `',
 		tipo='` + tipo + `',
-		situacion='` + v.Situacion + `' WHERE cedula='` + v.ID + `';`
+		modificaciones=Now(),
+		situacion='` + v.Situacion + `'
+		WHERE cedula='` + v.ID + `';`
 
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
