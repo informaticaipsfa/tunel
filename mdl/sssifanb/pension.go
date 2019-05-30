@@ -481,11 +481,11 @@ func obtenerGrado(codigo string, gradocodigo string) (grado string, componente i
 }
 
 //InsertarPensionado Insertando Militar a Pension
-func (P *Pension) InsertarPensionado(v Militar) {
+func (P *Pension) InsertarPensionado(v Militar, usuario string, ip string) {
 	consultarComponentes()
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
 		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje,
-		numero_cuenta, banco, tipo, situacion, modificaciones)	VALUES `
+		numero_cuenta, banco, tipo, situacion, modificaciones, usr_creacion, f_creacion)	VALUES `
 	grado, componente := obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
 	if grado == "0" {
 		grado, componente = obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
@@ -535,18 +535,22 @@ func (P *Pension) InsertarPensionado(v Militar) {
 		'` + numero + `',
 		'` + cuenta + `',
 		'` + tipo + `',
-		'` + v.Situacion + `', Now())`
+		'` + v.Situacion + `',
+		Now(),
+		'` + usuario + `',
+		Now())`
 
 	query := insert + cuerpo
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
-		fmt.Println("Error en el query por : ", err.Error())
-		P.ActualizarPensionado(v)
+		//fmt.Println("Error en el query por : ", err.Error())
+		fmt.Println("Actualizando Pensionado Vía llave Postgres: ", v.Persona.DatoBasico.Cedula)
+		P.ActualizarPensionado(v, usuario)
 	}
 }
 
 //ActualizarPensionado Insertando Militar a Pension
-func (P *Pension) ActualizarPensionado(v Militar) {
+func (P *Pension) ActualizarPensionado(v Militar, usuario string) {
 	grado, componente := obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
 	if grado == "0" {
 		grado, componente = obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
@@ -589,6 +593,7 @@ func (P *Pension) ActualizarPensionado(v Militar) {
 		banco='` + cuenta + `',
 		tipo='` + tipo + `',
 		modificaciones=Now(),
+		usr_creacion = '` + usuario + `',
 		situacion='` + v.Situacion + `'
 		WHERE cedula='` + v.ID + `';`
 

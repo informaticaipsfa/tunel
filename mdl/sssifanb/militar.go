@@ -376,7 +376,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		var pension Pension
 		mOriginal.FechaRetiro = m.FechaResuelto
 
-		pension.InsertarPensionado(mOriginal)
+		pension.InsertarPensionado(mOriginal, usuario, ip)
 	}
 
 	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal))
