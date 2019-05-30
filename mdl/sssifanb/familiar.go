@@ -185,6 +185,7 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	var mOriginal Militar
 	mOriginal, _ = consultarMongo(f.DocumentoPadre)
 	go f.ActualizarPorReduccion(mOriginal.Grado.Abreviatura, mOriginal.Componente.Abreviatura)
+	go f.ActualizarCuentaBancaria()
 	return
 }
 
@@ -202,6 +203,36 @@ func (f *Familiar) ActualizarPorReduccion(grado string, componente string) {
 	err := cred.Update(bson.M{"cedula": f.Persona.DatoBasico.Cedula}, bson.M{"$set": reduc})
 	if err != nil {
 		fmt.Println("Err", err.Error())
+	}
+}
+
+//ActualizarCuentaBancaria Cuenta Bancaria
+func (f *Familiar) ActualizarCuentaBancaria() {
+	var cabecera, cuerpo, autorizado, tipo, banco, cuenta, titular string
+	if f.PorcentajePrestaciones > 0 {
+
+		cabecera = `UPDATE familiar SET `
+
+		if len(f.Persona.DatoFinanciero) > 0 {
+			autorizado = f.Persona.DatoFinanciero[0].Autorizado
+			tipo = f.Persona.DatoFinanciero[0].Tipo
+			banco = f.Persona.DatoFinanciero[0].Institucion
+			cuenta = f.Persona.DatoFinanciero[0].Cuenta
+			titular = f.Persona.DatoFinanciero[0].Titular
+		}
+		cuerpo += `autorizado ='` + autorizado + `',
+			tipo='` + tipo + `',
+			banco='` + banco + `',
+			numero='` + cuenta + `',
+			nombre_autorizado='` + titular + `' WHERE cedula='` + f.Persona.DatoBasico.Cedula + `';`
+	}
+
+	query := cabecera + cuerpo
+	_, err := sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error actualizando sobreviviente: ", err.Error())
+	} else {
+		fmt.Println("Actualizando datos financieros de sobreviviente")
 	}
 }
 

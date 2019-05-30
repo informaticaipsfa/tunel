@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/gorilla/mux"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 )
 
 //Familiar Familiares
@@ -45,6 +45,7 @@ func (f *WFamiliar) Actualizar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	M.Tipo = 1
+	fmt.Println("Actualizando Test")
 	dataJSON.Actualizar()
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
