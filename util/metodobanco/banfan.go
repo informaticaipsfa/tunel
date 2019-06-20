@@ -10,7 +10,7 @@ import (
 	"github.com/informaticaipsfa/tunel/util"
 )
 
-//Banfan Control de Banco
+//Banfanb Control de Banco
 type Banfanb struct {
 	Firma         string
 	Cantidad      int
