@@ -297,18 +297,18 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var banfanb metodobanco.Banfanb
-	var bicentenario metodobanco.Bicentenario
-	var venzuela metodobanco.Venezuela
+	// var bicentenario metodobanco.Bicentenario
+	// var venzuela metodobanco.Venezuela
 
 	var archivos metodobanco.Archivos
 
 	var id = mux.Vars(r)
 	llave := id["id"]
-	banfanb.CodigoEmpresa = "0026"
-	banfanb.NumeroEmpresa = "01770006571100173915"
+	// banfanb.CodigoEmpresa = "0026"
+	// banfanb.NumeroEmpresa = "01770006571100173915"
 	banfanb.Firma = llave
 	banfanb.Cantidad, _ = strconv.Atoi(id["cant"])
-	banfanb.Generar(sys.PostgreSQLPENSION)
+	// banfanb.Generar(sys.PostgreSQLPENSION)
 
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770001421100683232"
@@ -325,26 +325,26 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770001411100683233"
 	banfanb.Tercero(sys.PostgreSQLPENSION, "0105") // MERCANTIL
+	// //
+	// bicentenario.CodigoEmpresa = "0651"
+	// bicentenario.NumeroEmpresa = "01750484310076626369"
+	// bicentenario.Firma = llave
+	// bicentenario.Cantidad, _ = strconv.Atoi(id["cant"])
+	// bicentenario.Generar(sys.PostgreSQLPENSION)
 	//
-	bicentenario.CodigoEmpresa = "0651"
-	bicentenario.NumeroEmpresa = "01750484310076626369"
-	bicentenario.Firma = llave
-	bicentenario.Cantidad, _ = strconv.Atoi(id["cant"])
-	bicentenario.Generar(sys.PostgreSQLPENSION)
-
+	// //
+	// venzuela.CodigoEmpresa = "0"
+	// venzuela.NumeroEmpresa = "01020488720000002147"
+	// venzuela.Firma = llave
+	// venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
+	// venzuela.Generar(sys.PostgreSQLPENSION, "CA")
 	//
-	venzuela.CodigoEmpresa = "0"
-	venzuela.NumeroEmpresa = "01020488720000002147"
-	venzuela.Firma = llave
-	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
-	venzuela.Generar(sys.PostgreSQLPENSION, "CA")
-
-	//
-	venzuela.CodigoEmpresa = "0"
-	venzuela.NumeroEmpresa = "01020488720000002147"
-	venzuela.Firma = llave
-	venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
-	venzuela.Generar(sys.PostgreSQLPENSION, "CC")
+	// //
+	// venzuela.CodigoEmpresa = "0"
+	// venzuela.NumeroEmpresa = "01020488720000002147"
+	// venzuela.Firma = llave
+	// venzuela.Cantidad, _ = strconv.Atoi(id["cant"])
+	// venzuela.Generar(sys.PostgreSQLPENSION, "CC")
 
 	//Comprimir todos los archivos en uno para su descarga
 	M.Mensaje = "Generacion de archivos exitosa "

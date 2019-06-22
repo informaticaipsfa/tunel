@@ -28,8 +28,10 @@ func (b *Banfanb) CabeceraSQL(bancos string) string {
 	  FROM
 	    space.nomina nom
 	  JOIN space.pagos pg ON nom.oid=pg.nomi
-  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu ;`
-	//AND cfam != '' AND cedu!=cfam AND naut =''
+  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `'
+
+	ORDER BY banc, pg.cedu ;`
+
 }
 
 //Generar Archivo
@@ -129,7 +131,7 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 	directorio := URLBanco + b.Firma
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
-
+	fmt.Println(b.CabeceraSQL("='" + cuenta + "'"))
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='" + cuenta + "'"))
 	util.Error(err)
 
@@ -154,10 +156,14 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 
 		bancos := util.CompletarCeros(util.EliminarUnderScore(numerocuenta), 0, 20)[:20]
 		nombrecompleto := ""
+		cfamilia := util.ValidarNullString(familia)
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
 			cedu = util.CompletarEspacios(util.ValidarNullString(ceddante), 1, 10)[:10]
 			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(ndante), 1, 30)[:30]
+		} else if cfamilia != "" {
+			cedu = util.CompletarEspacios(cfamilia, 1, 10)[:10]
+			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(nombre), 1, 30)[:30]
 		} else {
 			cedu = util.CompletarEspacios(util.ValidarNullString(cedula), 1, 10)[:10]
 			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(nombre), 1, 30)[:30]
