@@ -62,11 +62,11 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
-			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)
+			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
 		} else {
-			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
 			if util.ValidarNullString(familia) != "" {
-				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)
+				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)[:10]
 			}
 		}
 
