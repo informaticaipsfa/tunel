@@ -58,7 +58,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		monto := util.ValidarNullFloat64(neto)
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 		montos = util.CompletarCeros(montos, 0, 12)
-		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
+		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)[:20]
 
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {

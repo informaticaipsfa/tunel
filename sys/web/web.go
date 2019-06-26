@@ -145,7 +145,6 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/ccpensionados", wUsuario.ValidarToken(M.ConsultarCantidadPensionados)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpendientes/{id}", wUsuario.ValidarToken(wNomina.ListarPendientes)).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpagos", wUsuario.ValidarToken(wNomina.ListarPagos)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/cuadrebanco/{id}", wUsuario.ValidarToken(wNomina.CuadreBanco)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/prima", wUsuario.ValidarToken(M.ActualizarPrima)).Methods("POST")
@@ -159,6 +158,7 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/descuentos", wUsuario.ValidarToken(descuentos.Agregar)).Methods("POST")
 
+	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpagos", wUsuario.ValidarToken(wNomina.ListarPagos)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpagosdetalles", wUsuario.ValidarToken(wNomina.ListarPagosDetalle)).Methods("POST")
 }
 
