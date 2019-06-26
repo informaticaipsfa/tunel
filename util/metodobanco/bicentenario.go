@@ -29,6 +29,7 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
   JOIN space.pagos pg ON nom.oid=pg.nomi
   WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
 
+	//
 	//WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
 	//AND cfam != '' AND cedu!=cfam AND naut =''
 }
@@ -58,7 +59,8 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		monto := util.ValidarNullFloat64(neto)
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 		montos = util.CompletarCeros(montos, 0, 12)
-		bancos := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)[:20]
+		strnumero := util.EliminarUnderScore(util.ValidarNullString(numero))
+		bancos := util.CompletarCeros(strnumero, 0, 20)[:20]
 
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
