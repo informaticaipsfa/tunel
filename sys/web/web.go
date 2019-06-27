@@ -133,6 +133,8 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/listar/concepto/", wUsuario.ValidarToken(concepto.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/conceptos/listar/", wUsuario.ValidarToken(concepto.ListarPHP)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/conceptos/contable/{id}", wUsuario.ValidarToken(concepto.ListarContable)).Methods("GET")
+
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva", wUsuario.ValidarToken(M.ConsultarDirectiva)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/detalle/{id}", wUsuario.ValidarToken(M.ConsultarDetalleDirectiva)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/listar/{id}", wUsuario.ValidarToken(M.ListarDetalleDirectiva)).Methods("GET")
@@ -305,4 +307,5 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/pensionado/consultarnetos/{id}", wPensionado.ConsultarNeto).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/pensionado/consultarsobrevivientes/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/nomina/conceptos/listar/", concepto.ListarPHP).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/nomina/conceptos/contable/{id}", concepto.ListarContable).Methods("GET")
 }
