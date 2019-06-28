@@ -620,25 +620,28 @@ type WNetos struct {
 	Mes        string  `json:"mes"`
 	Familiar   string  `json:"familiar"`
 	Porcentaje string  `json:"porcentaje"`
+	Otros      string  `json:"otros"`
 }
 
 //ConsultarNetos Insertando Militar a Pension
 func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSon []byte, err error) {
 	var lst []WNetos
 	s := `SELECT pg.cedu, pg.calc, pg.fech, pg.banc, pg.tipo, pg.nume, pg.situ, pg.esta,
-	pg.neto, sn.obse, sn.desd, sn.hast, sn.mes,
+	pg.neto, sn.obse, sn.desd, sn.hast, sn.mes, CAST(rtp.monto_prima AS character varying), rtp.descripcion,
 	`
 
 	if vive == true {
 		s += `pg.situ, pg.base
 		FROM space.pagos pg
 		JOIN space.nomina AS sn ON pg.nomi=sn.oid
+		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
 		WHERE pg.cedu='` + cedula + `' ORDER BY fech DESC`
 	} else {
 		s += `
 		 pg.cfam, fami.porcentaje
 		FROM space.pagos pg
 		JOIN space.nomina AS sn ON pg.nomi=sn.oid
+		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
 		JOIN familiar fami ON pg.cedu=fami.titular AND pg.cfam=fami.cedula
 		WHERE pg.cedu='` + cedula + `' AND pg.cfam='` + familiar + `' ORDER BY fech DESC`
 	}
@@ -647,10 +650,10 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSo
 	util.Error(err)
 
 	for sq.Next() {
-		var cedu, calc, fech, banc, tipo, nume, situ, esta, nomina, desde, hasta, mes, fam, porc sql.NullString
+		var cedu, calc, fech, banc, tipo, nume, situ, esta, nomina, desde, hasta, mes, pmonto, descrip, fam, porc sql.NullString
 		var neto sql.NullFloat64
 		var netos WNetos
-		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto, &nomina, &desde, &hasta, &mes, &fam, &porc)
+		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto, &nomina, &desde, &hasta, &mes, &pmonto, &descrip, &fam, &porc)
 		util.Error(err)
 		//		fmt.Println(desde, hasta)
 		netos.Cedula = util.ValidarNullString(cedu)
@@ -667,6 +670,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSo
 		netos.Desde = util.ValidarNullString(desde)[:10]
 		netos.Hasta = util.ValidarNullString(hasta)[:10]
 		netos.Porcentaje = util.ValidarNullString(porc)
+		netos.Otros = util.ValidarNullString(descrip) + "|" + util.ValidarNullString(pmonto)
 
 		lst = append(lst, netos)
 	}

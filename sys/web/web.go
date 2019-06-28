@@ -157,6 +157,7 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/medidajudicial", wUsuario.ValidarToken(medida.Agregar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/medidajudicial/{id}", wUsuario.ValidarToken(medida.Actualizar)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/lstmedidalistar/{id}", wUsuario.ValidarToken(medida.ListarMedida)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/descuentos", wUsuario.ValidarToken(descuentos.Agregar)).Methods("POST")
 
