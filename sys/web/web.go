@@ -305,8 +305,8 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/wfedevida", wfe.Registrar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wfactura", wfactura.Consultar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/wmedicina", wmedicina.Registrar).Methods("POST")
-	Enrutador.HandleFunc("/devel/api/pensionado/consultarnetos/{id}", wPensionado.ConsultarNeto).Methods("GET")
-	Enrutador.HandleFunc("/devel/api/pensionado/consultarsobrevivientes/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/pensionado/consultarneto/{id}", wPensionado.ConsultarNeto).Methods("GET")
+	Enrutador.HandleFunc("/devel/api/pensionado/consultarsobreviviente/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/nomina/conceptos/listar/", concepto.ListarPHP).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/nomina/conceptos/contable/{id}", concepto.ListarContable).Methods("GET")
 }
