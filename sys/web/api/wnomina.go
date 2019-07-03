@@ -397,7 +397,7 @@ func (N *WNomina) ListarPendientes(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listartpendientes/" + id["id"]
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listartpendientes/" + id["mes"] + "/" + id["id"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
@@ -429,6 +429,37 @@ func (N *WNomina) ListarPagos(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
 	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listarpagos/" + id["id"]
+	response, err := http.Get(url)
+	if err != nil {
+		M.Mensaje = err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusForbidden)
+			M.Mensaje = err.Error()
+			M.Tipo = 0
+			j, _ := json.Marshal(M)
+			w.Write(j)
+			return
+		}
+		defer response.Body.Close()
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+		return
+	}
+}
+
+//ListarPagos Militar
+func (N *WNomina) VerPagosIndividual(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var id = mux.Vars(r)
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "verpagosindividual/" + id["llav"] + "/" + id["cedu"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()
