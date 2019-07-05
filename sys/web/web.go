@@ -127,6 +127,7 @@ func CargarModulosNomina() {
 	var medida api.WMedidaJudicial
 	var descuentos api.WDescuentos
 	var M api.Militar
+	var wR api.WRechazos
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/{id}", wUsuario.ValidarToken(concepto.Consultar)).Methods("GET")
@@ -165,6 +166,8 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpagosdetalles", wUsuario.ValidarToken(wNomina.ListarPagosDetalle)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/verpagosindividual/{llav}/{cedu}", wUsuario.ValidarToken(wNomina.VerPagosIndividual)).Methods("GET")
+
+	Enrutador.HandleFunc("/ipsfa/api/rechazos/agregar", wUsuario.ValidarToken(wR.Agregar)).Methods("POST")
 }
 
 //CargarPensionados Pensionados en general

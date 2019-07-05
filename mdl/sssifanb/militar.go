@@ -340,7 +340,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	mOriginal.CodigoComponente = m.CodigoComponente
 	mOriginal.NumeroHistoria = m.NumeroHistoria
 	mOriginal.PaseARetiro = m.PaseARetiro
-	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "I" || mOriginal.Situacion == "PG" {
+	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "RSP" || mOriginal.Situacion == "I" || mOriginal.Situacion == "PG" {
 		mOriginal.FechaRetiro = m.FechaResuelto
 		mOriginal.Pension.DatoFinanciero.Tipo = m.Persona.DatoFinanciero[0].Tipo
 		mOriginal.Pension.DatoFinanciero.Cuenta = m.Persona.DatoFinanciero[0].Cuenta
@@ -372,7 +372,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		return
 	}
 
-	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "I" || mOriginal.Situacion == "PG" {
+	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "RSP" || mOriginal.Situacion == "I" || mOriginal.Situacion == "PG" {
 		var pension Pension
 		mOriginal.FechaRetiro = m.FechaResuelto
 
