@@ -16,6 +16,7 @@ type Venezuela struct {
 	CodigoEmpresa string
 	NumeroEmpresa string
 	Fecha         string
+	Tabla         string
 }
 
 //CabeceraSQL Creando consulta para archivos
@@ -26,7 +27,7 @@ func (b *Venezuela) CabeceraSQL(bancos string, tipocuenta string) string {
 		pg.cfam, pg.caut, regexp_replace(pg.naut, '[^a-zA-Y0-9 ]', '', 'g') AS autor
   FROM
     space.nomina nom
-  JOIN space.pagos pg ON nom.oid=pg.nomi
+  JOIN space.` + b.Tabla + ` pg ON nom.oid=pg.nomi
   WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' AND pg.tipo='` + tipocuenta + `' ORDER BY banc, pg.cedu;`
 }
 
@@ -40,7 +41,12 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0102'", tipocuenta))
 	util.Error(err)
 
-	directorio := URLBanco + b.Firma
+	valor := ""
+	if b.Tabla == "rechazos" {
+		valor = "-XR"
+	}
+	directorio := URLBanco + b.Firma + valor
+
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 	i := 0
@@ -86,7 +92,7 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 		linea += stipo + numerocuenta + montoapagar + codigocuenta + nombrecompleto + cedu + "003291  \r\n"
 		if i == b.Cantidad {
 			arch++
-			venz, e := os.Create(URLBanco + b.Firma + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
+			venz, e := os.Create(directorio + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
 			sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 			sumas = util.CompletarCeros(sumas, 0, 13)
@@ -105,7 +111,7 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 
 	if i > 0 {
 		arch++
-		venz, e := os.Create(URLBanco + b.Firma + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
+		venz, e := os.Create(directorio + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 		sumas = util.CompletarCeros(sumas, 0, 13)

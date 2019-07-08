@@ -337,9 +337,10 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 
 	var id = mux.Vars(r)
 	llave := id["id"]
+	banfanb.Tabla = "pagos"
+	banfanb.Firma = llave
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770006571100173915"
-	banfanb.Firma = llave
 	banfanb.Cantidad, _ = strconv.Atoi(id["cant"])
 	banfanb.Generar(sys.PostgreSQLPENSION)
 
@@ -359,6 +360,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.NumeroEmpresa = "01770001411100683233"
 	banfanb.Tercero(sys.PostgreSQLPENSION, "0105") // MERCANTIL
 	// //
+	bicentenario.Tabla = "pagos"
 	bicentenario.CodigoEmpresa = "0651"
 	bicentenario.NumeroEmpresa = "01750484310076626369"
 	bicentenario.Firma = llave
@@ -366,6 +368,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	bicentenario.Generar(sys.PostgreSQLPENSION)
 
 	//
+	venzuela.Tabla = "pagos"
 	venzuela.CodigoEmpresa = "0"
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave
@@ -490,7 +493,7 @@ func (N *WNomina) CuadreBanco(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "cuadrebanco/" + id["id"]
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "cuadrebanco/" + id["id"] + "/" + id["tbl"]
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()

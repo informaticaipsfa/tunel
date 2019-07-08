@@ -17,6 +17,7 @@ type Banfanb struct {
 	CodigoEmpresa string
 	NumeroEmpresa string
 	Fecha         string
+	Tabla         string
 }
 
 //CabeceraSQL Creando consulta para archivos
@@ -27,9 +28,8 @@ func (b *Banfanb) CabeceraSQL(bancos string) string {
 			pg.cfam, pg.caut, regexp_replace(pg.naut, '[^a-zA-Y0-9 ]', '', 'g') AS autor
 	  FROM
 	    space.nomina nom
-	  JOIN space.pagos pg ON nom.oid=pg.nomi
+	  JOIN space.` + b.Tabla + ` pg ON nom.oid=pg.nomi
   WHERE banc ` + bancos + ` AND llav='` + b.Firma + `'
-
 	ORDER BY banc, pg.cedu ;`
 
 }
@@ -41,7 +41,11 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	util.Error(err)
 
 	i := 0
-	directorio := URLBanco + b.Firma
+	valor := ""
+	if b.Tabla == "rechazos" {
+		valor = "-XR"
+	}
+	directorio := URLBanco + b.Firma + valor
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 	b.Cantidad = 30000
@@ -84,7 +88,7 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\r\n"
 		if i == b.Cantidad {
 			arch++
-			banf, e := os.Create(URLBanco + b.Firma + "/banfan " + strconv.Itoa(arch) + ".txt")
+			banf, e := os.Create(directorio + "/banfan " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
 			sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 			sumas = util.CompletarCeros(sumas, 0, 17)
@@ -103,7 +107,7 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	}
 	if i > 0 {
 		arch++
-		banf, e := os.Create(URLBanco + b.Firma + "/banfan " + strconv.Itoa(arch) + ".txt")
+		banf, e := os.Create(directorio + "/banfan " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 		sumas = util.CompletarCeros(sumas, 0, 17)
@@ -127,8 +131,11 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 	mm := fecha.String()[5:7]
 	aa := fecha.String()[2:4]
 	fechas := dd + mm + aa
-
-	directorio := URLBanco + b.Firma
+	valor := ""
+	if b.Tabla == "rechazos" {
+		valor = "-XR"
+	}
+	directorio := URLBanco + b.Firma + valor
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 	//fmt.Println(b.CabeceraSQL("='" + cuenta + "'"))
@@ -181,7 +188,7 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 		sumaparcial += monto
 		if i == b.Cantidad {
 			arch++
-			banftercero, e := os.Create(URLBanco + b.Firma + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
+			banftercero, e := os.Create(directorio + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
 			cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\r\n"
 			fmt.Fprintf(banftercero, cabecera)
@@ -195,7 +202,7 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 	}
 	if i > 0 {
 		arch++
-		banftercero, e := os.Create(URLBanco + b.Firma + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
+		banftercero, e := os.Create(directorio + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
 		cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\r\n"
 		fmt.Fprintf(banftercero, cabecera)

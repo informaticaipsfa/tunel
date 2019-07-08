@@ -16,6 +16,7 @@ type Bicentenario struct {
 	CodigoEmpresa string
 	NumeroEmpresa string
 	Fecha         string
+	Tabla         string
 }
 
 //CabeceraSQL Creando consulta para archivos
@@ -26,7 +27,7 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
 		pg.cfam, pg.caut, regexp_replace(pg.naut, '[^a-zA-Y0-9 ]', '', 'g') AS autor
   FROM
     space.nomina nom
-  JOIN space.pagos pg ON nom.oid=pg.nomi
+  JOIN space.` + b.Tabla + ` pg ON nom.oid=pg.nomi
   WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
 
 	//
@@ -40,7 +41,12 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	util.Error(err)
 
 	i := 0
-	directorio := URLBanco + b.Firma
+	valor := ""
+	if b.Tabla == "rechazos" {
+		valor = "-XR"
+	}
+	directorio := URLBanco + b.Firma + valor
+
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 
@@ -82,7 +88,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	}
 	// if i > 0 {
 	arch++
-	banf, e := os.Create(URLBanco + b.Firma + "/bicentenario " + strconv.Itoa(arch) + ".txt")
+	banf, e := os.Create(directorio + "/bicentenario " + strconv.Itoa(arch) + ".txt")
 	util.Error(e)
 	sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
 	sumas = util.CompletarCeros(sumas, 0, 17)
