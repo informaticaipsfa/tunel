@@ -37,6 +37,7 @@ func (b *Banfanb) CabeceraSQL(bancos string) string {
 //Generar Archivo
 func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 
+	fmt.Println(b.CabeceraSQL("='0177'"))
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0177'"))
 	util.Error(err)
 
@@ -138,7 +139,7 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 	directorio := URLBanco + b.Firma + valor
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
-	//fmt.Println(b.CabeceraSQL("='" + cuenta + "'"))
+	fmt.Println(b.CabeceraSQL("='" + cuenta + "'"))
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='" + cuenta + "'"))
 	util.Error(err)
 

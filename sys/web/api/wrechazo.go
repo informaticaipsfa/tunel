@@ -115,7 +115,7 @@ func (R *WRechazos) CrearTxt(w http.ResponseWriter, r *http.Request) {
 
 	var id = mux.Vars(r)
 	llave := id["id"]
-	banfanb.Tabla = "rechazos"
+	banfanb.Tabla = "bono"
 	banfanb.Firma = llave
 	banfanb.CodigoEmpresa = "0026"
 	banfanb.NumeroEmpresa = "01770006571100173915"
@@ -138,7 +138,7 @@ func (R *WRechazos) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	banfanb.NumeroEmpresa = "01770001411100683233"
 	banfanb.Tercero(sys.PostgreSQLPENSION, "0105") // MERCANTIL
 	// //
-	bicentenario.Tabla = "rechazos"
+	bicentenario.Tabla = "bono"
 	bicentenario.CodigoEmpresa = "0651"
 	bicentenario.NumeroEmpresa = "01750484310076626369"
 	bicentenario.Firma = llave
@@ -146,7 +146,7 @@ func (R *WRechazos) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	bicentenario.Generar(sys.PostgreSQLPENSION)
 
 	//
-	venzuela.Tabla = "rechazos"
+	venzuela.Tabla = "bono"
 	venzuela.CodigoEmpresa = "0"
 	venzuela.NumeroEmpresa = "01020488720000002147"
 	venzuela.Firma = llave

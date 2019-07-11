@@ -38,6 +38,7 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 	mm := fecha.String()[5:7]
 	aa := fecha.String()[2:4]
 	fechas := dd + "/" + mm + "/" + aa
+	//fmt.Println(b.CabeceraSQL("='0102'", tipocuenta))
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0102'", tipocuenta))
 	util.Error(err)
 
@@ -77,12 +78,12 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 		cedu := ""
 		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
 			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(ndante), 1, 40)[:40]
-			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)
+			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
 		} else {
 			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(nombre), 1, 40)[:40]
-			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)
+			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
 			if util.ValidarNullString(familia) != "" {
-				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)
+				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)[:10]
 			}
 
 		}
