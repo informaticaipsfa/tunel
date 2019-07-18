@@ -29,8 +29,7 @@ func (b *Banfanb) CabeceraSQL(bancos string) string {
 	  FROM
 	    space.nomina nom
 	  JOIN space.` + b.Tabla + ` pg ON nom.oid=pg.nomi
-  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `'
-	ORDER BY banc, pg.cedu ;`
+  	WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu ;`
 
 }
 
@@ -49,7 +48,7 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	directorio := URLBanco + b.Firma + valor
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
-	b.Cantidad = 30000
+	b.Cantidad = 500000
 	var sumatotal float64
 	var sumaparcial float64
 	arch := 0
@@ -127,7 +126,7 @@ func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 //Tercero Generando pago
 func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 	fecha := time.Now()
-	b.Cantidad = 40000
+	b.Cantidad = 50000
 	dd := fecha.String()[8:10]
 	mm := fecha.String()[5:7]
 	aa := fecha.String()[2:4]
@@ -139,7 +138,7 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 	directorio := URLBanco + b.Firma + valor
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
-	fmt.Println(b.CabeceraSQL("='" + cuenta + "'"))
+	// fmt.Println(b.CabeceraSQL("='" + cuenta + "'"))
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='" + cuenta + "'"))
 	util.Error(err)
 

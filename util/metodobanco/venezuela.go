@@ -76,7 +76,9 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 		montoapagar := util.CompletarCeros(pagar, 0, 11)
 		nombrecompleto := ""
 		cedu := ""
-		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
+		evaluar := util.ValidarNullString(ceddante)
+		nombeval := util.ValidarNullString(nombre)
+		if evaluar != "" && evaluar != "0" && nombeval != "" {
 			nombrecompleto = util.CompletarEspacios(util.ValidarNullString(ndante), 1, 40)[:40]
 			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
 		} else {

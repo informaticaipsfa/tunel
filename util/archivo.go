@@ -24,7 +24,7 @@ type Archivo struct {
 }
 
 func (a *Archivo) iniciarVariable() {
-	a.Cabecera = "INSERT INTO space.nomina_archivo (cedu,fami, llav, conc,mont,tipo,fech) VALUES "
+	a.Cabecera = "INSERT INTO space.nomina_archivo (cedu,fami, llav, conc,mont,tipo,fech, proc) VALUES "
 	a.CantidadLineas = 0
 	a.Leer = false
 	a.Salvar = false

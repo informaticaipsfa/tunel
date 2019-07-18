@@ -12,6 +12,9 @@ import (
 //LeerCA Leer archivos de la caja de ahorro
 func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 	var coma string
+
+	codigomd5 := strings.Split(codigo, "|")
+
 	a.iniciarVariable()
 	insertar := a.Cabecera
 	archivo, err := os.Open(a.Ruta)
@@ -37,7 +40,9 @@ func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 			cedula, _ := strconv.Atoi(strings.Split(linea[1], ".")[0])
 			familiar, _ := strconv.Atoi(strings.Split(linea[2], ".")[0])
 			monto := linea[3]
-			insertar += coma + "('" + strconv.Itoa(cedula) + "','" + strconv.Itoa(familiar) + "','" + codigo + "','" + concepto + "'," + monto + ", " + tipo + ", Now() )"
+			insertar += coma + "('" + strconv.Itoa(cedula) + "','" + strconv.Itoa(familiar)
+			insertar += "','" + codigomd5[0] + "','" + concepto + "'," + monto + ", " + tipo + ", Now(), '" + codigomd5[1] + "' )"
+
 		} else { //DE LO CONTRARIO ARCHIVO DE SOBREVIVIENTES
 			tipo := "2"
 			if l > 3 {
@@ -52,7 +57,8 @@ func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 				concepto := linea[0]
 				cedula, _ := strconv.Atoi(strings.Split(linea[1], ".")[0])
 				monto := linea[2]
-				insertar += coma + "('" + strconv.Itoa(cedula) + "','','" + codigo + "','" + concepto + "'," + monto + ", " + tipo + ", Now() )"
+				insertar += coma + "('" + strconv.Itoa(cedula) + "','','" + codigomd5[0]
+				insertar += "','" + concepto + "'," + monto + ", " + tipo + ", Now(), '" + codigomd5[1] + "')"
 				//fmt.Println("Linea # ", i, cedula, "|", concepto)
 			}
 		}
