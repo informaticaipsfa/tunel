@@ -169,6 +169,7 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/rechazos/agregar", wUsuario.ValidarToken(wR.Agregar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/rechazos/listar/{id}", wUsuario.ValidarToken(wR.Listar)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/rechazos/eliminar/{id}", wUsuario.ValidarToken(wR.Eliminar)).Methods("GET")
 }
 
 //CargarPensionados Pensionados en general
