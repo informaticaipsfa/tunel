@@ -55,7 +55,7 @@ func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 				monto := linea[1]
 				insertar += coma + "('" + strconv.Itoa(cedula) + "','','" + codigomd5[0]
 				insertar += "','" + concepto + "'," + monto + ", " + tipo + ", Now(), '" + codigomd5[1] + "')"
-				fmt.Println("Linea # ", i, cedula, "|", concepto)
+				//fmt.Println("Linea # ", i, cedula, "|", concepto)
 			}
 
 		}
@@ -65,7 +65,7 @@ func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 
 	fmt.Println("procesando ", i)
 	_, err = PostPension.Exec(insertar)
-	fmt.Println(insertar)
+	//fmt.Println(insertar)
 	if err != nil {
 		fmt.Println("ERR. AL PROCESAR ARCHIVO TXT ", a.Ruta, err.Error())
 		return false
