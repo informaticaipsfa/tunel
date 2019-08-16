@@ -40,7 +40,22 @@ func (Cp *Concepto) Agregar() (jSon []byte, err error) {
 
 	_, err = sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
-		fmt.Println("Error en el query: ", err.Error())
+		fmt.Println("Clave repetida en concepto actualizando: ", err.Error())
+		query = `UPDATE space.conceptos SET
+			codigo='` + Cp.Codigo + `',
+			descripcion='` + Cp.Descripcion + `',
+			forumula='` + Cp.Formula + `',
+			partida='` + Cp.Partida + `',
+			cuenta=` + Cp.Cuenta + `',
+			tipo=` + strconv.Itoa(Cp.Tipo) + `,
+			estatus='` + strconv.Itoa(Cp.Estatus) + `',
+		  componente='` + Cp.Componente + `',
+			grado='` + Cp.Grado + `',
+			usuario='` + Cp.Usuario + `',
+			creado=Now()
+		WHERE codigo='` + Cp.Codigo + `'`
+
+		_, err = sys.PostgreSQLPENSION.Exec(query)
 		Cp.Actualizar()
 	} else {
 		c := sys.MGOSession.DB(sys.CBASE).C(sys.CCONCEPTO)

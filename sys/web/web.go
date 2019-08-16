@@ -320,4 +320,7 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/pensionado/consultarsobreviviente/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/nomina/conceptos/listar/", concepto.ListarPHP).Methods("GET")
 	Enrutador.HandleFunc("/devel/api/nomina/conceptos/contable/{id}", concepto.ListarContable).Methods("GET")
+
+	Enrutador.HandleFunc("/devel/api/pensionado/calculo/{id}", wPensionado.Calculo).Methods("GET")
+
 }
