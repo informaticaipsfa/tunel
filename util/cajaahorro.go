@@ -24,7 +24,6 @@ func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 	for scan.Scan() {
 		linea := strings.Split(scan.Text(), ";")
 		l := len(linea)
-		fmt.Println("lineas ", l)
 		if i == 0 {
 			concepto = linea[0]
 			tipo = linea[4]
