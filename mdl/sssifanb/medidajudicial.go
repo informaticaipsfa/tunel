@@ -77,6 +77,8 @@ type MedidaJudicial struct {
 func (MJ *MedidaJudicial) Agregar() (jSon []byte, err error) {
 	var msj Mensaje
 
+	InsertarPension(MJ)
+
 	medida := make(map[string]interface{})
 
 	medida["pension.medidajudicial"] = MJ
@@ -89,7 +91,6 @@ func (MJ *MedidaJudicial) Agregar() (jSon []byte, err error) {
 		jSon, err = json.Marshal(msj)
 		return
 	}
-	InsertarPension(MJ)
 	msj.Mensaje = "Proceso exitoso"
 	msj.Tipo = 1
 	jSon, err = json.Marshal(msj)
@@ -98,7 +99,8 @@ func (MJ *MedidaJudicial) Agregar() (jSon []byte, err error) {
 }
 
 //InsertarPension Cargar medidas
-func InsertarPension(CMJ *MedidaJudicial) {
+func InsertarPension(CMJ *MedidaJudicial) string {
+	var id string
 	query := `
 	INSERT INTO space.medidajudicial (
 		nume, expe, tipo, obse,
@@ -113,12 +115,13 @@ func InsertarPension(CMJ *MedidaJudicial) {
 						'` + CMJ.Autoridad + `','` + CMJ.Estado + `','` + CMJ.Ciudad + `','` + CMJ.Municipio + `',
 						'` + CMJ.DescripcionInstitucion + `','` + CMJ.CedulaBeneficiario + `','` + CMJ.Beneficiario + `','` + CMJ.Parentesco + `',
 						'` + CMJ.CedulaAutorizado + `','` + CMJ.Autorizado + `','` + CMJ.Fecha.String()[:10] + `','` + CMJ.FechaFin.String()[:10] + `','` + CMJ.Usuario + `',1,
-						'` + CMJ.ID + `')`
+						'` + CMJ.ID + `') RETURNING oid`
 
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
 		fmt.Println("Error en el query: ", err.Error())
 	}
+	return id
 }
 
 //Actualizar Sistema
