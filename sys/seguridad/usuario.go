@@ -158,7 +158,7 @@ func CrearClaveTodos() {
 	return
 }
 
-//Validar Usuarios
+//CambiarClave Usuarios
 func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C("usuario")

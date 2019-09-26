@@ -26,6 +26,7 @@ func Cargar() {
 
 	WMAdminLTE()
 	CargarModulosWebDevel()
+	CargarModulosWebSite()
 
 }
 
@@ -323,5 +324,34 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/nomina/conceptos/contable/{id}", concepto.ListarContable).Methods("GET")
 
 	Enrutador.HandleFunc("/devel/api/pensionado/calculo/{id}", wPensionado.Calculo).Methods("GET")
+
+}
+
+//CargarModulosWebSite Cargador de modulos web
+func CargarModulosWebSite() {
+	var wU api.WebUsuario
+	var per api.Militar
+	var wPensionado api.Militar
+
+	var wUsuario api.WUsuario
+	// Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crud/{id}", wUsuario.Consultar).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.LoginW).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.Opciones).Methods("OPTIONS")
+	// Enrutador.HandleFunc("/ipsfa/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
+
+	//Identificación de Usuario
+	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Identificacion).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Opciones).Methods("OPTIONS")
+
+	//Datos Militares
+	Enrutador.HandleFunc("/ipsfa/api/web/militar/{id}", per.Consultar).Methods("GET")
+	//Consultar Netos de Pensionados
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/consultarneto/{id}", wPensionado.ConsultarNeto).Methods("GET")
+	//Consultar Netos de Pensionados Sobrevivientes
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/consultarsobreviviente/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")
+	//Constancia de Pensionado
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/calculo/{id}", wPensionado.Calculo).Methods("GET")
+	//Fideicomiso
+	Enrutador.HandleFunc("/ipsfa/api/web/pace/consultarbeneficiario/{id}", per.ConsultarBeneficiario).Methods("GET")
 
 }

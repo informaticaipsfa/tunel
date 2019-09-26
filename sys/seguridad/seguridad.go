@@ -48,3 +48,18 @@ func GenerarJWT(u Usuario) string {
 	util.Fatal(e)
 	return rs
 }
+
+//WGenerarJWT Json Web Token
+func WGenerarJWT(u WUsuario) string {
+	peticion := WReclamaciones{
+		WUsuario: u,
+		StandardClaims: jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Second * 360).Unix(),
+			Issuer:    "Conexion Bus Empresarial",
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodRS256, peticion)
+	rs, e := token.SignedString(LlavePrivada)
+	util.Fatal(e)
+	return rs
+}

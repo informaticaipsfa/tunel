@@ -10,7 +10,7 @@ import (
 )
 
 func BuscarEmpleadosSigesp() string {
-	return `select    per.codper,
+	return `select per.codper,
     per.nomper,
     per.apeper,
     per.fecnacper,
@@ -53,8 +53,8 @@ func BuscarEmpleadosSigesp() string {
         on car.codemp = nom.codemp
         and car.codnom = nom.codnom
         and car.codcar = nom.codcar
---where     per.codper = '015132444'
-order by nom.codnom, 1`
+		--where     per.codper = '015132444'
+		order by nom.codnom, 1`
 }
 
 type Empleado struct {

@@ -7,3 +7,9 @@ type Reclamaciones struct {
 	Rol     Rol     `json:"Rol" bson:"Rol"`
 	jwt.StandardClaims
 }
+
+type WReclamaciones struct {
+	WUsuario WUsuario `json:"WUsuario" bson:"wusuario"`
+	Rol      Rol      `json:"Rol" bson:"Rol"`
+	jwt.StandardClaims
+}

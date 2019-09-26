@@ -21,6 +21,7 @@ const (
 	CTRAZACIS         string = "trazacis"
 	CCATEGORIA        string = "categoria"
 	CUSUARIO          string = "usuario"
+	WUSUARIO          string = "wusuario"
 	CREDUCCION        string = "reduccion"
 	CTAREASPENDIENDTE string = "tareaspendientes"
 	CCONCEPTO         string = "conceptos"
