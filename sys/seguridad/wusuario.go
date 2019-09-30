@@ -13,6 +13,7 @@ type WCausante struct {
 	Nombre     string `json:"nombre" bson:"nombre"`
 	Apellido   string `json:"apellido" bson:"apellido"`
 	Componente string `json:"componente" bson:"componente"`
+	Grado      string `json:"grado" bson:"grado"`
 }
 
 //WUsuario del Sistema

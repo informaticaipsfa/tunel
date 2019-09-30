@@ -68,10 +68,11 @@ func (IU *IdentificacionUsuario) BuscarTitular(id string, tipo string, clv strin
 func (IU *IdentificacionUsuario) BuscarSobreviviente(id string, tipo string, corr string, clv string) (err error, wU seguridad.WUsuario) {
 
 	s := `SELECT fm.cedula, fm.nombres, fm.apellidos, fm.titular,
-					bf.nombres, bf.apellidos, cp.descripcion
+					bf.nombres, bf.apellidos, cp.descripcion, grd.nombre
 				FROM familiar fm
 				JOIN beneficiario bf ON bf.cedula=fm.titular
 				JOIN componente cp ON bf.componente_id=cp.id
+				JOIN grado grd ON bf.grado_id=grd.codigo AND bf.componente_id=grd.componente_id
 				WHERE fm.cedula='` + id + `'
 
 				`
@@ -79,13 +80,14 @@ func (IU *IdentificacionUsuario) BuscarSobreviviente(id string, tipo string, cor
 	util.Error(err)
 
 	for sq.Next() {
-		var cedu, tit, nomb, apel, nombbf, apelbf, descri string
+		var cedu, tit, nomb, apel, nombbf, apelbf, descri, grado string
 		var causante seguridad.WCausante
-		sq.Scan(&cedu, &nomb, &apel, &tit, &nombbf, &apelbf, &descri)
+		sq.Scan(&cedu, &nomb, &apel, &tit, &nombbf, &apelbf, &descri, &grado)
 		causante.Cedula = tit
 		causante.Nombre = nombbf
 		causante.Apellido = apelbf
 		causante.Componente = descri
+		causante.Grado = grado
 
 		wU.Cedula = cedu
 		wU.Nombre = nomb
