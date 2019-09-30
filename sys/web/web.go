@@ -331,6 +331,7 @@ func CargarModulosWebDevel() {
 func CargarModulosWebSite() {
 	var wU api.WebUsuario
 	var per api.Militar
+	var concepto api.WNomina
 	var wPensionado api.Militar
 
 	var wUsuario api.WUsuario
@@ -346,6 +347,7 @@ func CargarModulosWebSite() {
 	//Datos Militares
 	Enrutador.HandleFunc("/ipsfa/api/web/militar/{id}", per.Consultar).Methods("GET")
 	//Consultar Netos de Pensionados
+	Enrutador.HandleFunc("/ipsfa/api/web/nomina/conceptos/listar/", concepto.ListarPHP).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/consultarneto/{id}", wPensionado.ConsultarNeto).Methods("GET")
 	//Consultar Netos de Pensionados Sobrevivientes
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/consultarsobreviviente/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")

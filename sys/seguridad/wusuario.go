@@ -8,12 +8,11 @@ import (
 )
 
 //WFamiliar Control de familiares para asignaciones
-type WFamiliar struct {
-	Cedula          string
-	Nombre          string
-	Apellido        string
-	FechaNacimiento string
-	Parentesco      string
+type WCausante struct {
+	Cedula     string `json:"cedula" bson:"cedula"`
+	Nombre     string `json:"nombre" bson:"nombre"`
+	Apellido   string `json:"apellido" bson:"apellido"`
+	Componente string `json:"componente" bson:"componente"`
 }
 
 //WUsuario del Sistema
@@ -22,7 +21,7 @@ type WUsuario struct {
 	Cedula        string       `json:"cedula" bson:"cedula"`
 	Nombre        string       `json:"nombre" bson:"nombre"`
 	Apellido      string       `json:"apellido" bson:"apellido"`
-	Familiar      []WFamiliar  `json:"familiar,omitempty" bson:"familiar"`
+	Causante      []WCausante  `json:"causante,omitempty" bson:"causante"`
 	Login         string       `json:"usuario" bson:"login"`
 	Clave         string       `json:"clave,omitempty" bson:"clave"`
 	Correo        string       `json:"correo" bson:"correo"`
@@ -46,6 +45,15 @@ func (u *WUsuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
 	err = c.Find(bson.M{"cedula": login, "clave": clave}).Select(bson.M{"clave": false}).One(&u)
+
+	return
+}
+
+//WVwalidar Validacion de Usuarios
+func (u *WUsuario) Existe(login string) (err error) {
+	u.Nombre = ""
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
+	err = c.Find(bson.M{"cedula": login}).Select(bson.M{"clave": false}).One(&u)
 
 	return
 }

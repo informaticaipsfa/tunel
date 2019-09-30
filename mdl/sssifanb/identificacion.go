@@ -23,7 +23,12 @@ func (IU *IdentificacionUsuario) BuscarTitular(id string, tipo string, clv strin
 	err = c.Find(bson.M{"id": id}).One(&militar)
 
 	if err != nil {
-		fmt.Println("Buscando error ", err.Error())
+		fmt.Println("Buscando error de login de usuarios... ", err.Error())
+		return
+	}
+	fmt.Println(comp, " ", militar.Componente.Abreviatura)
+	if comp != militar.Componente.Abreviatura {
+		return
 	}
 	wU.Cedula = militar.ID
 	wU.Nombre = militar.Persona.DatoBasico.NombrePrimero
@@ -32,6 +37,8 @@ func (IU *IdentificacionUsuario) BuscarTitular(id string, tipo string, clv strin
 	wU.Clave = util.GenerarHash256([]byte(clv))
 	wU.Componente = comp
 	wU.Grado = militar.Grado.Abreviatura
+	wU.Situacion = militar.Situacion
+
 	wU.FechaCreacion = time.Now()
 	wU.Correo = corr
 
@@ -58,24 +65,41 @@ func (IU *IdentificacionUsuario) BuscarTitular(id string, tipo string, clv strin
 }
 
 //BuscarSobreviviente e identificar un cédula, Como lo es un titulas o sobreviviente
-func (IU *IdentificacionUsuario) BuscarSobreviviente(id string, tipo string) (err error, wU seguridad.WUsuario) {
+func (IU *IdentificacionUsuario) BuscarSobreviviente(id string, tipo string, corr string, clv string) (err error, wU seguridad.WUsuario) {
 
-	s := `SELECT titular, nombres, apellidos FROM familiar WHERE cedula = ` + id
+	s := `SELECT fm.cedula, fm.nombres, fm.apellidos, fm.titular,
+					bf.nombres, bf.apellidos, cp.descripcion
+				FROM familiar fm
+				JOIN beneficiario bf ON bf.cedula=fm.titular
+				JOIN componente cp ON bf.componente_id=cp.id
+				WHERE fm.cedula='` + id + `'
 
+				`
 	sq, err := sys.PostgreSQLPENSION.Query(s)
 	util.Error(err)
 
 	for sq.Next() {
-		var tit, nomb, apel string
-		var familiar seguridad.WFamiliar
-		sq.Scan(&tit, &nomb, &apel)
-		familiar.Cedula = tit
-		familiar.Nombre = nomb
-		familiar.Apellido = apel
-		wU.Familiar = append(wU.Familiar, familiar)
+		var cedu, tit, nomb, apel, nombbf, apelbf, descri string
+		var causante seguridad.WCausante
+		sq.Scan(&cedu, &nomb, &apel, &tit, &nombbf, &apelbf, &descri)
+		causante.Cedula = tit
+		causante.Nombre = nombbf
+		causante.Apellido = apelbf
+		causante.Componente = descri
+
+		wU.Cedula = cedu
+		wU.Nombre = nomb
+		wU.Apellido = apel
+		wU.Sobreviviente = true
+		wU.Clave = util.GenerarHash256([]byte(clv))
+		wU.Correo = corr
+		wU.Componente = descri
+		wU.Causante = append(wU.Causante, causante)
 	}
-
-	fmt.Println("Controlando los datos...")
-
+	cu := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
+	err = cu.Insert(wU)
+	if err != nil {
+		fmt.Println("insertando error ", err.Error())
+	}
 	return
 }
