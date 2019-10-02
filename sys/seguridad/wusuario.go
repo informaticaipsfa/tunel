@@ -28,8 +28,10 @@ type WUsuario struct {
 	Correo        string       `json:"correo" bson:"correo"`
 	FechaCreacion time.Time    `json:"fechacreacion,omitempty" bson:"fechacreacion"`
 	Estatus       int          `json:"estatus" bson:"estatus"`
-	Situacion     string       `json:"situacion,omitempty" bson:"situacion"` //PM - PC
+	Situacion     string       `json:"situacion,omitempty" bson:"situacion"`   //PM - PC
+	Parentesco    string       `json:"parentesco,omitempty" bson:"parentesco"` //TIT EA HJ
 	Componente    string       `json:"componente" bson:"componente"`
+	Sexo          string       `json:"sexo" bson:"sexo"`
 	Grado         string       `json:"grado" bson:"grado"`
 	Rol           Rol          `json:"Roles,omitempty" bson:"roles"`
 	Token         string       `json:"token,omitempty" bson:"token"`

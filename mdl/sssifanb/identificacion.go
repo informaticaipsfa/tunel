@@ -38,6 +38,7 @@ func (IU *IdentificacionUsuario) BuscarTitular(id string, tipo string, clv strin
 	wU.Componente = comp
 	wU.Grado = militar.Grado.Abreviatura
 	wU.Situacion = militar.Situacion
+	wU.Parentesco = "TIT"
 
 	wU.FechaCreacion = time.Now()
 	wU.Correo = corr
@@ -68,7 +69,7 @@ func (IU *IdentificacionUsuario) BuscarTitular(id string, tipo string, clv strin
 func (IU *IdentificacionUsuario) BuscarSobreviviente(id string, tipo string, corr string, clv string) (err error, wU seguridad.WUsuario) {
 
 	s := `SELECT fm.cedula, fm.nombres, fm.apellidos, fm.titular,
-					bf.nombres, bf.apellidos, cp.descripcion, grd.nombre
+					bf.nombres, bf.apellidos, cp.descripcion, grd.nombre, fm.parentesco, fm.sexo
 				FROM familiar fm
 				JOIN beneficiario bf ON bf.cedula=fm.titular
 				JOIN componente cp ON bf.componente_id=cp.id
@@ -80,9 +81,9 @@ func (IU *IdentificacionUsuario) BuscarSobreviviente(id string, tipo string, cor
 	util.Error(err)
 
 	for sq.Next() {
-		var cedu, tit, nomb, apel, nombbf, apelbf, descri, grado string
+		var cedu, tit, nomb, apel, nombbf, apelbf, descri, grado, parent, sexo string
 		var causante seguridad.WCausante
-		sq.Scan(&cedu, &nomb, &apel, &tit, &nombbf, &apelbf, &descri, &grado)
+		sq.Scan(&cedu, &nomb, &apel, &tit, &nombbf, &apelbf, &descri, &grado, &parent, &sexo)
 		causante.Cedula = tit
 		causante.Nombre = nombbf
 		causante.Apellido = apelbf
@@ -93,6 +94,8 @@ func (IU *IdentificacionUsuario) BuscarSobreviviente(id string, tipo string, cor
 		wU.Nombre = nomb
 		wU.Apellido = apel
 		wU.Sobreviviente = true
+		wU.Parentesco = parent
+		wU.Sexo = sexo
 		wU.Clave = util.GenerarHash256([]byte(clv))
 		wU.Correo = corr
 		wU.Componente = descri

@@ -37,12 +37,16 @@ func (Wu *WebUsuario) Identificacion(w http.ResponseWriter, r *http.Request) {
 	e := json.NewDecoder(r.Body).Decode(&Usr)
 	util.Error(e)
 	existeUsr.Existe(Usr.Cedula)
-	fmt.Println(existeUsr)
+	fmt.Println(existeUsr.Cedula)
 	if existeUsr.Cedula != "" {
 		M.Msj = "El usuario ya se encuentra registrado"
 		M.Tipo = 0
 		j, _ = json.Marshal(M)
+
 		estatus = http.StatusForbidden
+		w.WriteHeader(estatus)
+		w.Write(j)
+		return
 	}
 	// ok := usr.CambiarClave(datos.Login, datos.Clave, datos.Nueva)
 	switch Usr.Tipo {
