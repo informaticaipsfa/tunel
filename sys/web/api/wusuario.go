@@ -54,14 +54,16 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+//Clave de tipos
 type Clave struct {
 	Login   string `json:"login"`
 	Clave   string `json:"clave"`
 	Nueva   string `json:"nueva"`
 	Repetir string `json:"repetir"`
+	Correo  string `json:"correo"`
 }
 
-//Consultar ID
+//CambiarClave ID
 func (u *WUsuario) CambiarClave(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M util.Mensajes
@@ -177,6 +179,7 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 	})
 }
 
+//Autorizado Formando archivos
 func (u *WUsuario) Autorizado(w http.ResponseWriter, r *http.Request) {
 	var mensaje util.Mensajes
 	Cabecera(w, r)
@@ -187,7 +190,7 @@ func (u *WUsuario) Autorizado(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Login conexion para solicitud de token
+//Consultar conexion para solicitud de token
 func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.Usuario
 	var traza fanb.Traza
@@ -221,7 +224,7 @@ func (u *WUsuario) Listar(w http.ResponseWriter, r *http.Request) {
 //Opciones Militar
 func (u *WUsuario) Opciones(w http.ResponseWriter, r *http.Request) {
 	CabeceraW(w, r)
-	fmt.Println("OPTIONS USUARIO...")
+	//fmt.Println("OPTIONS USUARIO...")
 	//fmt.Fprintf(w, "Saludos")
 
 }
@@ -254,4 +257,24 @@ func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+}
+
+//CambiarClaveW Control de Cambio de Clave
+func (u *WUsuario) CambiarClaveW(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M util.Mensajes
+	var usr seguridad.WUsuario
+	var datos Clave
+
+	e := json.NewDecoder(r.Body).Decode(&datos)
+	util.Error(e)
+	ok := usr.CambiarClave(datos.Login, datos.Clave, datos.Nueva)
+	M.Tipo = 1
+	if ok != nil {
+		M.Msj = ok.Error()
+		M.Tipo = 0
+	}
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 }

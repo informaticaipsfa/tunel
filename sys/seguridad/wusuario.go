@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/util"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -58,5 +59,16 @@ func (u *WUsuario) Existe(login string) (err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
 	err = c.Find(bson.M{"cedula": login}).Select(bson.M{"clave": false}).One(&u)
 
+	return
+}
+
+//CambiarClave Usuarios
+func (u *WUsuario) CambiarClave(login string, clave string, nueva string) (err error) {
+	u.Nombre = ""
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
+	actualizar := make(map[string]interface{})
+	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
+	antigua := util.GenerarHash256([]byte(clave))
+	err = c.Update(bson.M{"login": login, "clave": antigua}, bson.M{"$set": actualizar})
 	return
 }
