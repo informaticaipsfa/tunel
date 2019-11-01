@@ -645,7 +645,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSo
 		JOIN familiar fami ON pg.cedu=fami.titular AND pg.cfam=fami.cedula
 		WHERE pg.cedu='` + cedula + `' AND pg.cfam='` + familiar + `' AND sn.llav != '' ORDER BY fech DESC`
 	}
-	fmt.Println(s)
+	//fmt.Println(s)
 	sq, err := sys.PostgreSQLPENSION.Query(s)
 	util.Error(err)
 
