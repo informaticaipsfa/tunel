@@ -635,7 +635,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSo
 		FROM space.pagos pg
 		JOIN space.nomina AS sn ON pg.nomi=sn.oid
 		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
-		WHERE pg.esta = 5 AND pg.cedu='` + cedula + `' ORDER BY fech DESC`
+		WHERE pg.cedu='` + cedula + `'  AND sn.llav != '' ORDER BY fech DESC`
 	} else {
 		s += `
 		 pg.cfam, fami.porcentaje
@@ -643,7 +643,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSo
 		JOIN space.nomina AS sn ON pg.nomi=sn.oid
 		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
 		JOIN familiar fami ON pg.cedu=fami.titular AND pg.cfam=fami.cedula
-		WHERE pg.esta = 5 AND pg.cedu='` + cedula + `' AND pg.cfam='` + familiar + `' ORDER BY fech DESC`
+		WHERE pg.cedu='` + cedula + `' AND pg.cfam='` + familiar + `' AND sn.llav != '' ORDER BY fech DESC`
 	}
 	//fmt.Println(s)
 	sq, err := sys.PostgreSQLPENSION.Query(s)
