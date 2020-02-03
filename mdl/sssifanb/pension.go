@@ -931,7 +931,7 @@ func (P *Pension) ActualizarSobrevivienteNEW(cedula string) {
 	}
 }
 
-//ActualizarSobrevivientesPension ActualizarDatos
+//ActualizarSobrevivientesPension Actualizar Datos
 func (p *Pension) ActualizarSobrevivientesPension() {
 
 	sq, err := sys.PostgreSQLPENSION.Query("SELECT titular, cedula, estatus, porcentaje FROM familiar WHERE estatus=201 ORDER BY titular")
@@ -1047,4 +1047,49 @@ func (p *Pension) ActualizarsqlPensionesGracia() (err error) {
 	}
 	fmt.Println("Insertados: ", i, " Actualizados: ", j)
 	return
+}
+
+func (p *Pension) ConsultarPensionadosReconocido() {
+	//Listado de Militares Pensionados
+	var lst []Militar
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+	seleccion := bson.M{
+		"id":                 true,
+		"persona.datobasico": true,
+		"areconocido":        true,
+		"mreconocido":        true,
+		"dreconocido":        true,
+	}
+	//26419599
+	//buscar := bson.M{"situacion": "RCP"}
+	buscar := bson.M{}
+	//buscar := bson.M{"situacion": "I"}
+	//buscar := bson.M{"id": "11467216"}
+	err := c.Find(buscar).Select(seleccion).All(&lst)
+	//err := c.Find(buscar).Select(seleccion).Limit(3).All(&lstMilitares)
+	if err != nil {
+		fmt.Println("Error en la consulta de Pensionados Militares")
+		//return
+	}
+	var i int
+
+	for _, v := range lst {
+		//fmt.Println("Control: ", v.AnoReconocido)
+		if v.AnoReconocido > 0 || v.MesReconocido > 0 {
+			query := `UPDATE beneficiario SET
+				anio_reconocido=` + strconv.Itoa(v.AnoReconocido) + `,
+				mes_reconocido=` + strconv.Itoa(v.MesReconocido) + `,
+				dia_reconocido=` + strconv.Itoa(v.DiaReconocido) + `
+				WHERE cedula='` + v.ID + `';`
+			//fmt.Println(query)
+			_, err := sys.PostgreSQLPENSION.Exec(query)
+			if err != nil {
+				fmt.Println("Error actualizando pensionado: ", err.Error())
+			}
+			i++
+			fmt.Println(" Cant: ", i, " Impimiendo ", v.ID)
+		}
+
+	}
+
 }

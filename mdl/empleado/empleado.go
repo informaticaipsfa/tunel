@@ -75,7 +75,7 @@ func (e *Empleado) Insertar() bool {
 		var ced, nom, ape, fch, edo, sex, rif, fing, ano, car, ger, ban, cue, tip string
 		sq.Scan(&ced, &nom, &ape, &fch, &edo, &sex, &rif, &fing, &ano,
 			&car, &ger, &ban, &cue, &tip)
-		fmt.Println(ced, nom, ape, fch, edo, sex, rif, fing, ano, car, ger, ban, cue, tip)
+		//fmt.Println(ced, nom, ape, fch, edo, sex, rif, fing, ano, car, ger, ban, cue, tip)
 		Empl.Persona.DatoBasico.Cedula = ced
 		DF.Cuenta = cue
 		DF.Institucion = ban
