@@ -23,7 +23,6 @@ import (
 	"time"
 
 	"github.com/gorilla/context"
-	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/sys/web"
 )
@@ -50,9 +49,9 @@ func main() {
 	// militar.MGOActualizarSobrevivientes() //Evalua y carga los porcentajes de los familiares
 	// militar.MGOActualizarSobrevivientesFideicomiso()
 	// militar.MGOActualizarFEVIDA()
-	var pension sssifanb.Pension
-
-	pension.ConsultarPensionadosReconocido()
+	// var pension sssifanb.Pension
+	//
+	// pension.ConsultarPensionadosReconocido()
 	// var pension sssifanb.Pension
 	// pension.Exportar("", 0)
 	// pension.ExportarFamiliares() //Pagar a los familiares
