@@ -46,6 +46,7 @@ import (
 
 //MedidaJudicial militares
 type MedidaJudicial struct {
+	OIDPostgresql          string    `json:"id,omitempty" bson:"id"`
 	ID                     string    `json:"id,omitempty" bson:"id"`
 	Numero                 string    `json:"numero,omitempty" bson:"numero"`
 	Expediente             string    `json:"expediente,omitempty" bson:"expediente"`
@@ -77,8 +78,8 @@ type MedidaJudicial struct {
 func (MJ *MedidaJudicial) Agregar() (jSon []byte, err error) {
 	var msj Mensaje
 
-	InsertarPension(MJ)
-
+	var oidpostgresql = InsertarPension(MJ)
+	MJ.OIDPostgresql = oidpostgresql
 	medida := make(map[string]interface{})
 
 	medida["pension.medidajudicial"] = MJ
@@ -100,7 +101,7 @@ func (MJ *MedidaJudicial) Agregar() (jSon []byte, err error) {
 
 //InsertarPension Cargar medidas
 func InsertarPension(CMJ *MedidaJudicial) string {
-	var id string
+	var oid string
 	query := `
 	INSERT INTO space.medidajudicial (
 		nume, expe, tipo, obse,
@@ -117,11 +118,15 @@ func InsertarPension(CMJ *MedidaJudicial) string {
 						'` + CMJ.CedulaAutorizado + `','` + CMJ.Autorizado + `','` + CMJ.Fecha.String()[:10] + `','` + CMJ.FechaFin.String()[:10] + `','` + CMJ.Usuario + `',1,
 						'` + CMJ.ID + `') RETURNING oid`
 
-	_, err := sys.PostgreSQLPENSION.Exec(query)
+	sq, err := sys.PostgreSQLPENSION.Query(query)
 	if err != nil {
 		fmt.Println("Error en el query: ", err.Error())
 	}
-	return id
+	for sq.Next() {
+		sq.Scan(&oid)
+	}
+
+	return oid
 }
 
 //Actualizar Sistema

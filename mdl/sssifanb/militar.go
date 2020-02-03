@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/cis"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/credito"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys"
 	"github.com/informaticaipsfa/tunel/util"
@@ -61,6 +62,7 @@ type Militar struct {
 	EstatusCarnet                int                 `json:"estatuscarnet" bson:"estatuscarnet"`
 	PaseARetiro                  bool                `json:"pasearetiro" bson:"pasearetiro"`
 	CIS                          cis.CuidadoIntegral `json:"CIS" bson:"cis"`
+	Credito                      credito.Credito     `json:"Credito" bson:"credito"`
 }
 
 //Anomalia Irregularidades
@@ -192,6 +194,7 @@ func (m *Militar) AplicarReglas() {
 	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
 }
 
+//NumeroHijos Cantidad de hijos con situacion de beneficiario
 func (m *Militar) NumeroHijos() int {
 	cantidad := 0
 	for _, v := range m.Familiar {
