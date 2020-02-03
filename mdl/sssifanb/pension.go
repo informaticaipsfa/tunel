@@ -485,7 +485,8 @@ func (P *Pension) InsertarPensionado(v Militar, usuario string, ip string) {
 	consultarComponentes()
 	insert := `INSERT INTO beneficiario (cedula,nombres,apellidos, grado_id, componente_id, fecha_ingreso, f_ult_ascenso, f_retiro,
 		f_retiro_efectiva, st_no_ascenso, st_profesion, monto_especial, status_id, n_hijos, porcentaje,
-		numero_cuenta, banco, tipo, situacion, modificaciones, usr_creacion, f_creacion)	VALUES `
+		numero_cuenta, banco, tipo, situacion, modificaciones, usr_creacion, f_creacion,
+		anio_reconocido,mes_reconocido,dia_reconocido)	VALUES `
 	grado, componente := obtenerGrado(v.Componente.Abreviatura, v.Grado.Abreviatura)
 	if grado == "0" {
 		grado, componente = obtenerGrado(v.Pension.ComponenteCodigo, v.Pension.GradoCodigo)
@@ -538,7 +539,10 @@ func (P *Pension) InsertarPensionado(v Militar, usuario string, ip string) {
 		'` + v.Situacion + `',
 		Now(),
 		'` + usuario + `',
-		Now())`
+		Now(),
+		` + strconv.Itoa(v.AnoReconocido) + `,
+		` + strconv.Itoa(v.MesReconocido) + `,
+		` + strconv.Itoa(v.DiaReconocido) + `	)`
 
 	query := insert + cuerpo
 	_, err := sys.PostgreSQLPENSION.Exec(query)
@@ -594,7 +598,10 @@ func (P *Pension) ActualizarPensionado(v Militar, usuario string) {
 		tipo='` + tipo + `',
 		modificaciones=Now(),
 		usr_creacion = '` + usuario + `',
-		situacion='` + v.Situacion + `'
+		situacion='` + v.Situacion + `',
+		anio_reconocido =` + strconv.Itoa(v.AnoReconocido) + `,
+		mes_reconocido =` + strconv.Itoa(v.MesReconocido) + `,
+		dia_reconocido =` + strconv.Itoa(v.DiaReconocido) + `
 		WHERE cedula='` + v.ID + `';`
 
 	_, err := sys.PostgreSQLPENSION.Exec(query)

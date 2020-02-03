@@ -157,27 +157,27 @@ func (m *Militar) AplicarReglas() {
 	}
 	a, mes, d := util.CalcularTiempoServicio(fechaActual, fecha)
 
-	acr := a + m.Fideicomiso.AnoReconocido
+	acr := a + m.AnoReconocido
 	mcr := int(mes)
 	dcr := d
 	// fmt.Println("A ", a, "M ", mes, "D ", d)
 
-	if m.Fideicomiso.DiaReconocido > 29 {
-		dcr += m.Fideicomiso.DiaReconocido - 30
+	if m.DiaReconocido > 29 {
+		dcr += m.DiaReconocido - 30
 		mcr++
 	} else {
-		dcr += m.Fideicomiso.DiaReconocido
+		dcr += m.DiaReconocido
 	}
 
-	if m.Fideicomiso.MesReconocido > 11 {
-		mcr += m.Fideicomiso.MesReconocido - 12
+	if m.MesReconocido > 11 {
+		mcr += m.MesReconocido - 12
 		acr++
 	} else {
-		mcr += m.Fideicomiso.MesReconocido
+		mcr += m.MesReconocido
 	}
 
 	// fmt.Println("A ", acr, "M ", mcr, "D ", dcr)
-	if m.Fideicomiso.AnoReconocido > 0 || m.Fideicomiso.MesReconocido > 0 || m.Fideicomiso.DiaReconocido > 0 {
+	if m.AnoReconocido > 0 || m.MesReconocido > 0 || m.DiaReconocido > 0 {
 		if dcr > 29 {
 			dcr = dcr - 30
 			mcr++
@@ -343,6 +343,10 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	mOriginal.CodigoComponente = m.CodigoComponente
 	mOriginal.NumeroHistoria = m.NumeroHistoria
 	mOriginal.PaseARetiro = m.PaseARetiro
+	mOriginal.AnoReconocido = m.AnoReconocido
+	mOriginal.MesReconocido = m.MesReconocido
+	mOriginal.DiaReconocido = m.DiaReconocido
+
 	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "RSP" || mOriginal.Situacion == "I" || mOriginal.Situacion == "PG" {
 		mOriginal.FechaRetiro = m.FechaResuelto
 		mOriginal.Pension.DatoFinanciero.Tipo = m.Persona.DatoFinanciero[0].Tipo
