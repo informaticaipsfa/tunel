@@ -78,6 +78,6 @@ func main() {
 		ReadTimeout:  280 * time.Second,
 	}
 	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
-	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/cert.pem", "sys/seguridad/https/key.pem"))
+	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/app.ipsfa.gob.ve.crt", "sys/seguridad/https/sucre.key"))
 
 }
