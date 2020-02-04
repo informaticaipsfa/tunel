@@ -561,6 +561,7 @@ type WRetroactivo struct {
 	FechaInicio        string `json:"inicio"`
 	FechaFin           string `json:"fin"`
 	Usuario            string `json:"usuario"`
+	Situacion          string `json:"situacion"`
 }
 
 //CalcularRetroactivo Militar
