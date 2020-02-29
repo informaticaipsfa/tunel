@@ -46,7 +46,7 @@ import (
 
 //MedidaJudicial militares
 type MedidaJudicial struct {
-	OIDPostgresql          string    `json:"oid,omitempty" bson:"oid"`
+	OIDPostgresql          string    `json:"id,omitempty" bson:"id"`
 	ID                     string    `json:"id,omitempty" bson:"id"`
 	Numero                 string    `json:"numero,omitempty" bson:"numero"`
 	Expediente             string    `json:"expediente,omitempty" bson:"expediente"`

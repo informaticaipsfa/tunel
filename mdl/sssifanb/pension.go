@@ -796,7 +796,7 @@ func (P *Pension) ActualizarSituacion(wa WActualizarPension) (err error) {
 	if err != nil {
 		fmt.Println("Incluyendo parentesco eRR Cedula: " + wa.Cedula + " -> " + err.Error())
 	}
-	query := `UPDATE familiar SET situacion=` + wa.Situacion + ` WHERE cedula='` + wa.Familiar + `'`
+	query := `UPDATE familiar SET situacion=` + wa.Situacion + `, estatus=` + wa.Situacion + ` WHERE cedula='` + wa.Familiar + `'`
 	//fmt.Println(query)
 	_, err = sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
