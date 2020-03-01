@@ -357,5 +357,7 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/calculo/{id}", wPensionado.Calculo).Methods("GET")
 	//Fideicomiso
 	Enrutador.HandleFunc("/ipsfa/api/web/pace/consultarbeneficiario/{id}", per.ConsultarBeneficiario).Methods("GET")
+	//Consultar ARC
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/calcularretroactivo", wUsuario.ValidarToken(wPensionado.CalcularRetroactivo)).Methods("POST")
 
 }
