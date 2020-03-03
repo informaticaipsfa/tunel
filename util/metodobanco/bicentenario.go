@@ -37,6 +37,7 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
 
 //Generar Archivo
 func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
+	fmt.Println(b.CabeceraSQL("='0175'"))
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0175'"))
 	util.Error(err)
 
@@ -68,8 +69,8 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		strnumero := util.EliminarUnderScore(util.ValidarNullString(numero))
 		bancos := util.CompletarCeros(strnumero, 0, 20)[:20]
 
-		cedu := util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
-		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
+		cedu := ""
+		if util.ValidarNullString(ceddante) != "" {
 			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
 		} else {
 			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
