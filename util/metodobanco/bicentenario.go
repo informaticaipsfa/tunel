@@ -70,7 +70,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		bancos := util.CompletarCeros(strnumero, 0, 20)[:20]
 
 		cedu := ""
-		if util.ValidarNullString(ceddante) != "" {
+		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ceddante) != "0"  {
 			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
 		} else {
 			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
