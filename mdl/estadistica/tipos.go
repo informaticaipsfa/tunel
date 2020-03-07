@@ -41,6 +41,7 @@ type Reduccion struct {
 	Categoria              string           `json:"categoria,omitempty" bson:"categoria"` // efectivo,asimilado,invalidez, reserva activa, tropa
 	Situacion              string           `json:"situacion,omitempty" bson:"situacion"` //activo,fallecido con pension, fsp, retirado con pension, rsp
 	Clase                  string           `json:"clase,omitempty" bson:"clase"`         //alumno, cadete, oficial, oficial tecnico, oficial tropa, sub.oficial
+	CausalRetiro           string           `json:"causalretiro,omitempty" bson:"causalretiro"`
 	FechaIngresoComponente time.Time        `json:"fingreso,omitempty" bson:"fingreso"`
 	FechaAscenso           time.Time        `json:"fascenso,omitempty" bson:"fascenso"`
 	FechaRetiro            time.Time        `json:"fretiro,omitempty" bson:"fretiro"`
@@ -181,6 +182,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		"persona.direccion":           true,
 		"persona.telefono":            true,
 		"persona.correo":              true,
+		"Pension.causal":              true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
 		"familiar.esmilitar":          true,
@@ -227,6 +229,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		prs.Componente = mil.Componente.Abreviatura
 		prs.FechaCreacion = mil.TIM.FechaCreacion
 		prs.FechaVencimiento = mil.TIM.FechaVencimiento
+		prs.CausalRetiro = CausalRetiro(mil.Pension.Causal)
 		err := creduccion.Insert(prs)
 		if err != nil {
 			fmt.Println(err.Error())
@@ -323,7 +326,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			//"estatura;" +
 			"grupo sanguineo;sena particular;correo;telefono;ciudad;estado;municipio;direccion;" +
 			"categoria;situacion;clase;fecha ingreso;fecha ascenso;fecha resuelto;numero resuelto;" +
-			"fecha retiro;grado;componente;fecha creacion;fecha vencimiento\n"
+			"fecha retiro;grado;componente;fecha creacion;fecha vencimiento;causal\n"
 		_, e := f.WriteString(cabecera)
 		if e != nil {
 			fmt.Println("Error en la linea...")
@@ -337,19 +340,6 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 	}
 	for _, rd := range reduccion {
 		if tipo == "F" {
-			// a, _, _ := rd.FechaNacimiento.Date()
-			// au, _, _ := time.Now().Date()
-			// edad := au - a
-			// if edad > 15 && edad < 27 {
-
-			// 	i++
-			// 	linea := rd.Cedula + ";" + rd.Nombre + ";" + strconv.Itoa(i) + "\n"
-			// 	_, e := f.WriteString(linea)
-			// 	if e != nil {
-			// 		fmt.Println("Error en la linea...")
-			// 	}
-
-			// } else if rd.Parentesco != "HJ" {
 			convertir := rd.FechaNacimiento.Format("2006-01-02")
 			fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
 			i++
@@ -442,6 +432,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 				";" + rd.Componente +
 				";" + fechaCreacion +
 				";" + fechaVencimiento +
+				";" + rd.CausalRetiro +
 				"\n"
 			_, e := f.WriteString(linea)
 			if e != nil {
@@ -459,5 +450,142 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 	if err != nil {
 		panic(err)
 	}
+
+}
+
+//CausalRetiro Permite ver el motivo por el que paso a retiro un pensionado
+func CausalRetiro(cod string) string {
+
+	msj := ""
+	switch cod {
+	case "AIA":
+		msj = "Aspirante Invalida antes LOSSFA"
+		break
+	case "APM":
+		msj = "Ascenso Post-Mortem"
+		break
+	case "CAMBIOG":
+		msj = "Cambio de Grado"
+	case "CDD":
+		msj = "Condena por Delitos de Droga"
+		break
+	case "CPD":
+		msj = "Condena Judicial por Deserción"
+		break
+	case "CPE":
+		msj = "Condena Judicial por Espionaje"
+		break
+	case "CTP":
+		msj = "Condena por Traición a la Patria"
+		break
+	case "DSP":
+		msj = "Disponibilidad sin Pensión"
+		break
+	case "EMP":
+		msj = "Excepción Ministerial o Presidencial"
+		break
+	case "FAS":
+		msj = "Fallecimiento en Acto de Servicio"
+		break
+	case "FCP":
+		msj = "Falta Idoneidad o Capacidad Profesional"
+		break
+	case "FDE":
+		msj = "Falta de Empleo (Invalidez Tropa)"
+		break
+	case "FFS":
+		msj = "Fallecimiento Afiliado Fuera de Servicio"
+		break
+	case "GEM":
+		msj = "Graduación Escuela Militar"
+		break
+	case "IAS100":
+		msj = "Invalidez Total y Perm. Acto Servicio 100%(LOSSFA28DIC89)"
+		break
+	case "IPA":
+		msj = "Invalidez Parc. y Perm. Actos Servicio 80%(LOSSFA28DIC89)"
+		break
+	case "IPF60":
+		msj = "Invalidez Parc. y Perm. Fuera de Servicio 60 %(LOFAN28DIC89)"
+		break
+	case "IPT60":
+		msj = "Invalidez Parcial y Permanente (Tropa Alistada 60%)"
+		break
+	case "IPT80":
+		msj = "Invalidez Total y Permanente (Tropa Alistada 80%)"
+		break
+	case "ITA80":
+		msj = "Invalidez Parc. y Temp. En Acto Servicio 80 % (LOFAN 21NOV58)"
+		break
+	case "ITF60":
+		msj = "Invalidez Total Fuera de Servicio 60 % (LOFAN 21NOV58)"
+		break
+	case "ITP100":
+		msj = "Invalidez Total y Permanente 100 % (LSSFAN 11AGO93)"
+		break
+	case "ITP75":
+		msj = "Invalidez Parcial y Permanente 75 % (LSSFAN 11AGO93)"
+		break
+	case "ITS80":
+		msj = "Invalidez Total y Perm. Fuera Servicio 80%(LOSSFA28DIC89)"
+		break
+	case "ITT100":
+		msj = "Invalidez Total y Perm. Acto Servicio 100%(LOFAN21NOV58)"
+		break
+	case "ITT80":
+		msj = "Invalidez Total y Temp. Fuera de Servicio 80%(LOFAN21NOV58)"
+		break
+	case "LDR":
+		msj = "Límite Disponibilidad Reincorporación"
+		break
+	case "LEG":
+		msj = "Límite de Edad"
+		break
+	case "LSM":
+		msj = "Licencia Superior 6 meses"
+		break
+	case "LTD":
+		msj = "Límite Tiempo en Disponibilidad"
+		break
+	case "LTG":
+		msj = "Límite Tiempo den Grado"
+		break
+	case "MDA":
+		msj = "Medida Disciplinaria"
+		break
+	case "PSA":
+		msj = "Propia Solicitud del Afiliado"
+		break
+	case "RCR":
+		msj = "Rescisión Contrato de Renganche"
+		break
+	case "SCJ":
+		msj = "Sentencia Judicial Condenatoria"
+		break
+	case "SCS":
+		msj = "Separación Cargo por Sentencia"
+		break
+	case "SEP":
+		msj = "Separación Funciones Propia Solicitud (Perm. Mil. Asim.)"
+		break
+	case "SFD":
+		msj = "Separación Funciones Medida Disciplinaria (Per. Mil. Asim.)"
+		break
+	case "SFI":
+		msj = "Separación Funciones Idoneidad Prof. (Per. Mil. Asim.)"
+		break
+	case "TIA":
+		msj = "Tropa Profesional Invalida antes LOSSFA"
+		break
+	case "TSC":
+		msj = "Tiempo Servicio Cumplido"
+		break
+	case "X":
+		msj = "Conversion"
+		break
+	default:
+		msj = "N/A"
+	}
+	return msj
 
 }
