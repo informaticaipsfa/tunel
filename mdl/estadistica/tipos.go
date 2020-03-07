@@ -182,7 +182,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		"persona.direccion":           true,
 		"persona.telefono":            true,
 		"persona.correo":              true,
-		"Pension.causal":              true,
+		"pension.causal":              true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
 		"familiar.esmilitar":          true,
