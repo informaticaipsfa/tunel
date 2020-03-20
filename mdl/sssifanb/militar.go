@@ -130,7 +130,6 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 		msj.Tipo = 0
 		jSon, err = json.Marshal(msj)
 	} else {
-		//fmt.Println(m.Pension.GradoCodigo, " OJO ")
 		if militar.Persona.DatoBasico.Cedula == "" {
 			msj.Tipo = 0
 			jSon, err = json.Marshal(msj)
@@ -160,8 +159,6 @@ func (m *Militar) AplicarReglas() {
 	acr := a + m.AnoReconocido
 	mcr := int(mes)
 	dcr := d
-	// fmt.Println("A ", a, "M ", mes, "D ", d)
-
 	if m.DiaReconocido > 29 {
 		dcr += m.DiaReconocido - 30
 		mcr++
@@ -176,7 +173,6 @@ func (m *Militar) AplicarReglas() {
 		mcr += m.MesReconocido
 	}
 
-	// fmt.Println("A ", acr, "M ", mcr, "D ", dcr)
 	if m.AnoReconocido > 0 || m.MesReconocido > 0 || m.DiaReconocido > 0 {
 		if dcr > 29 {
 			dcr = dcr - 30
@@ -257,7 +253,6 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	fechavece, _ := time.Parse("2006-01-02", fvenc)
 
 	serial := m.TIM.Usuario + m.TIM.GenerarSerial()
-	// fmt.Println("Geenerando Carnet Militar: ", serial)
 	TIM.Serial = serial
 	TIM.FechaCreacion = fecha
 	TIM.FechaVencimiento = fechavece
@@ -303,7 +298,7 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Update(bson.M{"id": oid}, bson.M{"$set": familiar})
-	fmt.Println("Actualizando", familiar)
+	fmt.Println("Actualizando familiar: militar.go ( ActualizarMGO )")
 	if err != nil {
 		fmt.Println("Error: " + oid + " -> " + err.Error())
 		return
@@ -322,7 +317,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 
 	m.Grado.Nombre = comp.ObtenerGradoID(m.Componente.Abreviatura, m.Grado.Abreviatura)
 
-	fmt.Println("Analizando los datos")
+	fmt.Println("Analizando los datos militar.go (MGOActualizar) ")
 	modificar := false
 	if mOriginal.Grado.Abreviatura != m.Grado.Abreviatura {
 		modificar = true
@@ -596,7 +591,6 @@ func (m *Militar) ActualizarGradoCodigo() {
 		var comp fanb.Componente
 
 		v.Grado.Nombre = comp.ObtenerGradoID(v.Componente.Abreviatura, v.Grado.Abreviatura)
-		//fmt.Println("ID : ", v.ID, " CODIGO: ", v.Grado.Nombre)
 		grado := make(map[string]interface{})
 		c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 		grado["grado.nombre"] = v.Grado.Nombre
@@ -648,10 +642,6 @@ type MYSQLFULL struct {
 
 //BusquedaFullText Busqueda Avanzada
 func (m *Militar) BusquedaFullText(contenido string, tipo int) (jSon []byte, err error) {
-
-	fmt.Println(contenido, tipo)
-	fmt.Println(QueryMysqlText(contenido, tipo))
-
 	rows, err := sys.MysqlFullText.Query(QueryMysqlText(contenido, tipo))
 	if err != nil {
 		panic(err.Error())

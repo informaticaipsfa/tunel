@@ -141,8 +141,6 @@ func ActulizarPensionadosID(id string) {
 }
 
 func consultarPensionados() {
-	//Listado de Militares Pensionados
-	// var lst []Militar{}
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	seleccion := bson.M{
 		"persona.datobasico":      true,

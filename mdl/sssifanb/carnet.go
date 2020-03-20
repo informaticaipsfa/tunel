@@ -53,7 +53,7 @@ func (tim *Carnet) GenerarSerial() string {
 //Salvar Guardar
 func (tim *Carnet) Salvar() (err error) {
 	var militar Militar
-	//fmt.Println("Salvar " + tim.Usuario)
+
 	militar.ConsultarMGO(tim.ID)
 	militar.TIM.ID = tim.ID
 	militar.TIM.IDF = tim.IDF
@@ -144,11 +144,9 @@ func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int) (err error) 
 	if estatus == 3 {
 		timtif := make(map[string]interface{})
 		if TIM.IDF == "" { //Militar
-			// fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " TIT ")
 			timtif["tim"] = TIM
 			err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": timtif})
 		} else { //familiares
-			// fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " FAM")
 			timtif["familiar.$.tif"] = TIM
 			err = coleccion.Update(bson.M{"familiar.persona.datobasico.cedula": TIM.IDF, "id": TIM.ID}, bson.M{"$set": timtif})
 		}
@@ -188,13 +186,13 @@ func (tim *Carnet) ProcesarYActualizar() {
 		i++
 		carnet := make(map[string]interface{})
 		if TIM.IDF == "" { //Militar
-			//fmt.Println(i, " Serial ", TIM.Serial, "ID ", TIM.ID, " TIT ")
+
 			carnet["tim"] = TIM
-			err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
+			coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
 
 		} else { //familiares
 			carnet["familiar.$.tif"] = TIM
-			err = coleccion.Update(bson.M{"familiar.persona.datobasico.cedula": TIM.IDF, "id": TIM.ID}, bson.M{"$set": carnet})
+			coleccion.Update(bson.M{"familiar.persona.datobasico.cedula": TIM.IDF, "id": TIM.ID}, bson.M{"$set": carnet})
 		}
 
 	}

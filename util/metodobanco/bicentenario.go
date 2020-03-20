@@ -29,10 +29,6 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
     space.nomina nom
   JOIN space.` + b.Tabla + ` pg ON nom.oid=pg.nomi
   WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
-
-	//
-	//WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
-	//AND cfam != '' AND cedu!=cfam AND naut =''
 }
 
 //Generar Archivo
@@ -70,7 +66,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		bancos := util.CompletarCeros(strnumero, 0, 20)[:20]
 
 		cedu := ""
-		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ceddante) != "0"  {
+		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ceddante) != "0" {
 			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
 		} else {
 			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
@@ -87,7 +83,6 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\r\n"
 
 	}
-	// if i > 0 {
 	arch++
 	banf, e := os.Create(directorio + "/bicentenario " + strconv.Itoa(arch) + ".txt")
 	util.Error(e)
@@ -100,8 +95,6 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	fmt.Fprintf(banf, cabecera)
 	fmt.Fprintf(banf, linea)
 	banf.Close()
-
-	// }
 
 	return true
 }
