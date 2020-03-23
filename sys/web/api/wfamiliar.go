@@ -9,7 +9,7 @@ import (
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 )
 
-//Familiar Familiares
+//WFamiliar Familiares
 type WFamiliar struct{}
 
 //Consultar Militares
@@ -18,7 +18,7 @@ func (f *WFamiliar) Consultar(w http.ResponseWriter, r *http.Request) {
 	var dataJSON sssifanb.Militar
 	var cedula = mux.Vars(r)
 	dataJSON.Persona.DatoBasico.Cedula = cedula["id"]
-	fmt.Println(dataJSON.Persona.DatoBasico.Cedula)
+	//fmt.Println(dataJSON.Persona.DatoBasico.Cedula)
 	j, e := dataJSON.Consultar()
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
@@ -45,8 +45,8 @@ func (f *WFamiliar) Actualizar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	M.Tipo = 1
-	fmt.Println("Actualizando Test")
-	dataJSON.Actualizar()
+
+	dataJSON.Actualizar(UsuarioConectado.Login)
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
@@ -59,7 +59,7 @@ func (f *WFamiliar) Insertar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var familiar sssifanb.Familiar
 
-	fmt.Println("POST...")
+	fmt.Println("Creando nuevo familiar...")
 	err := json.NewDecoder(r.Body).Decode(&familiar)
 	M.Tipo = 1
 	if err != nil {
@@ -71,7 +71,7 @@ func (f *WFamiliar) Insertar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//e := militar.SalvarMGOI("militares", objeto)
-	e := familiar.IncluirFamiliar()
+	e := familiar.IncluirFamiliar(UsuarioConectado.Login)
 	if e != nil {
 		M.Mensaje = e.Error()
 		M.Tipo = 0
@@ -85,7 +85,7 @@ func (f *WFamiliar) Insertar(w http.ResponseWriter, r *http.Request) {
 //Opciones Militar
 func (f *WFamiliar) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
-	fmt.Println("OPTIONS...")
+	//fmt.Println("OPTIONS...")
 	//fmt.Fprintf(w, "Saludos")
 
 }

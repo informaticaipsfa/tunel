@@ -99,7 +99,7 @@ func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 }
 
 //Actualizar Actualizando en MONGO
-func (f *Familiar) Actualizar() (jSon []byte, err error) {
+func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 
 	id := f.Persona.DatoBasico.Cedula
 	familiar := make(map[string]interface{})
@@ -185,7 +185,7 @@ func (f *Familiar) Actualizar() (jSon []byte, err error) {
 	var mOriginal Militar
 	mOriginal, _ = consultarMongo(f.DocumentoPadre)
 	go f.ActualizarPorReduccion(mOriginal.Grado.Abreviatura, mOriginal.Componente.Abreviatura)
-	go f.ActualizarCuentaBancaria()
+	go f.ActualizarCuentaBancaria(usuario)
 	return
 }
 
@@ -207,7 +207,7 @@ func (f *Familiar) ActualizarPorReduccion(grado string, componente string) {
 }
 
 //ActualizarCuentaBancaria Cuenta Bancaria
-func (f *Familiar) ActualizarCuentaBancaria() {
+func (f *Familiar) ActualizarCuentaBancaria(usuario string) {
 	var cabecera, cuerpo, autorizado, tipo, banco, cuenta, titular string
 	if f.PorcentajePrestaciones > 0 {
 
@@ -224,15 +224,17 @@ func (f *Familiar) ActualizarCuentaBancaria() {
 			tipo='` + tipo + `',
 			banco='` + banco + `',
 			numero='` + cuenta + `',
+			f_ult_modificacion=Now(),
+			usr_modificacion='` + usuario + `',
 			nombre_autorizado='` + titular + `' WHERE cedula='` + f.Persona.DatoBasico.Cedula + `';`
 	}
 
 	query := cabecera + cuerpo
 	_, err := sys.PostgreSQLPENSION.Exec(query)
 	if err != nil {
-		fmt.Println("Error actualizando sobreviviente: ", err.Error())
+		fmt.Println("familiar.go ( ActualizarCuentaBancaria ) : ", err.Error())
 	} else {
-		fmt.Println("Actualizando datos financieros de sobreviviente")
+		fmt.Println("familiar.go ( ActualizarCuentaBancaria ) : OK!")
 	}
 }
 
@@ -325,7 +327,7 @@ func (f *Familiar) AplicarReglasCarnetHermanos() (TIM Carnet) {
 }
 
 //IncluirFamiliar Agregar
-func (f *Familiar) IncluirFamiliar() (err error) {
+func (f *Familiar) IncluirFamiliar(usuario string) (err error) {
 	familiar := make(map[string]interface{})
 	familiar["familiar"] = f
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)

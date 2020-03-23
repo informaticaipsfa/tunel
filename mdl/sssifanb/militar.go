@@ -377,7 +377,6 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	if mOriginal.Situacion == "RCP" || mOriginal.Situacion == "FCP" || mOriginal.Situacion == "RSP" || mOriginal.Situacion == "I" || mOriginal.Situacion == "PG" {
 		var pension Pension
 		mOriginal.FechaRetiro = m.FechaResuelto
-
 		pension.InsertarPensionado(mOriginal, usuario, ip)
 	}
 

@@ -595,7 +595,8 @@ func (P *Pension) ActualizarPensionado(v Militar, usuario string) {
 		banco='` + cuenta + `',
 		tipo='` + tipo + `',
 		modificaciones=Now(),
-		usr_creacion = '` + usuario + `',
+		f_ult_modificacion=Now(),
+		usr_modificacion = '` + usuario + `',
 		situacion='` + v.Situacion + `',
 		anio_reconocido =` + strconv.Itoa(v.AnoReconocido) + `,
 		mes_reconocido =` + strconv.Itoa(v.MesReconocido) + `,
@@ -737,7 +738,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 	count := len(fm)
 	cabecera := `DELETE FROM familiar WHERE titular='` + cedula + `';
 	INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,f_nacimiento,edo_civil,parentesco,f_defuncion,
-		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje)	VALUES `
+		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje, usr_creacion, f_creacion)	VALUES `
 	cuerpo, autorizado, tipo, banco, cuenta, coma := "", "", "", "", "", ""
 	estatuspago := "201"
 	j := 0
@@ -767,7 +768,8 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 				`','` + cuenta +
 				`', 'DERECHO',` + estatuspago +
 				`,'REGISTRADO','` + v.FechaAfiliacion.String()[0:10] +
-				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `)`
+				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `,
+				'', Now() )`
 		}
 	}
 	query := cabecera + cuerpo
@@ -893,7 +895,7 @@ func (P *Pension) ActualizarSobrevivienteNEW(cedula string) {
 	count := len(fm)
 	cabecera := `DELETE FROM familiar WHERE titular='` + cedula + `';
 	INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,f_nacimiento,edo_civil,parentesco,f_defuncion,
-		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje)	VALUES `
+		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje, usr_creacion, f_creacion)	VALUES `
 	cuerpo, autorizado, tipo, banco, cuenta, coma := "", "", "", "", "", ""
 	// estatuspago := "201"
 	j := 0
@@ -925,7 +927,8 @@ func (P *Pension) ActualizarSobrevivienteNEW(cedula string) {
 				`','` + cuenta +
 				`', 'DERECHO',` + estatuspago +
 				`,'REGISTRADO','` + v.FechaAfiliacion.String()[0:10] +
-				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `)`
+				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `,
+				'',Now())`
 		}
 	}
 	query := cabecera + cuerpo
