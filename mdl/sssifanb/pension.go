@@ -767,7 +767,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string, usuario string) {
 				`','` + banco +
 				`','` + cuenta +
 				`', 'DERECHO',` + estatuspago +
-				`,'REGISTRADO','` + v.FechaAfiliacion.String()[0:10] +
+				`,'ACTUALIZADO','` + v.FechaAfiliacion.String()[0:10] +
 				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `,
 				'` + usuario + `', Now() )`
 		}
