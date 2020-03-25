@@ -502,7 +502,37 @@ func (p *Militar) AplicarDerechoACrecer(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	j, e := pension.AplicarDerechoACrecer(wderecho)
+	j, e := pension.AplicarDerechoACrecer(wderecho, UsuarioConectado.Login)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//AplicarDerechoACrecerUpdate Militar
+func (p *Militar) AplicarDerechoACrecerUpdate(w http.ResponseWriter, r *http.Request) {
+	//var traza fanb.Traza
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	var wderecho sssifanb.WDerechoACrecer
+	var pension sssifanb.Pension
+
+	errx := json.NewDecoder(r.Body).Decode(&wderecho)
+	M.Tipo = 1
+	if errx != nil {
+		M.Mensaje = errx.Error()
+		M.Tipo = 0
+		fmt.Println(M.Mensaje)
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+
+	j, e := pension.AplicarDerechoACrecer(wderecho, UsuarioConectado.Login)
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))

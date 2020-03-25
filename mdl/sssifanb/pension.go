@@ -698,7 +698,7 @@ type WDerechoACrecer struct {
 }
 
 //AplicarDerechoACrecer Insertando Militar a Pension
-func (P *Pension) AplicarDerechoACrecer(wdr WDerechoACrecer) (jSon []byte, err error) {
+func (P *Pension) AplicarDerechoACrecer(wdr WDerechoACrecer, usuario string) (jSon []byte, err error) {
 	var M Mensaje
 	M.Mensaje = "Hola"
 	var count = len(wdr.Derecho)
@@ -712,14 +712,14 @@ func (P *Pension) AplicarDerechoACrecer(wdr WDerechoACrecer) (jSon []byte, err e
 			fmt.Println("Incluyendo parentesco eRR Cedula: " + wdr.Cedula + " -> " + err.Error())
 		}
 	}
-	P.ActualizarSobreviviente(wdr.Cedula)
+	P.ActualizarSobreviviente(wdr.Cedula, usuario)
 
 	jSon, err = json.Marshal(M)
 	return
 }
 
 //ActualizarSobreviviente Generar Distribución del porcentaje
-func (P *Pension) ActualizarSobreviviente(cedula string) {
+func (P *Pension) ActualizarSobreviviente(cedula string, usuario string) {
 
 	var mil Militar
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
@@ -738,7 +738,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 	count := len(fm)
 	cabecera := `DELETE FROM familiar WHERE titular='` + cedula + `';
 	INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,f_nacimiento,edo_civil,parentesco,f_defuncion,
-		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje, usr_creacion, f_creacion)	VALUES `
+		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje, usr_modificacion, f_ult_modificacion )	VALUES `
 	cuerpo, autorizado, tipo, banco, cuenta, coma := "", "", "", "", "", ""
 	estatuspago := "201"
 	j := 0
@@ -769,7 +769,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string) {
 				`', 'DERECHO',` + estatuspago +
 				`,'REGISTRADO','` + v.FechaAfiliacion.String()[0:10] +
 				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `,
-				'', Now() )`
+				'` + usuario + `', Now() )`
 		}
 	}
 	query := cabecera + cuerpo
