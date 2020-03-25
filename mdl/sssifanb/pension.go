@@ -738,7 +738,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string, usuario string) {
 	count := len(fm)
 	cabecera := `DELETE FROM familiar WHERE titular='` + cedula + `';
 	INSERT INTO familiar (titular,cedula, nombres, apellidos,sexo,f_nacimiento,edo_civil,parentesco,f_defuncion,
-		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje, usr_modificacion, f_ult_modificacion )	VALUES `
+		autorizado,tipo,banco,numero,situacion,estatus,motivo,f_ingreso, porcentaje, usr_creacion, f_creacion, usr_modificacion, f_ult_modificacion )	VALUES `
 	cuerpo, autorizado, tipo, banco, cuenta, coma := "", "", "", "", "", ""
 	estatuspago := "201"
 	j := 0
@@ -769,6 +769,7 @@ func (P *Pension) ActualizarSobreviviente(cedula string, usuario string) {
 				`', 'DERECHO',` + estatuspago +
 				`,'ACTUALIZADO','` + v.FechaAfiliacion.String()[0:10] +
 				`',` + strconv.FormatFloat(v.PorcentajePrestaciones, 'f', 2, 64) + `,
+				'` + usuario + `', Now(),
 				'` + usuario + `', Now() )`
 		}
 	}
