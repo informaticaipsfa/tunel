@@ -594,6 +594,11 @@ type WRetroactivo struct {
 	Situacion          string `json:"situacion"`
 }
 
+type WARC struct {
+	Cedula string `json:"cedula"`
+	Anio   string `json:"anio"`
+}
+
 //CalcularRetroactivo Militar
 func (p *Militar) CalcularRetroactivo(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
@@ -620,6 +625,54 @@ func (p *Militar) CalcularRetroactivo(w http.ResponseWriter, r *http.Request) {
 	wRetroactivo.Usuario = UsuarioConectado.Login
 
 	jsonW, ex := json.Marshal(wRetroactivo)
+	if ex != nil {
+		fmt.Println(ex.Error())
+	}
+
+	response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonW))
+	if err != nil {
+		M.Mensaje = err.Error()
+		w.WriteHeader(http.StatusOK)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			w.WriteHeader(http.StatusOK)
+			M.Mensaje = err.Error()
+			j, _ := json.Marshal(M)
+			w.Write(j)
+			return
+		}
+		defer response.Body.Close()
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+		return
+	}
+}
+
+//CalcularRetroactivo Militar
+func (p *Militar) ImprimirARC(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+
+	var wArc WARC
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "imprimirarc"
+
+	errx := json.NewDecoder(r.Body).Decode(&wArc)
+	M.Tipo = 1
+	if errx != nil {
+		M.Mensaje = errx.Error()
+		M.Tipo = 0
+		fmt.Println(M.Mensaje)
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+
+	jsonW, ex := json.Marshal(wArc)
 	if ex != nil {
 		fmt.Println(ex.Error())
 	}
