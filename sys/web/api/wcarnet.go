@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/gorilla/mux"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 )
 
 //WCarnet Familiares
@@ -17,20 +17,6 @@ type WCarnet struct{}
 //Consultar Militares
 func (wca *WCarnet) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
-	//fmt.Println(r)
-
-	// var recibo sssifanb.Recibo
-	// var cedula = mux.Vars(r)
-	// dataJSON.Persona.DatoBasico.Cedula = cedula["id"]
-	// fmt.Println(dataJSON.Persona.DatoBasico.Cedula)
-	// j, e := dataJSON.Consultar()
-	// if e != nil {
-	// 	w.WriteHeader(http.StatusForbidden)
-	// 	w.Write([]byte("Error al consultar los datos"))
-	// 	return
-	// }
-	// w.WriteHeader(http.StatusOK)
-	// w.Write(j)
 }
 
 //Insertar Militar
@@ -49,7 +35,6 @@ func (wca *WCarnet) Insertar(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		return
 	}
-	//e := militar.SalvarMGOI("militares", objeto)
 	e := Carnet.Salvar()
 	if e != nil {
 		M.Mensaje = e.Error()
@@ -99,8 +84,6 @@ func (wca *WCarnet) Aprobar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-
-
 //Listar Militares
 func (wca *WCarnet) Limpiar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
@@ -108,7 +91,7 @@ func (wca *WCarnet) Limpiar(w http.ResponseWriter, r *http.Request) {
 	var Carnet sssifanb.Carnet
 	var nivel = mux.Vars(r)
 	estatus, _ := strconv.Atoi(nivel["estatus"])
-	sucursal :=  strings.ToUpper(nivel["sucursal"])
+	sucursal := strings.ToUpper(nivel["sucursal"])
 	e := Carnet.Limpiar(estatus, sucursal)
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)

@@ -338,17 +338,14 @@ func CargarModulosWebSite() {
 	var wPensionado api.Militar
 
 	var wUsuario api.WUsuario
-	// Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crud/{id}", wUsuario.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.LoginW).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.CambiarClave).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
-	// Enrutador.HandleFunc("/ipsfa/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
 
 	//Identificación de Usuario
 	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Identificacion).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Opciones).Methods("OPTIONS")
-
 	//Datos Militares
 	Enrutador.HandleFunc("/ipsfa/api/web/militar/{id}", per.Consultar).Methods("GET")
 	//Consultar Netos de Pensionados

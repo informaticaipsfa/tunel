@@ -75,19 +75,19 @@ func (tim *Carnet) Salvar() (err error) {
 				switch v.Parentesco {
 				case "PD":
 					TIMS = v.AplicarReglasCarnetPadres()
-					//fmt.Println("Entrando, Padre...")
+					break
 				case "HJ":
 					TIMS = v.AplicarReglasCarnetHijos()
-					//fmt.Println("Entrando, Hijos...")
+					break
 				case "EA":
 					TIMS = v.AplicarReglasCarnetEsposa()
-					//fmt.Println("Entrando, Esposa...")
+					break
 				case "VI":
 					TIMS = v.AplicarReglasCarnetEsposa()
-					//fmt.Println("Entrando, Esposa...")
+					break
 				case "HO":
 					TIMS = v.AplicarReglasCarnetHermanos()
-					//fmt.Println("Entrando, Hermano...")
+					break
 				}
 			}
 		}
