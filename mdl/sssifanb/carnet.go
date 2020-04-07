@@ -136,9 +136,9 @@ func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int) (err error) 
 	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	if TIM.ID != "" && TIM.IDF == "" {
 		carnet := make(map[string]interface{})
-		carnet["estatuscarnet"] = 0
+		carnet["estatuscarnet"] = estatus
 		err = coleccion.Update(bson.M{"id": TIM.ID}, bson.M{"$set": carnet})
-		fmt.Println("Cambiando a Cero")
+		//fmt.Println("Cambiando a Cero")
 	}
 
 	if estatus == 3 {
