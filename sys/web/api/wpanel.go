@@ -76,11 +76,11 @@ func (wp *WPanel) ExtraerReduccion(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
+//CrearReduccion Reduciones
 func (wp *WPanel) CrearReduccion(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var Reduccion estadistica.Reduccion
 	Cabecera(w, r)
-	// e := json.NewDecoder(r.Body).Decode(&wcis)
 	go Reduccion.CrearColeccion("reduccion")
 	M.Tipo = 1
 	j, _ := json.Marshal(M)
@@ -88,7 +88,7 @@ func (wp *WPanel) CrearReduccion(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//ExtraerReduccion Exportar datos
+//ExtraerDatosMySQL Exportar datos
 func (wp *WPanel) ExtraerDatosMySQL(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	Cabecera(w, r)
