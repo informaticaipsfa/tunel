@@ -18,6 +18,7 @@ var (
 
 //Cargar los diferentes modulos del sistema
 func Cargar() {
+	CargarModulosPanel()
 	CargarModulosWeb()
 	CargarModulosNomina()
 	CargarPensionados()
@@ -48,7 +49,7 @@ func CargarModulosWeb() {
 
 	var wfactura api.WFactura
 	var wmedicina api.WMedicina
-	var wpanel api.WPanel
+
 	var wcsv api.CSV
 
 	Enrutador.HandleFunc("/", Principal)
@@ -112,6 +113,13 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/wfactura", wUsuario.ValidarToken(wfactura.Consultar)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wmedicina", wUsuario.ValidarToken(wmedicina.Registrar)).Methods("POST")
+
+}
+
+//CargarModulosPanel Panel de Contencion
+func CargarModulosPanel() {
+	var wUsuario api.WUsuario
+	var wpanel api.WPanel
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/vreduccion", wUsuario.ValidarToken(wpanel.ValidarReduccion)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/exreduccion", wUsuario.ValidarToken(wpanel.ExtraerReduccion)).Methods("POST")
@@ -119,6 +127,10 @@ func CargarModulosWeb() {
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarcolecciones", wUsuario.ValidarToken(wpanel.ListarColecciones)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarpendientes", wUsuario.ValidarToken(wpanel.ListarPendientes)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/extraerdatosmysql", wUsuario.ValidarToken(wpanel.ExtraerDatosMySQL)).Methods("POST")
+
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/gitall", wUsuario.ValidarToken(wpanel.GitAll)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/compilar", wUsuario.ValidarToken(wpanel.Compilar)).Methods("POST")
+
 }
 
 //CargarModulosNomina Nomina del personal Militar

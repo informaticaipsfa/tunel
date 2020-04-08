@@ -6,10 +6,14 @@ import (
 
 	"github.com/informaticaipsfa/tunel/mdl/estadistica"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 type WPanel struct {
-	Data string
+	Data    string `json:"data"`
+	Host    string `json:"host"`
+	Origen  string `json:"origen"`
+	Paquete string `json:"paquete"`
 }
 
 //ListarPendientes Ver
@@ -94,4 +98,26 @@ func (wp *WPanel) ExtraerDatosMySQL(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
+}
+
+//Compilar Sevicios
+func (wp *WPanel) Compilar(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+
+	go util.EjecutarScript()
+	M.Tipo = 1
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//GitAll Actualizacion de paquetes en el sistema
+func (wp *WPanel) GitAll(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	e := json.NewDecoder(r.Body).Decode(&wp)
+	util.Error(e)
+	jSon, _ := util.GitAll(wp.Paquete, wp.Data, wp.Origen)
+	w.WriteHeader(http.StatusOK)
+	w.Write(jSon)
 }

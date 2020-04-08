@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"os/exec"
 	"strings"
 	"time"
 )
@@ -190,4 +191,25 @@ func Error(e error) {
 	if e != nil {
 		fmt.Println("\n Utilidad Error: ", e.Error())
 	}
+}
+
+//EjecutarScript ejecucion de comandos
+func EjecutarScript() (out []byte, err error) {
+	argstr := []string{"update.sh", "actualizar"}
+	out, err = exec.Command("/bin/sh", argstr...).Output()
+	Error(err)
+	return
+}
+
+//GitAll Actualizando proyectos
+func GitAll(paquete string, cmd string, origen string) (out []byte, err error) {
+	if paquete == "bus" {
+		origen = "."
+	} else {
+		origen = "public_web/SSSIFANB/" + paquete + "/"
+	}
+	argstr := []string{"gitall.sh", origen, cmd}
+	out, err = exec.Command("/bin/sh", argstr...).Output()
+	Error(err)
+	return
 }
