@@ -110,7 +110,6 @@ func (wp *WPanel) Compilar(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
-	// w.Write(jSon)
 }
 
 //GitAll Actualizacion de paquetes en el sistema
