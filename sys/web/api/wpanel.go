@@ -102,14 +102,12 @@ func (wp *WPanel) ExtraerDatosMySQL(w http.ResponseWriter, r *http.Request) {
 
 //Compilar Sevicios
 func (wp *WPanel) Compilar(w http.ResponseWriter, r *http.Request) {
-	var M sssifanb.Mensaje
-	Cabecera(w, r)
 
+	Cabecera(w, r)
 	go util.EjecutarScript()
-	M.Tipo = 1
-	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
-	w.Write(j)
+	s := "Este proceso puede durar unos segundos... por favor espere"
+	w.Write([]byte(s))
 }
 
 //GitAll Actualizacion de paquetes en el sistema
