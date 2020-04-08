@@ -1,6 +1,7 @@
 package util
 
 import (
+	"context"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
@@ -194,10 +195,14 @@ func Error(e error) {
 }
 
 //EjecutarScript ejecucion de comandos
-func EjecutarScript() (out []byte, err error) {
-	argstr := []string{"update.sh", "actualizar"}
-	out, err = exec.Command("/bin/sh", argstr...).Output()
-	Error(err)
+func EjecutarScript() (err error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
+	defer cancel()
+
+	if err := exec.CommandContext(ctx, "/bin/sh", "update.sh").Run(); err != nil {
+		// This will fail after 100 milliseconds. The 5 second sleep
+		// will be interrupted.
+	}
 	return
 }
 

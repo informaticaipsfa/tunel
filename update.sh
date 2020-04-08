@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "Estableciendo mensajes..."
 echo "Bajando el servicio esb.ipsfa"
 echo "Por favor espere..."
 pkill esb.ipsfa
