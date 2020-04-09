@@ -203,6 +203,8 @@ func CargarPensionados() {
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/calcularretroactivo", wUsuario.ValidarToken(wPensionado.CalcularRetroactivo)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/impimirarc", wUsuario.ValidarToken(wPensionado.ImprimirARC)).Methods("POST")
 
+	Enrutador.HandleFunc("/ipsfa/api/pensionado/gitall", wUsuario.ValidarToken(wPensionado.GitAll)).Methods("POST")
+
 }
 
 //CargarModulosBanco Modulos de txt y reportes de banco
@@ -220,6 +222,8 @@ func CargarModulosSeguridad() {
 	var wUsuario api.WUsuario
 	// Enrutador.HandleFunc("/ipsfa/app/api/wusuario/crud/{id}", wUsuario.Consultar).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Login).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Opciones).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/listar", wUsuario.ValidarToken(wUsuario.Listar)).Methods("GET")
 

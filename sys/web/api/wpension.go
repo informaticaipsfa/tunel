@@ -14,6 +14,7 @@ import (
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 //ConsultarDirectiva Militar
@@ -689,6 +690,56 @@ func (p *Militar) ImprimirARC(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusOK)
 			M.Mensaje = err.Error()
+			j, _ := json.Marshal(M)
+			w.Write(j)
+			return
+		}
+		defer response.Body.Close()
+		w.WriteHeader(http.StatusOK)
+		w.Write(body)
+		return
+	}
+}
+
+//GitAll Paquete de Pension
+func (p *Militar) GitAll(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var data interface{}
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "gitall"
+	fmt.Println(url)
+
+	errx := json.NewDecoder(r.Body).Decode(&data)
+	M.Tipo = 1
+	if errx != nil {
+		M.Mensaje = errx.Error()
+		M.Tipo = 0
+		fmt.Println(M.Mensaje)
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+
+	jsonW, ex := json.Marshal(data)
+
+	util.Error(ex)
+
+	response, err := http.Post(url, "application/json", bytes.NewBuffer(jsonW))
+	if err != nil {
+		M.Mensaje = err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusOK)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	} else {
+		body, err := ioutil.ReadAll(response.Body)
+
+		if err != nil {
+			w.WriteHeader(http.StatusOK)
+			M.Mensaje = err.Error()
+			M.Tipo = 0
 			j, _ := json.Marshal(M)
 			w.Write(j)
 			return
