@@ -14,4 +14,4 @@ go build -o esb.ipsfa servicio.go
 
 echo "Lanzando nueva versión del servicio esb.ipsfa"
 echo "Por favor	espere..."
-./esb.ipsfa
+./esb.ipsfa &
