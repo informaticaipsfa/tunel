@@ -6,13 +6,20 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
+	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
 )
 
 //WCarnet Familiares
-type WCarnet struct{}
+type WCarnet struct {
+	Cedula      string `json:"cedula"`
+	Serial 			string `json:"serial"`
+	Motivo      string `json:"motivo"`
+	Descripcion string `json:"descripcion"`
+}
 
 //Consultar Militares
 func (wca *WCarnet) Consultar(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +71,7 @@ func (wca *WCarnet) Listar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Listar Militares
+//Aprobar Militares
 func (wca *WCarnet) Aprobar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	Cabecera(w, r)
@@ -84,7 +91,7 @@ func (wca *WCarnet) Aprobar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Listar Militares
+//Limpiar Militares
 func (wca *WCarnet) Limpiar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	Cabecera(w, r)
@@ -102,4 +109,50 @@ func (wca *WCarnet) Limpiar(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
+}
+
+//Liberar Militares
+func (wca *WCarnet) Liberar(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	var Carnet sssifanb.Carnet
+	var traza fanb.Traza
+
+	Cabecera(w, r)
+
+	errx := json.NewDecoder(r.Body).Decode(&wca)
+
+	if errx != nil {
+		M.Mensaje = errx.Error() + " Falla en el formato JSON"
+		fmt.Println(M.Mensaje)
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}
+
+	errx = Carnet.CambiarEstadoMilitar(wca.Serial, 0)
+	if errx != nil {
+		M.Mensaje = errx.Error() + " falla con el serial del carnet"
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusForbidden)
+		w.Write(j)
+		return
+	}else{
+		ip := strings.Split(r.RemoteAddr, ":")
+		M.Tipo = 1
+
+		traza.IP = ip[0]
+		traza.Time = time.Now()
+		traza.Usuario = UsuarioConectado.Login
+		traza.Log = wca.Cedula
+		traza.Documento = "Liberar Carnet: " + wca.Motivo + "|" + wca.Descripcion
+		traza.CrearHistoricoConsulta("historicoconsultas")
+		M.Mensaje = "Felicitaciones! El carnet ha sido liberado..."
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusOK)
+		w.Write(j)
+		return
+	}
+
+
 }

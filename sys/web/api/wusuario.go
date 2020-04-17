@@ -118,6 +118,36 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//LoginW conexion para solicitud de token
+func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
+	var usuario seguridad.WUsuario
+	// var traza fanb.Traza
+	CabeceraW(w, r)
+	e := json.NewDecoder(r.Body).Decode(&usuario)
+	util.Error(e)
+
+	err := usuario.Validar(usuario.Cedula, util.GenerarHash256([]byte(usuario.Clave)))
+	if err != nil {
+		w.Header().Set("Content-Type", "application/text")
+		fmt.Println("Error en la conexion del usuario")
+		w.WriteHeader(http.StatusForbidden)
+		fmt.Fprintln(w, "Usuario y clave no validas")
+
+	} else {
+
+		if usuario.Cedula != "" && usuario.Componente != "" {
+			usuario.Clave = ""
+			token := seguridad.WGenerarJWT(usuario)
+			result := seguridad.RespuestaToken{Token: token}
+			j, e := json.Marshal(result)
+			util.Error(e)
+			w.WriteHeader(http.StatusOK)
+			w.Write(j)
+		}
+	}
+
+}
+
 //ValidarToken Validacion de usuario
 func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 	var mensaje util.Mensajes
@@ -226,36 +256,6 @@ func (u *WUsuario) Opciones(w http.ResponseWriter, r *http.Request) {
 	CabeceraW(w, r)
 	fmt.Println("Conectandose usuario vía Extranet...")
 	//fmt.Fprintf(w, "Saludos")
-
-}
-
-//LoginW conexion para solicitud de token
-func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
-	var usuario seguridad.WUsuario
-	// var traza fanb.Traza
-	CabeceraW(w, r)
-	e := json.NewDecoder(r.Body).Decode(&usuario)
-	util.Error(e)
-
-	err := usuario.Validar(usuario.Cedula, util.GenerarHash256([]byte(usuario.Clave)))
-	if err != nil {
-		w.Header().Set("Content-Type", "application/text")
-		fmt.Println("Error en la conexion del usuario")
-		w.WriteHeader(http.StatusForbidden)
-		fmt.Fprintln(w, "Usuario y clave no validas")
-
-	} else {
-
-		if usuario.Cedula != "" && usuario.Componente != "" {
-			usuario.Clave = ""
-			token := seguridad.WGenerarJWT(usuario)
-			result := seguridad.RespuestaToken{Token: token}
-			j, e := json.Marshal(result)
-			util.Error(e)
-			w.WriteHeader(http.StatusOK)
-			w.Write(j)
-		}
-	}
 
 }
 
