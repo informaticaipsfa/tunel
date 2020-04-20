@@ -438,7 +438,7 @@ func (p *Militar) ConsultarNeto(w http.ResponseWriter, r *http.Request) {
 	var pension sssifanb.Pension
 	var cedula = mux.Vars(r)
 
-	j, e := pension.ConsultarNetos(cedula["id"], true, "")
+	j, e := pension.ConsultarNetos(cedula["id"], true, "", "")
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))
@@ -464,7 +464,33 @@ func (p *Militar) ConsultarNetoSobreviviente(w http.ResponseWriter, r *http.Requ
 	var pension sssifanb.Pension
 	var cedula = mux.Vars(r)
 
-	j, e := pension.ConsultarNetos(cedula["id"], false, cedula["fam"])
+	j, e := pension.ConsultarNetos(cedula["id"], false, cedula["fam"], "")
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = cedula["id"]
+	traza.Documento = "Consultando Militar"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//ConsultarNetoWEB Militar
+func (p *Militar) ConsultarNetoWeb(w http.ResponseWriter, r *http.Request) {
+	var traza fanb.Traza
+	Cabecera(w, r)
+	var pension sssifanb.Pension
+	var cedula = mux.Vars(r)
+
+	j, e := pension.ConsultarNetos(cedula["id"], true, "", " AND sn.esta = 10 ")
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))

@@ -630,8 +630,9 @@ type WNetos struct {
 }
 
 //ConsultarNetos Insertando Militar a Pension
-func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSon []byte, err error) {
+func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string, estatus string) (jSon []byte, err error) {
 	var lst []WNetos
+
 	s := `SELECT pg.cedu, pg.calc, pg.fech, pg.banc, pg.tipo, pg.nume, pg.situ, pg.esta,
 	pg.neto, sn.obse, sn.desd, sn.hast, sn.mes, CAST(rtp.monto_prima AS character varying), rtp.descripcion,
 	`
@@ -641,7 +642,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSo
 		FROM space.pagos pg
 		JOIN space.nomina AS sn ON pg.nomi=sn.oid
 		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
-		WHERE pg.cedu='` + cedula + `'  AND sn.llav != '' ORDER BY fech DESC`
+		WHERE pg.cedu='` + cedula + `'  AND sn.llav != '' ` + estatus + ` ORDER BY fech DESC`
 	} else {
 		s += `
 		 pg.cfam, fami.porcentaje
@@ -649,7 +650,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string) (jSo
 		JOIN space.nomina AS sn ON pg.nomi=sn.oid
 		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
 		JOIN familiar fami ON pg.cedu=fami.titular AND pg.cfam=fami.cedula
-		WHERE pg.cedu='` + cedula + `' AND pg.cfam='` + familiar + `' AND sn.llav != '' ORDER BY fech DESC`
+		WHERE pg.cedu='` + cedula + `' AND pg.cfam='` + familiar + `' AND sn.llav != '' ` + estatus + ` ORDER BY fech DESC`
 	}
 	//fmt.Println(s)
 	sq, err := sys.PostgreSQLPENSION.Query(s)
@@ -1101,4 +1102,18 @@ func (p *Pension) ConsultarPensionadosReconocido() {
 
 	}
 
+}
+
+//EliminarNomina Actualizar Datos
+func (p *Pension) EliminarNomina(llave string) (err error) {
+	_, err = sys.PostgreSQLPENSION.Exec("DELETE FROM space.nomina WHERE llav='" + llave + "'")
+	obtenerErr(err, "")
+	return
+}
+
+//PublicarNomina Publicar Nomina
+func (p *Pension) PublicarNomina(llave string, estatus string) (err error) {
+	_, err = sys.PostgreSQLPENSION.Exec("UPDATE space.nomina SET esta=" + estatus + " WHERE llav='" + llave + "'")
+	obtenerErr(err, "")
+	return
 }

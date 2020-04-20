@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
@@ -526,4 +528,97 @@ func (N *WNomina) Opciones(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("OPTIONS...")
 	//fmt.Println(w, "Saludos")
 
+}
+
+//Eliminar Militar
+func (N *WNomina) Eliminar(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var traza fanb.Traza
+	var pension sssifanb.Pension
+	var llave = mux.Vars(r)
+
+	e := pension.EliminarNomina(llave["id"])
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = llave["id"]
+	traza.Documento = "Eliminar Nomina"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+
+	M.Mensaje = "Se ha eliminado la noimna completa"
+	M.Tipo = 1
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//Publicar Militar
+func (N *WNomina) Publicar(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var traza fanb.Traza
+	var pension sssifanb.Pension
+	var llave = mux.Vars(r)
+
+	e := pension.PublicarNomina(llave["id"], "10")
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = llave["id"]
+	traza.Documento = "Publicar Nomina"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+
+	M.Mensaje = "Se ha publicar la noimna completa"
+	M.Tipo = 1
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//DeBaja Militar
+func (N *WNomina) DeBaja(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var traza fanb.Traza
+	var pension sssifanb.Pension
+	var llave = mux.Vars(r)
+
+	e := pension.PublicarNomina(llave["id"], "5")
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	ip := strings.Split(r.RemoteAddr, ":")
+
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = llave["id"]
+	traza.Documento = "Dar de Baja Nomina"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+
+	M.Mensaje = "Se ha dado de baja la noimna completa"
+	M.Tipo = 1
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 }
