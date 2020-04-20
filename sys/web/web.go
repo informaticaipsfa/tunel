@@ -375,7 +375,7 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/api/web/nomina/conceptos/listar/", concepto.ListarPHP).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/consultarneto/{id}", wPensionado.ConsultarNetoWeb).Methods("GET")
 	//Consultar Netos de Pensionados Sobrevivientes
-	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/consultarsobreviviente/{id}/{fam}", wPensionado.ConsultarNetoSobreviviente).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/consultarsobreviviente/{id}/{fam}", wPensionado.ConsultarNetoSobrevivienteWeb).Methods("GET")
 	//Constancia de Pensionado
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/calculo/{id}", wPensionado.Calculo).Methods("GET")
 	//Fideicomiso
