@@ -189,7 +189,7 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/eliminar/{id}", wUsuario.ValidarToken(wNomina.Eliminar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/publicar/{id}", wUsuario.ValidarToken(wNomina.Publicar)).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/nomina/debaja/{id}", wUsuario.ValidarToken(wNomina.Publicar)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/debaja/{id}", wUsuario.ValidarToken(wNomina.DeBaja)).Methods("GET")
 
 }
 
