@@ -402,7 +402,8 @@ func (N *WNomina) ListarPendientes(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
 	var id = mux.Vars(r)
-	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listartpendientes/" + id["mes"] + "/" + id["id"]
+	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "listartpendientes/" + id["mes"] + "/" + id["id"] + "/" + id["ano"]
+	fmt.Println(url)
 	response, err := http.Get(url)
 	if err != nil {
 		M.Mensaje = err.Error()

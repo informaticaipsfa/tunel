@@ -28,7 +28,7 @@ func Cargar() {
 	WMAdminLTE()
 	CargarModulosWebDevel()
 	CargarModulosWebSite()
-
+	CargarModulosCredito()
 }
 
 //CargarModulosWeb Cargador de modulos web
@@ -162,7 +162,7 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/nomina/verpartida/{id}", wUsuario.ValidarToken(wNomina.VerPartidas)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/ccpensionados", wUsuario.ValidarToken(M.ConsultarCantidadPensionados)).Methods("GET")
-	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpendientes/{mes}/{id}", wUsuario.ValidarToken(wNomina.ListarPendientes)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/listarpendientes/{mes}/{id}/{ano}", wUsuario.ValidarToken(wNomina.ListarPendientes)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/cuadrebanco/{id}/{tbl}", wUsuario.ValidarToken(wNomina.CuadreBanco)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/directiva/prima", wUsuario.ValidarToken(M.ActualizarPrima)).Methods("POST")
@@ -251,8 +251,7 @@ func Principal(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Saludos bienvenidos al Bus Empresarial de Datos")
 }
 
-//WMAdminLTE OpenSource tema de panel de control
-//Tecnología Bootstrap3
+//WMAdminLTE OpenSource tema de panel de control Tecnología Bootstrap3
 func WMAdminLTE() {
 	fmt.Println("Cargando Modulos de AdminLTE...")
 	// var GP = GPanel{}
@@ -386,5 +385,14 @@ func CargarModulosWebSite() {
 	//Consultar ARC
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/impimirarc", wUsuario.ValidarToken(wPensionado.ImprimirARC)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/impimirarc", wU.Opciones).Methods("OPTIONS")
+
+}
+
+//CargarModulosCredito Cargador de modulos web
+func CargarModulosCredito() {
+	var wUsuario api.WUsuario
+	var wCredito api.WCredito
+
+	Enrutador.HandleFunc("/ipsfa/api/credito/crud", wUsuario.ValidarToken(wCredito.Guardar)).Methods("POST")
 
 }
