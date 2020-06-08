@@ -16,10 +16,10 @@ type WCredito struct {
 //Guardar Salvando datos del credito a un militar
 func (wc *WCredito) Guardar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
-	var wPrestamo credito.Solicitud
+	var wCredito credito.Solicitud
 	Cabecera(w, r)
 
-	err := json.NewDecoder(r.Body).Decode(&wPrestamo)
+	err := json.NewDecoder(r.Body).Decode(&wCredito)
 	if err != nil {
 		fmt.Println(err.Error())
 		M.Mensaje = "Error de Prestamos " + err.Error()
@@ -29,12 +29,9 @@ func (wc *WCredito) Guardar(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		return
 	} else {
-		fmt.Println(wPrestamo)
-		for _, lst := range wPrestamo.Cuotas {
-			fmt.Println(lst.Cuota, " ", lst.Fecha, " ", lst.Interes)
-		}
-		wPrestamo.NuevoPrestamo()
-		M.Mensaje = "Proceso exitoso para el prestamo personal " + wPrestamo.Cedula
+
+		wCredito.NuevoPrestamo(UsuarioConectado.Login)
+		M.Mensaje = "Proceso exitoso para el prestamo personal " + wCredito.Cedula
 		M.Tipo = 1
 		w.WriteHeader(http.StatusOK)
 		j, _ := json.Marshal(M)
