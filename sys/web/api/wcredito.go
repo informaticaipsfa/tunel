@@ -11,6 +11,7 @@ import (
 
 //WCredito API de apoyo a credito
 type WCredito struct {
+	Fecha string `json:"fecha" bson:"fecha"`
 }
 
 //Guardar Salvando datos del credito a un militar
@@ -39,4 +40,41 @@ func (wc *WCredito) Guardar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+//Listar Creditos
+func (wc *WCredito) Listar(w http.ResponseWriter, r *http.Request) {
+	// var traza fanb.Traza
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	var wCred credito.Credito
+
+	err := json.NewDecoder(r.Body).Decode(&wc)
+	if err != nil {
+		fmt.Println(err.Error())
+		M.Mensaje = "Error de Prestamos " + err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	}
+	fmt.Println("Listando")
+
+	j, e := wCred.Listar(wc.Fecha)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	// ip := strings.Split(r.RemoteAddr, ":")
+	// traza.IP = ip[0]
+	// traza.Time = time.Now()
+	// traza.Usuario = UsuarioConectado.Login
+	// traza.Log = cedula["id"]
+	// traza.Documento = "Consultando Militar"
+	// traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
 }

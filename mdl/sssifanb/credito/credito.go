@@ -1,6 +1,8 @@
 package credito
 
 import (
+	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -30,6 +32,7 @@ type Credito struct {
 type Solicitud struct {
 	Oid              string         `json:"oid,omitempty" bson:"oid"`
 	Cedula           string         `json:"cedula,omitempty" bson:"cedula"`                 //Monto total del credito solicitado
+	Nombre           string         `json:"nombre,omitempty" bson:"nombre"`                 //Nombre total del credito solicitado
 	Capital          float64        `json:"capital,omitempty" bson:"capital"`               //Monto total del credito solicitado
 	MontoAprobado    float64        `json:"montoaprobado,omitempty" bson:"montoaprobado"`   //Monto Aprobado
 	Cantidad         int            `json:"cantidad,omitempty" bson:"cantidad"`             //Cantidad por cuota
@@ -87,10 +90,11 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 	var oid string
 
 	query = `INSERT INTO space.credito(
-            cedula, capi, monta, cant, cuot, porc, conc, peri, esta, inst,
+            cedula, nomb, capi, monta, cant, cuot, porc, conc, peri, esta, inst,
             tcue, ncue, fini, toti, inte, pors, totd, crea, usua)
     VALUES (
 			'` + PP.Cedula + `',
+			'` + PP.Nombre + `',
 			` + strconv.FormatFloat(PP.Capital, 'f', 2, 64) + `,` + strconv.FormatFloat(PP.MontoAprobado, 'f', 2, 64) + `,
 			` + strconv.Itoa(PP.Cantidad) + `,` + strconv.FormatFloat(PP.Cuota, 'f', 2, 64) + `,` + strconv.FormatFloat(PP.PorcentajeTasa, 'f', 2, 64) + `,
 			'` + PP.Concepto + `','` + PP.Periodo + `', ` + strconv.Itoa(PP.Estatus) + `,
@@ -153,4 +157,43 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 //Nuevo Credito Para vivienda
 func (CH *Hipotecario) Nuevo() {
 
+}
+
+//wCredito Control
+type WCredito struct {
+	Cedula    string  `json:"cedula"`
+	Nombre    string  `json:"nombre"`
+	Concepto  string  `json:"concepto"`
+	Instituto string  `json:"instituto"`
+	Tipo      string  `json:"tipo"`
+	Cuenta    string  `json:"cuenta"`
+	Fecha     string  `json:"fecha"`
+	Monto     float64 `json:"monto"`
+}
+
+//Listar consultando
+func (CR *Credito) Listar(fecha string) (jSon []byte, err error) {
+	var lst []WCredito
+	s := `SELECT cedula, nomb, conc, inst, tcue, ncue, totd, fini FROM space.credito crd`
+	sq, err := sys.PostgreSQLPENSION.Query(s)
+	util.Error(err)
+
+	for sq.Next() {
+		var ced, nomb, conc, inst, tcue, ncue, fini sql.NullString
+		var totd sql.NullFloat64
+		var credito WCredito
+		err = sq.Scan(&ced, &nomb, &conc, &inst, &tcue, &ncue, &totd, &fini)
+		credito.Cedula = util.ValidarNullString(ced)
+		credito.Nombre = util.ValidarNullString(nomb)
+		credito.Concepto = util.ValidarNullString(conc)
+		credito.Instituto = util.ValidarNullString(inst)
+		credito.Tipo = util.ValidarNullString(tcue)
+		credito.Cuenta = util.ValidarNullString(ncue)
+		credito.Monto = util.ValidarNullFloat64(totd)
+		credito.Fecha = util.ValidarNullString(fini)
+		lst = append(lst, credito)
+	}
+
+	jSon, err = json.Marshal(lst)
+	return
 }
