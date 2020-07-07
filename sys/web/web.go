@@ -143,6 +143,7 @@ func CargarModulosNomina() {
 	var descuentos api.WDescuentos
 	var M api.Militar
 	var wR api.WRechazos
+	var wRetroactivo api.Retroactivo
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/{id}", wUsuario.ValidarToken(concepto.Consultar)).Methods("GET")
@@ -190,6 +191,12 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/ipsfa/api/nomina/eliminar/{id}", wUsuario.ValidarToken(wNomina.Eliminar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/publicar/{id}", wUsuario.ValidarToken(wNomina.Publicar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/debaja/{id}", wUsuario.ValidarToken(wNomina.DeBaja)).Methods("GET")
+
+	Enrutador.HandleFunc("/ipsfa/api/nomina/mes/activo", wUsuario.ValidarToken(wRetroactivo.MesActivo)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/mes/detalle", wUsuario.ValidarToken(wRetroactivo.MesDetalle)).Methods("POST")
+
+	Enrutador.HandleFunc("/ipsfa/api/nomina/gretroctivo", wUsuario.ValidarToken(wRetroactivo.GenerarRetroactivo)).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/nomina/gretroactivo", wRetroactivo.GenerarRetroactivo).Methods("POST")
 
 }
 
