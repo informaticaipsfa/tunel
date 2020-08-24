@@ -72,6 +72,8 @@ type Cuota struct {
 	Saldo   float64 `json:"saldo,omitempty" bson:"saldo"`
 	Fecha   string  `json:"fecha,omitempty" bson:"fecha"`
 	Estatus int     `json:"estatus,omitempty" bson:"estatus"`
+	Tipo    int     `json:"tipo,omitempty" bson:"tipo"`
+	Dias    int     `json:"dias,omitempty" bson:"dias"`
 }
 
 //Hipotecario viviendas
@@ -116,7 +118,7 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 		sq.Scan(&oid)
 	}
 
-	query = `INSERT INTO space.cuota ( creid, cedula, bala, cuot, inte, capi, sald, fech, esta) VALUES `
+	query = `INSERT INTO space.cuota ( creid, cedula, bala, cuot, inte, capi, sald, fech, esta, tipo, dias) VALUES `
 	i := 0
 	for _, lst := range PP.Cuotas {
 
@@ -130,7 +132,7 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 			` + strconv.FormatFloat(lst.Interes, 'f', 2, 64) + `,
 			` + strconv.FormatFloat(lst.Capital, 'f', 2, 64) + `,
 			` + strconv.FormatFloat(lst.Saldo, 'f', 2, 64) + `,
-			'` + lst.Fecha + `',` + strconv.Itoa(lst.Estatus) + `) `
+			'` + lst.Fecha + `',` + strconv.Itoa(lst.Estatus) + `,` + strconv.Itoa(lst.Tipo) + `,` + strconv.Itoa(lst.Dias) + `) `
 
 		i++
 	}
@@ -142,7 +144,7 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 		return "0"
 	}
 
-	PP.Oid = oid
+	PP.Oid = "CR" + util.CompletarCeros(oid, 0, 10)
 	creditopersonal := make(map[string]interface{})
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	creditopersonal["credito.prestamo.personal"] = PP
@@ -151,7 +153,7 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 		fmt.Println("Err", err.Error())
 	}
 
-	return util.CompletarCeros(oid, 0, 8)
+	return "CR" + util.CompletarCeros(oid, 0, 10)
 }
 
 //Nuevo Credito Para vivienda

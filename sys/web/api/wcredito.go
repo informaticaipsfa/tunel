@@ -29,16 +29,14 @@ func (wc *WCredito) Guardar(w http.ResponseWriter, r *http.Request) {
 		j, _ := json.Marshal(M)
 		w.Write(j)
 		return
-	} else {
-
-		wCredito.NuevoPrestamo(UsuarioConectado.Login)
-		M.Mensaje = "Proceso exitoso para el prestamo personal " + wCredito.Cedula
-		M.Tipo = 1
-		w.WriteHeader(http.StatusOK)
-		j, _ := json.Marshal(M)
-		w.Write(j)
-		return
 	}
+	var codigo = wCredito.NuevoPrestamo(UsuarioConectado.Login)
+	M.Mensaje = codigo
+	M.Tipo = 1
+	w.WriteHeader(http.StatusOK)
+	j, _ := json.Marshal(M)
+	w.Write(j)
+	return
 
 }
 
