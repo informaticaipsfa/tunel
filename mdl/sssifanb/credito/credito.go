@@ -31,8 +31,11 @@ type Credito struct {
 //Solicitud Solicitar Prestamo o credito
 type Solicitud struct {
 	Oid              string         `json:"oid,omitempty" bson:"oid"`
-	Cedula           string         `json:"cedula,omitempty" bson:"cedula"`                 //Monto total del credito solicitado
-	Nombre           string         `json:"nombre,omitempty" bson:"nombre"`                 //Nombre total del credito solicitado
+	Cedula           string         `json:"cedula,omitempty" bson:"cedula"` //Monto total del credito solicitado
+	Nombre           string         `json:"nombre,omitempty" bson:"nombre"` //Nombre total del credito solicitado
+	Grado            string         `json:"grado,omitempty" bson:"grado"`
+	Componente       string         `json:"componente,omitempty" bson:"componente"`
+	Situacion        string         `json:"situacion,omitempty" bson:"situacion"`
 	Capital          float64        `json:"capital,omitempty" bson:"capital"`               //Monto total del credito solicitado
 	MontoAprobado    float64        `json:"montoaprobado,omitempty" bson:"montoaprobado"`   //Monto Aprobado
 	Cantidad         int            `json:"cantidad,omitempty" bson:"cantidad"`             //Cantidad por cuota
@@ -93,7 +96,7 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 
 	query = `INSERT INTO space.credito(
             cedula, nomb, capi, monta, cant, cuot, porc, conc, peri, esta, inst,
-            tcue, ncue, fini, toti, inte, pors, totd, crea, usua)
+            tcue, ncue, fini, toti, inte, pors, totd, crea, usua, grad, comp, situa)
     VALUES (
 			'` + PP.Cedula + `',
 			'` + PP.Nombre + `',
@@ -107,7 +110,7 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 			` + strconv.FormatFloat(PP.Intereses, 'f', 2, 64) + `,
 			` + strconv.FormatFloat(PP.PorcentajeSeguro, 'f', 2, 64) + `,
 			` + strconv.FormatFloat(PP.TotalDepositar, 'f', 2, 64) + `,
-			 Now(), '` + usuario + `')  RETURNING oid;`
+			 Now(), '` + usuario + `', '` + PP.Grado + `', '` + PP.Componente + `', '` + PP.Situacion + `')  RETURNING oid;`
 	//fmt.Println(query)
 	sq, err := sys.PostgreSQLPENSION.Query(query)
 	if err != nil {
