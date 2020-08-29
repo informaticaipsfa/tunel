@@ -166,29 +166,40 @@ func (CH *Hipotecario) Nuevo() {
 
 //wCredito Control
 type WCredito struct {
-	Cedula    string  `json:"cedula"`
-	Nombre    string  `json:"nombre"`
-	Concepto  string  `json:"concepto"`
-	Instituto string  `json:"instituto"`
-	Tipo      string  `json:"tipo"`
-	Cuenta    string  `json:"cuenta"`
-	Fecha     string  `json:"fecha"`
-	Monto     float64 `json:"monto"`
+	Cedula     string  `json:"cedula"`
+	Componente string  `json:"componente"`
+	Grado      string  `json:"grado"`
+	Situacion  string  `json:"situacion"`
+	Codigo     string  `json:"codigo"`
+	Nombre     string  `json:"nombre"`
+	Concepto   string  `json:"concepto"`
+	Instituto  string  `json:"instituto"`
+	Tipo       string  `json:"tipo"`
+	Cuenta     string  `json:"cuenta"`
+	Fecha      string  `json:"fecha"`
+	Monto      float64 `json:"monto"`
 }
 
 //Listar consultando
 func (CR *Credito) Listar(fecha string) (jSon []byte, err error) {
 	var lst []WCredito
-	s := `SELECT cedula, nomb, conc, inst, tcue, ncue, totd, fini FROM space.credito crd`
+	s := `SELECT oid, cedula, nomb, conc, inst, tcue, ncue, totd, fini, comp, grad, situa
+	FROM space.credito crd`
 	sq, err := sys.PostgreSQLPENSION.Query(s)
 	util.Error(err)
 
 	for sq.Next() {
-		var ced, nomb, conc, inst, tcue, ncue, fini sql.NullString
+		var oid, ced, nomb, conc, inst, tcue, ncue, fini, comp, grad, situa sql.NullString
 		var totd sql.NullFloat64
+
 		var credito WCredito
-		err = sq.Scan(&ced, &nomb, &conc, &inst, &tcue, &ncue, &totd, &fini)
+		err = sq.Scan(&oid, &ced, &nomb, &conc, &inst, &tcue, &ncue, &totd, &fini, &comp, &grad, &situa)
+
+		credito.Codigo = "CR" + util.CompletarCeros(util.ValidarNullString(oid), 0, 10)
 		credito.Cedula = util.ValidarNullString(ced)
+		credito.Componente = util.ValidarNullString(comp)
+		credito.Grado = util.ValidarNullString(grad)
+		credito.Situacion = util.ValidarNullString(situa)
 		credito.Nombre = util.ValidarNullString(nomb)
 		credito.Concepto = util.ValidarNullString(conc)
 		credito.Instituto = util.ValidarNullString(inst)
