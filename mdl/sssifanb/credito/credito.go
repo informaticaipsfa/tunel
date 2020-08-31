@@ -253,3 +253,19 @@ func (CR *Credito) ActualizarLote(wca WCreditoActualizar, usuario string) (jSon 
 	jSon, err = json.Marshal(wca)
 	return
 }
+
+//EnviarATesoreria credito lotes
+func (CR *Credito) EnviarATesoreria(wca WCreditoActualizar, usuario string) (jSon []byte, err error) {
+
+	for i := 0; i < len(wca.Serie); i++ {
+		fmt.Println("Actualizando credito: ", wca.Serie[i])
+		s := `UPDATE space.credito SET esta=2 WHERE oid=` + wca.Serie[i]
+		_, err = sys.PostgreSQLPENSION.Exec(s)
+		if err != nil {
+			fmt.Println("Error en el query crédito ", err.Error())
+		}
+	}
+
+	jSon, err = json.Marshal(wca)
+	return
+}

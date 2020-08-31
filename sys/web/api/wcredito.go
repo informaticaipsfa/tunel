@@ -116,3 +116,40 @@ func (wc *WCredito) Actualizar(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
+
+//EnviarATesoreria Creditos
+func (wc *WCredito) EnviarATesoreria(w http.ResponseWriter, r *http.Request) {
+
+	var M sssifanb.Mensaje
+	Cabecera(w, r)
+	var wCred credito.WCreditoActualizar
+	var CCredito credito.Credito
+
+	err := json.NewDecoder(r.Body).Decode(&wCred)
+	if err != nil {
+		fmt.Println(err.Error())
+		M.Mensaje = "Error de Prestamos " + err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	}
+
+	j, e := CCredito.EnviarATesoreria(wCred, UsuarioConectado.Login)
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+
+	// ip := strings.Split(r.RemoteAddr, ":")
+	// traza.IP = ip[0]
+	// traza.Time = time.Now()
+	// traza.Usuario = UsuarioConectado.Login
+	// traza.Log = cedula["id"]
+	// traza.Documento = "Consultando Militar"
+	// traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
