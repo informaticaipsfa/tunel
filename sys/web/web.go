@@ -402,5 +402,6 @@ func CargarModulosCredito() {
 
 	Enrutador.HandleFunc("/ipsfa/api/credito/crud", wUsuario.ValidarToken(wCredito.Guardar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/credito/listar", wUsuario.ValidarToken(wCredito.Listar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/credito/actualizar", wUsuario.ValidarToken(wCredito.Actualizar)).Methods("POST")
 
 }

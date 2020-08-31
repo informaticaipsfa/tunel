@@ -166,6 +166,7 @@ func (CH *Hipotecario) Nuevo() {
 
 //wCredito Control
 type WCredito struct {
+	OID        string  `json:"oid"`
 	Cedula     string  `json:"cedula"`
 	Componente string  `json:"componente"`
 	Grado      string  `json:"grado"`
@@ -181,11 +182,13 @@ type WCredito struct {
 }
 
 //Listar consultando
-func (CR *Credito) Listar(fecha string) (jSon []byte, err error) {
+func (CR *Credito) Listar(fecha string, desde string, hasta string, estatus int) (jSon []byte, err error) {
 	var lst []WCredito
 	s := `SELECT oid, cedula, nomb, conc, inst, tcue, ncue, totd, fini, comp, grad, situa
-	FROM space.credito crd`
+	FROM space.credito crd WHERE esta = ` + strconv.Itoa(estatus) + ` AND crea BETWEEN '` + desde + `' AND '` + hasta + `'`
+
 	sq, err := sys.PostgreSQLPENSION.Query(s)
+
 	util.Error(err)
 
 	for sq.Next() {
@@ -194,7 +197,7 @@ func (CR *Credito) Listar(fecha string) (jSon []byte, err error) {
 
 		var credito WCredito
 		err = sq.Scan(&oid, &ced, &nomb, &conc, &inst, &tcue, &ncue, &totd, &fini, &comp, &grad, &situa)
-
+		credito.OID = util.ValidarNullString(oid)
 		credito.Codigo = "CR" + util.CompletarCeros(util.ValidarNullString(oid), 0, 10)
 		credito.Cedula = util.ValidarNullString(ced)
 		credito.Componente = util.ValidarNullString(comp)
@@ -211,5 +214,42 @@ func (CR *Credito) Listar(fecha string) (jSon []byte, err error) {
 	}
 
 	jSon, err = json.Marshal(lst)
+	return
+}
+
+//WCreditoActualizar Creditos
+type WCreditoActualizar struct {
+	Estatus     int      `json:"estatus"`
+	Serie       []string `json:"serie"`
+	Cantidad    int      `json:"cantidad"`
+	Total       float64  `json:"total"`
+	Llave       string   `json:"llave"`
+	Observacion string   `json:"Observacion"`
+}
+
+//ActualizarLote credito lotes
+func (CR *Credito) ActualizarLote(wca WCreditoActualizar, usuario string) (jSon []byte, err error) {
+
+	query := `INSERT INTO space.credito_detalle(
+            llav, obse, fech, esta, cant, totd, crea, usua)
+    VALUES ('` + wca.Llave + `', 'CRED', Now(), 1,  '` + strconv.Itoa(wca.Cantidad) + `',
+		'` + strconv.FormatFloat(wca.Total, 'f', 2, 64) + `', Now(), '` + usuario + `');`
+
+	_, err = sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query crédito ", err.Error())
+
+	}
+
+	for i := 0; i < len(wca.Serie); i++ {
+		fmt.Println("Actualizando credito: ", wca.Serie[i])
+		s := `UPDATE space.credito SET esta=1, llav='` + wca.Llave + `' WHERE oid=` + wca.Serie[i]
+		_, err = sys.PostgreSQLPENSION.Exec(s)
+		if err != nil {
+			fmt.Println("Error en el query crédito ", err.Error())
+		}
+	}
+
+	jSon, err = json.Marshal(wca)
 	return
 }
