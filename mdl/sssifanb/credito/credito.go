@@ -269,3 +269,38 @@ func (CR *Credito) EnviarATesoreria(wca WCreditoActualizar, usuario string) (jSo
 	jSon, err = json.Marshal(wca)
 	return
 }
+
+//WLiquidar API de apoyo a credito
+type WLiquidar struct {
+	Credito     string `json:"credito" bson:"credito"`
+	Cedula      string `json:"cedula" bson:"cedula"`
+	Observacion string `json:"observacion" bson:"observacion"`
+	Banco       string `json:"banco" bson:"banco"`
+	Numero      string `json:"numero" bson:"numero"`
+	Fecha       string `json:"fecha" bson:"fecha"`
+}
+
+//Liquidar credito lotes
+func (CR *Credito) Liquidar(wlq WLiquidar, usuario string) (jSon []byte, err error) {
+
+	query := `INSERT INTO space.liquidar_credito(
+            cedu, coid, obse, banc, fech, nume, crea, usua)
+    VALUES ('` + wlq.Cedula + `', ` + wlq.Credito + `, '` +
+		wlq.Observacion + `', '` + wlq.Banco + `', '` +
+		wlq.Fecha + `', '` + wlq.Numero + `', Now(), '` + usuario + `');`
+
+	_, err = sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query crédito ", err.Error())
+
+	}
+
+	s := `UPDATE space.credito SET esta=3 WHERE oid=` + wlq.Credito
+	_, err = sys.PostgreSQLPENSION.Exec(s)
+	if err != nil {
+		fmt.Println("Error en el query crédito ", err.Error())
+	}
+
+	jSon, err = json.Marshal(wlq)
+	return
+}

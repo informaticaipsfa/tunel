@@ -153,3 +153,32 @@ func (wc *WCredito) EnviarATesoreria(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
+
+//Liquidar Salvando datos del credito a un militar
+func (wc *WCredito) Liquidar(w http.ResponseWriter, r *http.Request) {
+	var M sssifanb.Mensaje
+	var wCredito credito.Credito
+
+	var wLiquidar credito.WLiquidar
+	Cabecera(w, r)
+
+	err := json.NewDecoder(r.Body).Decode(&wLiquidar)
+	if err != nil {
+		fmt.Println(err.Error())
+		M.Mensaje = "Error de Prestamos " + err.Error()
+		M.Tipo = 0
+		w.WriteHeader(http.StatusForbidden)
+		j, _ := json.Marshal(M)
+		w.Write(j)
+		return
+	}
+
+	wCredito.Liquidar(wLiquidar, UsuarioConectado.Login)
+	M.Mensaje = wLiquidar.Credito
+	M.Tipo = 1
+	w.WriteHeader(http.StatusOK)
+	j, _ := json.Marshal(M)
+	w.Write(j)
+	return
+
+}
