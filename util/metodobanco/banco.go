@@ -4,6 +4,7 @@ package metodobanco
 const (
 	URLBanco    = "./public_web/SSSIFANB/pensiones/temp/banco/"
 	URLBancoZIP = "public_web/SSSIFANB/pensiones/temp/banco/"
+	URLCobranza = "./public_web/SSSIFANB/afiliacion/tmp/"
 )
 
 //Seleccion Seleccionar Banco para generar pagos

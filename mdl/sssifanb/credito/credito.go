@@ -77,9 +77,11 @@ type Cuota struct {
 	Estatus int     `json:"estatus,omitempty" bson:"estatus"`
 	Tipo    int     `json:"tipo,omitempty" bson:"tipo"`
 	Dias    int     `json:"dias,omitempty" bson:"dias"`
+	Numero  int     `json:"numero,omitempty" bson:"numero"`
 }
 
 //Hipotecario viviendas
+
 type Hipotecario struct {
 	Solicitud Solicitud `json:"Solicitud,omitempty" bson:"solicitud"`
 }
@@ -121,7 +123,7 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 		sq.Scan(&oid)
 	}
 
-	query = `INSERT INTO space.cuota ( creid, cedula, bala, cuot, inte, capi, sald, fech, esta, tipo, dias) VALUES `
+	query = `INSERT INTO space.cuota ( creid, cedula, bala, cuot, inte, capi, sald, fech, esta, tipo, dias, nume ) VALUES `
 	i := 0
 	for _, lst := range PP.Cuotas {
 
@@ -135,7 +137,10 @@ func (PP *Solicitud) NuevoPrestamo(usuario string) string {
 			` + strconv.FormatFloat(lst.Interes, 'f', 2, 64) + `,
 			` + strconv.FormatFloat(lst.Capital, 'f', 2, 64) + `,
 			` + strconv.FormatFloat(lst.Saldo, 'f', 2, 64) + `,
-			'` + lst.Fecha + `',` + strconv.Itoa(lst.Estatus) + `,` + strconv.Itoa(lst.Tipo) + `,` + strconv.Itoa(lst.Dias) + `) `
+			'` + lst.Fecha + `',` + strconv.Itoa(lst.Estatus) + `,
+			` + strconv.Itoa(lst.Tipo) + `,
+			` + strconv.Itoa(lst.Dias) + `,
+			` + strconv.Itoa(lst.Numero) + `) `
 
 		i++
 	}
