@@ -5,8 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/mux"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/credito"
+	"github.com/informaticaipsfa/tunel/sys"
+	"github.com/informaticaipsfa/tunel/util/metodobanco"
 )
 
 //WCredito API de apoyo a credito
@@ -58,6 +61,7 @@ func (wc *WCredito) Listar(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
 		j, _ := json.Marshal(M)
 		w.Write(j)
+
 		return
 	}
 	//fmt.Println("Listando")
@@ -181,4 +185,34 @@ func (wc *WCredito) Liquidar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 	return
 
+}
+
+//CrearTxt Sistema de generacion bancaria
+func (wc *WCredito) CrearTxt(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var wcob metodobanco.Cobranza
+	var rcob []metodobanco.CobranzaDetalle
+
+	var id = mux.Vars(r)
+	ano := id["ano"]
+	mes := id["mes"]
+	desde := ano + "-" + mes + "-01"
+	hasta := ano + "-" + mes + "-30"
+
+	lsta := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "GN")
+	rcob = append(rcob, lsta)
+
+	lstb := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "AV")
+	rcob = append(rcob, lstb)
+
+	lstc := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "AR")
+	rcob = append(rcob, lstc)
+
+	lstd := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "EJ")
+	rcob = append(rcob, lstd)
+
+	j, _ := json.Marshal(rcob)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+	return
 }
