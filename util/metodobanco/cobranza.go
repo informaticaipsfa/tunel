@@ -28,7 +28,7 @@ func (CB *Cobranza) CabeceraSQL(desde string, hasta string, componente string) s
   WHERE
      -- crd.esta = 3 AND cot.esta = 0 AND tipo = 0
      -- comp = 'GN' AND cot.fech BETWEEN '2020-09-01' AND '2020-12-30'
-     comp = '` + componente + `' AND crea BETWEEN '` + desde + `' AND '` + hasta + `'`
+     comp = '` + componente + `' AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
 }
 
 //CobranzaDetalle Detalles de contcuotrol
@@ -39,13 +39,14 @@ type CobranzaDetalle struct {
 }
 
 //GenerarCobranza Creando consulta para archivos
-func (CB *Cobranza) GenerarCobranza(PostgreSQLPENSIONSIGESP *sql.DB, desde string, hasta string, componente string) (wcob CobranzaDetalle) {
+func (CB *Cobranza) GenerarCobranza(PostgreSQLPENSION *sql.DB, desde string, hasta string, componente string) (wcob CobranzaDetalle) {
 	CB.Componente = componente
-	sq, err := PostgreSQLPENSIONSIGESP.Query(CB.CabeceraSQL(desde, hasta, componente))
+	fmt.Println(CB.CabeceraSQL(desde, hasta, componente))
+	sq, err := PostgreSQLPENSION.Query(CB.CabeceraSQL(desde, hasta, componente))
 	util.Error(err)
 	i := 0
 	suma := 0.0
-	directorio := URLCobranza + "cobranza/" + CB.Firma
+	directorio := URLCobranza + "cobranza/"
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 	linea := ""

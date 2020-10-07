@@ -199,16 +199,16 @@ func (wc *WCredito) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	desde := ano + "-" + mes + "-01"
 	hasta := ano + "-" + mes + "-30"
 
-	lsta := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "GN")
+	lsta := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "GN")
 	rcob = append(rcob, lsta)
 
-	lstb := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "AV")
+	lstb := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "AV")
 	rcob = append(rcob, lstb)
 
-	lstc := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "AR")
+	lstc := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "AR")
 	rcob = append(rcob, lstc)
 
-	lstd := wcob.GenerarCobranza(sys.PostgreSQLPENSIONSIGESP, desde, hasta, "EJ")
+	lstd := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "EJ")
 	rcob = append(rcob, lstd)
 
 	j, _ := json.Marshal(rcob)
