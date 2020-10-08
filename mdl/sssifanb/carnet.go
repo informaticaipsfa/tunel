@@ -111,7 +111,7 @@ func (tim *Carnet) Salvar() (err error) {
 }
 
 // CambiarEstado Seleccionar estados
-func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
+func (tim *Carnet) CambiarEstado(serial string, estatus int, cedula string) (err error) {
 	carnet := make(map[string]interface{})
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 
@@ -119,13 +119,13 @@ func (tim *Carnet) CambiarEstado(serial string, estatus int) (err error) {
 	fmt.Println(serial, " ", estatus)
 	err = c.Update(bson.M{"serial": serial}, bson.M{"$set": carnet})
 	if estatus == 3 || estatus == 2 {
-		err = tim.CambiarEstadoMilitar(serial, estatus)
+		err = tim.CambiarEstadoMilitar(serial, estatus, cedula)
 	}
 	return
 }
 
 //CambiarEstadoMilitar Carnets
-func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int) (err error) {
+func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int, cedula string) (err error) {
 	var TIM Carnet
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 	err = c.Find(bson.M{"serial": serial}).One(&TIM)
@@ -134,6 +134,11 @@ func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int) (err error) 
 	}
 
 	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+	if TIM.ID == "" && cedula != "" {
+		TIM.ID = cedula
+	}
+
 	if TIM.ID != "" && TIM.IDF == "" {
 		carnet := make(map[string]interface{})
 		carnet["estatuscarnet"] = estatus

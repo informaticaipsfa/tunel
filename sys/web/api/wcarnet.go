@@ -16,7 +16,7 @@ import (
 //WCarnet Familiares
 type WCarnet struct {
 	Cedula      string `json:"cedula"`
-	Serial 			string `json:"serial"`
+	Serial      string `json:"serial"`
 	Motivo      string `json:"motivo"`
 	Descripcion string `json:"descripcion"`
 }
@@ -79,7 +79,7 @@ func (wca *WCarnet) Aprobar(w http.ResponseWriter, r *http.Request) {
 	var nivel = mux.Vars(r)
 	serial := nivel["serial"]
 	estatus, _ := strconv.Atoi(nivel["estatus"])
-	e := Carnet.CambiarEstado(serial, estatus)
+	e := Carnet.CambiarEstado(serial, estatus, "")
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))
@@ -130,14 +130,14 @@ func (wca *WCarnet) Liberar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errx = Carnet.CambiarEstadoMilitar(wca.Serial, 0)
+	errx = Carnet.CambiarEstadoMilitar(wca.Serial, 0, wca.Cedula)
 	if errx != nil {
 		M.Mensaje = errx.Error() + " falla con el serial del carnet"
 		j, _ := json.Marshal(M)
 		w.WriteHeader(http.StatusForbidden)
 		w.Write(j)
 		return
-	}else{
+	} else {
 		ip := strings.Split(r.RemoteAddr, ":")
 		M.Tipo = 1
 
@@ -153,6 +153,5 @@ func (wca *WCarnet) Liberar(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		return
 	}
-
 
 }
