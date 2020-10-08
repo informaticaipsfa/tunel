@@ -130,7 +130,7 @@ func (tim *Carnet) CambiarEstadoMilitar(serial string, estatus int) (err error) 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CTIM)
 	err = c.Find(bson.M{"serial": serial}).One(&TIM)
 	if err != nil {
-		return
+		// return
 	}
 
 	coleccion := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
