@@ -28,7 +28,7 @@ func (CB *Cobranza) CabeceraSQL(desde string, hasta string, componente string) s
   WHERE
      -- crd.esta = 3 AND cot.esta = 0 AND tipo = 0
      -- comp = 'GN' AND cot.fech BETWEEN '2020-09-01' AND '2020-12-30'
-     comp = '` + componente + `' AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
+	 crd.esta = 3 AND comp = '` + componente + `' AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
 }
 
 //CobranzaDetalle Detalles de contcuotrol
