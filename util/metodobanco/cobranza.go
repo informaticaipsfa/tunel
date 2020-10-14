@@ -22,7 +22,7 @@ type Cobranza struct {
 //CabeceraSQL Creando consulta para archivos
 func (CB *Cobranza) CabeceraSQL(desde string, hasta string, componente string) string {
 	CB.Componente = componente
-	return `  SELECT crd.cedula, cot.cuot, nume, creid, cot.fech, cot.tipo, crd.esta
+	return `  SELECT crd.cedula, cot.cuot, nume, creid, cot.fech, cot.tipo, crd.esta, crd.cant
   FROM space.credito crd
   JOIN space.cuota cot on crd.oid=cot.creid
   WHERE
@@ -41,7 +41,7 @@ type CobranzaDetalle struct {
 //GenerarCobranza Creando consulta para archivos
 func (CB *Cobranza) GenerarCobranza(PostgreSQLPENSION *sql.DB, desde string, hasta string, componente string) (wcob CobranzaDetalle) {
 	CB.Componente = componente
-	fmt.Println(CB.CabeceraSQL(desde, hasta, componente))
+	//fmt.Println(CB.CabeceraSQL(desde, hasta, componente))
 	sq, err := PostgreSQLPENSION.Query(CB.CabeceraSQL(desde, hasta, componente))
 	util.Error(err)
 	i := 0
@@ -52,17 +52,17 @@ func (CB *Cobranza) GenerarCobranza(PostgreSQLPENSION *sql.DB, desde string, has
 	linea := ""
 	for sq.Next() {
 		i++
-		var cedula, numero, credito, fecha, tipo, esta sql.NullString
+		var cedula, numero, credito, fecha, tipo, esta, plaz sql.NullString
 		var couta sql.NullFloat64
-		e := sq.Scan(&cedula, &couta, &numero, &credito, &fecha, &tipo, &esta)
+		e := sq.Scan(&cedula, &couta, &numero, &credito, &fecha, &tipo, &esta, &plaz)
 		util.Error(e)
 		ced := util.CompletarCeros(util.ValidarNullString(cedula), 0, 8)[:8]
 		cod := "00557"
 		mon := util.ValidarNullFloat64(couta)
-		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(mon, 'f', 2, 64))
+		montos := util.ReemplazarPuntoPorComa(strconv.FormatFloat(mon, 'f', 2, 64))
 		montos = util.CompletarCeros(montos, 0, 10)
 		num := util.CompletarCeros(util.ValidarNullString(numero), 0, 3)
-		plazo := "120"
+		plazo := util.ValidarNullString(plaz)
 		oid := credito
 		cred := "CR" + util.CompletarCeros(util.ValidarNullString(oid), 0, 10)
 		condicion := "01"

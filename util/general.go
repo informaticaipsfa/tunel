@@ -187,6 +187,11 @@ func ReemplazarGuionesPorSlah(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), "-", "/", -1)
 }
 
+//ReemplazarPuntoPorComa Reemplazando coma por puntos
+func ReemplazarPuntoPorComa(cadena string) string {
+	return strings.Replace(strings.Trim(cadena, " "), ".", ",", -1)
+}
+
 //Error Procesa errores del sistema
 func Error(e error) {
 	if e != nil {
