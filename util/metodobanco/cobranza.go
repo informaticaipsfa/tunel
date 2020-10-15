@@ -59,7 +59,7 @@ func (CB *Cobranza) GenerarCobranza(PostgreSQLPENSION *sql.DB, desde string, has
 		ced := util.CompletarCeros(util.ValidarNullString(cedula), 0, 8)[:8]
 		cod := "00557"
 		mon := util.ValidarNullFloat64(couta)
-		montos := util.ReemplazarPuntoPorComa(strconv.FormatFloat(mon, 'f', 2, 64))
+		montos := strconv.FormatFloat(mon, 'f', 2, 64)
 		montos = util.CompletarCeros(montos, 0, 10)
 		num := util.CompletarCeros(util.ValidarNullString(numero), 0, 3)
 		plazo := util.ValidarNullString(plaz)
