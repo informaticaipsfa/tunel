@@ -10,7 +10,7 @@ import (
 )
 
 //LeerCA Leer archivos de la caja de ahorro
-func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
+func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string, doc string) bool {
 	var coma, concepto, tipo string
 
 	codigomd5 := strings.Split(codigo, "|")
@@ -62,7 +62,7 @@ func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string) bool {
 
 	}
 
-	fmt.Println("procesando ", i)
+	fmt.Println("procesando ", i, doc)
 	_, err = PostPension.Exec(insertar)
 	//fmt.Println(insertar)
 	if err != nil {

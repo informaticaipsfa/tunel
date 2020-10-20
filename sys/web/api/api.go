@@ -349,6 +349,6 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 func ProcesarTxt(doc string, codigo string) {
 	var a util.Archivo
 	a.Ruta = "./public_web/SSSIFANB/pensiones/temp/nomina/" + doc
-	a.LeerCA(sys.PostgreSQLPENSION, codigo)
+	a.LeerCA(sys.PostgreSQLPENSION, codigo, doc)
 
 }
