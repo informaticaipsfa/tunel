@@ -323,7 +323,9 @@ func (CR *Credito) RelacionActiva(fecha string, desde string, hasta string, esta
 		WHERE 
 		esta = 0 
 		--AND fech BETWEEN '2020-11-01' AND '2020-12-31'
-	GROUP BY creid) AS B ON A.oid=B.creid`
+	GROUP BY creid) AS B ON A.oid=B.creid
+	ORDER BY B.creid
+	`
 	sq, err := sys.PostgreSQLPENSION.Query(s)
 
 	for sq.Next() {
