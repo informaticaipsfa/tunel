@@ -358,3 +358,49 @@ func (CR *Credito) RelacionActiva(fecha string, desde string, hasta string, esta
 
 	return
 }
+
+//RelacionActiva Creditos Activos
+func (CR *Credito) RelacionPagados(fecha string, desde string, hasta string, estatus int) (jSon []byte, err error) {
+	var lst []WCredito
+	s := `SELECT  oid, cedula, nomb, conc, inst, tcue, ncue, totd, fini, comp, grad, situa, abonado, toti
+	FROM space.credito A
+	INNER JOIN (SELECT creid, SUM(cuot) AS abonado
+		FROM space.cuota C
+		WHERE 
+		esta = 0 
+		--AND fech BETWEEN '2020-11-01' AND '2020-12-31'
+	GROUP BY creid) AS B ON A.oid=B.creid
+	ORDER BY B.creid
+	`
+	sq, err := sys.PostgreSQLPENSION.Query(s)
+
+	for sq.Next() {
+		var oid, ced, nomb, conc, inst, tcue, ncue, fini, comp, grad, situa sql.NullString
+		var totd, abon, toti sql.NullFloat64
+
+		var credito WCredito
+		err = sq.Scan(&oid, &ced, &nomb, &conc, &inst, &tcue, &ncue, &totd, &fini, &comp, &grad, &situa, &abon, &toti)
+		credito.OID = util.ValidarNullString(oid)
+		credito.Codigo = "CR" + util.CompletarCeros(util.ValidarNullString(oid), 0, 10)
+		credito.Cedula = util.ValidarNullString(ced)
+		credito.Componente = util.ValidarNullString(comp)
+		credito.Grado = util.ValidarNullString(grad)
+		credito.Situacion = util.ValidarNullString(situa)
+		credito.Nombre = util.ValidarNullString(nomb)
+		credito.Concepto = util.ValidarNullString(conc)
+		credito.Instituto = util.ValidarNullString(inst)
+		credito.Tipo = util.ValidarNullString(tcue)
+		credito.Cuenta = util.ValidarNullString(ncue)
+		credito.Monto = util.ValidarNullFloat64(totd)
+		credito.Fecha = util.ValidarNullString(fini)
+		credito.TotalIntereses = util.ValidarNullFloat64(toti)
+		credito.Abonado = util.ValidarNullFloat64(abon)
+		lst = append(lst, credito)
+	}
+
+	jSon, err = json.Marshal(lst)
+
+	util.Error(err)
+
+	return
+}
