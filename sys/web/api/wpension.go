@@ -649,6 +649,7 @@ type WRetroactivo struct {
 
 type WARC struct {
 	Cedula string `json:"cedula"`
+	CedulaFamiliar string `json:"cedulafamiliar"`
 	Anio   string `json:"anio"`
 }
 
