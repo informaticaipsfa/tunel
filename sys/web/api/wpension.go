@@ -706,7 +706,7 @@ func (p *Militar) CalcularRetroactivo(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//CalcularRetroactivo Militar
+//ImprimirARC Militar
 func (p *Militar) ImprimirARC(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
