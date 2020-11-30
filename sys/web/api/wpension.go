@@ -648,9 +648,9 @@ type WRetroactivo struct {
 }
 
 type WARC struct {
-	Cedula string `json:"cedula"`
+	Cedula         string `json:"cedula"`
 	CedulaFamiliar string `json:"cedulafamiliar"`
-	Anio   string `json:"anio"`
+	Anio           string `json:"anio"`
 }
 
 //CalcularRetroactivo Militar
@@ -713,7 +713,6 @@ func (p *Militar) ImprimirARC(w http.ResponseWriter, r *http.Request) {
 
 	var wArc WARC
 	url := "http://" + sys.HostIPPension + sys.HostUrlPension + "imprimirarc"
-
 	errx := json.NewDecoder(r.Body).Decode(&wArc)
 	M.Tipo = 1
 	if errx != nil {
@@ -725,7 +724,6 @@ func (p *Militar) ImprimirARC(w http.ResponseWriter, r *http.Request) {
 		w.Write(j)
 		return
 	}
-
 	jsonW, ex := json.Marshal(wArc)
 	if ex != nil {
 		fmt.Println(ex.Error())

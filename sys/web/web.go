@@ -390,8 +390,8 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/calcularretroactivo", wPensionado.CalcularRetroactivo).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/calcularretroactivo", wU.Opciones).Methods("OPTIONS")
 	//Consultar ARC
-	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/impimirarc", wPensionado.ImprimirARC).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/impimirarc", wU.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wPensionado.ImprimirARC).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wU.Opciones).Methods("OPTIONS")
 
 }
 
