@@ -79,5 +79,14 @@ func main() {
 		ReadTimeout:  280 * time.Second,
 	}
 	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL)
-	log.Fatal(server.ListenAndServeTLS("sys/seguridad/https/app.ipsfa.gob.ve.crt", "sys/seguridad/https/sucre.key"))
+	go server.ListenAndServeTLS("sys/seguridad/https/app.ipsfa.gob.ve.crt", "sys/seguridad/https/sucre.key")
+
+	serverx := &http.Server{
+		Handler:      context.ClearHandler(web.Enrutador),
+		Addr:         ":" + sys.PUERTO_SSL_STANDAR,
+		WriteTimeout: 280 * time.Second,
+		ReadTimeout:  280 * time.Second,
+	}
+	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_SSL_STANDAR)
+	log.Fatal(serverx.ListenAndServeTLS("sys/seguridad/https/app.ipsfa.gob.ve.crt", "sys/seguridad/https/sucre.key"))
 }
