@@ -255,7 +255,9 @@ func CargarModulosSeguridad() {
 
 //Principal Página inicial del sistema o bienvenida
 func Principal(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Saludos bienvenidos al Bus Empresarial de Datos")
+	//fmt.Fprintf(w, "Saludos bienvenidos al Bus Empresarial de Datos")
+	prefix := http.StripPrefix("/", http.FileServer(http.Dir("public_web/SSSIFANB/app.ipsfa/dist")))
+	Enrutador.PathPrefix("/").Handler(prefix)
 }
 
 //WMAdminLTE OpenSource tema de panel de control Tecnología Bootstrap3
