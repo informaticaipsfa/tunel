@@ -52,7 +52,7 @@ func CargarModulosWeb() {
 
 	var wcsv api.CSV
 
-	Enrutador.HandleFunc("/", Principal)
+	//Enrutador.HandleFunc("/", Principal)
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Actualizar)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Insertar)).Methods("POST")
@@ -256,17 +256,20 @@ func CargarModulosSeguridad() {
 //Principal Página inicial del sistema o bienvenida
 func Principal(w http.ResponseWriter, r *http.Request) {
 	//fmt.Fprintf(w, "Saludos bienvenidos al Bus Empresarial de Datos")
+
 	prefix := http.StripPrefix("/", http.FileServer(http.Dir("public_web/SSSIFANB/app.ipsfa/dist")))
 	Enrutador.PathPrefix("/").Handler(prefix)
+	fmt.Println("Consolidar log...")
 }
 
 //WMAdminLTE OpenSource tema de panel de control Tecnología Bootstrap3
 func WMAdminLTE() {
 	fmt.Println("Cargando Modulos de AdminLTE...")
-	// var GP = GPanel{}
-	// Enrutador.HandleFunc("/sssifanb/{id}", GP.IrA)
-	prefix := http.StripPrefix("/sssifanb", http.FileServer(http.Dir("public_web/SSSIFANB")))
-	Enrutador.PathPrefix("/sssifanb/").Handler(prefix)
+	prefix := http.StripPrefix("/", http.FileServer(http.Dir("public_web/SSSIFANB/app.ipsfa/dist")))
+	Enrutador.PathPrefix("/").Handler(prefix)
+
+	prefixx := http.StripPrefix("/sssifanb", http.FileServer(http.Dir("public_web/SSSIFANB")))
+	Enrutador.PathPrefix("/sssifanb/").Handler(prefixx)
 	// prefixx := http.StripPrefix("/bdse-admin/public/temp", http.FileServer(http.Dir("public/temp")))
 	// Enrutador.PathPrefix("/bdse-admin/public/temp/").Handler(prefixx)
 }
