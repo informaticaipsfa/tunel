@@ -124,10 +124,12 @@ func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 	// var traza fanb.Traza
 	CabeceraW(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
+	fmt.Println(usuario)
 	util.Error(e)
 
 	err := usuario.Validar(usuario.Cedula, util.GenerarHash256([]byte(usuario.Clave)))
 	if err != nil {
+
 		w.Header().Set("Content-Type", "application/text")
 		fmt.Println("Error en la conexion del usuario")
 		w.WriteHeader(http.StatusForbidden)

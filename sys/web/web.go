@@ -265,11 +265,11 @@ func Principal(w http.ResponseWriter, r *http.Request) {
 //WMAdminLTE OpenSource tema de panel de control Tecnología Bootstrap3
 func WMAdminLTE() {
 	fmt.Println("Cargando Modulos de AdminLTE...")
-	prefix := http.StripPrefix("/", http.FileServer(http.Dir("public_web/SSSIFANB/app.ipsfa/dist")))
-	Enrutador.PathPrefix("/").Handler(prefix)
 
 	prefixx := http.StripPrefix("/sssifanb", http.FileServer(http.Dir("public_web/SSSIFANB")))
 	Enrutador.PathPrefix("/sssifanb/").Handler(prefixx)
+	// prefix := http.StripPrefix("/", http.FileServer(http.Dir("public_web/SSSIFANB/app.ipsfa/dist")))
+	// Enrutador.PathPrefix("/").Handler(prefix)
 	// prefixx := http.StripPrefix("/bdse-admin/public/temp", http.FileServer(http.Dir("public/temp")))
 	// Enrutador.PathPrefix("/bdse-admin/public/temp/").Handler(prefixx)
 }
