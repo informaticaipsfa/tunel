@@ -46,7 +46,7 @@ const (
 	DESACTIVAR_LIMITE_DE_CONSULTA bool   = false
 	PUERTO                        string = "8080"
 	PUERTO_SSL                    string = "2608"
-	PUERTO_SSL_STANDAR            string = "448"
+	PUERTO_SSL_STANDAR            string = "443"
 	CODIFCACION_DE_ARCHIVOS       string = "UTF-8"
 	MAXIMO_LIMITE_DE_USUARIO      int    = 100
 	MAXIMO_LIMITE_DE_CONSULTAS    int    = 10
