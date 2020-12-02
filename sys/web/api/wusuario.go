@@ -90,7 +90,8 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
-
+	fmt.Println(usuario)
+	fmt.Println("login... ", usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
 	usuario.Validar(usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
 
 	if usuario.Nombre != "" {
