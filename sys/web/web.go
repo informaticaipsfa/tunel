@@ -18,7 +18,6 @@ var (
 
 //Cargar los diferentes modulos del sistema
 func Cargar() {
-	CargarModulosSeguridad()
 	CargarMiddleWare()
 	CargarModulosNomina()
 	CargarPensionados()
@@ -28,12 +27,17 @@ func Cargar() {
 	CargarModulosWebSite()
 	CargarModulosWebDevel()
 	CargarModulosPanel()
+	CargarModulosSeguridad()
 	WMAdminLTE()
 	//Principal()
 }
 
 //CargarModulosSeguridad Y cifrado
 func CargarModulosSeguridad() {
+
+	Enrutador.HandleFunc("/appipsfa/login", wUsuario.Login).Methods("POST")
+	Enrutador.HandleFunc("/appipsfa/login", wUsuario.Opciones).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Login).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
