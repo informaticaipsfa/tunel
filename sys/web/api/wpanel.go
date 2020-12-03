@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/informaticaipsfa/tunel/mdl/estadistica"
@@ -30,6 +31,7 @@ func (wp *WPanel) ListarPendientes(w http.ResponseWriter, r *http.Request) {
 //ListarColecciones Ver
 func (wp *WPanel) ListarColecciones(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
+	fmt.Println("Colecciones")
 	var Reduccion estadistica.Reduccion
 	Cabecera(w, r)
 	j, _ := Reduccion.ListarColecciones()

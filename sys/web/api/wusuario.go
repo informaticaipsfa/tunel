@@ -154,9 +154,9 @@ func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 //ValidarToken Validacion de usuario
 func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 	var mensaje util.Mensajes
-	// fmt.Println("Entrando... ")
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		//fmt.Println(r.Header)
+		fmt.Println("Entrando... ")
 		Cabecera(w, r)
 		token, e := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &seguridad.Reclamaciones{}, func(token *jwt.Token) (interface{}, error) {
 			//var claims jwt.Claims
