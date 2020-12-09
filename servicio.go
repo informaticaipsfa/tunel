@@ -70,6 +70,15 @@ func main() {
 	}
 	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO)
 	go srv.ListenAndServe()
+
+	srvs := &http.Server{
+		Handler:      context.ClearHandler(web.Enrutador),
+		Addr:         ":" + sys.PUERTO_STANDAR,
+		WriteTimeout: 280 * time.Second,
+		ReadTimeout:  280 * time.Second,
+	}
+	fmt.Println("Servidor Escuchando en el puerto: ", sys.PUERTO_STANDAR)
+	go srvs.ListenAndServe()
 	//
 	//https://dominio.com/* Protocolo de capa de seguridad
 	server := &http.Server{

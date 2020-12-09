@@ -44,7 +44,8 @@ const (
 	DESACTIVAR_ROLES              bool   = false
 	ACTIVAR_LIMITE_DE_CONSULTA    bool   = true
 	DESACTIVAR_LIMITE_DE_CONSULTA bool   = false
-	PUERTO                        string = "8080"
+	PUERTO                        string = "80"
+	PUERTO_STANDAR                string = "8080"
 	PUERTO_SSL                    string = "2608"
 	PUERTO_SSL_STANDAR            string = "443"
 	CODIFCACION_DE_ARCHIVOS       string = "UTF-8"
