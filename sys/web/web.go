@@ -340,10 +340,6 @@ func CargarModulosWebSite() {
 
 	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.LoginW).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.Opciones).Methods("OPTIONS")
-
-	Enrutador.HandleFunc("/x/api/web/login", wUsuario.LoginW).Methods("POST")
-	Enrutador.HandleFunc("/x/api/web/login", wUsuario.Opciones).Methods("OPTIONS")
-
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.CambiarClave).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
 

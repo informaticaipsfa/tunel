@@ -91,7 +91,7 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
 	fmt.Println(usuario)
-	fmt.Println("login... ", usuario.Clave, usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
+
 	usuario.Validar(usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
 
 	if usuario.Nombre != "" {
@@ -127,7 +127,7 @@ func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	fmt.Println(usuario)
 	util.Error(e)
-
+	//fmt.Println("login... ", usuario.Cedula, usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
 	err := usuario.Validar(usuario.Cedula, util.GenerarHash256([]byte(usuario.Clave)))
 	if err != nil {
 

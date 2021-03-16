@@ -197,7 +197,11 @@ func (wc *WCredito) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	ano := id["ano"]
 	mes := id["mes"]
 	desde := ano + "-" + mes + "-01"
-	hasta := ano + "-" + mes + "-30"
+	maxdia := "-30"
+	if mes == "2" {
+		maxdia = "-28"
+	}
+	hasta := ano + "-" + mes + maxdia
 
 	lsta := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "GN")
 	rcob = append(rcob, lsta)
