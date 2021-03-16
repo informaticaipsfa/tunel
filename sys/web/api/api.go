@@ -342,7 +342,6 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
-
 }
 
 //ProcesarTxt Proceso de archivo
@@ -350,5 +349,67 @@ func ProcesarTxt(doc string, codigo string) {
 	var a util.Archivo
 	a.Ruta = "./public_web/SSSIFANB/pensiones/temp/nomina/" + doc
 	a.LeerCA(sys.PostgreSQLPENSION, codigo, doc)
+}
 
+//SubirArchivosTXTCobranza Pensionados
+func (p *Militar) SubirArchivosTXTCobranza(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var traza fanb.Traza
+	var M sssifanb.Mensaje
+
+	ip := strings.Split(r.RemoteAddr, ":")
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+
+	er := r.ParseMultipartForm(32 << 20)
+	if er != nil {
+		fmt.Println(er)
+		return
+	}
+	m := r.MultipartForm
+	files := m.File["input-folder-2"]
+	codigo := r.FormValue("txtFileID")
+	directorio := "./public_web/SSSIFANB/tmp/cobranza/"
+	errr := os.Mkdir(directorio, 0777)
+	if errr != nil {
+		fmt.Println("El directorio ya existe!")
+	}
+	cadena := ""
+	for i, _ := range files {
+		file, errf := files[i].Open()
+		defer file.Close()
+		if errf != nil {
+			fmt.Println(errf)
+			return
+		}
+		out, er := os.Create(directorio + files[i].Filename)
+		defer out.Close()
+		if er != nil {
+			fmt.Println(er.Error())
+			return
+		}
+		_, err := io.Copy(out, file) // file not files[i] !
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		cadena += files[i].Filename + ";"
+		ProcesarCob(files[i].Filename, codigo)
+
+	} // Fin de archivos
+	M.Mensaje = cadena
+	M.Tipo = 2
+
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+
+}
+
+//ProcesarCob Proceso de archivo
+func ProcesarCob(doc string, codigo string) {
+	var a util.Archivo
+	a.Ruta = "./public_web/SSSIFANB/tmp/cobranza/" + doc
+	a.LeerCA(sys.PostgreSQLPENSION, codigo, doc)
 }

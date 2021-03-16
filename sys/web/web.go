@@ -84,6 +84,7 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportefamiliar", wUsuario.ValidarToken(per.EstadisticasFamiliar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivos", wUsuario.ValidarToken(per.SubirArchivos)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivostxt", wUsuario.ValidarToken(per.SubirArchivosTXTPensiones)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivoscob", wUsuario.ValidarToken(per.SubirArchivosTXTCobranza)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", wUsuario.ValidarToken(comp.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/estado", wUsuario.ValidarToken(esta.Consultar)).Methods("GET")

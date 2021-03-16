@@ -8,7 +8,27 @@ import (
 	"gopkg.in/mgo.v2/bson"
 )
 
-//WFamiliar Control de familiares para asignaciones
+const (
+	AINGRESO           string = "0xFI" //Año de Ingreso
+	AASCENSO           string = "0xFA" //Año de Ultimo de Ascenso
+	ANACIMIENTO        string = "0xFN" //Año de Nacimiento
+	CARNET_SERIAL      string = "0xCS" //Serial del Carnet
+	CANTIDAD_HIJOS     string = "0xCH" //Cantidad de Hijos
+	CANTIDAD_AFILIADOS string = "0xCA" //Cantidad de Afiliados
+	ESTADO_CIVIL       string = "0xEC" //Estado Civil
+)
+
+var WPreguntas = []string{
+	AINGRESO,
+	AASCENSO,
+	ANACIMIENTO,
+	CARNET_SERIAL,
+	CANTIDAD_HIJOS,
+	CANTIDAD_AFILIADOS,
+	ESTADO_CIVIL,
+}
+
+//WCausante Control de familiares para asignaciones
 type WCausante struct {
 	Cedula     string `json:"cedula" bson:"cedula"`
 	Nombre     string `json:"nombre" bson:"nombre"`
@@ -44,7 +64,7 @@ type WUsuario struct {
 	Empleado      bool         `json:"empleado,omitempty" bson:"empleado"`
 }
 
-//WVwalidar Validacion de Usuarios
+//Validar Validacion de Usuarios
 func (u *WUsuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
@@ -53,7 +73,7 @@ func (u *WUsuario) Validar(login string, clave string) (err error) {
 	return
 }
 
-//WVwalidar Validacion de Usuarios
+//Existe Validacion de Usuarios
 func (u *WUsuario) Existe(login string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
@@ -71,4 +91,13 @@ func (u *WUsuario) CambiarClave(login string, clave string, nueva string) (err e
 	antigua := util.GenerarHash256([]byte(clave))
 	err = c.Update(bson.M{"login": login, "clave": antigua}, bson.M{"$set": actualizar})
 	return
+}
+
+//CrearPreguntas Para encuestador
+func (u *WUsuario) CrearPreguntas() (err error) {
+	return
+}
+
+func obtenerMilitar() {
+
 }

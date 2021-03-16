@@ -20,6 +20,12 @@ type Archivo struct {
 	Canal            chan []byte
 }
 
+//Directorio operaciones sobre un directorio
+type Directorio struct {
+	Ruta    string
+	Listado []string `json:"listado"`
+}
+
 func (a *Archivo) iniciarVariable() {
 	a.Cabecera = "INSERT INTO space.nomina_archivo (cedu,fami, llav, conc,mont,tipo,fech, proc) VALUES "
 	a.CantidadLineas = 0
