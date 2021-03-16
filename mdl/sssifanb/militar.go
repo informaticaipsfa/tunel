@@ -685,3 +685,32 @@ func QueryMysqlText(contenido string, tipo int) string {
 	WHERE MATCH (` + parametro + `) AGAINST ('` + contenido + `'  IN BOOLEAN MODE)
 	ORDER BY puntuacion DESC LIMIT 500`
 }
+
+//Consultar una persona mediante el metodo de MongoDB
+func (m *Militar) ConsultarCedula(id string) (jSon []byte, err error) {
+	var militar Militar
+	var msj Mensaje
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+	err = c.Find(bson.M{"id": id}).One(&militar)
+
+	if err != nil {
+
+		seleccion := bson.M{
+			"familiar.persona.datobasico.$": true,
+		}
+		err = c.Find(bson.M{"familiar.persona.datobasico.cedula": id}).Select(seleccion).One(&militar)
+		msj.Tipo = 1
+		for _, v := range militar.Familiar {
+			msj.Mensaje = v.Persona.DatoBasico.ConcatenarApellidoNombre()
+		}
+		//militar.Familiar[0].Persona.DatoBasico.ConcatenarApellidoNombre()
+		jSon, err = json.Marshal(msj)
+	} else {
+		msj.Tipo = 1
+		msj.Mensaje = militar.Persona.DatoBasico.ConcatenarApellidoNombre()
+		jSon, err = json.Marshal(msj)
+	}
+
+	return
+}

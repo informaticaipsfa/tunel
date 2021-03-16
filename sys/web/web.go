@@ -58,17 +58,7 @@ func CargarMiddleWare() {
 	var wrec api.WRecibo
 	var wcar api.WCarnet
 	var wfam api.WFamiliar
-
-	var wCis api.WCis
-	var wCisA api.WCisApoyo
-	var wCisC api.WCisCarta
-	var wfe api.WFedeVida
-	var wtp api.WTratamiento
-
-	var wfactura api.WFactura
-	var wmedicina api.WMedicina
 	var wcsv api.CSV
-
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Actualizar)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Insertar)).Methods("POST")
@@ -103,6 +93,21 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/carnet/apro/{estatus}/{serial}", wUsuario.ValidarToken(wcar.Aprobar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/carnet/liberar", wUsuario.ValidarToken(wcar.Liberar)).Methods("POST")
 
+	Enrutador.HandleFunc("/ipsfa/api/consultar/{id}", wUsuario.ValidarToken(per.ConsultarCedula)).Methods("GET")
+	
+
+}
+
+//CargarBienestarSocial Modulos de Bienestar Social para Reembolsos Carta y apoyos
+func CargarBienestarSocial() {
+	var wCis api.WCis
+	var wCisA api.WCisApoyo
+	var wCisC api.WCisCarta
+	var wfe api.WFedeVida
+	var wtp api.WTratamiento
+	var wfactura api.WFactura
+	var wmedicina api.WMedicina
+
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso/listar/{id}/{sucursal}", wUsuario.ValidarToken(wCis.ListarReembolso)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Registrar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Actualizar)).Methods("PUT")
@@ -126,7 +131,6 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/wfedevida", wUsuario.ValidarToken(wfe.Registrar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wfactura", wUsuario.ValidarToken(wfactura.Consultar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wmedicina", wUsuario.ValidarToken(wmedicina.Registrar)).Methods("POST")
-
 }
 
 //CargarModulosNomina Nomina del personal Militar
@@ -329,6 +333,8 @@ func CargarModulosWebDevel() {
 
 	Enrutador.HandleFunc("/devel/api/pensionado/calculo/{id}", wPensionado.Calculo).Methods("GET")
 
+	Enrutador.HandleFunc("/devel/api/consultar/{id}", per.ConsultarCedula).Methods("GET")
+
 }
 
 //CargarModulosWebSite Cargador de modulos web
@@ -378,6 +384,7 @@ func CargarModulosPanel() {
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/extraerdatosmysql", wUsuario.ValidarToken(wpanel.ExtraerDatosMySQL)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/gitall", wUsuario.ValidarToken(wpanel.GitAll)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/compilar", wUsuario.ValidarToken(wpanel.Compilar)).Methods("POST")
+
 }
 
 //WMAdminLTE OpenSource tema de panel de control Tecnología Bootstrap3

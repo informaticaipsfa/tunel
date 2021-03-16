@@ -413,3 +413,27 @@ func ProcesarCob(doc string, codigo string) {
 	a.Ruta = "./public_web/SSSIFANB/tmp/cobranza/" + doc
 	a.LeerCA(sys.PostgreSQLPENSION, codigo, doc)
 }
+
+//ConsultarCedula Obtener cedulas de familiar o militar
+func (p *Militar) ConsultarCedula(w http.ResponseWriter, r *http.Request) {
+	var traza fanb.Traza
+	Cabecera(w, r)
+	var dataJSON sssifanb.Militar
+	var cedula = mux.Vars(r)
+
+	j, e := dataJSON.ConsultarCedula(cedula["id"])
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
+	ip := strings.Split(r.RemoteAddr, ":")
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+	traza.Log = cedula["id"]
+	traza.Documento = "C::SistemaTurnos"
+	traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
