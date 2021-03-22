@@ -300,8 +300,10 @@ func (u *WUsuario) RestablecerClaves(w http.ResponseWriter, r *http.Request) {
 	if datos.Coleccion == "" {
 		datos.Coleccion = "usuario"
 	}
-	ok := usr.RestablecerClaves(datos.ID, datos.Nueva, datos.Coleccion)
+	ok := usr.RestablecerClaves(datos.ID, datos.Clave, datos.Coleccion)
 	M.Tipo = 1
+	M.Fecha = time.Now()
+	M.Msj = "Felicitaciones su clave ha sido actualizada"
 	if ok != nil {
 		M.Msj = ok.Error()
 		M.Tipo = 0
