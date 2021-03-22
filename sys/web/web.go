@@ -41,7 +41,7 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/listar", wUsuario.ValidarToken(wUsuario.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.Crear).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.CambiarClave)).Methods("PUT")
-	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.Crear)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/listar", wUsuario.ValidarToken(wUsuario.Listar)).Methods("GET")
@@ -49,7 +49,7 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/consultar/{id}/{col}", wUsuario.ValidarToken(wUsuario.Consultar)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.ValidarToken(wUsuario.RestablecerClaves)).Methods("PUT")
-	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.Opciones).Methods("OPTIONS")
 }
 
 //CargarMiddleWare Cargador de modulos web
@@ -96,7 +96,7 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/carnet/apro/{estatus}/{serial}", wUsuario.ValidarToken(wcar.Aprobar)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/carnet/liberar", wUsuario.ValidarToken(wcar.Liberar)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/carnet/liberar", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/carnet/liberar", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/consultar/{id}", wUsuario.ValidarToken(per.ConsultarCedula)).Methods("GET")
 }
@@ -384,18 +384,18 @@ func CargarModulosPanel() {
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/crearreduccion", wUsuario.ValidarToken(wpanel.CrearReduccion)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarcolecciones", wUsuario.ValidarToken(wpanel.ListarColecciones)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarcolecciones", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarcolecciones", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarpendientes", wUsuario.ValidarToken(wpanel.ListarPendientes)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarpendientes", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarpendientes", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/extraerdatosmysql", wUsuario.ValidarToken(wpanel.ExtraerDatosMySQL)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/gitall", wUsuario.ValidarToken(wpanel.GitAll)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/gitall", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/gitall", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/compilar", wUsuario.ValidarToken(wpanel.Compilar)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/compilar", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/compilar", wUsuario.Opciones).Methods("OPTIONS")
 
 }
 
