@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	
 	"github.com/informaticaipsfa/tunel/sys/web/api"
 )
 
@@ -34,7 +35,6 @@ func Cargar() {
 
 //CargarModulosSeguridad Y cifrado
 func CargarModulosSeguridad() {
-
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Login).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/validar", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("POST")
@@ -43,15 +43,17 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.CambiarClave)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.Crear)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.CambiarClave)).Methods("PUT")
-	Enrutador.HandleFunc("/ipsfa/api/wusuario", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/listar", wUsuario.ValidarToken(wUsuario.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/validarphp", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario/consultar/{id}/{col}", wUsuario.ValidarToken(wUsuario.Consultar)).Methods("GET")
+
+	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.ValidarToken(wUsuario.RestablecerClaves)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
 }
 
 //CargarMiddleWare Cargador de modulos web
 func CargarMiddleWare() {
-
 	var per api.Militar
 	var comp api.APIComponente
 	var esta api.APIEstado
@@ -90,12 +92,13 @@ func CargarMiddleWare() {
 
 	Enrutador.HandleFunc("/ipsfa/api/carnet/listar/{id}", wUsuario.ValidarToken(wcar.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/carnet/limpiar/{estatus}/{sucursal}", wUsuario.ValidarToken(wcar.Limpiar)).Methods("GET")
+
 	Enrutador.HandleFunc("/ipsfa/api/carnet/apro/{estatus}/{serial}", wUsuario.ValidarToken(wcar.Aprobar)).Methods("GET")
+
 	Enrutador.HandleFunc("/ipsfa/api/carnet/liberar", wUsuario.ValidarToken(wcar.Liberar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/carnet/liberar", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/consultar/{id}", wUsuario.ValidarToken(per.ConsultarCedula)).Methods("GET")
-	
-
 }
 
 //CargarBienestarSocial Modulos de Bienestar Social para Reembolsos Carta y apoyos
@@ -379,11 +382,20 @@ func CargarModulosPanel() {
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/vreduccion", wUsuario.ValidarToken(wpanel.ValidarReduccion)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/exreduccion", wUsuario.ValidarToken(wpanel.ExtraerReduccion)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/crearreduccion", wUsuario.ValidarToken(wpanel.CrearReduccion)).Methods("POST")
+
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarcolecciones", wUsuario.ValidarToken(wpanel.ListarColecciones)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarcolecciones", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarpendientes", wUsuario.ValidarToken(wpanel.ListarPendientes)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/listarpendientes", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/extraerdatosmysql", wUsuario.ValidarToken(wpanel.ExtraerDatosMySQL)).Methods("POST")
+
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/gitall", wUsuario.ValidarToken(wpanel.GitAll)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/gitall", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/compilar", wUsuario.ValidarToken(wpanel.Compilar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/wpanel/data/compilar", wUsuario.ValidarToken(wUsuario.Opciones)).Methods("OPTIONS")
 
 }
 

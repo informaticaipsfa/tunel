@@ -56,11 +56,13 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 
 //Clave de tipos
 type Clave struct {
-	Login   string `json:"login"`
-	Clave   string `json:"clave"`
-	Nueva   string `json:"nueva"`
-	Repetir string `json:"repetir"`
-	Correo  string `json:"correo"`
+	ID        string `json:"id"`
+	Login     string `json:"login"`
+	Clave     string `json:"clave"`
+	Nueva     string `json:"nueva"`
+	Repetir   string `json:"repetir"`
+	Correo    string `json:"correo"`
+	Coleccion string `json:"coleccion"`
 }
 
 //CambiarClave ID
@@ -72,7 +74,10 @@ func (u *WUsuario) CambiarClave(w http.ResponseWriter, r *http.Request) {
 
 	e := json.NewDecoder(r.Body).Decode(&datos)
 	util.Error(e)
-	ok := usr.CambiarClave(datos.Login, datos.Clave, datos.Nueva)
+	if datos.Coleccion == "" {
+		datos.Coleccion = "usuario"
+	}
+	ok := usr.CambiarClave(datos.Login, datos.Clave, datos.Nueva, datos.Coleccion)
 	M.Tipo = 1
 	if ok != nil {
 		M.Msj = ok.Error()
@@ -230,8 +235,9 @@ func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var cedula = mux.Vars(r)
 	ced := cedula["id"]
+	col := cedula["col"]
 
-	j, _ := usuario.Consultar(ced)
+	j, _ := usuario.Consultar(ced, col)
 
 	ip := strings.Split(r.RemoteAddr, ":")
 	traza.Usuario = usuario.Login
@@ -256,7 +262,7 @@ func (u *WUsuario) Listar(w http.ResponseWriter, r *http.Request) {
 
 //Opciones Militar
 func (u *WUsuario) Opciones(w http.ResponseWriter, r *http.Request) {
-	CabeceraW(w, r)
+	//CabeceraW(w, r)
 	fmt.Println("Conectandose usuario vía Extranet...")
 	//fmt.Fprintf(w, "Saludos")
 
@@ -271,7 +277,30 @@ func (u *WUsuario) CambiarClaveW(w http.ResponseWriter, r *http.Request) {
 
 	e := json.NewDecoder(r.Body).Decode(&datos)
 	util.Error(e)
-	ok := usr.CambiarClave(datos.Login, datos.Clave, datos.Nueva)
+	ok := usr.CambiarClave(datos.ID, datos.Clave, datos.Nueva)
+	M.Tipo = 1
+	if ok != nil {
+		M.Msj = ok.Error()
+		M.Tipo = 0
+	}
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//RestablecerClaves ID
+func (u *WUsuario) RestablecerClaves(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M util.Mensajes
+	var usr seguridad.Usuario
+	var datos Clave
+
+	e := json.NewDecoder(r.Body).Decode(&datos)
+	util.Error(e)
+	if datos.Coleccion == "" {
+		datos.Coleccion = "usuario"
+	}
+	ok := usr.RestablecerClaves(datos.ID, datos.Nueva, datos.Coleccion)
 	M.Tipo = 1
 	if ok != nil {
 		M.Msj = ok.Error()

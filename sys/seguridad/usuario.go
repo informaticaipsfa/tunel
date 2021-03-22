@@ -159,9 +159,9 @@ func CrearClaveTodos() {
 }
 
 //CambiarClave Usuarios
-func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err error) {
+func (u *Usuario) CambiarClave(login string, clave string, nueva string, coleccion string) (err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
+	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
 	actualizar := make(map[string]interface{})
 	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
 	antigua := util.GenerarHash256([]byte(clave))
@@ -170,11 +170,27 @@ func (u *Usuario) CambiarClave(login string, clave string, nueva string) (err er
 }
 
 //Consultar el sistema de usuarios
-func (u *Usuario) Consultar(cedula string) (j []byte, err error) {
+func (u *Usuario) Consultar(cedula string, coleccion string) (j []byte, err error) {
 	u.Nombre = ""
-	c := sys.MGOSession.DB(sys.CBASE).C("usuario")
-	err = c.Find(bson.M{"cedula": cedula}).Select(bson.M{"clave": false}).One(&u)
-	j, _ = json.Marshal(u)
+	campo := "login"
+	var itObjeto interface{}
+
+	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
+	if coleccion == "wusuario" {
+		campo = "cedula"
+	}
+	err = c.Find(bson.M{campo: cedula}).Select(bson.M{"clave": false}).One(&itObjeto)
+	j, _ = json.Marshal(itObjeto)
+	return
+}
+
+//RestablecerClaves  de usuarios Internos y WEB
+func (u *Usuario) RestablecerClaves(id string, nueva string, coleccion string) (err error) {
+
+	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
+	actualizar := make(map[string]interface{})
+	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
+	err = c.UpdateId(bson.ObjectIdHex(id), bson.M{"$set": actualizar})
 	return
 }
 
