@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/informaticaipsfa/tunel/mdl/estadistica"
@@ -19,24 +18,19 @@ type WPanel struct {
 
 //ListarPendientes Ver
 func (wp *WPanel) ListarPendientes(w http.ResponseWriter, r *http.Request) {
-	var M sssifanb.Mensaje
-	var Reduccion estadistica.Reduccion
 	Cabecera(w, r)
+	var Reduccion estadistica.Reduccion
 	j, _ := Reduccion.ListarPendientes()
 	w.WriteHeader(http.StatusOK)
-	M.Tipo = 0
 	w.Write(j)
 }
 
 //ListarColecciones Ver
 func (wp *WPanel) ListarColecciones(w http.ResponseWriter, r *http.Request) {
-	var M sssifanb.Mensaje
-	fmt.Println("Colecciones")
-	var Reduccion estadistica.Reduccion
 	Cabecera(w, r)
+	var Reduccion estadistica.Reduccion
 	j, _ := Reduccion.ListarColecciones()
 	w.WriteHeader(http.StatusOK)
-	M.Tipo = 0
 	w.Write(j)
 }
 
@@ -104,7 +98,6 @@ func (wp *WPanel) ExtraerDatosMySQL(w http.ResponseWriter, r *http.Request) {
 
 //Compilar Sevicios
 func (wp *WPanel) Compilar(w http.ResponseWriter, r *http.Request) {
-
 	Cabecera(w, r)
 	go util.EjecutarScript()
 	w.WriteHeader(http.StatusOK)

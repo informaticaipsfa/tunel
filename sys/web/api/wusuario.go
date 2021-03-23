@@ -262,7 +262,7 @@ func (u *WUsuario) Listar(w http.ResponseWriter, r *http.Request) {
 
 //Opciones Militar
 func (u *WUsuario) Opciones(w http.ResponseWriter, r *http.Request) {
-	//CabeceraW(w, r)
+	CabeceraW(w, r)
 	fmt.Println("Conectandose usuario vía Extranet...")
 	//fmt.Fprintf(w, "Saludos")
 
