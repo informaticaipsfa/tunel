@@ -148,6 +148,8 @@ func CargarModulosNomina() {
 	var wRetroactivo api.Retroactivo
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.Opciones).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/{id}", wUsuario.ValidarToken(concepto.Consultar)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/listar/concepto/", wUsuario.ValidarToken(concepto.Listar)).Methods("GET")
