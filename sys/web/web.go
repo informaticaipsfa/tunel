@@ -148,6 +148,8 @@ func CargarModulosNomina() {
 	var wRetroactivo api.Retroactivo
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.ValidarToken(concepto.Agregar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto", wUsuario.Opciones).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/ipsfa/api/nomina/concepto/{id}", wUsuario.ValidarToken(concepto.Consultar)).Methods("GET")
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/listar/concepto/", wUsuario.ValidarToken(concepto.Listar)).Methods("GET")
@@ -371,7 +373,7 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/calcularretroactivo", wU.Opciones).Methods("OPTIONS")
 	//Consultar ARC
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wPensionado.ImprimirARC).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wU.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wUsuario.Opciones).Methods("OPTIONS")
 
 }
 
