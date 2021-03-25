@@ -67,17 +67,17 @@ type Prestamo struct {
 
 //Cuota Prestamos
 type Cuota struct {
-	ID      string  `json:"id,omitempty" bson:"id"`
-	Balance float64 `json:"balance,omitempty" bson:"balance"`
-	Cuota   float64 `json:"cuota,omitempty" bson:"cuota"`
-	Interes float64 `json:"interes,omitempty" bson:"interes"`
-	Capital float64 `json:"capital,omitempty" bson:"capital"`
-	Saldo   float64 `json:"saldo,omitempty" bson:"saldo"`
-	Fecha   string  `json:"fecha,omitempty" bson:"fecha"`
-	Estatus int     `json:"estatus,omitempty" bson:"estatus"`
-	Tipo    int     `json:"tipo,omitempty" bson:"tipo"`
-	Dias    int     `json:"dias,omitempty" bson:"dias"`
-	Numero  int     `json:"numero,omitempty" bson:"numero"`
+	ID      string  `json:"id" bson:"id"`
+	Balance float64 `json:"balance" bson:"balance"`
+	Cuota   float64 `json:"cuota" bson:"cuota"`
+	Interes float64 `json:"interes" bson:"interes"`
+	Capital float64 `json:"capital" bson:"capital"`
+	Saldo   float64 `json:"saldo" bson:"saldo"`
+	Fecha   string  `json:"fecha" bson:"fecha"`
+	Estatus int     `json:"estatus" bson:"estatus"`
+	Tipo    int     `json:"tipo" bson:"tipo"`
+	Dias    int     `json:"dias" bson:"dias"`
+	Numero  int     `json:"numero" bson:"numero"`
 }
 
 //Hipotecario viviendas
@@ -219,6 +219,47 @@ func (CR *Credito) Listar(fecha string, desde string, hasta string, estatus int)
 		credito.Fecha = util.ValidarNullString(fini)
 		credito.TotalIntereses = 0
 		lst = append(lst, credito)
+	}
+
+	jSon, err = json.Marshal(lst)
+	return
+}
+
+//Listar consultando
+func (CUO *Cuota) Listar(creditoid string) (jSon []byte, err error) {
+	var lst []Cuota
+	s := `SELECT 
+			cuo.oid,
+			cuo.bala, cuo.cuot,
+			cuo.inte, cuo.capi,
+			cuo.sald, cuo.fech, 
+			cuo.esta, cuo.tipo,
+			cuo.dias, cuo.nume
+		FROM space.credito cre JOIN space.cuota cuo ON cre.oid=cuo.creid WHERE cuo.creid=` + creditoid
+	sq, err := sys.PostgreSQLPENSION.Query(s)
+	
+	util.Error(err)
+	for sq.Next() {
+		var oid, fech sql.NullString
+		var bala, cuot, inte, capi, sald sql.NullFloat64
+		var esta, tipo, dias, nume int
+		var cuota Cuota
+		err = sq.Scan(&oid, &bala, &cuot, &inte, &capi, &sald, &fech, &esta, &tipo, &dias, &nume)
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+		cuota.ID = util.ValidarNullString(oid)
+		cuota.Balance = util.ValidarNullFloat64(bala)
+		cuota.Cuota = util.ValidarNullFloat64(cuot)
+		cuota.Interes = util.ValidarNullFloat64(inte)
+		cuota.Capital = util.ValidarNullFloat64(capi)
+		cuota.Saldo = util.ValidarNullFloat64(sald)
+		cuota.Fecha = util.ValidarNullString(fech)
+		cuota.Estatus = esta
+		cuota.Tipo = tipo
+		cuota.Dias = dias
+		cuota.Numero = nume
+		lst = append(lst, cuota)
 	}
 
 	jSon, err = json.Marshal(lst)

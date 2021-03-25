@@ -65,7 +65,7 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Actualizar)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Insertar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Eliminar)).Methods("DELETE")
-	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/militar/listado", wUsuario.ValidarToken(per.Listado)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/militar/pace/{id}", wUsuario.ValidarToken(per.ConsultarPACE)).Methods("GET")
@@ -74,9 +74,13 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportecomponente", wUsuario.ValidarToken(per.EstadisticasPorComponente)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportegrado", wUsuario.ValidarToken(per.EstadisticasPorGrado)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/militar/reportefamiliar", wUsuario.ValidarToken(per.EstadisticasFamiliar)).Methods("POST")
+
 	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivos", wUsuario.ValidarToken(per.SubirArchivos)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivos", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivostxt", wUsuario.ValidarToken(per.SubirArchivosTXTPensiones)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivostxt", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivoscob", wUsuario.ValidarToken(per.SubirArchivosTXTCobranza)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/jwtsubirarchivoscob", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/componente/{id}", wUsuario.ValidarToken(comp.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/estado", wUsuario.ValidarToken(esta.Consultar)).Methods("GET")
@@ -84,11 +88,12 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Actualizar)).Methods("PUT")
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Insertar)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Opciones)).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/familiar/csvfamiliar", wUsuario.ValidarToken(wcsv.GCSVSC)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/recibo/crud/{id}", wUsuario.ValidarToken(wrec.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/recibo/crud", wUsuario.ValidarToken(wrec.Insertar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/recibo/crud", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/carnet/listar/{id}", wUsuario.ValidarToken(wcar.Listar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/carnet/limpiar/{estatus}/{sucursal}", wUsuario.ValidarToken(wcar.Limpiar)).Methods("GET")
@@ -250,6 +255,7 @@ func CargarModulosCredito() {
 	Enrutador.HandleFunc("/ipsfa/api/credito/creartxt/{ano}/{mes}", wUsuario.ValidarToken(wCredito.CrearTxt)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/credito/relacionactiva", wUsuario.ValidarToken(wCredito.RelacionActiva)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/credito/relacionpagados", wUsuario.ValidarToken(wCredito.RelacionPagados)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/credito/cuotas/{id}", wUsuario.ValidarToken(wCredito.ListarCuotas)).Methods("GET")
 }
 
 //CargarModulosWebDevel Cargador de modulos web

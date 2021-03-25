@@ -43,7 +43,6 @@ func (wc *WCredito) Guardar(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(M)
 	w.Write(j)
 	return
-
 }
 
 //Listar Creditos
@@ -64,22 +63,12 @@ func (wc *WCredito) Listar(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-	//fmt.Println("Listando")
-
 	j, e := wCred.Listar(wc.Fecha, wc.Desde, wc.Hasta, wc.Estatus)
 	if e != nil {
 		w.WriteHeader(http.StatusForbidden)
 		w.Write([]byte("Error al consultar los datos"))
 		return
 	}
-
-	// ip := strings.Split(r.RemoteAddr, ":")
-	// traza.IP = ip[0]
-	// traza.Time = time.Now()
-	// traza.Usuario = UsuarioConectado.Login
-	// traza.Log = cedula["id"]
-	// traza.Documento = "Consultando Militar"
-	// traza.CrearHistoricoConsulta("historicoconsultas")
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
@@ -293,6 +282,23 @@ func (wc *WCredito) RelacionPagados(w http.ResponseWriter, r *http.Request) {
 	// traza.Log = cedula["id"]
 	// traza.Documento = "Consultando Militar"
 	// traza.CrearHistoricoConsulta("historicoconsultas")
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+}
+
+//ListarCuotas Cuotas
+func (wc *WCredito) ListarCuotas(w http.ResponseWriter, r *http.Request) {
+	// var traza fanb.Traza
+	Cabecera(w, r)
+	var wCuota credito.Cuota
+	var codigo = mux.Vars(r)
+
+	j, e := wCuota.Listar(codigo["id"])
+	if e != nil {
+		w.WriteHeader(http.StatusForbidden)
+		w.Write([]byte("Error al consultar los datos"))
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
 }
