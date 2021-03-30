@@ -48,7 +48,7 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/validarphp", wUsuario.ValidarToken(wUsuario.Autorizado)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/consultar/{id}/{col}", wUsuario.ValidarToken(wUsuario.Consultar)).Methods("GET")
 
-	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.ValidarToken(wUsuario.RestablecerClaves)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.ValidarToken(wUsuario.RestablecerClaves)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.Opciones).Methods("OPTIONS")
 }
 
