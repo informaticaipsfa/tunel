@@ -67,6 +67,9 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.ValidarToken(per.Eliminar)).Methods("DELETE")
 	Enrutador.HandleFunc("/ipsfa/api/militar/crud", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/militar/listado", wUsuario.ValidarToken(per.Listado)).Methods("POST")
+	//
+	Enrutador.HandleFunc("/ipsfa/api/militar/xcrud", wUsuario.ValidarToken(per.Actualizar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/militar/xcrud", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/militar/pace/{id}", wUsuario.ValidarToken(per.ConsultarPACE)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/militar/pace/consultarbeneficiario/{id}", wUsuario.ValidarToken(per.ConsultarBeneficiario)).Methods("GET")
@@ -90,6 +93,10 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.ValidarToken(wfam.Insertar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/familiar/crud", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/familiar/csvfamiliar", wUsuario.ValidarToken(wcsv.GCSVSC)).Methods("POST")
+
+	//
+	Enrutador.HandleFunc("/ipsfa/api/familiar/xcrud", wUsuario.ValidarToken(wfam.Actualizar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/familiar/xcrud", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/recibo/crud/{id}", wUsuario.ValidarToken(wrec.Consultar)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/recibo/crud", wUsuario.ValidarToken(wrec.Insertar)).Methods("POST")
@@ -283,6 +290,10 @@ func CargarModulosWebDevel() {
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Insertar).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Eliminar).Methods("DELETE")
 	Enrutador.HandleFunc("/devel/api/militar/crud", per.Opciones).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/devel/api/militar/xcrud", per.Actualizar).Methods("POST")
+	Enrutador.HandleFunc("/devel/api/militar/xcrud", per.Opciones).Methods("OPTIONS")
+
 	Enrutador.HandleFunc("/devel/api/militar/reportecomponente", per.EstadisticasPorComponente).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/militar/reportegrado", per.EstadisticasPorGrado).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/militar/reportefamiliar", per.EstadisticasFamiliar).Methods("POST")
