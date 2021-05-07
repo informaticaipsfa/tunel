@@ -58,7 +58,7 @@ func main() {
 	// var pension sssifanb.Pension
 	// pension.PensioanadosBeneficiarios()
 	// pension.ActualizarSobrevivientesPension()
-	//
+
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
 

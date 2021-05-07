@@ -213,12 +213,10 @@ func CargarModulosNomina() {
 
 	Enrutador.HandleFunc("/ipsfa/api/nomina/gretroctivo", wUsuario.ValidarToken(wRetroactivo.GenerarRetroactivo)).Methods("POST")
 	Enrutador.HandleFunc("/devel/api/nomina/gretroactivo", wRetroactivo.GenerarRetroactivo).Methods("POST")
-
 }
 
 //CargarPensionados Pensionados en general
 func CargarPensionados() {
-
 	var wPensionado api.Militar
 
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/calculo/{id}", wUsuario.ValidarToken(wPensionado.Calculo)).Methods("GET")
@@ -236,7 +234,6 @@ func CargarPensionados() {
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/impimirarc", wUsuario.Opciones).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/gitall", wUsuario.ValidarToken(wPensionado.GitAll)).Methods("POST")
-
 }
 
 //CargarModulosBanco Modulos de txt y reportes de banco

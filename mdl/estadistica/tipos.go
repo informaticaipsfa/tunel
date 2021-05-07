@@ -54,6 +54,8 @@ type Reduccion struct {
 	Componente             string           `json:"componente" bson:"componente"`
 	FechaCreacion          time.Time        `json:"fcreacion,omitempty" bson:"fcreacion"`
 	FechaVencimiento       time.Time        `json:"fvencimiento,omitempty" bson:"fvencimiento"`
+	PorcentajeT            float64          `json:"porcentajet,omitempty" bson:"porcentajet"`
+	PorcentajeF            float64          `json:"porcentajef,omitempty" bson:"porcentajef"`
 }
 
 func Inferencia() {
@@ -183,9 +185,11 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		"persona.telefono":            true,
 		"persona.correo":              true,
 		"pension.causal":              true,
+		"pension.pprestaciones":       true,
 		"familiar.persona.datobasico": true,
 		"familiar.parentesco":         true,
 		"familiar.esmilitar":          true,
+		"familiar.pprestaciones":      true,
 		"tim.fechacreacion":           true,
 		"tim.fechavencimiento":        true,
 	}
@@ -225,6 +229,8 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 		prs.FechaResuelto = mil.FechaResuelto
 		prs.EsMilitar = true
 		prs.Parentesco = "T"
+		prs.PorcentajeT = mil.Pension.PorcentajePrestaciones
+
 		prs.Grado = mil.Grado.Abreviatura
 		prs.Componente = mil.Componente.Abreviatura
 		prs.FechaCreacion = mil.TIM.FechaCreacion
@@ -253,6 +259,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 			prsf.Situacion = mili.Situacion
 			prsf.Grado = mili.Grado.Abreviatura
 			prsf.Componente = mili.Componente.Abreviatura
+			prsf.PorcentajeF = Familia.PorcentajePrestaciones
 			ad, _, _ := Familia.Persona.DatoBasico.FechaDefuncion.Date()
 			if ad < 1900 {
 				err := creduccion.Insert(prsf)
@@ -332,7 +339,7 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			fmt.Println("Error en la linea...")
 		}
 	} else {
-		cabecera := "#;cedula;nombre;parentesco;sexo;fecha nacimiento;titular\n"
+		cabecera := "#;cedula;nombre;parentesco;sexo;fecha nacimiento;titular;porcentajet;porcentajef\n"
 		_, e := f.WriteString(cabecera)
 		if e != nil {
 			fmt.Println("Error en la linea...")
@@ -344,8 +351,9 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 			fechaSlashNacimiento := strings.Replace(convertir, "-", "/", -1)
 			i++
 			linea := strconv.Itoa(i) + ";" + rd.Cedula + ";" +
-				rd.Nombre + ";" + rd.Parentesco + ";" + rd.Sexo + ";" + fechaSlashNacimiento + ";" + rd.IDT +
-				"\n"
+				rd.Nombre + ";" + rd.Parentesco + ";" + rd.Sexo + ";" + fechaSlashNacimiento +
+				";" + rd.IDT + ";" + strconv.FormatFloat(rd.PorcentajeT, 'f', 2, 64) + ";" +
+				strconv.FormatFloat(rd.PorcentajeF, 'f', 2, 64) + "\n"
 			_, e := f.WriteString(linea)
 			if e != nil {
 				fmt.Println("Error en la linea...")
