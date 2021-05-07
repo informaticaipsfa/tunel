@@ -2,6 +2,8 @@
 /start.sh
 sys/config_dev.json
 tmp/*
+sys/seguridad/https/cert.pem
+sys/seguridad/https/key.pem
 sys/seguridad/https/app.ipsfa.gob.ve.pem
 sys/seguridad/https/sucre.pem
 sys/seguridad/https/app.ipsfa.gob.ve.crt

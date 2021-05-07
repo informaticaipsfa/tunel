@@ -259,6 +259,7 @@ func (r *Reduccion) MilitarTitular() (valor bool) {
 			prsf.Situacion = mili.Situacion
 			prsf.Grado = mili.Grado.Abreviatura
 			prsf.Componente = mili.Componente.Abreviatura
+			prsf.PorcentajeT = mili.Pension.PorcentajePrestaciones
 			prsf.PorcentajeF = Familia.PorcentajePrestaciones
 			ad, _, _ := Familia.Persona.DatoBasico.FechaDefuncion.Date()
 			if ad < 1900 {
