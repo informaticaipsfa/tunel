@@ -187,6 +187,7 @@ func (m *Militar) AplicarReglas() {
 		mes = time.Month(mcr)
 		d = dcr
 	}
+
 	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
 }
 
