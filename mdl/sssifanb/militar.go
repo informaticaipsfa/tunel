@@ -155,7 +155,7 @@ func (m *Militar) AplicarReglas() {
 		fechaActual = m.FechaRetiro.UTC()
 	}
 	a, mes, d := util.CalcularTiempoServicio(fechaActual, fecha)
-
+	//fmt.Println("a , m , d", a, mes, d)
 	acr := a + m.AnoReconocido
 	mcr := int(mes)
 	dcr := d
