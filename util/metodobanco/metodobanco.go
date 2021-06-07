@@ -1,8 +1,12 @@
 package metodobanco
 
 import (
+	"database/sql"
 	"fmt"
 	"os/exec"
+	"strconv"
+
+	"github.com/informaticaipsfa/tunel/util"
 )
 
 type Archivos struct{}
@@ -35,4 +39,28 @@ func (m *Archivos) Borrar(llave string) bool {
 	//fmt.Printf("%s", out)
 	return true
 
+}
+
+//generarCedula Permite generar el campo de cedula completando ceros
+//al mismo tiempo limpia la cadena de espacios en blanco y elimna puntos
+//orientacion establece el inicio si es de derecha a izquierda 0 BDV
+//cantidad estable el formato de autollenado para completar ceros segun su orientacion
+func generarCedula(cedula sql.NullString, orientacion int, cantidad int) string {
+	sCedula := util.ValidarNullString(cedula)
+	return util.CompletarCeros(util.EliminarPuntoDecimal(sCedula), orientacion, cantidad)[:cantidad]
+}
+
+//generarNombre basado en el autocompletar con espacio BDV
+func generarNombre(nombre sql.NullString, orientacion int, cantidad int) string {
+	return util.CompletarEspacios(util.ValidarNullString(nombre), orientacion, cantidad)[:cantidad]
+}
+
+//generarMonto Permite evaluar valores de postgres y convertirlos en cadena con float64
+func generarMonto(neto sql.NullFloat64) (monto float64, smonto string) {
+	monto = util.ValidarNullFloat64(neto)
+	smonto = util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
+	smonto = util.CompletarCeros(smonto, 0, 12)
+	//strnumero := util.EliminarUnderScore(util.ValidarNullString(numero))
+
+	return
 }

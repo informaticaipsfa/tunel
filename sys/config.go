@@ -13,11 +13,10 @@ type config struct{}
 
 //Variables del modelo
 var (
-	Version                  string = "V.1.0.2"
-	MySQL                    bool   = false
-	MongoDB                  bool   = false
-	SQLServer                bool   = false
-	Oracle                   bool   = false
+	MySQL                    bool = false
+	MongoDB                  bool = false
+	SQLServer                bool = false
+	Oracle                   bool = false
 	BaseDeDatos              BaseDatos
 	MGOSession               *mgo.Session
 	PostgreSQLSAMAN          *sql.DB
@@ -32,6 +31,7 @@ var (
 	HostUrlPace              string = ""
 	HostIPPension            string = ""
 	HostUrlPension           string = ""
+	Version                  string = "V.2.2.2"
 )
 
 //Constantes del sistema

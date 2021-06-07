@@ -53,7 +53,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 	linea := ""
 	for sq.Next() {
 		i++
-		var cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
+		var cedu, cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
 
 		var neto sql.NullFloat64
 		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto, &familia, &ceddante, &ndante)
@@ -63,16 +63,18 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 		montos = util.CompletarCeros(montos, 0, 12)
 		strnumero := util.EliminarUnderScore(util.ValidarNullString(numero))
-		bancos := util.CompletarCeros(strnumero, 0, 20)[:20]
+		cuenta := util.CompletarCeros(strnumero, 0, 20)[:20]
 
-		cedu := ""
-		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ceddante) != "0" {
-			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
+		cedulaAutorizado := util.ValidarNullString(ceddante)
+		p := cedulaAutorizado != "" //cedula del autorizado
+		q := cedulaAutorizado != "0"
+
+		if p == q {
+			cedu = ceddante //cedula del autorizado
+		} else if util.ValidarNullString(familia) != "" {
+			cedu = familia //cedula del familiar
 		} else {
-			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
-			if util.ValidarNullString(familia) != "" {
-				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)[:10]
-			}
+			cedu = cedula //cedula del titular
 		}
 
 		cerocinco := "00000"
@@ -80,7 +82,7 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		filler := "00"
 		sumatotal += monto
 		sumaparcial += monto
-		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\r\n"
+		linea += b.CodigoEmpresa + montos + cuenta + generarCedula(cedu, 0, 10) + cerocinco + tipos + filler + "\r\n"
 
 	}
 	arch++

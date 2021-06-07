@@ -73,7 +73,7 @@ func DiasDelMes(fecha time.Time) int {
 //CompletarCeros llenar con ceros antes y despues de una cadena
 func CompletarCeros(cadena string, orientacion int, cantidad int) string {
 	var result string
-	cant := len(cadena)
+	cant := len(EliminarEspacioBlanco(cadena))
 	total := cantidad - cant
 	for i := 0; i < total; i++ {
 		result += "0"
@@ -89,7 +89,7 @@ func CompletarCeros(cadena string, orientacion int, cantidad int) string {
 //CompletarEspacios llenar con ceros antes y despues de una cadena
 func CompletarEspacios(cadena string, orientacion int, cantidad int) string {
 	var result string
-	cant := len(cadena)
+	cant := len(EliminarEspacioBlanco(cadena))
 	total := cantidad - cant
 	for i := 0; i < total; i++ {
 		result += " "
@@ -169,7 +169,7 @@ func GenerarHash256(password []byte) (encry string) {
 
 }
 
-//EliminarPuntoDecimal Reemplazando coma por puntos
+//EliminarPuntoDecimal Reemplazando por nada
 func EliminarPuntoDecimal(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ".", "", -1)
 }
