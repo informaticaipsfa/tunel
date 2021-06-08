@@ -20,3 +20,6 @@ func TestGenerarBDV(t *testing.T) {
 		t.Fail()
 	}
 }
+
+//func TesGenerarBBI(t *testing.T){
+//)

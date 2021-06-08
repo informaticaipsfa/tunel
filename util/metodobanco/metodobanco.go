@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"os/exec"
 	"strconv"
+	"time"
 
 	"github.com/informaticaipsfa/tunel/util"
 )
 
+//Archivos Generalizando normas del archivo
 type Archivos struct{}
 
 //ComprimirTxt Comprimir la carpeta generada para los archivos bancarios
@@ -60,7 +62,20 @@ func generarMonto(neto sql.NullFloat64) (monto float64, smonto string) {
 	monto = util.ValidarNullFloat64(neto)
 	smonto = util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 	smonto = util.CompletarCeros(smonto, 0, 12)
-	//strnumero := util.EliminarUnderScore(util.ValidarNullString(numero))
-
 	return
+}
+
+//generarCuentaBancaria Crear formato de cuetnas bancarias
+func generarCuentaBancaria(cuenta sql.NullString) string {
+	sCuenta := util.ValidarNullString(cuenta)
+	return util.CompletarCeros(sCuenta, 0, 20) //20 Numero de cuenta)
+}
+
+//genearFecha Archivos del Banco Venezuala
+func generarFecha() string {
+	fecha := time.Now()
+	dd := fecha.String()[8:10]
+	mm := fecha.String()[5:7]
+	aa := fecha.String()[2:4]
+	return dd + "/" + mm + "/" + aa
 }

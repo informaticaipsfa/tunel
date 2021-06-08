@@ -5,18 +5,23 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
 
 	"github.com/informaticaipsfa/tunel/util"
 )
 
 type Venezuela struct {
-	Firma         string
-	Cantidad      int
-	CodigoEmpresa string
-	NumeroEmpresa string
-	Fecha         string
-	Tabla         string
+	GenerarArchivo bool
+	Firma          string
+	Cantidad       int
+	CodigoEmpresa  string
+	NumeroEmpresa  string
+	Fecha          string
+	Tabla          string
+	Archivo        int
+	TipoCuenta     string
+	Directorio     string
+	Registros      int
+	Nombre         string
 }
 
 //CabeceraSQL Creando consulta para archivos
@@ -33,11 +38,6 @@ func (b *Venezuela) CabeceraSQL(bancos string, tipocuenta string) string {
 
 //Generar Generando pago
 func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) bool {
-	fecha := time.Now()
-	dd := fecha.String()[8:10]
-	mm := fecha.String()[5:7]
-	aa := fecha.String()[2:4]
-	fechas := dd + "/" + mm + "/" + aa
 	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0102'", tipocuenta))
 	util.Error(err)
 
@@ -50,75 +50,53 @@ func (b *Venezuela) Generar(PostgreSQLPENSIONSIGESP *sql.DB, tipocuenta string) 
 	errr := os.Mkdir(directorio, 0777)
 	util.Error(errr)
 	i := 0
-	var sumatotal float64
-	var sumaparcial float64
-	arch := 0
+	var sumatotal, sumaparcial float64
 	linea := ""
+
+	fechas := generarFecha()
+
 	for sq.Next() {
 		i++
-		var cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
-
+		var cedu, cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
 		var neto sql.NullFloat64
 		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto, &familia, &ceddante, &ndante)
 		util.Error(e)
-		//1
-
-		codigocuenta, stipo := evaluarTipoCuenta(util.ValidarNullString(tipo))
-
-		//20
-		numerocuenta := util.CompletarCeros(util.ValidarNullString(numero), 0, 20)
+		codigocuenta, stipo := evaluarTipoCuenta(util.ValidarNullString(tipo)) //1 Codigo Empresa
+		numerocuenta := generarCuentaBancaria(numero)                          //Cuenta Bancaria 20 Digitos
 		monto := util.ValidarNullFloat64(neto)
 		pagar := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
 		montoapagar := util.CompletarCeros(pagar, 0, 11)
-		nombrecompleto := ""
-		cedu := ""
-		evaluar := util.ValidarNullString(ceddante)
-		nombeval := util.ValidarNullString(nombre)
-		if evaluar != "" || evaluar != "0" && nombeval != "" {
-			nombrecompleto = generarNombre(ndante, 1, 40)
-			cedu = generarCedula(ceddante, 0, 10)
-		} else {
-			nombrecompleto = generarNombre(nombre, 1, 40)
-			cedu = generarCedula(cedula, 0, 10)
-			if util.ValidarNullString(familia) != "" {
-				cedu = generarCedula(familia, 0, 10)
-			}
+
+		cedulaAutorizado := util.ValidarNullString(ceddante)
+		nombeval := util.ValidarNullString(nombre) //Evaluamos cedula del titular de la cuenta
+
+		p := cedulaAutorizado != ""
+		q := cedulaAutorizado != "0"
+
+		nombrecomp := nombre //Nombre del titular
+		cedu = cedula        //cedula del titular
+
+		if p == q && nombeval != "" {
+			nombrecomp = ndante
+			cedu = ceddante //cedula del autorizado
+		} else if util.ValidarNullString(familia) != "" {
+			cedu = familia //cedula del familiar
 		}
 
 		sumatotal += monto
 		sumaparcial += monto
-		linea += stipo + numerocuenta + montoapagar + codigocuenta + nombrecompleto + cedu + "003291  \r\n"
+		linea += stipo + numerocuenta + montoapagar + codigocuenta + generarNombre(nombrecomp, 1, 40) + generarCedula(cedu, 0, 10) + "003291  \r\n"
 		if i == b.Cantidad {
-			arch++
-			venz, e := os.Create(directorio + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
-			util.Error(e)
-			sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-			sumas = util.CompletarCeros(sumas, 0, 13)
-
-			registros := "03291" //util.Completara(i), 0, 4)
-			cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa + "01" + fechas + sumas + registros + "  \r\n"
-			fmt.Fprintf(venz, cabecera)
-			fmt.Fprintf(venz, linea)
-			venz.Close()
-			sumaparcial = 0
-			linea = ""
+			b.Archivo++
+			b.generarArchivo(fechas, linea, sumaparcial)
 			i = 0
+			linea = ""
+			sumaparcial = 0
 		}
-
 	}
 
-	if i > 0 {
-		arch++
-		venz, e := os.Create(directorio + "/venezuela " + tipocuenta + " " + strconv.Itoa(arch) + ".txt")
-		util.Error(e)
-		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-		sumas = util.CompletarCeros(sumas, 0, 13)
-		fechas := dd + "/" + mm + "/" + aa
-		registros := "03291"
-		cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa + "01" + fechas + sumas + registros + "  \r\n"
-		fmt.Fprintf(venz, cabecera)
-		fmt.Fprintf(venz, linea)
-		venz.Close()
+	if i > 0 { //Pendiente si existen mas personas por escribir en el archivo
+		b.generarArchivo(fechas, linea, sumaparcial)
 	}
 
 	return true
@@ -138,4 +116,17 @@ func evaluarTipoCuenta(sTipo string) (codigo string, tipo string) {
 //titularCuenta generar la persona responsable con nombre y cedula
 func titularCuenta() string {
 	return ""
+}
+
+//generarArchivo Permite generar archivo del sistema para los bancos
+func (b *Venezuela) generarArchivo(fecha string, contenido string, sumaparcial float64) {
+	venz, e := os.Create(b.Directorio + "/venezuela " + b.TipoCuenta + " " + strconv.Itoa(b.Archivo) + ".txt")
+	util.Error(e)
+	sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
+	sumas = util.CompletarCeros(sumas, 0, 13)
+	codigo := "03291" //codigo banco final de la linea
+	cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa + "01" + fecha + sumas + codigo + "  \r\n"
+	fmt.Fprintf(venz, cabecera)
+	fmt.Fprintf(venz, contenido) //insertar contenido del archivo
+	venz.Close()
 }
