@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -30,7 +31,8 @@ const layout string = "2006-01-02"
 //ValidarNullFloat64 los campos nulos de la base de datos y retornar su valor original
 func ValidarNullFloat64(b sql.NullFloat64) (f float64) {
 	if b.Valid {
-		f = b.Float64
+		str := strconv.FormatFloat(b.Float64, 'f', 2, 64)
+		f, _ = strconv.ParseFloat(str, 64)
 	} else {
 		f = 0
 	}

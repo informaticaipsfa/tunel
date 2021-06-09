@@ -58,10 +58,10 @@ func generarNombre(nombre sql.NullString, orientacion int, cantidad int) string 
 }
 
 //generarMonto Permite evaluar valores de postgres y convertirlos en cadena con float64
-func generarMonto(neto sql.NullFloat64) (monto float64, smonto string) {
+func generarMonto(neto sql.NullFloat64, orientacion int, cantidad int) (monto float64, smonto string) {
 	monto = util.ValidarNullFloat64(neto)
 	smonto = util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
-	smonto = util.CompletarCeros(smonto, 0, 12)
+	smonto = util.CompletarCeros(smonto, orientacion, cantidad)
 	return
 }
 
@@ -72,6 +72,7 @@ func generarCuentaBancaria(cuenta sql.NullString) string {
 }
 
 //genearFecha Archivos del Banco Venezuala
+//formato dd/mm/aa
 func generarFecha() string {
 	fecha := time.Now()
 	dd := fecha.String()[8:10]
