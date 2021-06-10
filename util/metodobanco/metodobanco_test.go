@@ -22,7 +22,7 @@ func TestGenerarBDV(t *testing.T) {
 		vzla.CodigoEmpresa = "0"
 		vzla.NumeroEmpresa = "01020488720000002147"
 		vzla.Firma = "8a3afb8f96ec8a0c032fc829dc586d42" //firma del archivo nomina a generar
-		vzla.Cantidad = 100
+		vzla.Cantidad = 1100
 		vzla.DesactivarArchivo = false
 		vzla.Directorio = "tmp/8a3afb8f96ec8a0c032fc829dc586d42"
 
@@ -30,7 +30,7 @@ func TestGenerarBDV(t *testing.T) {
 
 		if err == nil {
 
-			t.Log("Proceso finalizado Registro: ", vzla.Registro, " Total: ", strconv.FormatFloat(vzla.Total, 'f', 2, 64))
+			t.Log("Proceso finalizado Registro: ", vzla.Registros, " Total: ", strconv.FormatFloat(vzla.Total, 'f', 2, 64))
 		} else {
 			t.Error("El proceso se ejecuto pero no se encontro el archivo")
 			t.Fail()

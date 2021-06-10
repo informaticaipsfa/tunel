@@ -58,6 +58,7 @@ func (b *Venezuela) Generar(psqlPension *sql.DB, tipocuenta string) error {
 
 	for sq.Next() {
 		b.Registro++
+		b.Registros++
 		var cedu, cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
 		var neto sql.NullFloat64
 		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto, &familia, &ceddante, &ndante)
