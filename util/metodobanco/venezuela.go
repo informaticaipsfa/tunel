@@ -49,7 +49,7 @@ func (b *Venezuela) Generar(psqlPension *sql.DB, tipocuenta string) error {
 	sq, err := psqlPension.Query(b.CabeceraSQL("='0102'", tipocuenta))
 	util.Error(err)
 
-	b.crearDirectorio()
+	b.Directorio = crearDirectorio(b.Directorio, b.DesactivarArchivo, b.Firma, b.Tabla)
 
 	b.Registro = 0
 	b.Contenido = ""
@@ -125,34 +125,13 @@ func (b *Venezuela) generarArchivo(fecha string) {
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(b.SumaParcial, 'f', 2, 64))
 		sumas = util.CompletarCeros(sumas, 0, 13)
 		codigo := "03291" //codigo banco final de la linea
-		cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa + "01" + fecha + sumas + codigo + "  \r\n"
-		fmt.Fprintf(venz, cabecera)
-		fmt.Fprintf(venz, b.Contenido) //insertar contenido del archivo
+		cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa +
+			"01" + fecha + sumas + codigo + "  \r\n"
+		fmt.Fprintf(venz, cabecera+"")
+		fmt.Fprintf(venz, b.Contenido+"") //insertar contenido del archivo
 		venz.Close()
 		b.Contenido = ""
 		b.Registro = 0
 		b.SumaParcial = 0
 	}
-}
-
-//crearDirectorio permite iniciar la carpeta donde se crearan los documentos
-func (b *Venezuela) crearDirectorio() {
-	if !b.DesactivarArchivo {
-		if b.Directorio == "" {
-			b.Directorio = URLBanco + b.Firma + definirArchivo(b.Tabla)
-		}
-
-		err := os.Mkdir(b.Directorio, 0777)
-		util.Error(err)
-	}
-}
-
-//definirArchivo para su asignacion y creacion en los documentos
-func definirArchivo(tabla string) (valor string) {
-
-	valor = ""
-	if tabla == "rechazos" {
-		valor = "-XR"
-	}
-	return
 }

@@ -73,7 +73,7 @@ func (CB *Cobranza) GenerarCobranza(PostgreSQLPENSION *sql.DB, desde string, has
 
 	cobr, e := os.Create(directorio + "/" + CB.Componente + ".txt")
 	util.Error(e)
-	fmt.Fprintf(cobr, linea)
+	fmt.Fprintf(cobr, linea+"")
 
 	cobr.Close()
 	wcob.Cantidad = i

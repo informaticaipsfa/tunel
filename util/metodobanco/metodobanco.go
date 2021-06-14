@@ -3,6 +3,7 @@ package metodobanco
 import (
 	"database/sql"
 	"fmt"
+	"os"
 	"os/exec"
 	"strconv"
 	"time"
@@ -68,7 +69,7 @@ func generarMonto(neto sql.NullFloat64, orientacion int, cantidad int) (monto fl
 //generarCuentaBancaria Crear formato de cuetnas bancarias
 func generarCuentaBancaria(cuenta sql.NullString) string {
 	sCuenta := util.ValidarNullString(cuenta)
-	return util.CompletarCeros(sCuenta, 0, 20) //20 Numero de cuenta)
+	return util.CompletarCeros(util.EliminarUnderScore(sCuenta), 0, 20)[:20] //20 Numero de cuenta)
 }
 
 //genearFecha Archivos del Banco Venezuala
@@ -79,4 +80,27 @@ func generarFecha() string {
 	mm := fecha.String()[5:7]
 	aa := fecha.String()[2:4]
 	return dd + "/" + mm + "/" + aa
+}
+
+//crearDirectorio permite iniciar la carpeta donde se crearan los documentos
+func crearDirectorio(Dir string, desactivar bool, firma string, tabla string) string {
+	if !desactivar {
+		if Dir == "" {
+			Dir = URLBanco + firma + definirArchivo(tabla)
+		}
+
+		err := os.Mkdir(Dir, 0777)
+		util.Error(err)
+	}
+	return Dir
+}
+
+//definirArchivo para su asignacion y creacion en los documentos
+func definirArchivo(tabla string) (valor string) {
+
+	valor = ""
+	if tabla == "rechazos" {
+		valor = "-XR"
+	}
+	return
 }

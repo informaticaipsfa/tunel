@@ -12,12 +12,22 @@ import (
 
 //Banfanb Control de Banco
 type Banfanb struct {
-	Firma         string
-	Cantidad      int
-	CodigoEmpresa string
-	NumeroEmpresa string
-	Fecha         string
-	Tabla         string
+	DesactivarArchivo bool
+	Firma             string
+	Cantidad          int
+	CodigoEmpresa     string
+	NumeroEmpresa     string
+	Fecha             string
+	Tabla             string
+	Archivo           int
+	TipoCuenta        string
+	Directorio        string
+	Registros         int
+	Nombre            string
+	Registro          int
+	Contenido         string //representa la linea
+	SumaParcial       float64
+	Total             float64
 }
 
 //CabeceraSQL Creando consulta para archivos
@@ -34,93 +44,75 @@ func (b *Banfanb) CabeceraSQL(bancos string) string {
 }
 
 //Generar Archivo
-func (b *Banfanb) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
+func (b *Banfanb) Generar(psqlPension *sql.DB) (err error) {
 
-	fmt.Println(b.CabeceraSQL("='0177'"))
-	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0177'"))
+	sq, err := psqlPension.Query(b.CabeceraSQL("='0177'"))
 	util.Error(err)
 
-	i := 0
-	valor := ""
-	if b.Tabla == "rechazos" {
-		valor = "-XR"
-	}
-	directorio := URLBanco + b.Firma + valor
-	errr := os.Mkdir(directorio, 0777)
-	util.Error(errr)
-	b.Cantidad = 500000
-	var sumatotal float64
-	var sumaparcial float64
-	arch := 0
-	linea := ""
-	for sq.Next() {
-		i++
-		var cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
+	b.Directorio = crearDirectorio(b.Directorio, b.DesactivarArchivo, b.Firma, b.Tabla)
 
+	//b.Cantidad = 500000
+	for sq.Next() {
+		b.Registro++
+		b.Registros++
+
+		var cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
 		var neto sql.NullFloat64
 		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto, &familia, &ceddante, &ndante)
 		util.Error(e)
 
-		monto := util.ValidarNullFloat64(neto)
-		//montocondecimale := strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64)
-		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
+		monto, montos := generarMonto(neto, 0, 12)
+		bancos := generarCuentaBancaria(numero)
+		cedulaAutorizado := util.ValidarNullString(ceddante) //Evaluamos cedula del titular de la cuenta
 
-		montos = util.CompletarCeros(montos, 0, 12)
-		numerocuenta := util.ValidarNullString(numero)
+		p := cedulaAutorizado != ""
+		q := cedulaAutorizado != "0"
 
-		bancos := util.CompletarCeros(util.EliminarUnderScore(numerocuenta), 0, 20)
+		cedu := cedula //cedula del titular
 
-		cedu := ""
-		if util.ValidarNullString(ceddante) != "" && util.ValidarNullString(ndante) != "" {
-			cedu = util.CompletarCeros(util.ValidarNullString(ceddante), 0, 10)[:10]
-		} else {
-			cedu = util.CompletarCeros(util.ValidarNullString(cedula), 0, 10)[:10]
-			if util.ValidarNullString(familia) != "" {
-				cedu = util.CompletarCeros(util.ValidarNullString(familia), 0, 10)[:10]
-			}
+		if p == q {
+			cedu = ceddante
+		} else if util.ValidarNullString(familia) != "" {
+			cedu = familia
 		}
 
 		cerocinco := "00000"
 		tipos := "0" // 0: ABONO 1: DEBITO
 		filler := "00"
-		sumatotal += monto
-		sumaparcial += monto
-		linea += b.CodigoEmpresa + montos + bancos + cedu + cerocinco + tipos + filler + "\r\n"
-		if i == b.Cantidad {
-			arch++
-			banf, e := os.Create(directorio + "/banfan " + strconv.Itoa(arch) + ".txt")
-			util.Error(e)
-			sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-			sumas = util.CompletarCeros(sumas, 0, 17)
-			fecha := time.Now()
-			fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
-			registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)
-			cabecera := b.NumeroEmpresa + fechas + sumas + registros + "\r\n"
-			fmt.Fprintf(banf, cabecera)
-			fmt.Fprintf(banf, linea)
-			banf.Close()
-			sumaparcial = 0
-			linea = ""
-			i = 0
+		b.Total += monto
+		b.SumaParcial += monto
+		b.Contenido += b.CodigoEmpresa + montos + bancos + generarCedula(cedu, 0, 10) + cerocinco + tipos + filler + "\r\n"
+		if b.Registro == b.Cantidad { //Pendiente si existen mas personas por escribir en el archivo
+			b.generarArchivo()
 		}
 
 	}
-	if i > 0 {
-		arch++
-		banf, e := os.Create(directorio + "/banfan " + strconv.Itoa(arch) + ".txt")
+
+	if b.Registro > 0 { //Pendiente si existen mas personas por escribir en el archivo
+		b.generarArchivo()
+	}
+	return
+}
+
+func (b *Banfanb) generarArchivo() {
+
+	if !b.DesactivarArchivo { //Desactiva la generacion de los archivos
+		b.Archivo++
+
+		banf, e := os.Create(b.Directorio + "/banfan " + strconv.Itoa(b.Archivo) + ".txt")
 		util.Error(e)
-		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
+		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(b.SumaParcial, 'f', 2, 64))
 		sumas = util.CompletarCeros(sumas, 0, 17)
 		fecha := time.Now()
 		fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
-		registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)
-		cabecera := b.NumeroEmpresa + fechas + sumas + registros + "\r\n"
-		fmt.Fprintf(banf, cabecera)
-		fmt.Fprintf(banf, linea)
+		registros := util.CompletarCeros(strconv.Itoa(b.Registro), 0, 4)
+		fmt.Fprintf(banf, b.NumeroEmpresa+fechas+sumas+registros+"\r\n")
+		fmt.Fprintf(banf, b.Contenido+"")
 		banf.Close()
+		b.SumaParcial = 0
+		b.Contenido = ""
+		b.Registro = 0
 	}
-
-	return true
 }
 
 //Tercero Generando pago
@@ -190,9 +182,8 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 			arch++
 			banftercero, e := os.Create(directorio + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
 			util.Error(e)
-			cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\r\n"
-			fmt.Fprintf(banftercero, cabecera)
-			fmt.Fprintf(banftercero, linea)
+			fmt.Fprintf(banftercero, "01FINANZAS CARACAS DE FECHA"+fechas+"\r\n")
+			fmt.Fprintf(banftercero, ""+linea)
 			banftercero.Close()
 			sumaparcial = 0
 			linea = ""
@@ -204,9 +195,8 @@ func (b *Banfanb) Tercero(PostgreSQLPENSIONSIGESP *sql.DB, cuenta string) bool {
 		arch++
 		banftercero, e := os.Create(directorio + "/banfan terceros ( " + cuenta + " ) " + strconv.Itoa(arch) + ".txt")
 		util.Error(e)
-		cabecera := "01FINANZAS CARACAS DE FECHA" + fechas + "\r\n"
-		fmt.Fprintf(banftercero, cabecera)
-		fmt.Fprintf(banftercero, linea)
+		fmt.Fprintf(banftercero, "01FINANZAS CARACAS DE FECHA"+fechas+"\r\n")
+		fmt.Fprintf(banftercero, ""+linea)
 		banftercero.Close()
 	}
 

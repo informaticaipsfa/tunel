@@ -11,12 +11,22 @@ import (
 )
 
 type Bicentenario struct {
-	Firma         string
-	Cantidad      int
-	CodigoEmpresa string
-	NumeroEmpresa string
-	Fecha         string
-	Tabla         string
+	DesactivarArchivo bool
+	Firma             string
+	Cantidad          int
+	CodigoEmpresa     string
+	NumeroEmpresa     string
+	Fecha             string
+	Tabla             string
+	Archivo           int
+	TipoCuenta        string
+	Directorio        string
+	Registros         int
+	Nombre            string
+	Registro          int
+	Contenido         string //representa la linea
+	SumaParcial       float64
+	Total             float64
 }
 
 //CabeceraSQL Creando consulta para archivos
@@ -32,38 +42,27 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
 }
 
 //Generar Archivo
-func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
-	fmt.Println(b.CabeceraSQL("='0175'"))
-	sq, err := PostgreSQLPENSIONSIGESP.Query(b.CabeceraSQL("='0175'"))
+func (b *Bicentenario) Generar(psqlPension *sql.DB) (err error) {
+	//fmt.Println(b.CabeceraSQL("='0175'"))
+	sq, err := psqlPension.Query(b.CabeceraSQL("='0175'"))
 	util.Error(err)
 
-	i := 0
-	valor := ""
-	if b.Tabla == "rechazos" {
-		valor = "-XR"
-	}
-	directorio := URLBanco + b.Firma + valor
+	b.Directorio = crearDirectorio(b.Directorio, b.DesactivarArchivo, b.Firma, b.Tabla)
 
-	errr := os.Mkdir(directorio, 0777)
-	util.Error(errr)
-
-	var sumatotal float64
-	var sumaparcial float64
-	arch := 0
-	linea := ""
+	fecha := time.Now()
+	fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
 	for sq.Next() {
-		i++
+		b.Registro++
+		b.Registros++
+
 		var cedu, cedula, nombre, numero, tipo, banco, familia, ceddante, ndante sql.NullString
 
 		var neto sql.NullFloat64
 		e := sq.Scan(&cedula, &nombre, &numero, &tipo, &banco, &neto, &familia, &ceddante, &ndante)
 		util.Error(e)
 
-		monto := util.ValidarNullFloat64(neto)
-		montos := util.EliminarPuntoDecimal(strconv.FormatFloat(util.ValidarNullFloat64(neto), 'f', 2, 64))
-		montos = util.CompletarCeros(montos, 0, 12)
-		strnumero := util.EliminarUnderScore(util.ValidarNullString(numero))
-		cuenta := util.CompletarCeros(strnumero, 0, 20)[:20]
+		monto, montos := generarMonto(neto, 0, 12)
+		cuenta := generarCuentaBancaria(numero)
 
 		cedulaAutorizado := util.ValidarNullString(ceddante)
 		p := cedulaAutorizado != "" //cedula del autorizado
@@ -80,23 +79,39 @@ func (b *Bicentenario) Generar(PostgreSQLPENSIONSIGESP *sql.DB) bool {
 		cerocinco := "00000"
 		tipos := "0" // 0: ABONO 1: DEBITO
 		filler := "00"
-		sumatotal += monto
-		sumaparcial += monto
-		linea += b.CodigoEmpresa + montos + cuenta + generarCedula(cedu, 0, 10) + cerocinco + tipos + filler + "\r\n"
+		b.Total += monto
+		b.SumaParcial += monto
+		b.Contenido += b.CodigoEmpresa + montos + cuenta +
+			generarCedula(cedu, 0, 10) + cerocinco + tipos + filler + "\r\n"
 
+		if b.Registro == b.Cantidad { //Pendiente si existen mas personas por escribir en el archivo
+			b.generarArchivo(fechas)
+		}
 	}
-	arch++
-	banf, e := os.Create(directorio + "/bicentenario " + strconv.Itoa(arch) + ".txt")
-	util.Error(e)
-	sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(sumaparcial, 'f', 2, 64))
-	sumas = util.CompletarCeros(sumas, 0, 17)
-	fecha := time.Now()
-	fechas := util.EliminarGuionesFecha((fecha.String()[0:10]))
-	registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)
-	cabecera := b.NumeroEmpresa + fechas + sumas + registros + "\r\n"
-	fmt.Fprintf(banf, cabecera)
-	fmt.Fprintf(banf, linea)
-	banf.Close()
 
-	return true
+	if b.Registro > 0 { //Pendiente si existen mas personas por escribir en el archivo
+		b.generarArchivo(fechas)
+	}
+
+	return err
+}
+
+//generarArchivo Permite generar archivo del sistema para los bancos
+func (b *Bicentenario) generarArchivo(fecha string) {
+	if !b.DesactivarArchivo { //Desactiva la generacion de los archivos
+		b.Archivo++
+
+		banf, e := os.Create(b.Directorio + "/bicentenario " + strconv.Itoa(b.Archivo) + ".txt")
+		util.Error(e)
+		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(b.SumaParcial, 'f', 2, 64))
+		sumas = util.CompletarCeros(sumas, 0, 17)
+		registros := util.CompletarCeros(strconv.Itoa(b.Registro), 0, 4)
+		cabecera := b.NumeroEmpresa + fecha + sumas + registros + "\r\n"
+		fmt.Fprintf(banf, cabecera+"")
+		fmt.Fprintf(banf, b.Contenido+"")
+		banf.Close()
+		b.Contenido = ""
+		b.Registro = 0
+		b.SumaParcial = 0
+	}
 }
