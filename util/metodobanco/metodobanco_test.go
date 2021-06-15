@@ -10,9 +10,10 @@ import (
 )
 
 const (
-	_CADENA string = "user=postgres dbname=pensiones password=za63qj2p host=localhost sslmode=disable"
-	_FIRMA  string = "8a3afb8f96ec8a0c032fc829dc586d42" //firma del archivo nomina a generar
-	_DIR    string = "tmp/8a3afb8f96ec8a0c032fc829dc586d42"
+	_CADENA   string = "user=postgres dbname=pensiones password=za63qj2p host=localhost sslmode=disable"
+	_FIRMA    string = "7af394c54166bb519624a976c6acd97d" //firma del archivo nomina a generar
+	_DIR      string = "tmp/" + _FIRMA
+	_CANTIDAD int    = 5000
 )
 
 var test = []func(t *testing.T){
@@ -28,7 +29,7 @@ var test = []func(t *testing.T){
 			vzla.CodigoEmpresa = "0"
 			vzla.NumeroEmpresa = "01020488720000002147"
 			vzla.Firma = _FIRMA
-			vzla.Cantidad = 1100
+			vzla.Cantidad = _CANTIDAD
 			vzla.DesactivarArchivo = false
 			vzla.Directorio = _DIR
 
@@ -36,7 +37,7 @@ var test = []func(t *testing.T){
 
 			if err == nil {
 
-				t.Log("Proceso finalizado Registro: ", vzla.Registros, " Total: ", strconv.FormatFloat(vzla.Total, 'f', 2, 64))
+				t.Log("Proceso finalizado Venezuela CA Registro: ", vzla.Registros, " Total: ", strconv.FormatFloat(vzla.Total, 'f', 2, 64))
 			} else {
 				t.Error("El proceso se ejecuto pero no se encontro el archivo")
 				t.Fail()
@@ -55,7 +56,7 @@ var test = []func(t *testing.T){
 			banfan.CodigoEmpresa = "0"
 			banfan.NumeroEmpresa = "01020488720000002147"
 			banfan.Firma = _FIRMA
-			banfan.Cantidad = 1100
+			banfan.Cantidad = _CANTIDAD
 			banfan.DesactivarArchivo = false
 			banfan.Directorio = _DIR
 
@@ -63,7 +64,7 @@ var test = []func(t *testing.T){
 
 			if err == nil {
 
-				t.Log("Proceso finalizado Registro: ", banfan.Registros, " Total: ", strconv.FormatFloat(banfan.Total, 'f', 2, 64))
+				t.Log("Proceso finalizado Banfanb Registro: ", banfan.Registros, " Total: ", strconv.FormatFloat(banfan.Total, 'f', 2, 64))
 			} else {
 				t.Error("El proceso se ejecuto pero no se encontro el archivo")
 				t.Fail()
@@ -83,7 +84,7 @@ var test = []func(t *testing.T){
 			bic.CodigoEmpresa = "0"
 			bic.NumeroEmpresa = "01020488720000002147"
 			bic.Firma = _FIRMA
-			bic.Cantidad = 1100
+			bic.Cantidad = _CANTIDAD
 			bic.DesactivarArchivo = false
 			bic.Directorio = _DIR
 
@@ -91,7 +92,7 @@ var test = []func(t *testing.T){
 
 			if err == nil {
 
-				t.Log("Proceso finalizado Registro: ", bic.Registros, " Total: ", strconv.FormatFloat(bic.Total, 'f', 2, 64))
+				t.Log("Proceso finalizado Bicentenario Registro: ", bic.Registros, " Total: ", strconv.FormatFloat(bic.Total, 'f', 2, 64))
 			} else {
 				t.Error("El proceso se ejecuto pero no se encontro el archivo")
 				t.Fail()
