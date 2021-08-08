@@ -70,6 +70,7 @@ type Menu struct {
 	Icono  string `json:"icono,omitempty"`
 	Nombre string `json:"nombre,omitempty"`
 	Accion string `json:"accion,omitempty"`
+	Color  string `json:"color,omitempty"`
 }
 
 type Rol struct {
@@ -97,7 +98,7 @@ type Usuario struct {
 	Direccion     string        `json:"direccion,omitempty" bson:"direccion"`
 	Telefono      string        `json:"telefono,omitempty" bson:"telefono"`
 	Cargo         string        `json:"cargo,omitempty" bson:"cargo"`
-	Modulo        []string      `json:"modulo,omitempty" bson:"modulo"`
+	Modulo        []Modulo      `json:"modulo,omitempty" bson:"modulo"`
 }
 
 //FirmaDigital La firma permite identificar una maquina y persona autorizada por el sistema
@@ -109,6 +110,15 @@ type FirmaDigital struct {
 
 type RespuestaToken struct {
 	Token string `json:"token"`
+}
+
+type Modulo struct {
+	Id         string `json:"id"`
+	Nombre     string `json:"nombre"`
+	URL        string `json:"url"`
+	Comentario string `json:"comentario"`
+	Version    string `json:"version"`
+	Autor      string `json:"autor"`
 }
 
 func (f *FirmaDigital) Registrar() bool {

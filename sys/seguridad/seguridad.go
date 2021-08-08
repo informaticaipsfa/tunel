@@ -39,7 +39,7 @@ func GenerarJWT(u Usuario) string {
 	peticion := Reclamaciones{
 		Usuario: u,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 360).Unix(),
+			ExpiresAt: time.Now().Add(time.Minute * 259200).Unix(),
 			Issuer:    "Conexion Bus Empresarial",
 		},
 	}

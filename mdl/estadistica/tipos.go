@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
+	"github.com/informaticaipsfa/tunel/util"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb"
 	"github.com/informaticaipsfa/tunel/sys"
@@ -428,7 +429,9 @@ func (r *Reduccion) ExportarCSV(tipo string) {
 				";" + rd.Persona.DatoFisionomico.GrupoSanguineo + ";" + rd.Persona.DatoFisionomico.SenaParticular +
 				";" + rd.Persona.Correo.Principal +
 				";" + rd.Persona.Telefono.Movil + "|" + rd.Persona.Telefono.Domiciliario +
-				";" + ciudad + ";" + ConsultarEstado(estado) + ";" + municipio + ";" + direccion +
+				";" + ciudad + ";" + ConsultarEstado(estado) +
+				";" + util.ReemplazarPuntoyComaPorComa(municipio) +
+				";" + util.ReemplazarPuntoyComaPorComa(direccion) +
 				";" + rd.Categoria +
 				";" + rd.Situacion +
 				";" + rd.Clase +
