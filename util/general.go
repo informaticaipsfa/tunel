@@ -137,14 +137,8 @@ func CalcularTiempo(fecha time.Time) (Ano int, Mes time.Month, Dia int) {
 //CalcularTiempoServicio Calculos
 func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Mes time.Month, Dia int) {
 
-	fmt.Println("Imprimiendo la fecha de ingreso ", fecha)
-
-	fmt.Println(fechaActual)
-
 	AnnoA, MesA, DiaA := fechaActual.Date() //
-	fmt.Println(AnnoA, "-", MesA, "-", DiaA)
-
-	AnoN, MesN, DiaN := fecha.Date() //Fecha de ingreso
+	AnoN, MesN, DiaN := fecha.Date()        //Fecha de ingreso
 
 	Ano = AnnoA - AnoN
 	MesX := int(MesA) - int(MesN)
@@ -154,10 +148,7 @@ func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Me
 		Dia = (30 + DiaA) - DiaN
 		//MesX--
 	}
-	fmt.Println("Imprimiendo Mes de la operacion MESES: ", int(MesX), int(MesA), int(MesN))
-
-	Mes = 1
-
+	//	fmt.Println("Imprimiendo Mes de la operacion MESES: ", int(MesX), int(MesA), int(MesN))
 	if int(MesX) < 0 {
 		Mes = (12 + MesA) - MesN
 		Ano--
