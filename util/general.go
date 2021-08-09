@@ -143,10 +143,12 @@ func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Me
 	Ano = AnnoA - AnoN
 	MesX := int(MesA) - int(MesN)
 	Dia = DiaA - DiaN
+
 	//fmt.Println("Imprimiendo Mes de la operacion MESES: ", Ano, Dia, DiaA, DiaN)
-	if Dia <= 0 {
+	if Dia < 0 {
 		Dia = (30 + DiaA) - DiaN
-		//MesX--
+		MesA--
+		MesX = int(MesA) - int(MesN)
 	}
 	//	fmt.Println("Imprimiendo Mes de la operacion MESES: ", int(MesX), int(MesA), int(MesN))
 	if int(MesX) < 0 {
