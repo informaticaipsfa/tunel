@@ -46,6 +46,8 @@ func (b *Venezuela) CabeceraSQL(bancos string, tipocuenta string) string {
 //Generar Generando pago
 func (b *Venezuela) Generar(psqlPension *sql.DB, tipocuenta string) error {
 
+	b.TipoCuenta = tipocuenta
+
 	sq, err := psqlPension.Query(b.CabeceraSQL("='0102'", tipocuenta))
 	util.Error(err)
 
@@ -124,9 +126,9 @@ func (b *Venezuela) generarArchivo(fecha string) {
 		util.Error(e)
 		sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(b.SumaParcial, 'f', 2, 64))
 		sumas = util.CompletarCeros(sumas, 0, 13)
-		codigo := "03291" //codigo banco final de la linea
+		codigo := "03291 " //codigo banco final de la linea
 		cabecera := "HINSTITUTO DE PREVISION SOCIAL DE LA FUER" + b.NumeroEmpresa +
-			"01" + fecha + sumas + codigo + "  \r\n"
+			"01" + fecha + sumas + codigo + "\r\n"
 		fmt.Fprintf(venz, cabecera+"")
 		fmt.Fprintf(venz, b.Contenido+"") //insertar contenido del archivo
 		venz.Close()

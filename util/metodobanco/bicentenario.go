@@ -38,7 +38,7 @@ func (b *Bicentenario) CabeceraSQL(bancos string) string {
   FROM
     space.nomina nom
   JOIN space.` + b.Tabla + ` pg ON nom.oid=pg.nomi
-  WHERE banc ` + bancos + ` AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
+  WHERE banc ` + bancos + ` AND pg.tipo='CA' AND llav='` + b.Firma + `' ORDER BY banc, pg.cedu;`
 }
 
 //Generar Archivo

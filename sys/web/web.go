@@ -256,6 +256,7 @@ func CargarModulosCredito() {
 	Enrutador.HandleFunc("/ipsfa/api/credito/actualizar", wUsuario.ValidarToken(wCredito.Actualizar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/credito/enviar", wUsuario.ValidarToken(wCredito.EnviarATesoreria)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/credito/liquidar", wUsuario.ValidarToken(wCredito.Liquidar)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/credito/pagar", wUsuario.ValidarToken(wCredito.Pagar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/credito/creartxt/{ano}/{mes}", wUsuario.ValidarToken(wCredito.CrearTxt)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/credito/relacionactiva", wUsuario.ValidarToken(wCredito.RelacionActiva)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/credito/relacionpagados", wUsuario.ValidarToken(wCredito.RelacionPagados)).Methods("POST")

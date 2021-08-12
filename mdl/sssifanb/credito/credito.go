@@ -237,7 +237,7 @@ func (CUO *Cuota) Listar(creditoid string) (jSon []byte, err error) {
 			cuo.dias, cuo.nume
 		FROM space.credito cre JOIN space.cuota cuo ON cre.oid=cuo.creid WHERE cuo.creid=` + creditoid
 	sq, err := sys.PostgreSQLPENSION.Query(s)
-	
+
 	util.Error(err)
 	for sq.Next() {
 		var oid, fech sql.NullString
@@ -321,12 +321,14 @@ func (CR *Credito) EnviarATesoreria(wca WCreditoActualizar, usuario string) (jSo
 
 //WLiquidar API de apoyo a credito
 type WLiquidar struct {
-	Credito     string `json:"credito" bson:"credito"`
-	Cedula      string `json:"cedula" bson:"cedula"`
-	Observacion string `json:"observacion" bson:"observacion"`
-	Banco       string `json:"banco" bson:"banco"`
-	Numero      string `json:"numero" bson:"numero"`
-	Fecha       string `json:"fecha" bson:"fecha"`
+	Oid         int     `json:"oid" bson:"oid"`
+	Credito     string  `json:"credito" bson:"credito"`
+	Cedula      string  `json:"cedula" bson:"cedula"`
+	Observacion string  `json:"observacion" bson:"observacion"`
+	Banco       string  `json:"banco" bson:"banco"`
+	Numero      string  `json:"numero" bson:"numero"`
+	Fecha       string  `json:"fecha" bson:"fecha"`
+	Total       float64 `json:"total" bson:"total"`
 }
 
 //Liquidar credito lotes
@@ -442,6 +444,41 @@ func (CR *Credito) RelacionPagados(fecha string, desde string, hasta string, est
 	jSon, err = json.Marshal(lst)
 
 	util.Error(err)
+
+	return
+}
+
+func (CR *Credito) Pagar(wlq WLiquidar, usuario string) (jSon []byte, err error) {
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+	total := make(map[string]interface{})
+	total["credito.prestamo.personal.$.total"] = wlq.Total
+
+	err = c.Update(bson.M{"id": wlq.Cedula, "credito.prestamo.personal.oid": wlq.Credito}, bson.M{"$set": total})
+	if err != nil {
+		fmt.Println("err Credito: " + wlq.Cedula + " -> " + err.Error())
+	}
+
+	//Actualizar datos en postgresi
+
+	s := `UPDATE space.cuota SET esta=1 WHERE cedula='` + wlq.Cedula + `' AND creid=` + strconv.Itoa(wlq.Oid) + `;`
+	_, err = sys.PostgreSQLPENSION.Exec(s)
+	if err != nil {
+		fmt.Println("Error en el query crédito ", err.Error())
+	}
+	fmt.Println(s)
+
+	query := `INSERT INTO space.pagar_credito(
+            cedu, cred, obse, banc, fech, mont, crea, usua)
+    VALUES ('` + wlq.Cedula + `','` + wlq.Credito + `', '` +
+		wlq.Observacion + `', '` + wlq.Banco + `', '` +
+		wlq.Fecha + `', ` + strconv.FormatFloat(wlq.Total, 'f', 2, 64) + `, Now(), '` + usuario + `');`
+	fmt.Println(query)
+
+	_, err = sys.PostgreSQLPENSION.Exec(query)
+	if err != nil {
+		fmt.Println("Error en el query crédito ", err.Error())
+	}
 
 	return
 }

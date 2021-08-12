@@ -42,6 +42,17 @@ var test = []func(t *testing.T){
 				t.Error("El proceso se ejecuto pero no se encontro el archivo")
 				t.Fail()
 			}
+
+			err = vzla.Generar(psql, "CC")
+
+			if err == nil {
+
+				t.Log("Proceso finalizado Venezuela CC Registro: ", vzla.Registros, " Total: ", strconv.FormatFloat(vzla.Total, 'f', 2, 64))
+			} else {
+				t.Error("El proceso se ejecuto pero no se encontro el archivo")
+				t.Fail()
+			}
+
 		}
 	}, //Testing Banfanb
 	func(t *testing.T) {
@@ -53,8 +64,8 @@ var test = []func(t *testing.T){
 
 			var banfan metodobanco.Banfanb
 			banfan.Tabla = "pagos"
-			banfan.CodigoEmpresa = "0"
-			banfan.NumeroEmpresa = "01020488720000002147"
+			banfan.CodigoEmpresa = "0026"
+			banfan.NumeroEmpresa = "01770001421100683232"
 			banfan.Firma = _FIRMA
 			banfan.Cantidad = _CANTIDAD
 			banfan.DesactivarArchivo = false
@@ -81,8 +92,8 @@ var test = []func(t *testing.T){
 
 			var bic metodobanco.Bicentenario
 			bic.Tabla = "pagos"
-			bic.CodigoEmpresa = "0"
-			bic.NumeroEmpresa = "01020488720000002147"
+			bic.CodigoEmpresa = "0651"
+			bic.NumeroEmpresa = "01750484310076626369"
 			bic.Firma = _FIRMA
 			bic.Cantidad = _CANTIDAD
 			bic.DesactivarArchivo = false
