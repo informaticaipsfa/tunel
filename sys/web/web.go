@@ -366,9 +366,9 @@ func CargarModulosWebSite() {
 	var concepto api.WNomina
 	var wPensionado api.Militar
 
-	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.LoginW).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/web/login", wUsuario.Opciones).Methods("OPTIONS")
-	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.CambiarClave).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/loginW", wUsuario.LoginW).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/loginW", wUsuario.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/web/cambiarcla:ve", wUsuario.CambiarClave).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
 
 	//Identificación de Usuario
