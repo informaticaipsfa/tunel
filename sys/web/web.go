@@ -368,13 +368,13 @@ func CargarModulosWebSite() {
 
 	Enrutador.HandleFunc("/ipsfa/api/web/loginW", wUsuario.LoginW).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/loginW", wUsuario.Opciones).Methods("OPTIONS")
-	Enrutador.HandleFunc("/ipsfa/api/web/cambiarcla:ve", wUsuario.CambiarClave).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.CambiarClave).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
 
 	//Identificación de Usuario
 	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Identificacion).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Opciones).Methods("OPTIONS")
-	//Datos Militares
+	//Datos Militares HTTP - DEVELOPER
 	Enrutador.HandleFunc("/ipsfa/api/web/militar/{id}", per.Consultar).Methods("GET")
 	//Consultar Netos de Pensionados
 	Enrutador.HandleFunc("/ipsfa/api/web/nomina/conceptos/listar/", concepto.ListarPHP).Methods("GET")
@@ -391,6 +391,25 @@ func CargarModulosWebSite() {
 	//Consultar ARC
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wPensionado.ImprimirARC).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wUsuario.Opciones).Methods("OPTIONS")
+
+	//SEGURIDAD HTTPS PRODUCTION - JWT
+	//Datos Militares
+	Enrutador.HandleFunc("/ipsfa/militar/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
+	//Consultar Netos de Pensionados - JWT
+	Enrutador.HandleFunc("/ipsfa/nomina/conceptos/listar/", wUsuario.ValidarToken(concepto.ListarPHP)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/pensionado/consultarneto/{id}", wUsuario.ValidarToken(wPensionado.ConsultarNetoWeb)).Methods("GET")
+	//Consultar Netos de Pensionados Sobrevivientes - JWT
+	Enrutador.HandleFunc("/ipsfa/pensionado/consultarsobreviviente/{id}/{fam}", wUsuario.ValidarToken(wPensionado.ConsultarNetoSobrevivienteWeb)).Methods("GET")
+	//Constancia de Pensionado - JWT
+	Enrutador.HandleFunc("/ipsfa/pensionado/calculo/{id}", wUsuario.ValidarToken(wPensionado.Calculo)).Methods("GET")
+	//Fideicomiso - JWT
+	Enrutador.HandleFunc("/ipsfa/pace/consultarbeneficiario/{id}", wUsuario.ValidarToken(per.ConsultarBeneficiario)).Methods("GET")
+	//Consultar Calculadora - JWT
+	Enrutador.HandleFunc("/ipsfa/pensionado/calcularretroactivo", wUsuario.ValidarToken(wPensionado.CalcularRetroactivo)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/pensionado/calcularretroactivo", wU.Opciones).Methods("OPTIONS")
+	//Consultar ARC - JWT
+	Enrutador.HandleFunc("/ipsfa/pensionado/imprimirarc", wUsuario.ValidarToken(wPensionado.ImprimirARC)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/pensionado/imprimirarc", wUsuario.Opciones).Methods("OPTIONS")
 
 }
 
