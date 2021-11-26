@@ -393,6 +393,10 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wUsuario.Opciones).Methods("OPTIONS")
 
 	//SEGURIDAD HTTPS PRODUCTION - JWT
+	Enrutador.HandleFunc("/ipsfa/loginW", wUsuario.LoginW).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/loginW", wUsuario.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.CambiarClave).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
 	//Datos Militares
 	Enrutador.HandleFunc("/ipsfa/militar/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	//Consultar Netos de Pensionados - JWT
