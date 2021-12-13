@@ -322,24 +322,31 @@ func (u *WUsuario) RecuperarW(w http.ResponseWriter, r *http.Request) {
 	CabeceraW(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
-	err := usuario.Recuperar(usuario.Correo)
-	if err != nil {
-		w.Header().Set("Content-Type", "application/text")
-		fmt.Println("Error en la conexion del usuario")
-		w.WriteHeader(http.StatusForbidden)
-		fmt.Fprintln(w, "Usuario y clave no validas")
 
-	} else {
+	if usuario.Correo != "" {
 
-		if usuario.Cedula != "" && usuario.Componente != "" {
-			usuario.Clave = ""
-			token := seguridad.WGenerarJWT(usuario)
-			result := seguridad.RespuestaToken{Token: token}
-			j, e := json.Marshal(result)
-			util.Error(e)
-			w.WriteHeader(http.StatusOK)
-			w.Write(j)
+		err := usuario.Recuperar(usuario.Correo)
+		if err != nil {
+			w.Header().Set("Content-Type", "application/text")
+			w.WriteHeader(http.StatusForbidden)
+			fmt.Fprintln(w, "Correo no validas")
+
+		} else {
+
+			if usuario.Cedula != "" && usuario.Componente != "" {
+				usuario.Clave = ""
+				token := seguridad.WGenerarJWT(usuario)
+				result := seguridad.RespuestaToken{Token: token}
+				j, e := json.Marshal(result)
+				util.Error(e)
+				w.WriteHeader(http.StatusOK)
+				w.Write(j)
+			}
 		}
-	}
+	} else {
+		w.Header().Set("Content-Type", "application/text")
+		w.WriteHeader(http.StatusForbidden)
+		fmt.Fprintln(w, "Correo no validas")
 
+	}
 }
