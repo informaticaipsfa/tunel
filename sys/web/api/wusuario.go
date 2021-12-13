@@ -277,8 +277,10 @@ func (u *WUsuario) CambiarClaveW(w http.ResponseWriter, r *http.Request) {
 
 	e := json.NewDecoder(r.Body).Decode(&datos)
 	util.Error(e)
+
 	ok := usr.CambiarClave(datos.Correo, datos.Clave, datos.Nueva)
 	M.Tipo = 1
+	M.Msj = "Felicitaciones"
 	if ok != nil {
 		M.Msj = ok.Error()
 		M.Tipo = 0

@@ -405,7 +405,7 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/recuperarclave", wUsuario.RecuperarW).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/recuperarclave", wUsuario.Opciones).Methods("OPTIONS")
 
-	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.ValidarToken(wUsuario.CambiarClave)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.ValidarToken(wUsuario.CambiarClaveW)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.Opciones).Methods("POST")
 
 	//Datos Militares
