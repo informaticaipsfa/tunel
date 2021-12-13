@@ -57,6 +57,7 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 //Clave de tipos
 type Clave struct {
 	ID        string `json:"id"`
+	Cedula    string `json:"cedula"`
 	Login     string `json:"login"`
 	Clave     string `json:"clave"`
 	Nueva     string `json:"nueva"`
@@ -302,7 +303,7 @@ func (u *WUsuario) RestablecerClaves(w http.ResponseWriter, r *http.Request) {
 	if datos.Coleccion == "" {
 		datos.Coleccion = "usuario"
 	}
-	ok := usr.RestablecerClaves(datos.ID, datos.Clave, datos.Coleccion)
+	ok := usr.RestablecerClaves(datos.Cedula, datos.Correo, datos.Clave, "wusuario")
 	M.Tipo = 1
 	M.Fecha = time.Now()
 	M.Msj = "Felicitaciones su clave ha sido actualizada"

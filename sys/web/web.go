@@ -408,6 +408,9 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.ValidarToken(wUsuario.CambiarClaveW)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.Opciones).Methods("POST")
 
+	Enrutador.HandleFunc("/ipsfa/restablecerclave", wUsuario.RestablecerClaves).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/restablecerclave", wUsuario.Opciones).Methods("OPTIONS")
+
 	//Datos Militares
 	Enrutador.HandleFunc("/ipsfa/militar/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	//Consultar Netos de Pensionados - JWT

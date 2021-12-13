@@ -195,12 +195,13 @@ func (u *Usuario) Consultar(cedula string, coleccion string) (j []byte, err erro
 }
 
 //RestablecerClaves  de usuarios Internos y WEB
-func (u *Usuario) RestablecerClaves(id string, nueva string, coleccion string) (err error) {
+func (u *Usuario) RestablecerClaves(cedula string, correo string, clave string, coleccion string) (err error) {
 
 	c := sys.MGOSession.DB(sys.CBASE).C(coleccion)
 	actualizar := make(map[string]interface{})
-	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
-	err = c.UpdateId(bson.ObjectIdHex(id), bson.M{"$set": actualizar})
+	actualizar["clave"] = util.GenerarHash256([]byte(clave))
+	//	err = c.UpdateId(bson.ObjectIdHex(id), bson.M{"$set": actualizar})
+	err = c.Update(bson.M{"cedula": cedula, "correo": correo}, bson.M{"$set": actualizar})
 	return
 }
 
