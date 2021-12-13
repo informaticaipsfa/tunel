@@ -372,8 +372,8 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
 
 	//Identificación de Usuario
-	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Identificacion).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/web/identicacion", wU.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/web/identificacion", wU.Identificacion).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/identificacion", wU.Opciones).Methods("OPTIONS")
 	//Datos Militares HTTP - DEVELOPER
 	Enrutador.HandleFunc("/ipsfa/api/web/militar/{id}", per.Consultar).Methods("GET")
 	//Consultar Netos de Pensionados
@@ -392,11 +392,22 @@ func CargarModulosWebSite() {
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wPensionado.ImprimirARC).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/pensionado/imprimirarc", wUsuario.Opciones).Methods("OPTIONS")
 
+	/** 	CONTENIDO HTTPS Y SEGURO **/
+
 	//SEGURIDAD HTTPS PRODUCTION - JWT
 	Enrutador.HandleFunc("/ipsfa/loginW", wUsuario.LoginW).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/loginW", wUsuario.Opciones).Methods("OPTIONS")
-	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.CambiarClave).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
+
+	//Identificación de Usuario
+	Enrutador.HandleFunc("/ipsfa/identificacion", wU.Identificacion).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/identificacion", wU.Opciones).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/ipsfa/recuperarclave", wUsuario.RecuperarW).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/recuperarclave", wUsuario.Opciones).Methods("OPTIONS")
+
+	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.ValidarToken(wUsuario.CambiarClave)).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/cambiarclave", wUsuario.Opciones).Methods("POST")
+
 	//Datos Militares
 	Enrutador.HandleFunc("/ipsfa/militar/{id}", wUsuario.ValidarToken(per.Consultar)).Methods("GET")
 	//Consultar Netos de Pensionados - JWT

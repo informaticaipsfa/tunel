@@ -83,21 +83,26 @@ func (u *WUsuario) Existe(login string) (err error) {
 }
 
 //CambiarClave Usuarios
-func (u *WUsuario) CambiarClave(login string, clave string, nueva string) (err error) {
+func (u *WUsuario) CambiarClave(correo string, clave string, nueva string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
 	actualizar := make(map[string]interface{})
 	actualizar["clave"] = util.GenerarHash256([]byte(nueva))
 	antigua := util.GenerarHash256([]byte(clave))
-	err = c.Update(bson.M{"login": login, "clave": antigua}, bson.M{"$set": actualizar})
+	err = c.Update(bson.M{"correo": correo, "clave": antigua}, bson.M{"$set": actualizar})
+	return
+}
+
+//Recuperar Validacion de Usuarios
+func (u *WUsuario) Recuperar(correo string) (err error) {
+	u.Nombre = ""
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
+	err = c.Find(bson.M{"correo": correo}).Select(bson.M{"clave": false}).One(&u)
+
 	return
 }
 
 //CrearPreguntas Para encuestador
 func (u *WUsuario) CrearPreguntas() (err error) {
 	return
-}
-
-func obtenerMilitar() {
-
 }

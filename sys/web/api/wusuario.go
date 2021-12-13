@@ -277,7 +277,7 @@ func (u *WUsuario) CambiarClaveW(w http.ResponseWriter, r *http.Request) {
 
 	e := json.NewDecoder(r.Body).Decode(&datos)
 	util.Error(e)
-	ok := usr.CambiarClave(datos.ID, datos.Clave, datos.Nueva)
+	ok := usr.CambiarClave(datos.Correo, datos.Clave, datos.Nueva)
 	M.Tipo = 1
 	if ok != nil {
 		M.Msj = ok.Error()
@@ -311,4 +311,32 @@ func (u *WUsuario) RestablecerClaves(w http.ResponseWriter, r *http.Request) {
 	j, _ := json.Marshal(M)
 	w.WriteHeader(http.StatusOK)
 	w.Write(j)
+}
+
+//RecuperarW conexion para solicitud de token
+func (u *WUsuario) RecuperarW(w http.ResponseWriter, r *http.Request) {
+	var usuario seguridad.WUsuario
+	CabeceraW(w, r)
+	e := json.NewDecoder(r.Body).Decode(&usuario)
+	util.Error(e)
+	err := usuario.Recuperar(usuario.Correo)
+	if err != nil {
+		w.Header().Set("Content-Type", "application/text")
+		fmt.Println("Error en la conexion del usuario")
+		w.WriteHeader(http.StatusForbidden)
+		fmt.Fprintln(w, "Usuario y clave no validas")
+
+	} else {
+
+		if usuario.Cedula != "" && usuario.Componente != "" {
+			usuario.Clave = ""
+			token := seguridad.WGenerarJWT(usuario)
+			result := seguridad.RespuestaToken{Token: token}
+			j, e := json.Marshal(result)
+			util.Error(e)
+			w.WriteHeader(http.StatusOK)
+			w.Write(j)
+		}
+	}
+
 }
