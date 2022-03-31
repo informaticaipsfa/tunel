@@ -2,6 +2,7 @@ package util
 
 import (
 	"database/sql"
+	"fmt"
 	"io/ioutil"
 )
 
@@ -43,7 +44,11 @@ func (a *Archivo) LeerTodo() (f []byte, err error) {
 	return
 }
 
-func (a *Archivo) EscribirLinea(linea string) bool {
+func (a *Archivo) EscribirLinea(linea []byte) bool {
+	err := ioutil.WriteFile("log.txt", linea, 0775)
+	if err != nil {
+		fmt.Println("Error al guardar SQL ", err.Error())
+	}
 	return true
 }
 

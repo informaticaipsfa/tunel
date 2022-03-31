@@ -366,8 +366,8 @@ func CargarModulosWebSite() {
 	var concepto api.WNomina
 	var wPensionado api.Militar
 
-	Enrutador.HandleFunc("/ipsfa/api/web/loginW", wUsuario.LoginW).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/web/loginW", wUsuario.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/api/web/loginWsx", wUsuario.LoginW).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/api/web/loginWsx", wUsuario.Opciones).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.CambiarClave).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/web/cambiarclave", wUsuario.Opciones).Methods("OPTIONS")
 
@@ -395,8 +395,8 @@ func CargarModulosWebSite() {
 	/** 	CONTENIDO HTTPS Y SEGURO **/
 
 	//SEGURIDAD HTTPS PRODUCTION - JWT
-	Enrutador.HandleFunc("/ipsfa/loginW", wUsuario.LoginW).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/loginW", wUsuario.Opciones).Methods("OPTIONS")
+	Enrutador.HandleFunc("/ipsfa/loginWsx", wUsuario.LoginW).Methods("POST")
+	Enrutador.HandleFunc("/ipsfa/loginWsx", wUsuario.Opciones).Methods("OPTIONS")
 
 	//Identificación de Usuario
 	Enrutador.HandleFunc("/ipsfa/identificacion", wU.Identificacion).Methods("POST")

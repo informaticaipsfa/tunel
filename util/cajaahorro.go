@@ -66,8 +66,10 @@ func (a *Archivo) LeerCA(PostPension *sql.DB, codigo string, doc string) bool {
 	_, err = PostPension.Exec(insertar)
 	//fmt.Println(insertar)
 	if err != nil {
-		fmt.Println("ERR. AL PROCESAR ARCHIVO TXT ", a.Ruta, err.Error())
+		fmt.Println("ERR. AL PROCESAR ARCHIVO TXT ", a.Ruta)
+		a.EscribirLinea([]byte(err.Error()))
 		return false
 	}
+
 	return true
 }
