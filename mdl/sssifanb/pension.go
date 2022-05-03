@@ -621,6 +621,7 @@ type WNetos struct {
 	Numero     string  `json:"numero"`
 	Situacion  string  `json:"situacion"`
 	Estatus    string  `json:"estatus"`
+	MontoSisa  float64 `json:"montosisa"`
 	Neto       float64 `json:"neto"`
 	Nomina     string  `json:"nomina"`
 	Mes        string  `json:"mes"`
@@ -638,14 +639,17 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string, esta
 	`
 
 	if vive == true {
-		s += `pg.situ, pg.base
-		FROM space.pagos pg
-		JOIN space.nomina AS sn ON pg.nomi=sn.oid
-		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
+		s += `pg.situ, pg.base, SISA.monto
+				FROM space.pagos pg
+				JOIN space.nomina AS sn ON pg.nomi=sn.oid
+				LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
+				LEFT JOIN 
+				(SELECT cedu, llav, SUM(mont) AS monto FROM space.nomina_sisa GROUP BY cedu, llav) AS SISA
+				ON pg.cedu=SISA.cedu AND sn.mes=SISA.llav AND sn.obse='NOMINA MENSUAL' AND sn.desd>'2021-12-31'
 		WHERE pg.cedu='` + cedula + `'  AND sn.llav != '' ` + estatus + ` ORDER BY fech DESC`
 	} else {
 		s += `
-		 pg.cfam, fami.porcentaje
+		 pg.cfam, fami.porcentaje, 0.00
 		FROM space.pagos pg
 		JOIN space.nomina AS sn ON pg.nomi=sn.oid
 		LEFT JOIN restaurarprima rtp ON rtp.cedula=pg.cedu AND rtp.nomina=pg.nomi
@@ -658,9 +662,9 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string, esta
 
 	for sq.Next() {
 		var cedu, calc, fech, banc, tipo, nume, situ, esta, nomina, desde, hasta, mes, pmonto, descrip, fam, porc sql.NullString
-		var neto sql.NullFloat64
+		var neto, montosisa sql.NullFloat64
 		var netos WNetos
-		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto, &nomina, &desde, &hasta, &mes, &pmonto, &descrip, &fam, &porc)
+		err = sq.Scan(&cedu, &calc, &fech, &banc, &tipo, &nume, &situ, &esta, &neto, &nomina, &desde, &hasta, &mes, &pmonto, &descrip, &fam, &porc, &montosisa)
 		util.Error(err)
 		//		fmt.Println(desde, hasta)
 		netos.Cedula = util.ValidarNullString(cedu)
@@ -672,6 +676,7 @@ func (P *Pension) ConsultarNetos(cedula string, vive bool, familiar string, esta
 		netos.Situacion = util.ValidarNullString(cedu)
 		netos.Estatus = util.ValidarNullString(cedu)
 		netos.Neto = util.ValidarNullFloat64(neto)
+		netos.MontoSisa = util.ValidarNullFloat64(montosisa)
 		netos.Nomina = util.ValidarNullString(nomina)
 		netos.Mes = util.ValidarNullString(mes)
 		netos.Desde = util.ValidarNullString(desde)[:10]

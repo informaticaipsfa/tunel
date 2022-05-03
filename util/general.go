@@ -202,6 +202,11 @@ func ReemplazarPuntoPorComa(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ".", ",", -1)
 }
 
+//ReemplazarComaPorPunto Reemplazando coma por puntos
+func ReemplazarComaPorPunto(cadena string) string {
+	return strings.Replace(strings.Trim(cadena, " "), ",", ".", -1)
+}
+
 //ReemplazarPuntoyComaPorComa Reemplazando
 func ReemplazarPuntoyComaPorComa(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ";", ",", -1)

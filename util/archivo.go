@@ -34,6 +34,12 @@ func (a *Archivo) iniciarVariable() {
 	a.Salvar = false
 }
 
+func (a *Archivo) iniciarVariableSisa() {
+	a.Cabecera = "INSERT INTO space.nomina_sisa (cedu,fami, llav, conc,mont,tipo,fech, proc) VALUES "
+	a.CantidadLineas = 0
+	a.Leer = false
+	a.Salvar = false
+}
 func (a *Archivo) Crear(cadena string) bool {
 	return true
 }
