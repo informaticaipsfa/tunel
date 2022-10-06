@@ -29,6 +29,7 @@ func Cargar() {
 	CargarModulosWebDevel()
 	CargarModulosPanel()
 	CargarModulosSeguridad()
+	CargarBienestarSocial()
 	WMAdminLTE()
 	Principal()
 }
