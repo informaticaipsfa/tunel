@@ -11,13 +11,13 @@ import (
 	"github.com/informaticaipsfa/tunel/sys/web/api"
 )
 
-//Variables de Control
+// Variables de Control
 var (
 	Enrutador = mux.NewRouter()
 	wUsuario  api.WUsuario
 )
 
-//Cargar los diferentes modulos del sistema
+// Cargar los diferentes modulos del sistema
 func Cargar() {
 	CargarMiddleWare()
 	CargarModulosNomina()
@@ -34,7 +34,7 @@ func Cargar() {
 	Principal()
 }
 
-//CargarModulosSeguridad Y cifrado
+// CargarModulosSeguridad Y cifrado
 func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Login).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/app/api/wusuario/login", wUsuario.Opciones).Methods("OPTIONS")
@@ -53,7 +53,7 @@ func CargarModulosSeguridad() {
 	Enrutador.HandleFunc("/ipsfa/api/wusuario/restablecer", wUsuario.Opciones).Methods("OPTIONS")
 }
 
-//CargarMiddleWare Cargador de modulos web
+// CargarMiddleWare Cargador de modulos web
 func CargarMiddleWare() {
 	var per api.Militar
 	var comp api.APIComponente
@@ -117,7 +117,7 @@ func CargarMiddleWare() {
 	Enrutador.HandleFunc("/ipsfa/api/consultar/{id}", wUsuario.ValidarToken(per.ConsultarCedula)).Methods("GET")
 }
 
-//CargarBienestarSocial Modulos de Bienestar Social para Reembolsos Carta y apoyos
+// CargarBienestarSocial Modulos de Bienestar Social para Reembolsos Carta y apoyos
 func CargarBienestarSocial() {
 	var wCis api.WCis
 	var wCisA api.WCisApoyo
@@ -129,17 +129,21 @@ func CargarBienestarSocial() {
 
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso/listar/{id}/{sucursal}", wUsuario.ValidarToken(wCis.ListarReembolso)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Registrar)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Actualizar)).Methods("PUT")
+	//Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Actualizar)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolsox", wUsuario.ValidarToken(wCis.Actualizar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso", wUsuario.ValidarToken(wCis.Opciones)).Methods("OPTIONS")
-	Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatus", wUsuario.ValidarToken(wCis.Estatus)).Methods("PUT")
+	//Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatus", wUsuario.ValidarToken(wCis.Estatus)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatusx", wUsuario.ValidarToken(wCis.Estatus)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolso/estatus", wUsuario.ValidarToken(wCis.Opciones)).Methods("OPTIONS")
 	Enrutador.HandleFunc("/ipsfa/api/wreembolsoreporte", wUsuario.ValidarToken(wCis.ListarReporteFinanzas)).Methods("POST")
 
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo/listar/{id}/{sucursal}", wUsuario.ValidarToken(wCisA.ListarApoyo)).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Registrar)).Methods("POST")
-	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Actualizar)).Methods("PUT")
+	//	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Actualizar)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyox", wUsuario.ValidarToken(wCisA.Actualizar)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
-	Enrutador.HandleFunc("/ipsfa/api/wapoyo/estatus", wUsuario.ValidarToken(wCisA.Estatus)).Methods("PUT")
+	//Enrutador.HandleFunc("/ipsfa/api/wapoyo/estatus", wUsuario.ValidarToken(wCisA.Estatus)).Methods("PUT")
+	Enrutador.HandleFunc("/ipsfa/api/wapoyo/estatusx", wUsuario.ValidarToken(wCisA.Estatus)).Methods("POST")
 	Enrutador.HandleFunc("/ipsfa/api/wapoyo/estatus", wUsuario.ValidarToken(wCisA.Opciones)).Methods("OPTIONS")
 
 	Enrutador.HandleFunc("/ipsfa/api/wcarta/listar/{id}", wUsuario.ValidarToken(wCisC.Listar)).Methods("GET")
@@ -152,7 +156,7 @@ func CargarBienestarSocial() {
 	Enrutador.HandleFunc("/ipsfa/api/wmedicina", wUsuario.ValidarToken(wmedicina.Registrar)).Methods("POST")
 }
 
-//CargarModulosNomina Nomina del personal Militar
+// CargarModulosNomina Nomina del personal Militar
 func CargarModulosNomina() {
 
 	var concepto api.WNomina
@@ -219,7 +223,7 @@ func CargarModulosNomina() {
 	Enrutador.HandleFunc("/devel/api/nomina/gretroactivo", wRetroactivo.GenerarRetroactivo).Methods("POST")
 }
 
-//CargarPensionados Pensionados en general
+// CargarPensionados Pensionados en general
 func CargarPensionados() {
 	var wPensionado api.Militar
 
@@ -240,7 +244,7 @@ func CargarPensionados() {
 	Enrutador.HandleFunc("/ipsfa/api/pensionado/gitall", wUsuario.ValidarToken(wPensionado.GitAll)).Methods("POST")
 }
 
-//CargarModulosBanco Modulos de txt y reportes de banco
+// CargarModulosBanco Modulos de txt y reportes de banco
 func CargarModulosBanco() {
 
 	var wNom api.WNomina
@@ -250,7 +254,7 @@ func CargarModulosBanco() {
 
 }
 
-//CargarModulosCredito Cargador de modulos web
+// CargarModulosCredito Cargador de modulos web
 func CargarModulosCredito() {
 
 	var wCredito api.WCredito
@@ -267,7 +271,7 @@ func CargarModulosCredito() {
 	Enrutador.HandleFunc("/ipsfa/api/credito/cuotas/{id}", wUsuario.ValidarToken(wCredito.ListarCuotas)).Methods("GET")
 }
 
-//CargarModulosWebDevel Cargador de modulos web
+// CargarModulosWebDevel Cargador de modulos web
 func CargarModulosWebDevel() {
 
 	var wCis api.WCis
@@ -363,7 +367,7 @@ func CargarModulosWebDevel() {
 
 }
 
-//CargarModulosWebSite Cargador de modulos web
+// CargarModulosWebSite Cargador de modulos web
 func CargarModulosWebSite() {
 	var wU api.WebUsuario
 	var per api.Militar
@@ -435,7 +439,7 @@ func CargarModulosWebSite() {
 
 }
 
-//CargarModulosPanel Panel de Contencion
+// CargarModulosPanel Panel de Contencion
 func CargarModulosPanel() {
 
 	var wpanel api.WPanel
@@ -456,7 +460,7 @@ func CargarModulosPanel() {
 
 }
 
-//WMAdminLTE OpenSource tema de panel de control Tecnología Bootstrap3
+// WMAdminLTE OpenSource tema de panel de control Tecnología Bootstrap3
 func WMAdminLTE() {
 	fmt.Println("Cargando Modulos de AdminLTE...")
 
@@ -464,7 +468,7 @@ func WMAdminLTE() {
 	Enrutador.PathPrefix("/sssifanb/").Handler(prefix)
 }
 
-//Principal Página inicial del sistema o bienvenida
+// Principal Página inicial del sistema o bienvenida
 func Principal() {
 	prefix := http.StripPrefix("/", http.FileServer(http.Dir("public_web/SSSIFANB/app.ipsfa/dist")))
 	Enrutador.PathPrefix("/").Handler(prefix)
