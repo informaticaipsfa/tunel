@@ -133,7 +133,7 @@ func (CB *Cobranza) GenerarCobranzaBanfanb(psql *sql.DB, desde string, hasta str
 	monto := util.CompletarCeros(cantidad, 0, 17)                                //17digist
 	registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)                      //4digist
 	cabecera := cuenta + fechas + monto + registros                              //' 000000000143236230792'
-	cobr, e := os.Create(directorio + "/banfanb" + fechas + ".txt")
+	cobr, e := os.Create(directorio + "/Banfanb.txt")
 	util.Error(e)
 	fmt.Fprintf(cobr, cabecera+"\n")
 	fmt.Fprintf(cobr, linea+"")
