@@ -93,8 +93,8 @@ func (CB *Cobranza) CabeceraSQLBanco(desde string, hasta string, componente stri
   WHERE
      -- crd.esta = 3 AND cot.esta = 0 AND tipo = 0
      -- comp = 'GN' AND cot.fech BETWEEN '2020-09-01' AND '2020-12-30'
-	 crd.fini > '01-04-2023' AND crd.inst='0177' AND crd.esta = 3 
-	 AND comp = '` + componente + `' AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
+		crd.fini > '01-04-2023' AND crd.inst='0177' AND crd.esta = 1 
+	 	AND comp = '` + componente + `' AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
 }
 
 // GenerarCobranza Creando consulta para archivos
