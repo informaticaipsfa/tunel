@@ -10,5 +10,5 @@ rm -rf esb.ipsfa
 
 echo "Compilando la nueva versión del servicio esb.ipsfa"
 echo "Por favor	espere..."
-go build -o esb.ipsfa servicio.go && ./esb.ipsfa & || echo "Comando Fallo"
+go build -o esb.ipsfa servicio.go && ./esb.ipsfa & 
 
