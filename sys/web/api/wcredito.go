@@ -192,7 +192,7 @@ func (wc *WCredito) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	}
 	hasta := ano + "-" + mes + maxdia
 
-	lsta := wcob.GenerarCobranzaBanfanb(sys.PostgreSQLPENSION, desde, hasta, "BANFANFB")
+	lsta := wcob.GenerarCobranzaBanfanb(sys.PostgreSQLPENSION, desde, hasta)
 	rcob = append(rcob, lsta)
 
 	//lstb := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "AV")

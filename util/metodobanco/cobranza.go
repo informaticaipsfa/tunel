@@ -85,8 +85,7 @@ func (CB *Cobranza) GenerarCobranza(PostgreSQLPENSION *sql.DB, desde string, has
 }
 
 // CabeceraSQL Creando consulta para archivos
-func (CB *Cobranza) CabeceraSQLBanco(desde string, hasta string, componente string) string {
-	CB.Componente = componente
+func (CB *Cobranza) CabeceraSQLBanco(desde string, hasta string) string {
 	return `  SELECT crd.cedula, cot.cuot, crd.ncue, creid, cot.fech, cot.tipo, crd.esta, crd.cant
 	FROM space.credito crd
   JOIN space.cuota cot on crd.oid=cot.creid
@@ -94,14 +93,13 @@ func (CB *Cobranza) CabeceraSQLBanco(desde string, hasta string, componente stri
      -- crd.esta = 3 AND cot.esta = 0 AND tipo = 0
      -- comp = 'GN' AND cot.fech BETWEEN '2020-09-01' AND '2020-12-30'
 		crd.fini > '01-04-2023' AND crd.inst='0177' AND crd.esta = 1 
-	 	AND comp = '` + componente + `' AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
+	 	AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
 }
 
 // GenerarCobranza Creando consulta para archivos
-func (CB *Cobranza) GenerarCobranzaBanfanb(PostgreSQLPENSION *sql.DB, desde string, hasta string, componente string) (wcob CobranzaDetalle) {
-	CB.Componente = componente
+func (CB *Cobranza) GenerarCobranzaBanfanb(psql *sql.DB, desde string, hasta string) (wcob CobranzaDetalle) {
 	//fmt.Println(CB.CabeceraSQL(desde, hasta, componente))
-	sq, err := PostgreSQLPENSION.Query(CB.CabeceraSQLBanco(desde, hasta, componente))
+	sq, err := psql.Query(CB.CabeceraSQLBanco(desde, hasta))
 	util.Error(err)
 	i := 0
 	suma := 0.0
@@ -135,7 +133,7 @@ func (CB *Cobranza) GenerarCobranzaBanfanb(PostgreSQLPENSION *sql.DB, desde stri
 	monto := util.CompletarCeros(cantidad, 0, 17)                                //17digist
 	registros := util.CompletarCeros(strconv.Itoa(i), 0, 4)                      //4digist
 	cabecera := cuenta + fechas + monto + registros                              //' 000000000143236230792'
-	cobr, e := os.Create(directorio + "/" + CB.Componente + ".txt")
+	cobr, e := os.Create(directorio + "/banfanb" + fechas + ".txt")
 	util.Error(e)
 	fmt.Fprintf(cobr, cabecera+"\n")
 	fmt.Fprintf(cobr, linea+"")
@@ -143,7 +141,7 @@ func (CB *Cobranza) GenerarCobranzaBanfanb(PostgreSQLPENSION *sql.DB, desde stri
 	cobr.Close()
 	wcob.Cantidad = i
 	wcob.Monto = suma
-	wcob.Componente = CB.Componente
+	wcob.Componente = "Banfanb"
 
 	return
 }
