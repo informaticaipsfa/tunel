@@ -90,8 +90,8 @@ func (CB *Cobranza) CabeceraSQLBanco(desde string, hasta string) string {
 	FROM space.credito crd
   JOIN space.cuota cot on crd.oid=cot.creid
   WHERE
-		crd.fini > '2023-04-01' AND crd.inst='0177'  
-	 	AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
+		crd.fini > '2023-03-01' AND crd.inst='0177'  
+	 	-- AND cot.fech BETWEEN '` + desde + `' AND '` + hasta + `'`
 }
 
 // GenerarCobranza Creando consulta para archivos
