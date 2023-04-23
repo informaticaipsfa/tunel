@@ -12,7 +12,7 @@ import (
 	"github.com/informaticaipsfa/tunel/util/metodobanco"
 )
 
-//WCredito API de apoyo a credito
+// WCredito API de apoyo a credito
 type WCredito struct {
 	Fecha   string `json:"fecha" bson:"fecha"`
 	Desde   string `json:"desde" bson:"desde"`
@@ -20,7 +20,7 @@ type WCredito struct {
 	Estatus int    `json:"estatus" bson:"estatus"`
 }
 
-//Guardar Salvando datos del credito a un militar
+// Guardar Salvando datos del credito a un militar
 func (wc *WCredito) Guardar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var wCredito credito.Solicitud
@@ -45,7 +45,7 @@ func (wc *WCredito) Guardar(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-//Listar Creditos
+// Listar Creditos
 func (wc *WCredito) Listar(w http.ResponseWriter, r *http.Request) {
 	// var traza fanb.Traza
 	var M sssifanb.Mensaje
@@ -73,7 +73,7 @@ func (wc *WCredito) Listar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Actualizar Creditos
+// Actualizar Creditos
 func (wc *WCredito) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 	var M sssifanb.Mensaje
@@ -110,7 +110,7 @@ func (wc *WCredito) Actualizar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//EnviarATesoreria Creditos
+// EnviarATesoreria Creditos
 func (wc *WCredito) EnviarATesoreria(w http.ResponseWriter, r *http.Request) {
 
 	var M sssifanb.Mensaje
@@ -147,7 +147,7 @@ func (wc *WCredito) EnviarATesoreria(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Liquidar Salvando datos del credito a un militar
+// Liquidar Salvando datos del credito a un militar
 func (wc *WCredito) Liquidar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var wCredito credito.Credito
@@ -176,7 +176,7 @@ func (wc *WCredito) Liquidar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//CrearTxt Sistema de generacion bancaria
+// CrearTxt Sistema de generacion bancaria
 func (wc *WCredito) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var wcob metodobanco.Cobranza
@@ -192,17 +192,17 @@ func (wc *WCredito) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	}
 	hasta := ano + "-" + mes + maxdia
 
-	lsta := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "GN")
+	lsta := wcob.GenerarCobranzaBanfanb(sys.PostgreSQLPENSION, desde, hasta, "BANFANFB")
 	rcob = append(rcob, lsta)
 
-	lstb := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "AV")
-	rcob = append(rcob, lstb)
+	//lstb := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "AV")
+	//rcob = append(rcob, lstb)
 
-	lstc := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "AR")
-	rcob = append(rcob, lstc)
+	//lstc := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "AR")
+	//rcob = append(rcob, lstc)
 
-	lstd := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "EJ")
-	rcob = append(rcob, lstd)
+	//lstd := wcob.GenerarCobranza(sys.PostgreSQLPENSION, desde, hasta, "EJ")
+	//rcob = append(rcob, lstd)
 
 	j, _ := json.Marshal(rcob)
 	w.WriteHeader(http.StatusOK)
@@ -210,7 +210,7 @@ func (wc *WCredito) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-//RelacionActiva Creditos
+// RelacionActiva Creditos
 func (wc *WCredito) RelacionActiva(w http.ResponseWriter, r *http.Request) {
 	// var traza fanb.Traza
 	var M sssifanb.Mensaje
@@ -248,7 +248,7 @@ func (wc *WCredito) RelacionActiva(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//RelacionActiva Creditos
+// RelacionActiva Creditos
 func (wc *WCredito) RelacionPagados(w http.ResponseWriter, r *http.Request) {
 	// var traza fanb.Traza
 	var M sssifanb.Mensaje
@@ -286,7 +286,7 @@ func (wc *WCredito) RelacionPagados(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//ListarCuotas Cuotas
+// ListarCuotas Cuotas
 func (wc *WCredito) ListarCuotas(w http.ResponseWriter, r *http.Request) {
 	// var traza fanb.Traza
 	Cabecera(w, r)
@@ -303,7 +303,7 @@ func (wc *WCredito) ListarCuotas(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Pagarr Salvando datos del credito a un militar
+// Pagarr Salvando datos del credito a un militar
 func (wc *WCredito) Pagar(w http.ResponseWriter, r *http.Request) {
 	var M sssifanb.Mensaje
 	var wCredito credito.Credito
