@@ -32,8 +32,6 @@ func init() {
 	fmt.Println("Versión del Panel ", sys.Version)
 	fmt.Println("")
 	if sys.MongoDB {
-		//fmt.Println("Metodo de Encriptamiento ", seguridad.Encriptamiento, "...")
-		// sys.MongoDBConexion()
 		fmt.Println("")
 		fmt.Println("..........................................................")
 		fmt.Println("... Iniciando Carga de Elemento Para el servidor WEB   ...")
@@ -44,20 +42,6 @@ func init() {
 }
 
 func main() {
-	// var militar sssifanb.Militar
-	// militar.MGOActualizarPensionados()
-	// militar.MGOActualizarSobrevivientes() //Evalua y carga los porcentajes de los familiares
-	// militar.MGOActualizarSobrevivientesFideicomiso()
-	// militar.MGOActualizarFEVIDA()
-	// var pension sssifanb.Pension
-	//
-	// pension.ConsultarPensionadosReconocido()
-	// var pension sssifanb.Pension
-	// pension.Exportar("", 0)
-	// pension.ExportarFamiliares() //Pagar a los familiares
-	// var pension sssifanb.Pension
-	// pension.PensioanadosBeneficiarios()
-	// pension.ActualizarSobrevivientesPension()
 
 	fmt.Println("Inciando la carga del sistema")
 	web.Cargar()
