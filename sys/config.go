@@ -31,7 +31,7 @@ var (
 	HostUrlPace              string = ""
 	HostIPPension            string = ""
 	HostUrlPension           string = ""
-	Version                  string = "V.2.2.2"
+	Version                  string = "V.3.0.1-ar"
 )
 
 // Constantes del sistema
@@ -45,7 +45,7 @@ const (
 	ACTIVAR_LIMITE_DE_CONSULTA    bool   = true
 	DESACTIVAR_LIMITE_DE_CONSULTA bool   = false
 	PUERTO                        string = "81"
-	PUERTO_STANDAR                string = "8080"
+	PUERTO_STANDAR                string = "8880"
 	PUERTO_SSL                    string = "2608"
 	PUERTO_SSL_STANDAR            string = "443"
 	CODIFCACION_DE_ARCHIVOS       string = "UTF-8"

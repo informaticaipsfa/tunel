@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
-	"github.com/dgrijalva/jwt-go/request"
+	jwt "github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5/request"
 	"github.com/gorilla/mux"
 
 	"github.com/informaticaipsfa/tunel/mdl/sssifanb/fanb"
@@ -18,7 +18,7 @@ import (
 
 type WUsuario struct{}
 
-//Crear Usuario del sistema
+// Crear Usuario del sistema
 func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.Usuario
 	var m util.Mensajes
@@ -54,7 +54,7 @@ func (u *WUsuario) Crear(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Clave de tipos
+// Clave de tipos
 type Clave struct {
 	ID        string `json:"id"`
 	Cedula    string `json:"cedula"`
@@ -66,7 +66,7 @@ type Clave struct {
 	Coleccion string `json:"coleccion"`
 }
 
-//CambiarClave ID
+// CambiarClave ID
 func (u *WUsuario) CambiarClave(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M util.Mensajes
@@ -89,7 +89,7 @@ func (u *WUsuario) CambiarClave(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Login conexion para solicitud de token
+// Login conexion para solicitud de token
 func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.Usuario
 	var traza fanb.Traza
@@ -125,7 +125,7 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//LoginW conexion para solicitud de token
+// LoginW conexion para solicitud de token
 func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.WUsuario
 	// var traza fanb.Traza
@@ -157,13 +157,27 @@ func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//ValidarToken Validacion de usuario
+// ValidarToken Validacion de usuario
 func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
-	var mensaje util.Mensajes
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Entrando... ")
 		Cabecera(w, r)
+
+		token, err := request.ParseFromRequest(r, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
+			// since we only use the one private key to sign the tokens,
+			// we also only use its public counter part to verify
+			return seguridad.LlavePublica, nil
+		}, request.WithClaims(&seguridad.Reclamaciones{}))
+
+		if err != nil {
+			w.WriteHeader(http.StatusUnauthorized)
+			fmt.Fprintln(w, "Invalid token:", err)
+			return
+		}
+		fmt.Println(token.Claims.(*seguridad.Reclamaciones).Usuario)
+
+		/**
 		token, e := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &seguridad.Reclamaciones{}, func(token *jwt.Token) (interface{}, error) {
 			//var claims jwt.Claims
 			reclamacion := token.Claims.(*seguridad.Reclamaciones)
@@ -207,7 +221,7 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 				w.Write(j)
 				return
 			}
-		}
+		}*/
 
 		if token.Valid {
 			fn(w, r)
@@ -218,7 +232,7 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 	})
 }
 
-//Autorizado Formando archivos
+// Autorizado Formando archivos
 func (u *WUsuario) Autorizado(w http.ResponseWriter, r *http.Request) {
 	var mensaje util.Mensajes
 	Cabecera(w, r)
@@ -229,7 +243,7 @@ func (u *WUsuario) Autorizado(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Consultar conexion para solicitud de token
+// Consultar conexion para solicitud de token
 func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.Usuario
 	var traza fanb.Traza
@@ -252,7 +266,7 @@ func (u *WUsuario) Consultar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//Listar Usuario del sistema
+// Listar Usuario del sistema
 func (u *WUsuario) Listar(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.Usuario
 	Cabecera(w, r)
@@ -261,7 +275,7 @@ func (u *WUsuario) Listar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Opciones Militar
+// Opciones Militar
 func (u *WUsuario) Opciones(w http.ResponseWriter, r *http.Request) {
 	CabeceraW(w, r)
 	fmt.Println("Conectandose usuario vía Extranet...")
@@ -269,7 +283,7 @@ func (u *WUsuario) Opciones(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//CambiarClaveW Control de Cambio de Clave
+// CambiarClaveW Control de Cambio de Clave
 func (u *WUsuario) CambiarClaveW(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M util.Mensajes
@@ -291,7 +305,7 @@ func (u *WUsuario) CambiarClaveW(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//RestablecerClaves ID
+// RestablecerClaves ID
 func (u *WUsuario) RestablecerClaves(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M util.Mensajes
@@ -316,7 +330,7 @@ func (u *WUsuario) RestablecerClaves(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//RecuperarW conexion para solicitud de token
+// RecuperarW conexion para solicitud de token
 func (u *WUsuario) RecuperarW(w http.ResponseWriter, r *http.Request) {
 	var usuario seguridad.WUsuario
 	CabeceraW(w, r)

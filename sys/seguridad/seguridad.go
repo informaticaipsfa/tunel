@@ -6,25 +6,27 @@ import (
 	"io/ioutil"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	//jwt "github.com/dgrijalva/jwt-go"
+	jwt "github.com/golang-jwt/jwt/v5"
+
 	"github.com/informaticaipsfa/tunel/util"
 )
 
-//Constantes Generales
+// Constantes Generales
 const (
 	ENCRIPTAMIENTO             = "md5"
 	ACTIVARLIMITECONEXIONES    = true
 	DESACTIVARLIMITECONEXIONES = false
 )
 
-//Variables de Seguridad
+// Variables de Seguridad
 var (
 	LlavePrivada *rsa.PrivateKey
 	LlavePublica *rsa.PublicKey
 	LlaveJWT     string
 )
 
-//init Función inicial del sistema
+// init Función inicial del sistema
 func init() {
 	bytePrivados, err := ioutil.ReadFile("./sys/seguridad/private.rsa")
 	util.Fatal(err)
@@ -34,12 +36,13 @@ func init() {
 	LlavePublica, err = jwt.ParseRSAPublicKeyFromPEM(bytePublicos)
 }
 
-//GenerarJWT Json Web Token
+// GenerarJWT Json Web Token
 func GenerarJWT(u Usuario) string {
+
 	peticion := Reclamaciones{
 		Usuario: u,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Minute * 259200).Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 259200)),
 			Issuer:    "Conexion Bus Empresarial",
 		},
 	}
@@ -49,12 +52,12 @@ func GenerarJWT(u Usuario) string {
 	return rs
 }
 
-//WGenerarJWT Json Web Token
+// WGenerarJWT Json Web Token
 func WGenerarJWT(u WUsuario) string {
 	peticion := WReclamaciones{
 		WUsuario: u,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(time.Second * 360).Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Second * 360)),
 			Issuer:    "Conexion Bus Empresarial",
 		},
 	}
