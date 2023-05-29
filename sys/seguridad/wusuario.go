@@ -28,7 +28,7 @@ var WPreguntas = []string{
 	ESTADO_CIVIL,
 }
 
-//WCausante Control de familiares para asignaciones
+// WCausante Control de familiares para asignaciones
 type WCausante struct {
 	Cedula     string `json:"cedula" bson:"cedula"`
 	Nombre     string `json:"nombre" bson:"nombre"`
@@ -37,7 +37,7 @@ type WCausante struct {
 	Grado      string `json:"grado" bson:"grado"`
 }
 
-//WUsuario del Sistema
+// WUsuario del Sistema
 type WUsuario struct {
 	ID            string       `json:"id,omitempty" bson:"id"`
 	Cedula        string       `json:"cedula" bson:"cedula"`
@@ -64,7 +64,7 @@ type WUsuario struct {
 	Empleado      bool         `json:"empleado,omitempty" bson:"empleado"`
 }
 
-//Validar Validacion de Usuarios
+// Validar Validacion de Usuarios
 func (u *WUsuario) Validar(login string, clave string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
@@ -73,7 +73,7 @@ func (u *WUsuario) Validar(login string, clave string) (err error) {
 	return
 }
 
-//Existe Validacion de Usuarios
+// Existe Validacion de Usuarios
 func (u *WUsuario) Existe(login string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
@@ -82,7 +82,7 @@ func (u *WUsuario) Existe(login string) (err error) {
 	return
 }
 
-//CambiarClave Usuarios
+// CambiarClave Usuarios
 func (u *WUsuario) CambiarClave(correo string, clave string, nueva string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
@@ -93,7 +93,7 @@ func (u *WUsuario) CambiarClave(correo string, clave string, nueva string) (err 
 	return
 }
 
-//Recuperar Validacion de Usuarios
+// Recuperar Validacion de Usuarios
 func (u *WUsuario) Recuperar(correo string) (err error) {
 	u.Nombre = ""
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.WUSUARIO)
@@ -102,7 +102,7 @@ func (u *WUsuario) Recuperar(correo string) (err error) {
 	return
 }
 
-//CrearPreguntas Para encuestador
+// CrearPreguntas Para encuestador
 func (u *WUsuario) CrearPreguntas() (err error) {
 	return
 }

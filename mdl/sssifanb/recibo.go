@@ -1,12 +1,13 @@
 package sssifanb
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/informaticaipsfa/tunel/sys"
 )
 
-//Recibo de Pago
+// Recibo de Pago
 type Recibo struct {
 	ID          string    `json:"id" bson:"id"`
 	IDF         string    `json:"idf" bson:"idf"` //ID FAMILIAR
@@ -19,13 +20,19 @@ type Recibo struct {
 	Usuario     string    `json:"usuario" bson:"usuario"`
 }
 
-//Salvar Guardar
+// Salvar Guardar
 func (r *Recibo) Salvar() (err error) {
 	var TIM Carnet
 	TIM.ID = r.ID
 	TIM.IDF = r.IDF
 	TIM.IP = r.IP
 	TIM.Motivo = r.Motivo
+
+	fmt.Println("Controlando los datos ")
+	fmt.Println(r)
+
+	fmt.Println("Controlando los datos ")
+
 	TIM.Usuario = r.Usuario[:3]
 	TIM.Salvar()
 
@@ -34,13 +41,13 @@ func (r *Recibo) Salvar() (err error) {
 	return
 }
 
-//Consultar Recibos
+// Consultar Recibos
 func (r *Recibo) Consultar(id string) (err error) {
 
 	return
 }
 
-//Listar Recibos
+// Listar Recibos
 func (r *Recibo) Listar(id string) (err error) {
 
 	return

@@ -96,7 +96,7 @@ func (u *WUsuario) Login(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
 	util.Error(e)
-	fmt.Println(usuario)
+	//fmt.Println(usuario)
 
 	usuario.Validar(usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
 
@@ -131,7 +131,7 @@ func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 	// var traza fanb.Traza
 	CabeceraW(w, r)
 	e := json.NewDecoder(r.Body).Decode(&usuario)
-	fmt.Println(usuario)
+	//fmt.Println(usuario)
 	util.Error(e)
 	//fmt.Println("login... ", usuario.Cedula, usuario.Nombre, util.GenerarHash256([]byte(usuario.Clave)))
 	err := usuario.Validar(usuario.Cedula, util.GenerarHash256([]byte(usuario.Clave)))
@@ -161,7 +161,7 @@ func (u *WUsuario) LoginW(w http.ResponseWriter, r *http.Request) {
 func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Entrando... ")
+		//fmt.Print("Entrando... ")
 		Cabecera(w, r)
 
 		token, err := request.ParseFromRequest(r, request.OAuth2Extractor, func(token *jwt.Token) (interface{}, error) {
@@ -175,8 +175,9 @@ func (u *WUsuario) ValidarToken(fn http.HandlerFunc) http.HandlerFunc {
 			fmt.Fprintln(w, "Invalid token:", err)
 			return
 		}
-		fmt.Println(token.Claims.(*seguridad.Reclamaciones).Usuario)
+		//fmt.Println(token.Claims.(*seguridad.Reclamaciones).Usuario)
 
+		UsuarioConectado = token.Claims.(*seguridad.Reclamaciones).Usuario
 		/**
 		token, e := request.ParseFromRequestWithClaims(r, request.OAuth2Extractor, &seguridad.Reclamaciones{}, func(token *jwt.Token) (interface{}, error) {
 			//var claims jwt.Claims
