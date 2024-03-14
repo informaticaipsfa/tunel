@@ -61,6 +61,7 @@ from
 ) as TBL1
 join space.cuentas_temp as rcuentas on
 	TBL1.nume = rcuentas.nume
+	AND TBL1.cdep=rcuentas.cedu
 where rcuentas.nume !='0102'
 order by
 	rcuentas.nume
