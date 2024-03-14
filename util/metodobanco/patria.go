@@ -62,9 +62,7 @@ func (P *Patria) Generar(psqlPension *sql.DB) {
 		P.Total += monto
 		P.SumaParcial += monto
 		P.Contenido += "V" + cedu + banc + montos + nomb + "\r\n"
-		if P.Registro == P.Cantidad { //Pendiente si existen mas personas por escribir en el archivo
-			//P.generarArchivo()
-		}
+		P.Registro++
 		//fmt.Println(cedu, banc, montos, nombre)
 	}
 
