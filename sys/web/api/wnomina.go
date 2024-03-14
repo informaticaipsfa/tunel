@@ -36,7 +36,7 @@ type WNomina struct {
 	Concepto    []WConcepto `json:"Concepto,omitempty" bson:"Concepto"`
 }
 
-//Agregar un concepto nuevo
+// Agregar un concepto nuevo
 func (N *WNomina) Agregar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -58,7 +58,7 @@ func (N *WNomina) Agregar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//Consultar un concepto nuevo
+// Consultar un concepto nuevo
 func (N *WNomina) Consultar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -78,7 +78,7 @@ func (N *WNomina) Consultar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Listar Ver
+// Listar Ver
 func (N *WNomina) Listar(w http.ResponseWriter, r *http.Request) {
 	var concepto fanb.Concepto
 	Cabecera(w, r)
@@ -87,7 +87,7 @@ func (N *WNomina) Listar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//ListarPHP Militar
+// ListarPHP Militar
 func (N *WNomina) ListarPHP(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -117,7 +117,7 @@ func (N *WNomina) ListarPHP(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//ListarContable Militar
+// ListarContable Militar
 func (N *WNomina) ListarContable(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -150,7 +150,7 @@ func (N *WNomina) ListarContable(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Gestionar un concepto nuevo
+// Gestionar un concepto nuevo
 func (N *WNomina) Gestionar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -184,14 +184,14 @@ func (N *WNomina) Gestionar(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//WProcesarNomina Nomina
+// WProcesarNomina Nomina
 type WProcesarNomina struct {
 	ID      int    `json:"id"`
 	Estatus int    `json:"estatus"`
 	Nombre  string `json:"nombre"`
 }
 
-//Procesar un concepto nuevo
+// Procesar un concepto nuevo
 func (N *WNomina) Procesar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -247,7 +247,7 @@ type WLstPagoDetalle struct {
 	Tipo   string `json:"tipo"` //Cuenta de ahorro (CA) y Corriente (CC) o Cheque ()
 }
 
-//ListarPagosDetalle un concepto nuevo
+// ListarPagosDetalle un concepto nuevo
 func (N *WNomina) ListarPagosDetalle(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -296,7 +296,7 @@ func (N *WNomina) ListarPagosDetalle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//VerPartidas Militar
+// VerPartidas Militar
 func (N *WNomina) VerPartidas(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -327,7 +327,28 @@ func (N *WNomina) VerPartidas(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//CrearTxt Sistema de generacion bancaria
+// CrearTxt Sistema de generacion bancaria
+func (N *WNomina) Patria(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var M sssifanb.Mensaje
+	var patria metodobanco.Patria
+
+	var id = mux.Vars(r)
+	patria.Firma = id["id"]
+	patria.Tabla = "patria"
+	//
+	patria.Generar(sys.PostgreSQLPENSION)
+	//Comprimir todos los archivos en uno para su descarga
+	M.Mensaje = "Generacion de archivos exitosa "
+
+	M.Tipo = 0
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+	return
+}
+
+// CrearTxt Sistema de generacion bancaria
 func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -397,7 +418,7 @@ func (N *WNomina) CrearTxt(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
-//ListarPendientes Militar
+// ListarPendientes Militar
 func (N *WNomina) ListarPendientes(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -429,7 +450,7 @@ func (N *WNomina) ListarPendientes(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//ListarPagos Militar
+// ListarPagos Militar
 func (N *WNomina) ListarPagos(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -460,7 +481,7 @@ func (N *WNomina) ListarPagos(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//ListarPagos Militar
+// ListarPagos Militar
 func (N *WNomina) VerPagosIndividual(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -491,7 +512,7 @@ func (N *WNomina) VerPagosIndividual(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//CuadreBanco Militar
+// CuadreBanco Militar
 func (N *WNomina) CuadreBanco(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -522,7 +543,7 @@ func (N *WNomina) CuadreBanco(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//Opciones Militar
+// Opciones Militar
 func (N *WNomina) Opciones(w http.ResponseWriter, r *http.Request) {
 
 	Cabecera(w, r)
@@ -531,7 +552,7 @@ func (N *WNomina) Opciones(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//Eliminar Militar
+// Eliminar Militar
 func (N *WNomina) Eliminar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -562,7 +583,7 @@ func (N *WNomina) Eliminar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Publicar Militar
+// Publicar Militar
 func (N *WNomina) Publicar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje
@@ -593,7 +614,7 @@ func (N *WNomina) Publicar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//DeBaja Militar
+// DeBaja Militar
 func (N *WNomina) DeBaja(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var M sssifanb.Mensaje

@@ -250,6 +250,8 @@ func CargarModulosBanco() {
 	var wNom api.WNomina
 	var wR api.WRechazos
 	Enrutador.HandleFunc("/ipsfa/api/nomina/metodobanco/{id}/{cant}", wUsuario.ValidarToken(wNom.CrearTxt)).Methods("GET")
+	Enrutador.HandleFunc("/ipsfa/api/nomina/patria", wUsuario.ValidarToken(wNom.Patria)).Methods("GET")
+	Enrutador.HandleFunc("/dev/api/nomina/patria/{id}", wNom.Patria).Methods("GET")
 	Enrutador.HandleFunc("/ipsfa/api/nomina/metodobancorechazos/{id}/{cant}", wUsuario.ValidarToken(wR.CrearTxt)).Methods("GET")
 
 }
