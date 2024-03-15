@@ -56,7 +56,7 @@ func (P *Patria) Generar(psqlPension *sql.DB) {
 
 		monto, montos := generarMonto(neto, 0, 11)
 		banc := generarCuentaBancaria(numero)
-		nomb := util.ValidarNullString(nombre)
+		nomb := util.CompletarEspacios(util.ValidarNullString(nombre), 1, 40)
 		cedu := generarCedula(cedula, 0, 8)
 
 		P.Total += monto
