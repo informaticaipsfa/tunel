@@ -20,7 +20,7 @@ type Mensajes struct {
 	Responsable int       `json:"responsable,onmitempty"`
 }
 
-//NullTime Tiempo nulo
+// NullTime Tiempo nulo
 type NullTime struct {
 	Time  time.Time
 	Valid bool
@@ -28,7 +28,7 @@ type NullTime struct {
 
 const layout string = "2006-01-02"
 
-//ValidarNullFloat64 los campos nulos de la base de datos y retornar su valor original
+// ValidarNullFloat64 los campos nulos de la base de datos y retornar su valor original
 func ValidarNullFloat64(b sql.NullFloat64) (f float64) {
 	if b.Valid {
 		str := strconv.FormatFloat(b.Float64, 'f', 2, 64)
@@ -39,7 +39,7 @@ func ValidarNullFloat64(b sql.NullFloat64) (f float64) {
 	return
 }
 
-//ValidarNullTime los campos nulos de la base de datos y retorna fecha
+// ValidarNullTime los campos nulos de la base de datos y retorna fecha
 func ValidarNullTime(b interface{}) (t time.Time) {
 	t, e := b.(time.Time)
 	if !e {
@@ -48,7 +48,7 @@ func ValidarNullTime(b interface{}) (t time.Time) {
 	return
 }
 
-//ValidarNullString Validar los campos nulos de la base de datos y retornar su valor original
+// ValidarNullString Validar los campos nulos de la base de datos y retornar su valor original
 func ValidarNullString(b sql.NullString) (s string) {
 	if b.Valid {
 		s = b.String
@@ -67,12 +67,12 @@ func GetFechaConvert(f sql.NullString) (dateStamp time.Time) {
 	return
 }
 
-//DiasDelMes los dias de un mes
+// DiasDelMes los dias de un mes
 func DiasDelMes(fecha time.Time) int {
 	return 0
 }
 
-//CompletarCeros llenar con ceros antes y despues de una cadena
+// CompletarCeros llenar con ceros antes y despues de una cadena
 func CompletarCeros(cadena string, orientacion int, cantidad int) string {
 	var result string
 	cant := len(EliminarEspacioBlanco(cadena))
@@ -88,7 +88,7 @@ func CompletarCeros(cadena string, orientacion int, cantidad int) string {
 	return result
 }
 
-//CompletarEspacios llenar con ceros antes y despues de una cadena
+// CompletarEspacios llenar con ceros antes y despues de una cadena
 func CompletarEspacios(cadena string, orientacion int, cantidad int) string {
 	var result string
 	cant := len(EliminarEspacioBlanco(cadena))
@@ -104,14 +104,14 @@ func CompletarEspacios(cadena string, orientacion int, cantidad int) string {
 	return result
 }
 
-//Fatal Error
+// Fatal Error
 func Fatal(e error) {
 	if e != nil {
 		log.Fatal(e)
 	}
 }
 
-//CalcularTiempo Calculos
+// CalcularTiempo Calculos
 func CalcularTiempo(fecha time.Time) (Ano int, Mes time.Month, Dia int) {
 	fechaActual := time.Now()
 
@@ -134,7 +134,7 @@ func CalcularTiempo(fecha time.Time) (Ano int, Mes time.Month, Dia int) {
 	return
 }
 
-//CalcularTiempoServicio Calculos
+// CalcularTiempoServicio Calculos
 func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Mes time.Month, Dia int) {
 
 	AnnoA, MesA, DiaA := fechaActual.Date() //
@@ -163,7 +163,7 @@ func CalcularTiempoServicio(fechaActual time.Time, fecha time.Time) (Ano int, Me
 	return
 }
 
-//GenerarHash256 Generar Claves 256 para usuarios
+// GenerarHash256 Generar Claves 256 para usuarios
 func GenerarHash256(password []byte) (encry string) {
 	h := sha256.New()
 	h.Write(password)
@@ -172,54 +172,54 @@ func GenerarHash256(password []byte) (encry string) {
 
 }
 
-//EliminarPuntoDecimal Reemplazando por nada
+// EliminarPuntoDecimal Reemplazando por nada
 func EliminarPuntoDecimal(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ".", "", -1)
 }
 
-//EliminarEspacioBlanco Reemplazando coma por puntos
+// EliminarEspacioBlanco Reemplazando coma por puntos
 func EliminarEspacioBlanco(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), " ", "", -1)
 }
 
-//EliminarUnderScore Reemplazando UnderScore por 0
+// EliminarUnderScore Reemplazando UnderScore por 0
 func EliminarUnderScore(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), "_", "0", -1)
 }
 
-//EliminarGuionesFecha Reemplazando coma por puntos
+// EliminarGuionesFecha Reemplazando coma por puntos
 func EliminarGuionesFecha(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), "-", "", -1)
 }
 
-//ReemplazarGuionesPorSlah Reemplazando coma por puntos
+// ReemplazarGuionesPorSlah Reemplazando coma por puntos
 func ReemplazarGuionesPorSlah(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), "-", "/", -1)
 }
 
-//ReemplazarPuntoPorComa Reemplazando coma por puntos
+// ReemplazarPuntoPorComa Reemplazando coma por puntos
 func ReemplazarPuntoPorComa(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ".", ",", -1)
 }
 
-//ReemplazarComaPorPunto Reemplazando coma por puntos
+// ReemplazarComaPorPunto Reemplazando coma por puntos
 func ReemplazarComaPorPunto(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ",", ".", -1)
 }
 
-//ReemplazarPuntoyComaPorComa Reemplazando
+// ReemplazarPuntoyComaPorComa Reemplazando
 func ReemplazarPuntoyComaPorComa(cadena string) string {
 	return strings.Replace(strings.Trim(cadena, " "), ";", ",", -1)
 }
 
-//Error Procesa errores del sistema
+// Error Procesa errores del sistema
 func Error(e error) {
 	if e != nil {
 		fmt.Println("\n Utilidad Error: ", e.Error())
 	}
 }
 
-//EjecutarScript ejecucion de comandos
+// EjecutarScript ejecucion de comandos
 func EjecutarScript() (err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 	defer cancel()
@@ -231,7 +231,7 @@ func EjecutarScript() (err error) {
 	return
 }
 
-//GitAll Actualizando proyectos
+// GitAll Actualizando proyectos
 func GitAll(paquete string, cmd string, origen string) (out []byte, err error) {
 	if paquete == "bus" {
 		origen = "."

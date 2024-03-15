@@ -80,9 +80,9 @@ func (P *Patria) generarArchivo(fecha string) {
 	fpatria, e := os.Create(P.Directorio + "/patria.txt")
 	util.Error(e)
 	sumas := util.EliminarPuntoDecimal(strconv.FormatFloat(P.SumaParcial, 'f', 2, 64))
-	sumas = util.CompletarCeros(sumas, 0, 17)
+	sumas = util.CompletarCeros(sumas, 0, 15)
 	registros := util.CompletarCeros(strconv.Itoa(P.Registro), 0, 7)
-	cabecera := "OTNOM" + P.NumeroEmpresa + registros + sumas + "VES" + fecha + "\r\n"
+	cabecera := "ONTNOM" + P.NumeroEmpresa + registros + sumas + "VES" + fecha + "\r\n"
 	fmt.Fprintf(fpatria, cabecera+"")
 	fmt.Fprintf(fpatria, P.Contenido+"")
 	fpatria.Close()
