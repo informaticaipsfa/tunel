@@ -7,7 +7,7 @@ func SQL_QUERY_PATRIA(firma string) string {
 		numero, 
 		monto,
 		cc.nombre,
-		sc.tipo_cedula
+		NULLIF('V', sc.tipo_cedula ) as tipo_cedula
 from
 	(
 select REGEXP_REPLACE(cedu, E'[\\s\\t]+', '', 'g') as cedula, numero, SUM(monto) as monto, nombre from (
