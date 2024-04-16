@@ -60,6 +60,10 @@ func (P *Patria) Generar(psqlPension *sql.DB) {
 		cedu := generarCedula(cedula, 0, 8)
 		tipo_cedula := util.ValidarNullString(tipo)
 
+		if tipo_cedula == "null" {
+			tipo_cedula = "V"
+		}
+
 		P.Total += monto
 		P.SumaParcial += monto
 		P.Contenido += tipo_cedula + cedu + banc + montos + nomb + "\r\n"
