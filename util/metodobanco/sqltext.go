@@ -6,6 +6,7 @@ func SQL_QUERY_PATRIA(firma string) string {
 		cc.cedula,
 		numero, 
 		monto,
+		cc.nombre,
 		sc.tipo_cedula
 from
 	(
