@@ -48,20 +48,21 @@ func (P *Patria) Generar(psqlPension *sql.DB) {
 	//b.Cantidad = 500000
 	for sq.Next() {
 
-		var cedula, numero, nombre sql.NullString
+		var cedula, numero, nombre, tipo sql.NullString
 		var neto sql.NullFloat64
 
-		e := sq.Scan(&cedula, &numero, &neto, &nombre)
+		e := sq.Scan(&cedula, &numero, &neto, &nombre, &tipo)
 		util.Error(e)
 
 		monto, montos := generarMonto(neto, 0, 11)
 		banc := generarCuentaBancaria(numero)
 		nomb := util.CompletarEspacios(util.ValidarNullString(nombre), 1, 40)
 		cedu := generarCedula(cedula, 0, 8)
+		tipo_cedula := util.ValidarNullString(tipo)
 
 		P.Total += monto
 		P.SumaParcial += monto
-		P.Contenido += "V" + cedu + banc + montos + nomb + "\r\n"
+		P.Contenido += tipo_cedula + cedu + banc + montos + nomb + "\r\n"
 		P.Registro++
 		//fmt.Println(cedu, banc, montos, nombre)
 	}

@@ -2,6 +2,13 @@ package metodobanco
 
 func SQL_QUERY_PATRIA(firma string) string {
 	return `
+	select
+		cedula,
+		numero, 
+		monto,
+		sc.tipo_cedula
+from
+	(
 select REGEXP_REPLACE(cedu, E'[\\s\\t]+', '', 'g') as cedula, numero, SUM(monto) as monto, nombre from (
 select
 	rcuentas.cedu, cdep as cedula, TBL1.nume as numero, neto_monto as monto, nomb as nombre
@@ -63,5 +70,10 @@ order by
 	
 group by cedu, numero, nombre
 order by cedu
+ ) as cc
+left join saime.saime_cedula sc on sc.cedula = cc.cedula
+
+
+
 	`
 }
