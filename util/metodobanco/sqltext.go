@@ -3,7 +3,7 @@ package metodobanco
 func SQL_QUERY_PATRIA(firma string) string {
 	return `
 	select
-		cedula,
+		cc.cedula,
 		numero, 
 		monto,
 		sc.tipo_cedula
@@ -72,8 +72,5 @@ group by cedu, numero, nombre
 order by cedu
  ) as cc
 left join saime.saime_cedula sc on sc.cedula = cc.cedula
-
-
-
 	`
 }
