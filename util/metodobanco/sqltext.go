@@ -72,6 +72,8 @@ order by
 group by cedu, numero, nombre
 order by cedu
  ) as cc
-left join saime.saime_cedula sc on sc.cedula = cc.cedula
-	`
+left join 
+	( select 
+	distinct (cedula), tipo_cedula, sigla1, nombre1, nombre2, apellido1, apellido2, sexo 
+from saime.saime_cedula ) AS sc on sc.cedula = cc.cedula `
 }
