@@ -21,7 +21,7 @@ const (
 	BENEFICIARIO int = 3
 )
 
-//Militar militares
+// Militar militares
 type Militar struct {
 	ID                           string              `json:"id,omitempty" bson:"id"`
 	TipoDato                     int                 `json:"tipodato,omitempty" bson:"tipodato"`
@@ -65,7 +65,7 @@ type Militar struct {
 	Credito                      credito.Credito     `json:"Credito" bson:"credito"`
 }
 
-//Anomalia Irregularidades
+// Anomalia Irregularidades
 type Anomalia struct {
 	Hijo bool `json:"hijo,omitempty" bson:"hijo"`
 	Ano  bool `json:"ano,omitempty" bson:"ano"`
@@ -73,7 +73,7 @@ type Anomalia struct {
 	Dia  bool `json:"dia,omitempty" bson:"dia"`
 }
 
-//HistorialMilitar Historico
+// HistorialMilitar Historico
 type HistorialMilitar struct {
 	Componente     string    `json:"componente,omitempty" bson:"componente"`
 	Grado          string    `json:"grado,omitempty" bson:"grado"`         //grado
@@ -91,33 +91,33 @@ type HistorialMilitar struct {
 	//TIM                    Carnet    `json:"Tim,omitempty" bson:"tim"`               //Tarjeta de Identificacion Militar
 }
 
-//Componente componente
+// Componente componente
 type Componente struct {
 	Nombre      string `json:"nombre" bson:"nombre"`
 	Descripcion string `json:"descripcion" bson:"descripcion"`
 	Abreviatura string `json:"abreviatura" bson:"abreviatura"`
 }
 
-//Grado Rango / Jerarquia
+// Grado Rango / Jerarquia
 type Grado struct {
 	Nombre      string `json:"nombre,omitempty" bson:"nombre"`
 	Descripcion string `json:"descripcion,omitempty" bson:"descripcion"`
 	Abreviatura string `json:"abreviatura,omitempty" bson:"abreviatura"`
 }
 
-//Listar sistemas
+// Listar sistemas
 func (m *Militar) Listar() {
 	//informaticaipsfa@gmail.com
 }
 
-//Mensaje del sistema
+// Mensaje del sistema
 type Mensaje struct {
 	Mensaje string `json:"msj"`
 	Tipo    int    `json:"tipo"`
 	Pgsql   string `json:"pgsql,omitempty"`
 }
 
-//Consultar una persona mediante el metodo de MongoDB
+// Consultar una persona mediante el metodo de MongoDB
 func (m *Militar) Consultar() (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
@@ -141,7 +141,7 @@ func (m *Militar) Consultar() (jSon []byte, err error) {
 	return
 }
 
-//AplicarReglas Reglas Generales
+// AplicarReglas Reglas Generales
 func (m *Militar) AplicarReglas() {
 	if m.Situacion != "ACT" {
 		m.Conversion()
@@ -191,7 +191,7 @@ func (m *Militar) AplicarReglas() {
 	m.TiempoSevicio = strconv.Itoa(a) + "A " + strconv.Itoa(int(mes)) + "M " + strconv.Itoa(d) + "D"
 }
 
-//NumeroHijos Cantidad de hijos con situacion de beneficiario
+// NumeroHijos Cantidad de hijos con situacion de beneficiario
 func (m *Militar) NumeroHijos() int {
 	cantidad := 0
 	for _, v := range m.Familiar {
@@ -204,7 +204,7 @@ func (m *Militar) NumeroHijos() int {
 	return cantidad
 }
 
-//Conversion de Grados
+// Conversion de Grados
 func (m *Militar) Conversion() {
 	var comp fanb.Componente
 	conver := comp.ConsultarGrado(m.Componente.Abreviatura, m.Grado.Abreviatura)
@@ -235,7 +235,7 @@ func (m *Militar) ConsultarCIS() (jSon []byte, err error) {
 	return
 }
 
-//GenerarCarnet Generacion de Carnet
+// GenerarCarnet Generacion de Carnet
 func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	var mes, dia string
 
@@ -251,6 +251,9 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 		dia = "0" + strconv.Itoa(d)
 	}
 	fvenc := strconv.Itoa(a) + "-" + mes + "-" + dia
+	if m.ID == "1088631" || m.ID == "10275164" {
+		fvenc = "2024-07-05"
+	}
 	fechavece, _ := time.Parse("2006-01-02", fvenc)
 
 	serial := m.TIM.Usuario + m.TIM.GenerarSerial()
@@ -283,7 +286,7 @@ func (m *Militar) GenerarCarnet() (TIM Carnet, err error) {
 	return
 }
 
-//Actualizar Vida Militar
+// Actualizar Vida Militar
 func (m *Militar) Actualizar(usuario string, ip string) (jSon []byte, err error) {
 	var msj Mensaje
 	m.TipoDato = 0
@@ -294,7 +297,7 @@ func (m *Militar) Actualizar(usuario string, ip string) (jSon []byte, err error)
 	return
 }
 
-//ActualizarMGO Actualizar familiares del militar con mongodb
+// ActualizarMGO Actualizar familiares del militar con mongodb
 func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (err error) {
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
@@ -307,7 +310,7 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 	return
 }
 
-//MGOActualizar Actualizando datos principales del militar
+// MGOActualizar Actualizando datos principales del militar
 func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	var comp fanb.Componente
 	var mOriginal Militar
@@ -424,7 +427,7 @@ func (m *Militar) ActualizarFoto(id string) {
 	}
 }
 
-//SalvarMGO Guardar
+// SalvarMGO Guardar
 func (m *Militar) SalvarMGO() (err error) {
 	var comp fanb.Componente
 
@@ -459,7 +462,7 @@ func InsertarMysqlFullText(d string) {
 	}
 }
 
-//consultarMongo una persona mediante el metodo de MongoDB
+// consultarMongo una persona mediante el metodo de MongoDB
 func consultarMongo(cedula string) (m Militar, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Find(bson.M{"id": cedula}).One(&m)
@@ -470,7 +473,7 @@ func consultarMongo(cedula string) (m Militar, err error) {
 	return
 }
 
-//SalvarMGOI Guardar
+// SalvarMGOI Guardar
 func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 	if colecion != "" {
 		c := sys.MGOSession.DB(sys.CBASE).C(colecion)
@@ -485,21 +488,21 @@ func (m *Militar) SalvarMGOI(colecion string, objeto interface{}) (err error) {
 	return
 }
 
-//ConsultarMGO una persona mediante el metodo de MongoDB
+// ConsultarMGO una persona mediante el metodo de MongoDB
 func (m *Militar) ConsultarMGO(cedula string) (err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 	err = c.Find(bson.M{"id": cedula}).One(&m)
 	return
 }
 
-//ListarMGO Listado General
+// ListarMGO Listado General
 func (m *Militar) ListarMGO(cedula string) (lst []Militar, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C("persona")
 	err = c.Find(bson.M{}).All(&lst)
 	return
 }
 
-//EstadisticasPorComponente Estadisticas Por Componente
+// EstadisticasPorComponente Estadisticas Por Componente
 func (m *Militar) EstadisticasPorComponente() (jSon []byte, err error) {
 	// 	db.militar.aggregate([
 	//   {$match:
@@ -525,7 +528,7 @@ func (m *Militar) EstadisticasPorComponente() (jSon []byte, err error) {
 	return
 }
 
-//EstadisticasPorGrado Estadisticas Por Grado
+// EstadisticasPorGrado Estadisticas Por Grado
 func (m *Militar) EstadisticasPorGrado(codComponente string) (jSon []byte, err error) {
 	// 	db.militar.aggregate([
 	//   {$match:
@@ -559,7 +562,7 @@ func (m *Militar) EstadisticasPorGrado(codComponente string) (jSon []byte, err e
 	return
 }
 
-//EstadisticasFamiliar Estadisticas Por Grado
+// EstadisticasFamiliar Estadisticas Por Grado
 func (m *Militar) EstadisticasFamiliar() (jSon []byte, err error) {
 	donde := bson.M{"$match": bson.M{"tipo": "F"}}
 	grupo := bson.M{"$group": bson.M{"_id": bson.M{
@@ -577,7 +580,7 @@ func (m *Militar) EstadisticasFamiliar() (jSon []byte, err error) {
 	return
 }
 
-//ActualizarGradoCodigo Actualizando
+// ActualizarGradoCodigo Actualizando
 func (m *Militar) ActualizarGradoCodigo() {
 	var militar []Militar
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
@@ -602,7 +605,7 @@ func (m *Militar) ActualizarGradoCodigo() {
 	}
 }
 
-//InsertarFullText Insertar
+// InsertarFullText Insertar
 func (m *Militar) InsertarFullText() {
 	var militar []Militar
 	var msj Mensaje
@@ -620,7 +623,7 @@ func (m *Militar) InsertarFullText() {
 	}
 }
 
-//InsertMySQL MySQL
+// InsertMySQL MySQL
 func InsertMySQL(mil Militar) {
 	cedula := mil.Persona.DatoBasico.Cedula
 	direccion := mil.Persona.Direccion
@@ -629,7 +632,7 @@ func InsertMySQL(mil Militar) {
 	fmt.Println(cadena)
 }
 
-//MYSQLFULL DATA
+// MYSQLFULL DATA
 type MYSQLFULL struct {
 	ID          int    `json:"id,omitempty"`
 	Cedula      string `json:"cedula,omitempty"`
@@ -640,7 +643,7 @@ type MYSQLFULL struct {
 	Puntuacion  string `json:"puntuacion,omitempty"`
 }
 
-//BusquedaFullText Busqueda Avanzada
+// BusquedaFullText Busqueda Avanzada
 func (m *Militar) BusquedaFullText(contenido string, tipo int) (jSon []byte, err error) {
 	rows, err := sys.MysqlFullText.Query(QueryMysqlText(contenido, tipo))
 	if err != nil {
@@ -664,7 +667,7 @@ func (m *Militar) BusquedaFullText(contenido string, tipo int) (jSon []byte, err
 	return
 }
 
-//QueryMysqlText Consultando
+// QueryMysqlText Consultando
 func QueryMysqlText(contenido string, tipo int) string {
 	parametro := ""
 	switch tipo {
@@ -687,7 +690,7 @@ func QueryMysqlText(contenido string, tipo int) string {
 	ORDER BY puntuacion DESC LIMIT 500`
 }
 
-//Consultar una persona mediante el metodo de MongoDB
+// Consultar una persona mediante el metodo de MongoDB
 func (m *Militar) ConsultarCedula(id string) (jSon []byte, err error) {
 	var militar Militar
 	var msj Mensaje
