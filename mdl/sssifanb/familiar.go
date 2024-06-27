@@ -14,7 +14,7 @@ import (
 	"github.com/informaticaipsfa/tunel/util"
 )
 
-//Familiar Busquedas
+// Familiar Busquedas
 type Familiar struct {
 	ID                     string                 `json:"id" bson:"id"`
 	Persona                Persona                `json:"Persona" bson:"persona"`
@@ -42,7 +42,7 @@ type Familiar struct {
 	// RazonAfiliacion   string `json:"adoptado" bson:"adoptado"`
 }
 
-//FamiliarEstadistica Busquedas
+// FamiliarEstadistica Busquedas
 type FamiliarEstadistica struct {
 	ID              string    `json:"id" bson:"id"`
 	FechaNacimiento time.Time `json:"fechanacimiento" bson:"fechanacimiento"`
@@ -57,7 +57,7 @@ type FamiliarEstadistica struct {
 	Condicion       int       `json:"condicion" bson:"condicion"` //Sano o Condicion especial
 }
 
-//AplicarReglasBeneficio OJO SEGUROS HORIZONTES
+// AplicarReglasBeneficio OJO SEGUROS HORIZONTES
 func (f *Familiar) AplicarReglasBeneficio() {
 	edad, _, _ := util.CalcularTiempo(f.Persona.DatoBasico.FechaNacimiento)
 	if f.Parentesco == "HJ" {
@@ -78,17 +78,17 @@ func (f *Familiar) AplicarReglasBeneficio() {
 
 }
 
-//AplicarReglasParentesco Reglas
+// AplicarReglasParentesco Reglas
 func (f *Familiar) AplicarReglasParentesco() {
 
 }
 
-//ConvertirFechaHumano Validacion
+// ConvertirFechaHumano Validacion
 func (f *Familiar) ConvertirFechaHumano() {
 
 }
 
-//MGOActualizar Vida Militar
+// MGOActualizar Vida Militar
 func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 	var msj Mensaje
 	msj.Mensaje = "Su data ha sido actualizada."
@@ -98,7 +98,7 @@ func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 	return
 }
 
-//Actualizar Actualizando en MONGO
+// Actualizar Actualizando en MONGO
 func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 
 	id := f.Persona.DatoBasico.Cedula
@@ -189,7 +189,7 @@ func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 	return
 }
 
-//ActualizarPorReduccion Control de Reduccion de datos
+// ActualizarPorReduccion Control de Reduccion de datos
 func (f *Familiar) ActualizarPorReduccion(grado string, componente string) {
 
 	//Reducción
@@ -206,7 +206,7 @@ func (f *Familiar) ActualizarPorReduccion(grado string, componente string) {
 	}
 }
 
-//ActualizarCuentaBancaria Cuenta Bancaria
+// ActualizarCuentaBancaria Cuenta Bancaria
 func (f *Familiar) ActualizarCuentaBancaria(usuario string) {
 	var cabecera, cuerpo, autorizado, tipo, banco, cuenta, titular string
 	if f.PorcentajePrestaciones > 0 {
@@ -221,6 +221,7 @@ func (f *Familiar) ActualizarCuentaBancaria(usuario string) {
 			titular = f.Persona.DatoFinanciero[0].Titular
 		}
 		cuerpo += `autorizado ='` + autorizado + `',
+			edo_civil='` + f.Persona.DatoBasico.EstadoCivil + `',
 			tipo='` + tipo + `',
 			banco='` + banco + `',
 			numero='` + cuenta + `',
@@ -238,7 +239,7 @@ func (f *Familiar) ActualizarCuentaBancaria(usuario string) {
 	}
 }
 
-//AplicarReglasCarnetHijos Reglas
+// AplicarReglasCarnetHijos Reglas
 func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	var mes, dia string
 	carnet := make(map[string]interface{})
@@ -292,7 +293,7 @@ func (f *Familiar) AplicarReglasCarnetHijos() (TIM Carnet) {
 	return
 }
 
-//AplicarReglasCarnetHijos Reglas
+// AplicarReglasCarnetHijos Reglas
 func (f *Familiar) AplicarReglasCarnetHermanos() (TIM Carnet) {
 	var mes, dia string
 	carnet := make(map[string]interface{})
@@ -326,7 +327,7 @@ func (f *Familiar) AplicarReglasCarnetHermanos() (TIM Carnet) {
 	return
 }
 
-//IncluirFamiliar Agregar
+// IncluirFamiliar Agregar
 func (f *Familiar) IncluirFamiliar(usuario string) (err error) {
 	familiar := make(map[string]interface{})
 	familiar["familiar"] = f
@@ -363,12 +364,12 @@ func (f *Familiar) IncluirFamiliar(usuario string) (err error) {
 	return
 }
 
-//ContarFamiliar Contando Familiares
+// ContarFamiliar Contando Familiares
 func (f *Familiar) ContarFamiliar() {
 
 }
 
-//AplicarReglasCarnetPadres Reglas
+// AplicarReglasCarnetPadres Reglas
 func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 	carnet := make(map[string]interface{})
 	var mes, dia string
@@ -411,7 +412,7 @@ func (f *Familiar) AplicarReglasCarnetPadres() (TIM Carnet) {
 
 }
 
-//AplicarReglasCarnetEsposa Reglas
+// AplicarReglasCarnetEsposa Reglas
 func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 	carnet := make(map[string]interface{})
 	var mes, dia string
@@ -455,7 +456,7 @@ func (f *Familiar) AplicarReglasCarnetEsposa() (TIM Carnet) {
 
 }
 
-//Estadisticas Actualizando
+// Estadisticas Actualizando
 func (f *Familiar) Estadisticas() {
 	var militar []Militar
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
