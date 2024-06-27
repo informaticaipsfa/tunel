@@ -221,7 +221,7 @@ func (f *Familiar) ActualizarCuentaBancaria(usuario string) {
 			titular = f.Persona.DatoFinanciero[0].Titular
 		}
 		cuerpo += `autorizado ='` + autorizado + `',
-			edo_civil='` + f.Persona.DatoBasico.EstadoCivil + `',
+			edo_civil='` + f.Persona.DatoBasico.Nacionalidad + `',
 			tipo='` + tipo + `',
 			banco='` + banco + `',
 			numero='` + cuenta + `',
