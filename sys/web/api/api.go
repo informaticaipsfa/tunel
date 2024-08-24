@@ -223,7 +223,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cedula = r.FormValue("txtFileID")
+	cedula := r.FormValue("txtFileID")
 
 	m := r.MultipartForm
 	files := m.File["archivo"]
