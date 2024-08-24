@@ -243,3 +243,14 @@ func GitAll(paquete string, cmd string, origen string) (out []byte, err error) {
 	Error(err)
 	return
 }
+
+// ConverttPhoto Actualizando proyectos
+func ConverPhoto(ruta string, cedula string, componente string) (out []byte, err error) {
+	base := "\"" + ruta + "/" + cedula
+	input := base + "/ifoto.jpg\""
+	fondo := "\"./img/" + componente + ".png\""
+	argstr := []string{"pytthon3.8 ", "main.py ", input, fondo, base + "/foto.jpg"}
+	out, err = exec.Command("/bin/sh", argstr...).Output()
+	Error(err)
+	return
+}

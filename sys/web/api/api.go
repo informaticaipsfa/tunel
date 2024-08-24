@@ -19,20 +19,20 @@ import (
 
 var UsuarioConectado seguridad.Usuario
 
-//Militar militares
+// Militar militares
 type Militar struct {
 	Frase string
 	Tipo  int
 }
 
-//Componente Control Militar
+// Componente Control Militar
 type Componente struct {
 	Componente string
 	Grado      string
 	Situacion  string
 }
 
-//Consultar Militares
+// Consultar Militares
 func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
 	var traza fanb.Traza
 	Cabecera(w, r)
@@ -56,7 +56,7 @@ func (p *Militar) Consultar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Actualizar Datos Generales
+// Actualizar Datos Generales
 func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 
 	Cabecera(w, r)
@@ -76,7 +76,7 @@ func (p *Militar) Actualizar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Insertar Militar
+// Insertar Militar
 func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var traza fanb.Traza
@@ -123,12 +123,12 @@ func (p *Militar) Insertar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Eliminar Militar
+// Eliminar Militar
 func (p *Militar) Eliminar(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//EstadisticasPorComponente
+// EstadisticasPorComponente
 func (p *Militar) EstadisticasPorComponente(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var militar sssifanb.Militar
@@ -137,12 +137,12 @@ func (p *Militar) EstadisticasPorComponente(w http.ResponseWriter, r *http.Reque
 	w.Write(j)
 }
 
-//ComponenteDecode Decodificando
+// ComponenteDecode Decodificando
 type ComponenteDecode struct {
 	Grado string
 }
 
-//EstadisticasPorGrado EstadisticasPorGrado
+// EstadisticasPorGrado EstadisticasPorGrado
 func (p *Militar) EstadisticasPorGrado(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var militar sssifanb.Militar
@@ -169,7 +169,7 @@ func (p *Militar) EstadisticasFamiliar(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Listado Militares
+// Listado Militares
 func (p *Militar) Listado(w http.ResponseWriter, r *http.Request) {
 	var traza fanb.Traza
 	var M sssifanb.Mensaje
@@ -199,7 +199,7 @@ func (p *Militar) Listado(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//Opciones Militar
+// Opciones Militar
 func (p *Militar) Opciones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	fmt.Println("OPTIONS...")
@@ -222,9 +222,11 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(er)
 		return
 	}
+
+	cedula = r.FormValue("txtFileID")
+
 	m := r.MultipartForm
 	files := m.File["archivo"]
-	cedula := r.FormValue("txtFileID")
 	directorio := "./public_web/SSSIFANB/afiliacion/temp/" + cedula + "/"
 	if cedula == "" {
 		M.Mensaje = "Carga fallida"
@@ -289,7 +291,7 @@ func (p *Militar) SubirArchivos(w http.ResponseWriter, r *http.Request) {
 
 }
 
-//SubirArchivosTXTPensiones Pensionados
+// SubirArchivosTXTPensiones Pensionados
 func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var traza fanb.Traza
@@ -344,14 +346,14 @@ func (p *Militar) SubirArchivosTXTPensiones(w http.ResponseWriter, r *http.Reque
 	w.Write(j)
 }
 
-//ProcesarTxt Proceso de archivo
+// ProcesarTxt Proceso de archivo
 func ProcesarTxt(doc string, codigo string) {
 	var a util.Archivo
 	a.Ruta = "./public_web/SSSIFANB/pensiones/temp/nomina/" + doc
 	a.LeerCA(sys.PostgreSQLPENSION, codigo, doc)
 }
 
-//SubirArchivosTXTCobranza Pensionados
+// SubirArchivosTXTCobranza Pensionados
 func (p *Militar) SubirArchivosTXTCobranza(w http.ResponseWriter, r *http.Request) {
 	Cabecera(w, r)
 	var traza fanb.Traza
@@ -407,14 +409,14 @@ func (p *Militar) SubirArchivosTXTCobranza(w http.ResponseWriter, r *http.Reques
 
 }
 
-//ProcesarCob Proceso de archivo
+// ProcesarCob Proceso de archivo
 func ProcesarCob(doc string, codigo string) {
 	var a util.Archivo
 	a.Ruta = "./public_web/SSSIFANB/tmp/cobranza/" + doc
 	a.LeerCA(sys.PostgreSQLPENSION, codigo, doc)
 }
 
-//ConsultarCedula Obtener cedulas de familiar o militar
+// ConsultarCedula Obtener cedulas de familiar o militar
 func (p *Militar) ConsultarCedula(w http.ResponseWriter, r *http.Request) {
 	var traza fanb.Traza
 	Cabecera(w, r)
@@ -492,10 +494,92 @@ func (p *Militar) SubirArchivosSISA(w http.ResponseWriter, r *http.Request) {
 	w.Write(j)
 }
 
-//ProcesarTxt Proceso de archivo
+// ProcesarTxt Proceso de archivo
 func ProcesarTxtSISA(doc string, codigonomina string) {
 	var a util.Archivo
 	valores := strings.Split(codigonomina, "|")
 	a.Ruta = "./public_web/SSSIFANB/pensiones/temp/sisa/" + doc
 	a.LeerSisa(sys.PostgreSQLPENSION, valores[0], doc, valores[1], valores[2])
+}
+
+func (p *Militar) SubirArchivosConversion(w http.ResponseWriter, r *http.Request) {
+	Cabecera(w, r)
+	var traza fanb.Traza
+	var M sssifanb.Mensaje
+	var militarF sssifanb.Militar
+
+	var componente = mux.Vars(r)
+	ip := strings.Split(r.RemoteAddr, ":")
+	traza.IP = ip[0]
+	traza.Time = time.Now()
+	traza.Usuario = UsuarioConectado.Login
+
+	er := r.ParseMultipartForm(32 << 20)
+	if er != nil {
+		fmt.Println(er)
+		return
+	}
+
+	cedula := r.FormValue("txtFileID")
+
+	m := r.MultipartForm
+	files := m.File["archivo"]
+	directorio := "./public_web/SSSIFANB/afiliacion/temp/" + cedula + "/"
+	if cedula == "" {
+		M.Mensaje = "Carga fallida"
+		M.Tipo = -1
+		j, _ := json.Marshal(M)
+		w.WriteHeader(http.StatusOK)
+		w.Write(j)
+		return
+
+	}
+
+	errr := os.Mkdir(directorio, 0775)
+	if errr != nil {
+		fmt.Println("la carpeta ya existe.")
+	}
+	cadena := ""
+	for i, _ := range files {
+		file, errf := files[i].Open()
+		defer file.Close()
+		if errf != nil {
+			fmt.Println(errf)
+			return
+		}
+		out, er := os.Create(directorio + files[i].Filename)
+		defer out.Close()
+		if er != nil {
+			fmt.Println("No se pudo escribir el archivo verifique los privilegios.")
+			return
+		}
+		// fmt.Println("Subiendo Archivo")
+		_, err := io.Copy(out, file) // file not files[i] !
+		if err != nil {
+			fmt.Println("Entrando en un Erro...", err)
+			return
+		}
+
+		if files[i].Filename == "ifoto.jpg" {
+			out, _ := util.ConverPhoto(directorio, cedula, componente["id"])
+			fmt.Println(out)
+		}
+	}
+
+	if UsuarioConectado.Login[:3] != "act" {
+		traza.Documento = "Agregando Historial Digital ( " + cedula + " )"
+		traza.Log = cadena
+		traza.CrearHistoricoConsulta("hmilitar")
+		M.Mensaje = "Carga exitosa"
+		M.Tipo = 2
+		militarF.ActualizarFoto(cedula)
+	} else {
+		M.Mensaje = "Carga fallida"
+		M.Tipo = -1
+	}
+
+	j, _ := json.Marshal(M)
+	w.WriteHeader(http.StatusOK)
+	w.Write(j)
+
 }
