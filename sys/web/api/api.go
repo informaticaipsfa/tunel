@@ -561,8 +561,7 @@ func (p *Militar) SubirArchivosConversion(w http.ResponseWriter, r *http.Request
 		}
 
 		if files[i].Filename == "ifoto.jpg" {
-			out, _ := util.ConverPhoto(directorio, cedula, componente["id"])
-			fmt.Println(out)
+			go util.ConverPhoto(directorio, componente["id"])
 		}
 	}
 

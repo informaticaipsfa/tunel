@@ -245,11 +245,9 @@ func GitAll(paquete string, cmd string, origen string) (out []byte, err error) {
 }
 
 // ConverttPhoto Actualizando proyectos
-func ConverPhoto(ruta string, cedula string, componente string) (out []byte, err error) {
-	base := "\"" + ruta
-	fondo := "\"" + componente + ".png\""
-	fmt.Println(base, fondo)
-	argstr := []string{"py-esb.sh", base, fondo}
+func ConverPhoto(base string, componente string) (out []byte, err error) {
+	fmt.Println(base, componente)
+	argstr := []string{"py-esb.sh", base, componente}
 	out, err = exec.Command("/bin/sh", argstr...).Output()
 	fmt.Println(string(out))
 	Error(err)
