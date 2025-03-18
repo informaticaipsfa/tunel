@@ -2,7 +2,7 @@ package credito
 
 import "time"
 
-//Personal Prestamo:
+// Personal Prestamo:
 type Personal struct {
 	// Solicitud Solicitud `json:"Solicitud,omitempty" bson:"solicitud"`
 	Oid              string         `json:"oid,omitempty" bson:"oid"`
@@ -23,29 +23,30 @@ type Personal struct {
 	TotalDepositar   float64        `json:"totaldepositar,omitempty" bson:"totaldepositar"`     //Monto Aprobado
 	FechaAprobado    time.Time      `json:"fechaaprobado,omitempty" bson:"fechaaprobado"`
 	FechaCreacion    time.Time      `json:"fechacreacion,omitempty" bson:"fechacreacion"`
+	Pagado           bool           `json:"pagado,omitempty" bson:"pagado"`
 }
 
-//Vacacional Prestamo:
+// Vacacional Prestamo:
 type Vacacional struct {
 	Solicitud Solicitud `json:"Solicitud,omitempty" bson:"solicitud"`
 }
 
-//Educativo Prestamo:
+// Educativo Prestamo:
 type Educativo struct {
 	Solicitud Solicitud `json:"Solicitud,omitempty" bson:"solicitud"`
 }
 
-//Parcelas Prestamo:
+// Parcelas Prestamo:
 type Parcelas struct {
 	Solicitud Solicitud `json:"Solicitud,omitempty" bson:"solicitud"`
 }
 
-//Articulos Prestamo:
+// Articulos Prestamo:
 type Articulos struct {
 	Solicitud Solicitud `json:"Solicitud,omitempty" bson:"solicitud"`
 }
 
-//MiCasaBienEquipada Prestamo:
+// MiCasaBienEquipada Prestamo:
 type MiCasaBienEquipada struct {
 	Solicitud Solicitud `json:"Solicitud,omitempty" bson:"solicitud"`
 }
