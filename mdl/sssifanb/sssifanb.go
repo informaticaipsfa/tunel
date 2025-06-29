@@ -104,7 +104,7 @@ func ActualizarPersona(persona Persona) string {
 			WHERE personas.codnip='` + persona.DatoBasico.Cedula + `' LIMIT 1);`
 }
 
-//ActualizarMilitar Militares
+// ActualizarMilitar Militares
 func ActualizarMilitar(militar Militar) string {
 	fecha := time.Now()
 	convertedDateString := fecha.Format(layout)
@@ -177,7 +177,7 @@ func ActualizarPace(militar Militar) string {
 
 }
 
-//InsertarMilitarSAMAN Control
+// InsertarMilitarSAMAN Control
 func InsertarMilitarSAMAN(militar *Militar) string {
 	fecha := time.Now()
 	convertedDateString := fecha.Format(layout)
@@ -368,12 +368,43 @@ func InsertarMilitarSAMANSN(militar Militar) string {
 
 }
 
-func ActualizarMysqlFT(mil Militar) string {
+//func ActualizarMysqlFT(mil Militar, familiar Familiar) string {
 
+func ActualizarMysqlFT(mil Militar, familiar Familiar) []string {
+	var queries []string
+	escape := func(s string) string {
+		return strings.ReplaceAll(s, "'", "''")
+	}
 	dire := obtenerEstado(mil.Persona.Direccion[0].Estado) + " " + mil.Persona.Direccion[0].Ciudad +
 		" " + mil.Persona.Direccion[0].Municipio + " " + mil.Persona.Direccion[0].Parroquia +
 		" " + mil.Persona.Direccion[0].CalleAvenida + " " + mil.Persona.Direccion[0].Casa +
 		" " + strconv.Itoa(mil.Persona.Direccion[0].Numero)
+
+	convertir := mil.TIM.FechaVencimiento.Format(layout)
+	fechaSlashVencimiento := strings.Replace(convertir, "/", "-", -1)
+
+	convertirf := familiar.Persona.DatoBasico.FechaNacimiento.Format(layout)
+	fechaSlashNacimiento := strings.Replace(convertirf, "-", "/", -1)
+
+	convertirfv := familiar.TIF.FechaVencimiento.Format(layout)
+	fechaSlashVencimientof := strings.Replace(convertirfv, "-", "/", -1)
+
+	serial_carnetf := familiar.TIF.Serial
+	donante := familiar.Donante
+	grupo_sanguineoF := familiar.GrupoSanguineo
+	historial_clinicoF := familiar.HistoriaMedica
+	nombreM1 := mil.Persona.DatoBasico.NombrePrimero
+	apellidoM1 := mil.Persona.DatoBasico.ApellidoPrimero
+	parentesco := obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo)
+	abreviatura_comp := mil.Componente.Abreviatura
+	color_piel := mil.Persona.DatoFisionomico.ColorPiel
+	ojos := mil.Persona.DatoFisionomico.ColorOjos
+	estaturaStr := fmt.Sprintf("%.2f", mil.Persona.DatoFisionomico.Estatura)
+	grupo_sanguineo := mil.Persona.DatoFisionomico.GrupoSanguineo
+	historial_clinico := mil.NumeroHistoria
+	cabello := mil.Persona.DatoFisionomico.ColorCabello
+	codigo_comp := mil.CodigoComponente
+	serial := mil.TIM.Serial
 
 	grad := mil.Grado.Descripcion
 	comp := mil.Componente.Descripcion
@@ -400,22 +431,89 @@ func ActualizarMysqlFT(mil Militar) string {
 	}
 
 	body := grad + " " + comp + " " + situ + " " + clas + " " + cate
+	afiliado := grad + " " + apellidoM1 + " " + nombreM1 + "" + mil.Persona.DatoBasico.Cedula
 
-	return `UPDATE datos SET
-		nombre = '` + mil.Persona.DatoBasico.ConcatenarApellidoNombre() + `',
-		descripcion = '` + body + `',
-		direccion = '` + dire + `',
-		familiares = '` + fami + `'
-		WHERE cedula='` + mil.Persona.DatoBasico.Cedula + `';`
+	queries = append(queries, /*`UPDATE datos SET
+		nombre = '`+mil.Persona.DatoBasico.ConcatenarApellidoNombre()+`',
+		descripcion = '`+body+`',
+		direccion = '`+dire+`',
+		familiares = '`+fami+`'
+		WHERE cedula='`+mil.Persona.DatoBasico.Cedula+`');*/
+
+		`UPDATE  sssifanb.carp_militar SET 
+					nombreprimero = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.NombrePrimero))+`',
+					nombresegundo = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.NombreSegundo))+`',
+					apellidoprimero = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero))+`',
+					apellidosegundo = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoSegundo))+`',
+					grado = '`+escape(grad)+`',
+					fecha_vencimiento = '`+fechaSlashVencimiento+`',
+					serial_carnet = '`+escape(serial)+`',
+					codigo_comp = '`+escape(codigo_comp)+`',
+					cabello='`+cabello+`',
+					historial_clinico = '`+escape(historial_clinico)+`',
+					grupo_sanguineo = '`+escape(grupo_sanguineo)+`',
+					estatura = '`+estaturaStr+`',
+					ojos = '`+ojos+`',
+					color_piel ='`+color_piel+`',
+					componente = '`+abreviatura_comp+`',
+					categoria ='`+escape(cate)+`',
+					huella = '`+escape(abreviatura_comp)+`',
+					foto = '`+escape(grupo_sanguineo)+`'
+					WHERE cedula =' `+escape(mil.Persona.DatoBasico.Cedula)+`';
+
+						
+					UPDATE sssifanb.carp_familiar SET
+    nombreprimerof = `+familiar.Persona.DatoBasico.NombrePrimero+`,
+    apellidoprimerof = `+familiar.Persona.DatoBasico.ApellidoPrimero+`,
+    fecha_nacimiento = '`+escape(fechaSlashNacimiento)+`',
+    parentesco = '`+escape(parentesco)+`',
+    afiliado = '`+escape(afiliado)+`',
+    f_vencimiento = '`+escape(fechaSlashVencimientof)+`',
+    historial_clinicof = '`+escape(historial_clinicoF)+`',
+    grupo_sanguineof = '`+escape(grupo_sanguineoF)+`',
+    donante = `+donante+`,
+    serial_carnet = '`+escape(serial_carnetf)+`',
+    huella = '`+escape(serial_carnetf)+`',
+    foto = '`+escape(body)+`'
+WHERE cedula_militar = '`+escape(mil.Persona.DatoBasico.Cedula)+`' 
+AND cedula_familiar = '`+escape(familiar.Persona.DatoBasico.Cedula)+`'
+					
+			);`)
+
+	return queries
+
 }
 
-func InsertMysqlFT(mil *Militar) string {
+func InsertMysqlFT(mil *Militar, familiar *Familiar) string {
 
 	dire := obtenerEstado(mil.Persona.Direccion[0].Estado) + " " + mil.Persona.Direccion[0].Ciudad +
 		" " + mil.Persona.Direccion[0].Municipio + " " + mil.Persona.Direccion[0].Parroquia +
 		" " + mil.Persona.Direccion[0].CalleAvenida + " " + mil.Persona.Direccion[0].Casa +
 		" " + strconv.Itoa(mil.Persona.Direccion[0].Numero)
 
+	convertir := mil.TIM.FechaVencimiento.Format(layout)
+	fechaSlashVencimiento := strings.Replace(convertir, "/", "-", -1)
+
+	convertirf := familiar.Persona.DatoBasico.FechaNacimiento.Format(layout)
+	fechaSlashNacimiento := strings.Replace(convertirf, "-", "/", -1)
+
+	convertirfv := familiar.TIF.FechaVencimiento.Format(layout)
+	fechaSlashVencimientof := strings.Replace(convertirfv, "-", "/", -1)
+
+	serial_carnetf := familiar.TIF.Serial
+	donante := familiar.Donante
+	grupo_sanguineoF := familiar.GrupoSanguineo
+	historial_clinicoF := familiar.HistoriaMedica
+	nombreM1 := mil.Persona.DatoBasico.NombrePrimero
+	apellidoM1 := mil.Persona.DatoBasico.ApellidoPrimero
+	parentesco := obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo)
+	abreviatura_comp := mil.Componente.Abreviatura
+	ojos := mil.Persona.DatoFisionomico.ColorOjos
+	estaturaStr := fmt.Sprintf("%.2f", mil.Persona.DatoFisionomico.Estatura)
+	grupo_sanguineo := mil.Persona.DatoFisionomico.GrupoSanguineo
+	historial_clinico := mil.NumeroHistoria
+	codigo_comp := mil.CodigoComponente
+	serial := mil.TIM.Serial
 	grad := mil.Grado.Descripcion
 	comp := mil.Componente.Descripcion
 	situ := obtenerSitiacion(mil.Situacion)
@@ -434,16 +532,93 @@ func InsertMysqlFT(mil *Militar) string {
 				" " + familiar.Persona.Direccion[0].CalleAvenida + " " + familiar.Persona.Direccion[0].Casa +
 				" " + strconv.Itoa(familiar.Persona.Direccion[0].Numero)
 		}
+
 		fami += " | " + obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo) + " " +
 			familiar.Persona.DatoBasico.Cedula + " " + familiar.Persona.DatoBasico.ConcatenarApellidoNombre() + " " +
 			obtenerEstadoCivil(familiar.Persona.DatoBasico.EstadoCivil) + " " +
 			obtenerSexo(familiar.Persona.DatoBasico.Sexo) + " " + direr
+
 	}
 
 	body := grad + " " + comp + " " + situ + " " + clas + " " + cate
-	return `INSERT INTO datos ( cedula, nombre, descripcion, direccion, familiares )
-		VALUES ('` + mil.Persona.DatoBasico.Cedula + `','` + mil.Persona.DatoBasico.ConcatenarApellidoNombre() + `','` + body + `','` + dire + `','` + fami + `')`
+	afiliado := grad + " " + apellidoM1 + " " + nombreM1 + "" + mil.Persona.DatoBasico.Cedula
 
+	/*return /*`INSERT INTO datos ( cedula, nombre, descripcion, direccion, familiares )
+	VALUES ('` + mil.Persona.DatoBasico.Cedula + `','` + mil.Persona.DatoBasico.ConcatenarApellidoNombre() + `','` + body + `','` + dire + `','` + fami + `');
+	*/
+	return ` INSERT INTO sssifanb.carp_militar
+( cedula, 
+ nombreprimero,
+  nombresegundo, 
+  apellidoprimero,
+   apellidosegundo,
+    grado, 
+	fecha_vencimiento,
+	 serial_carnet,
+	  codigo_comp, 
+	  cabello, 
+	  historial_clinico,
+	   grupo_sanguineo,
+	    estatura, 
+		ojos,
+		 color_piel, 
+		 componente, 
+		 categoria,
+		  huella,
+		   foto)
+VALUES('` + mil.Persona.DatoBasico.Cedula + `',
+ '` + strings.TrimSpace(mil.Persona.DatoBasico.NombrePrimero) + `', 
+ '` + strings.TrimSpace(mil.Persona.DatoBasico.NombreSegundo) + `',
+  '` + strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero) + `', 
+  '` + strings.TrimSpace(mil.Persona.DatoBasico.ApellidoSegundo) + `',
+   '` + grad + `', 
+   '` + fechaSlashVencimiento + `',
+    '` + serial + `',
+	 '` + serial + `',
+	  '` + codigo_comp + `',
+	   ' ` + historial_clinico + `',
+	    '` + grupo_sanguineo + `',
+		 '` + grupo_sanguineo + `',
+		  '` + estaturaStr + `',
+		  '` + ojos + `',
+		   '` + abreviatura_comp + `',
+		    '` + cate + `', 
+			'` + body + `',
+			 '` + abreviatura_comp + `');	
+
+			INSERT INTO sssifanb.carp_familiar (
+					cedula_militar,
+					cedula_familiar,
+					nombreprimero,
+					nombresegundo,
+					apellidoprimero,
+					apellidosegundo,
+					fecha_nacimiento,
+					parentesco,
+					afiliado,
+					f_vencimiento,
+					historial_clinicof,
+					grupo_sanguineof,
+					donante,
+					serial_carnet,
+					huella,
+					foto
+					) VALUES ('` + mil.Persona.DatoBasico.Cedula + `',
+			       '` + familiar.Persona.DatoBasico.Cedula + `',
+				    '` + familiar.Persona.DatoBasico.NombrePrimero + `',
+					 '` + familiar.Persona.DatoBasico.NombreSegundo + `',
+					  '` + familiar.Persona.DatoBasico.ApellidoPrimero + `',
+					   '` + familiar.Persona.DatoBasico.ApellidoSegundo + `',
+					    '` + fechaSlashNacimiento + `,
+						 '` + parentesco + `', 
+						 '` + afiliado + `',
+						  '` + fechaSlashVencimientof + `',
+						  '` + historial_clinicoF + `',
+						  '` + grupo_sanguineoF + `',
+						  '` + donante + `',
+						  '` + serial_carnetf + `',
+						  '` + serial_carnetf + `',
+						  '` + donante + `');`
 }
 
 func obtenerPensionados() string {
@@ -477,7 +652,7 @@ func obtenerPensionados() string {
 	pdm.perssituaccod IN ('FCP')`
 }
 
-//MGOActualizarPensionados Actualizando datos principales del militar desde SAMAN
+// MGOActualizarPensionados Actualizando datos principales del militar desde SAMAN
 func (m *Militar) MGOActualizarPensionados() (err error) {
 
 	sq, err := sys.PostgreSQLSAMAN.Query(obtenerPensionados())
@@ -630,7 +805,7 @@ func sqlSobrevivientes() string {
 	`
 }
 
-//MGOActualizarSobrevivientes Actualizando datos principales del militar
+// MGOActualizarSobrevivientes Actualizando datos principales del militar
 func (m *Militar) MGOActualizarSobrevivientes() (err error) {
 
 	sq, err := sys.PostgreSQLSAMAN.Query(sqlSobrevivientes())
@@ -696,7 +871,7 @@ func sqlFeDeVida() string {
 		ORDER BY codnip`
 }
 
-//MGOActualizarFEVIDA Control de la fe de vida
+// MGOActualizarFEVIDA Control de la fe de vida
 func (m *Militar) MGOActualizarFEVIDA() (err error) {
 	sq, err := sys.PostgreSQLSAMAN.Query(sqlFeDeVida())
 	util.Error(err)
@@ -737,7 +912,7 @@ func sqlFideicomitentesSssifanb() string {
 	`
 }
 
-//MGOActualizarSobrevivientesFideicomiso Actualizar segun Fideicomiso
+// MGOActualizarSobrevivientesFideicomiso Actualizar segun Fideicomiso
 func (m *Militar) MGOActualizarSobrevivientesFideicomiso() (err error) {
 
 	sq, err := sys.PostgreSQLPACE.Query(sqlFideicomitentesSssifanb())
@@ -778,7 +953,7 @@ func (m *Militar) MGOActualizarSobrevivientesFideicomiso() (err error) {
 	return
 }
 
-//getFechaConvertGuiones Con guioness
+// getFechaConvertGuiones Con guioness
 func getFechaConvertGuiones(f sql.NullString) (dateStamp time.Time) {
 	fecha := util.ValidarNullString(f)
 	if fecha != "null" {

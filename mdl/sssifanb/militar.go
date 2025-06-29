@@ -314,6 +314,7 @@ func (m *Militar) ActualizarMGO(oid string, familiar map[string]interface{}) (er
 func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	var comp fanb.Componente
 	var mOriginal Militar
+	var mOriginalf Familiar
 	var traza fanb.Traza
 
 	mOriginal, _ = consultarMongo(m.ID)
@@ -384,7 +385,8 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		pension.InsertarPensionado(mOriginal, usuario, ip)
 	}
 
-	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal))
+	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal, mOriginalf))
+	//go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal, mOriginalf))
 
 	//Reducción
 	reduc := make(map[string]interface{})
@@ -409,11 +411,22 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 	return
 }
 
-func ActualizarMysqlFullText(d string) {
-	_, err := sys.MysqlFullText.Exec(d)
-	if err != nil {
-		fmt.Println("MYSQL FULLTEXT: ", err.Error())
-		return
+/*
+	func ActualizarMysqlFullText(d string) {
+		_, err := sys.MysqlFullText.Exec(d)
+		if err != nil {
+			fmt.Println("MYSQL FULLTEXT: ", err.Error())
+			return
+		}
+	}
+*/
+func ActualizarMysqlFullText(queries []string) {
+	for _, query := range queries {
+		_, err := sys.MysqlFullText.Exec(query)
+		if err != nil {
+			fmt.Println("MYSQL FULLTEXT: ", err.Error())
+			// Decide si quieres continuar con las siguientes consultas o retornar
+		}
 	}
 }
 
@@ -438,7 +451,7 @@ func (m *Militar) SalvarMGO() (err error) {
 		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
 	}
 
-	go InsertarMysqlFullText(InsertMysqlFT(m))
+	go InsertarMysqlFullText(InsertMysqlFT(m, nil))
 
 	//Reducción
 	reduc := make(map[string]interface{})
