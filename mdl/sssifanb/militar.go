@@ -385,8 +385,8 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		pension.InsertarPensionado(mOriginal, usuario, ip)
 	}
 
-	go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal, mOriginalf))
-	//go ActualizarMysqlFullText(ActualizarMysqlFT(mOriginal, mOriginalf))
+	// Actualizar datos de la persona militar o familiar para CARPRESO CARNETS
+	go ActualizarMysqlFullText(UpsertMysqlFT(mOriginal, mOriginalf))
 
 	//Reducción
 	reduc := make(map[string]interface{})
@@ -420,6 +420,7 @@ func (m *Militar) MGOActualizar(usuario string, ip string) (err error) {
 		}
 	}
 */
+
 func ActualizarMysqlFullText(queries []string) {
 	for _, query := range queries {
 		_, err := sys.MysqlFullText.Exec(query)
@@ -442,6 +443,8 @@ func (m *Militar) ActualizarFoto(id string) {
 
 // SalvarMGO Guardar
 func (m *Militar) SalvarMGO() (err error) {
+	var mOriginal Militar
+	var mOriginalf Familiar
 	var comp fanb.Componente
 
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
@@ -451,7 +454,8 @@ func (m *Militar) SalvarMGO() (err error) {
 		fmt.Println("Err: Insertando cedula ", m.Persona.DatoBasico.Cedula, " Descripción: ", err.Error())
 	}
 
-	go InsertarMysqlFullText(InsertMysqlFT(m, nil))
+	// Actualizar datos de la persona militar o familiar para CARPRESO CARNETS
+	go ActualizarMysqlFullText(UpsertMysqlFT(mOriginal, mOriginalf))
 
 	//Reducción
 	reduc := make(map[string]interface{})

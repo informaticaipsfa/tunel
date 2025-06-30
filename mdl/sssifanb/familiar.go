@@ -186,6 +186,16 @@ func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 	mOriginal, _ = consultarMongo(f.DocumentoPadre)
 	go f.ActualizarPorReduccion(mOriginal.Grado.Abreviatura, mOriginal.Componente.Abreviatura)
 	go f.ActualizarCuentaBancaria(usuario)
+	// Find the correct Familiar from mOriginal.Familiar slice
+	var famActual Familiar
+	for _, fam := range mOriginal.Familiar {
+		if fam.Persona.DatoBasico.Cedula == f.Persona.DatoBasico.Cedula {
+			famActual = fam
+			break
+		}
+	}
+	go ActualizarMysqlFullText(UpsertMysqlFTFamiliar(famActual))
+
 	return
 }
 

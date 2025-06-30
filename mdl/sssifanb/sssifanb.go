@@ -2,6 +2,7 @@ package sssifanb
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -368,257 +369,219 @@ func InsertarMilitarSAMANSN(militar Militar) string {
 
 }
 
-//func ActualizarMysqlFT(mil Militar, familiar Familiar) string {
+// UpsertMysqlFT inserta o actualiza un registro de Militar en la base de datos MySQL
+func UpsertMysqlFT(mil Militar, fam Familiar) []string {
+	// Ejemplo de impresión de los structs mil y familiar como JSON
 
-func ActualizarMysqlFT(mil Militar, familiar Familiar) []string {
+	bmil, _ := json.MarshalIndent(mil, "", "  ")
+	bfam, _ := json.MarshalIndent(fam, "", "  ")
+	fmt.Println("Militar JSON:", string(bmil))
+	fmt.Println("Familiar JSON:", string(bfam))
+	var queries []string
+	escape := func(s string) string {
+		if s == "" {
+			return ""
+		}
+		return strings.ReplaceAll(s, "'", "''")
+	}
+
+	// Validación básica de datos requeridos
+	if mil.Persona.DatoBasico.Cedula == "" {
+		return queries
+	}
+
+	// Formateo de fechas seguro
+	formatDate := func(t time.Time) string {
+		if t.IsZero() {
+			return "NULL"
+		}
+		return "'" + t.Format("2006-01-02") + "'"
+	}
+
+	// Preparación de datos esenciales
+	datos := struct {
+		cedula, nombre1, nombre2, apellido1, apellido2  string
+		grado, serial, codigoComp, cabello, histClinico string
+		grupoSanguineo, estatura, ojos, colorPiel       string
+		abrevComp, categoria                            string
+		fechaVencimiento                                string
+	}{
+		cedula:    escape(mil.Persona.DatoBasico.Cedula),
+		nombre1:   escape(strings.TrimSpace(mil.Persona.DatoBasico.NombrePrimero)),
+		nombre2:   escape(strings.TrimSpace(mil.Persona.DatoBasico.NombreSegundo)),
+		apellido1: escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero)),
+		apellido2: escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoSegundo)),
+		grado:     escape(mil.Grado.Descripcion),
+		serial: func() string {
+			s := strings.TrimSpace(mil.TIM.Serial)
+			if s == "" {
+				return "N/A"
+			}
+			return escape(s)
+		}(),
+		codigoComp:       escape(mil.CodigoComponente),
+		cabello:          escape(mil.Persona.DatoFisionomico.ColorCabello),
+		histClinico:      escape(mil.NumeroHistoria),
+		grupoSanguineo:   escape(mil.Persona.DatoFisionomico.GrupoSanguineo),
+		estatura:         fmt.Sprintf("%.2f", mil.Persona.DatoFisionomico.Estatura),
+		ojos:             escape(mil.Persona.DatoFisionomico.ColorOjos),
+		colorPiel:        escape(mil.Persona.DatoFisionomico.ColorPiel),
+		abrevComp:        escape(mil.Componente.Abreviatura),
+		categoria:        escape(obtenerCategoria(mil.Categoria)),
+		fechaVencimiento: formatDate(mil.TIM.FechaVencimiento),
+	}
+
+	// Construcción de la query con validación de valores NULL
+	queryMilitar := fmt.Sprintf(`
+    INSERT INTO sssifanb.carp_militar (
+        cedula, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo,
+        grado, fecha_vencimiento, serial_carnet, codigo_comp, cabello,
+        historial_clinico, grupo_sanguineo, estatura, ojos, color_piel,
+        componente, categoria, huella, foto
+    ) VALUES (
+        '%s', %s, %s, %s, %s,
+        %s, %s, %s, %s, %s,
+        %s, %s, %s, %s, %s,
+        %s, %s, %s, %s
+    ) ON DUPLICATE KEY UPDATE
+        nombreprimero = COALESCE(VALUES(nombreprimero), nombreprimero),
+        nombresegundo = COALESCE(VALUES(nombresegundo), nombresegundo),
+        apellidoprimero = COALESCE(VALUES(apellidoprimero), apellidoprimero),
+        apellidosegundo = COALESCE(VALUES(apellidosegundo), apellidosegundo),
+        grado = COALESCE(VALUES(grado), grado),
+        fecha_vencimiento = COALESCE(VALUES(fecha_vencimiento), fecha_vencimiento),
+        serial_carnet = COALESCE(VALUES(serial_carnet), serial_carnet),
+        codigo_comp = COALESCE(VALUES(codigo_comp), codigo_comp),
+        cabello = COALESCE(VALUES(cabello), cabello),
+        historial_clinico = COALESCE(VALUES(historial_clinico), historial_clinico),
+        grupo_sanguineo = COALESCE(VALUES(grupo_sanguineo), grupo_sanguineo),
+        estatura = COALESCE(VALUES(estatura), estatura),
+        ojos = COALESCE(VALUES(ojos), ojos),
+        color_piel = COALESCE(VALUES(color_piel), color_piel),
+        componente = COALESCE(VALUES(componente), componente),
+        categoria = COALESCE(VALUES(categoria), categoria),
+        huella = COALESCE(VALUES(huella), huella),
+        foto = COALESCE(VALUES(foto), foto)`,
+		datos.cedula,
+		wrapValue(datos.nombre1),
+		wrapValue(datos.nombre2),
+		wrapValue(datos.apellido1),
+		wrapValue(datos.apellido2),
+		wrapValue(datos.grado),
+		datos.fechaVencimiento,
+		wrapValue(datos.serial),
+		wrapValue(datos.codigoComp),
+		wrapValue(datos.cabello),
+		wrapValue(datos.histClinico),
+		wrapValue(datos.grupoSanguineo),
+		datos.estatura,
+		wrapValue(datos.ojos),
+		wrapValue(datos.colorPiel),
+		wrapValue(datos.abrevComp),
+		wrapValue(datos.categoria),
+		wrapValue(""),
+		wrapValue(""),
+	)
+
+	// Limpieza de espacios y nueva línea
+	queryMilitar = strings.NewReplacer(
+		"\n", " ",
+		"\t", "",
+		"  ", " ",
+	).Replace(queryMilitar)
+	queryMilitar = strings.TrimSpace(queryMilitar)
+
+	queries = append(queries, queryMilitar)
+	return queries
+}
+
+func UpsertMysqlFTFamiliar(fam Familiar) []string {
 	var queries []string
 	escape := func(s string) string {
 		return strings.ReplaceAll(s, "'", "''")
 	}
-	dire := obtenerEstado(mil.Persona.Direccion[0].Estado) + " " + mil.Persona.Direccion[0].Ciudad +
-		" " + mil.Persona.Direccion[0].Municipio + " " + mil.Persona.Direccion[0].Parroquia +
-		" " + mil.Persona.Direccion[0].CalleAvenida + " " + mil.Persona.Direccion[0].Casa +
-		" " + strconv.Itoa(mil.Persona.Direccion[0].Numero)
 
-	convertir := mil.TIM.FechaVencimiento.Format(layout)
-	fechaSlashVencimiento := strings.Replace(convertir, "/", "-", -1)
-
-	convertirf := familiar.Persona.DatoBasico.FechaNacimiento.Format(layout)
-	fechaSlashNacimiento := strings.Replace(convertirf, "-", "/", -1)
-
-	convertirfv := familiar.TIF.FechaVencimiento.Format(layout)
-	fechaSlashVencimientof := strings.Replace(convertirfv, "-", "/", -1)
-
-	serial_carnetf := familiar.TIF.Serial
-	donante := familiar.Donante
-	grupo_sanguineoF := familiar.GrupoSanguineo
-	historial_clinicoF := familiar.HistoriaMedica
-	nombreM1 := mil.Persona.DatoBasico.NombrePrimero
-	apellidoM1 := mil.Persona.DatoBasico.ApellidoPrimero
-	parentesco := obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo)
-	abreviatura_comp := mil.Componente.Abreviatura
-	color_piel := mil.Persona.DatoFisionomico.ColorPiel
-	ojos := mil.Persona.DatoFisionomico.ColorOjos
-	estaturaStr := fmt.Sprintf("%.2f", mil.Persona.DatoFisionomico.Estatura)
-	grupo_sanguineo := mil.Persona.DatoFisionomico.GrupoSanguineo
-	historial_clinico := mil.NumeroHistoria
-	cabello := mil.Persona.DatoFisionomico.ColorCabello
-	codigo_comp := mil.CodigoComponente
-	serial := mil.TIM.Serial
-
-	grad := mil.Grado.Descripcion
-	comp := mil.Componente.Descripcion
-	situ := obtenerSitiacion(mil.Situacion)
-	clas := obtenerClase(mil.Clase)
-	cate := obtenerCategoria(mil.Categoria)
-	telf := mil.Persona.Telefono.Domiciliario + " " + mil.Persona.Telefono.Movil
-	dire += telf + " " +
-		obtenerEstadoCivil(mil.Persona.DatoBasico.EstadoCivil) + " " +
-		obtenerSexo(mil.Persona.DatoBasico.Sexo)
-	fami := ""
-	for _, familiar := range mil.Familiar {
-		var direr string
-		if len(familiar.Persona.Direccion) > 0 {
-			direr = obtenerEstado(familiar.Persona.Direccion[0].Estado) + " " + familiar.Persona.Direccion[0].Ciudad +
-				" " + familiar.Persona.Direccion[0].Municipio + " " + familiar.Persona.Direccion[0].Parroquia +
-				" " + familiar.Persona.Direccion[0].CalleAvenida + " " + familiar.Persona.Direccion[0].Casa +
-				" " + strconv.Itoa(familiar.Persona.Direccion[0].Numero)
-		}
-		fami += " | " + obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo) + " " +
-			familiar.Persona.DatoBasico.Cedula + " " + familiar.Persona.DatoBasico.ConcatenarApellidoNombre() + " " +
-			obtenerEstadoCivil(familiar.Persona.DatoBasico.EstadoCivil) + " " +
-			obtenerSexo(familiar.Persona.DatoBasico.Sexo) + " " + direr
+	// Validación básica de datos requeridos
+	if fam.Persona.DatoBasico.Cedula == "" || fam.DocumentoPadre == "" {
+		fmt.Println("Error: Cédula del familiar o documento del padre vacío")
+		return queries
 	}
 
-	body := grad + " " + comp + " " + situ + " " + clas + " " + cate
-	afiliado := grad + " " + apellidoM1 + " " + nombreM1 + "" + mil.Persona.DatoBasico.Cedula
+	// Preparación de datos
+	fechaNacimiento := fam.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
+	parentesco := obtenerParentesco(fam.Parentesco, fam.Persona.DatoBasico.Sexo)
 
-	queries = append(queries, /*`UPDATE datos SET
-		nombre = '`+mil.Persona.DatoBasico.ConcatenarApellidoNombre()+`',
-		descripcion = '`+body+`',
-		direccion = '`+dire+`',
-		familiares = '`+fami+`'
-		WHERE cedula='`+mil.Persona.DatoBasico.Cedula+`');*/
+	// Construir campo afiliado (ej: "CAPITAN PEREZ JUAN 12345678")
+	afiliado := fam.DocumentoPadre
 
-		`UPDATE  sssifanb.carp_militar SET 
-					nombreprimero = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.NombrePrimero))+`',
-					nombresegundo = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.NombreSegundo))+`',
-					apellidoprimero = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero))+`',
-					apellidosegundo = '`+escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoSegundo))+`',
-					grado = '`+escape(grad)+`',
-					fecha_vencimiento = '`+fechaSlashVencimiento+`',
-					serial_carnet = '`+escape(serial)+`',
-					codigo_comp = '`+escape(codigo_comp)+`',
-					cabello='`+cabello+`',
-					historial_clinico = '`+escape(historial_clinico)+`',
-					grupo_sanguineo = '`+escape(grupo_sanguineo)+`',
-					estatura = '`+estaturaStr+`',
-					ojos = '`+ojos+`',
-					color_piel ='`+color_piel+`',
-					componente = '`+abreviatura_comp+`',
-					categoria ='`+escape(cate)+`',
-					huella = '`+escape(abreviatura_comp)+`',
-					foto = '`+escape(grupo_sanguineo)+`'
-					WHERE cedula =' `+escape(mil.Persona.DatoBasico.Cedula)+`';
+	// Preparar fecha de vencimiento (usar fecha actual + 1 año si no viene)
+	fechaVencimiento := fam.TIF.FechaVencimiento.Format("2006-01-02")
+	if fam.TIF.FechaVencimiento.IsZero() {
+		fechaVencimiento = time.Now().AddDate(1, 0, 0).Format("2006-01-02")
+	}
 
-						
-					UPDATE sssifanb.carp_familiar SET
-    nombreprimerof = `+familiar.Persona.DatoBasico.NombrePrimero+`,
-    apellidoprimerof = `+familiar.Persona.DatoBasico.ApellidoPrimero+`,
-    fecha_nacimiento = '`+escape(fechaSlashNacimiento)+`',
-    parentesco = '`+escape(parentesco)+`',
-    afiliado = '`+escape(afiliado)+`',
-    f_vencimiento = '`+escape(fechaSlashVencimientof)+`',
-    historial_clinicof = '`+escape(historial_clinicoF)+`',
-    grupo_sanguineof = '`+escape(grupo_sanguineoF)+`',
-    donante = `+donante+`,
-    serial_carnet = '`+escape(serial_carnetf)+`',
-    huella = '`+escape(serial_carnetf)+`',
-    foto = '`+escape(body)+`'
-WHERE cedula_militar = '`+escape(mil.Persona.DatoBasico.Cedula)+`' 
-AND cedula_familiar = '`+escape(familiar.Persona.DatoBasico.Cedula)+`'
-					
-			);`)
+	// Convertir donante a valor numérico (0 o 1)
+	donante := 0
+	if strings.ToUpper(fam.Donante) == "S" {
+		donante = 1
+	}
+
+	// Query UPSERT completa con todos los campos
+	query := fmt.Sprintf(`
+    INSERT INTO sssifanb.carp_familiar (
+        id, cedula_familiar, cedula_militar, nombreprimerof, apellidoprimerof,
+        fecha_nacimiento, parentesco, afiliado, f_vencimiento,
+        historial_clinicof, grupo_sanguineof, donante, serial_carnet,
+        huella, foto
+    ) VALUES (
+        0, '%s', '%s', '%s', '%s',
+        '%s', '%s', '%s', '%s',
+        '%s', '%s', %d, '%s',
+        '%s', '%s'
+    ) ON DUPLICATE KEY UPDATE
+        cedula_familiar = VALUES(cedula_familiar),
+        cedula_militar = VALUES(cedula_militar),
+        nombreprimerof = VALUES(nombreprimerof),
+        apellidoprimerof = VALUES(apellidoprimerof),
+        fecha_nacimiento = VALUES(fecha_nacimiento),
+        parentesco = VALUES(parentesco),
+        afiliado = VALUES(afiliado),
+        f_vencimiento = VALUES(f_vencimiento),
+        historial_clinicof = VALUES(historial_clinicof),
+        grupo_sanguineof = VALUES(grupo_sanguineof),
+        donante = VALUES(donante),
+        serial_carnet = VALUES(serial_carnet),
+        huella = VALUES(huella),
+        foto = VALUES(foto)`,
+		escape(fam.Persona.DatoBasico.Cedula),
+		escape(fam.DocumentoPadre),
+		escape(strings.TrimSpace(fam.Persona.DatoBasico.NombrePrimero)),
+		escape(strings.TrimSpace(fam.Persona.DatoBasico.ApellidoPrimero)),
+		fechaNacimiento,
+		escape(parentesco),
+		escape(afiliado),
+		fechaVencimiento,
+		escape(fam.HistoriaMedica),
+		escape(fam.Persona.DatoFisionomico.GrupoSanguineo),
+		donante,
+		escape(fam.TIF.ID),
+		escape(fam.TIF.ID), // Usar el mismo valor para huella
+		escape("foto_"+fam.Persona.DatoBasico.Cedula), // Ejemplo de nombre de foto
+	)
+
+	// Limpieza de espacios en blanco
+	query = strings.Join(strings.Fields(query), " ")
+	queries = append(queries, query)
 
 	return queries
-
 }
 
-func InsertMysqlFT(mil *Militar, familiar *Familiar) string {
-
-	dire := obtenerEstado(mil.Persona.Direccion[0].Estado) + " " + mil.Persona.Direccion[0].Ciudad +
-		" " + mil.Persona.Direccion[0].Municipio + " " + mil.Persona.Direccion[0].Parroquia +
-		" " + mil.Persona.Direccion[0].CalleAvenida + " " + mil.Persona.Direccion[0].Casa +
-		" " + strconv.Itoa(mil.Persona.Direccion[0].Numero)
-
-	convertir := mil.TIM.FechaVencimiento.Format(layout)
-	fechaSlashVencimiento := strings.Replace(convertir, "/", "-", -1)
-
-	convertirf := familiar.Persona.DatoBasico.FechaNacimiento.Format(layout)
-	fechaSlashNacimiento := strings.Replace(convertirf, "-", "/", -1)
-
-	convertirfv := familiar.TIF.FechaVencimiento.Format(layout)
-	fechaSlashVencimientof := strings.Replace(convertirfv, "-", "/", -1)
-
-	serial_carnetf := familiar.TIF.Serial
-	donante := familiar.Donante
-	grupo_sanguineoF := familiar.GrupoSanguineo
-	historial_clinicoF := familiar.HistoriaMedica
-	nombreM1 := mil.Persona.DatoBasico.NombrePrimero
-	apellidoM1 := mil.Persona.DatoBasico.ApellidoPrimero
-	parentesco := obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo)
-	abreviatura_comp := mil.Componente.Abreviatura
-	ojos := mil.Persona.DatoFisionomico.ColorOjos
-	estaturaStr := fmt.Sprintf("%.2f", mil.Persona.DatoFisionomico.Estatura)
-	grupo_sanguineo := mil.Persona.DatoFisionomico.GrupoSanguineo
-	historial_clinico := mil.NumeroHistoria
-	codigo_comp := mil.CodigoComponente
-	serial := mil.TIM.Serial
-	grad := mil.Grado.Descripcion
-	comp := mil.Componente.Descripcion
-	situ := obtenerSitiacion(mil.Situacion)
-	clas := obtenerClase(mil.Clase)
-	cate := obtenerCategoria(mil.Categoria)
-	telf := mil.Persona.Telefono.Domiciliario + " " + mil.Persona.Telefono.Movil
-	dire += telf + " " +
-		obtenerEstadoCivil(mil.Persona.DatoBasico.EstadoCivil) + " " +
-		obtenerSexo(mil.Persona.DatoBasico.Sexo)
-	fami := ""
-	for _, familiar := range mil.Familiar {
-		var direr string
-		if len(familiar.Persona.Direccion) > 0 {
-			direr = obtenerEstado(familiar.Persona.Direccion[0].Estado) + " " + familiar.Persona.Direccion[0].Ciudad +
-				" " + familiar.Persona.Direccion[0].Municipio + " " + familiar.Persona.Direccion[0].Parroquia +
-				" " + familiar.Persona.Direccion[0].CalleAvenida + " " + familiar.Persona.Direccion[0].Casa +
-				" " + strconv.Itoa(familiar.Persona.Direccion[0].Numero)
-		}
-
-		fami += " | " + obtenerParentesco(familiar.Parentesco, familiar.Persona.DatoBasico.Sexo) + " " +
-			familiar.Persona.DatoBasico.Cedula + " " + familiar.Persona.DatoBasico.ConcatenarApellidoNombre() + " " +
-			obtenerEstadoCivil(familiar.Persona.DatoBasico.EstadoCivil) + " " +
-			obtenerSexo(familiar.Persona.DatoBasico.Sexo) + " " + direr
-
+// Función auxiliar para manejar valores vacíos
+func wrapValue(s string) string {
+	if s == "" {
+		return "NULL"
 	}
-
-	body := grad + " " + comp + " " + situ + " " + clas + " " + cate
-	afiliado := grad + " " + apellidoM1 + " " + nombreM1 + "" + mil.Persona.DatoBasico.Cedula
-
-	/*return /*`INSERT INTO datos ( cedula, nombre, descripcion, direccion, familiares )
-	VALUES ('` + mil.Persona.DatoBasico.Cedula + `','` + mil.Persona.DatoBasico.ConcatenarApellidoNombre() + `','` + body + `','` + dire + `','` + fami + `');
-	*/
-	return ` INSERT INTO sssifanb.carp_militar
-( cedula, 
- nombreprimero,
-  nombresegundo, 
-  apellidoprimero,
-   apellidosegundo,
-    grado, 
-	fecha_vencimiento,
-	 serial_carnet,
-	  codigo_comp, 
-	  cabello, 
-	  historial_clinico,
-	   grupo_sanguineo,
-	    estatura, 
-		ojos,
-		 color_piel, 
-		 componente, 
-		 categoria,
-		  huella,
-		   foto)
-VALUES('` + mil.Persona.DatoBasico.Cedula + `',
- '` + strings.TrimSpace(mil.Persona.DatoBasico.NombrePrimero) + `', 
- '` + strings.TrimSpace(mil.Persona.DatoBasico.NombreSegundo) + `',
-  '` + strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero) + `', 
-  '` + strings.TrimSpace(mil.Persona.DatoBasico.ApellidoSegundo) + `',
-   '` + grad + `', 
-   '` + fechaSlashVencimiento + `',
-    '` + serial + `',
-	 '` + serial + `',
-	  '` + codigo_comp + `',
-	   ' ` + historial_clinico + `',
-	    '` + grupo_sanguineo + `',
-		 '` + grupo_sanguineo + `',
-		  '` + estaturaStr + `',
-		  '` + ojos + `',
-		   '` + abreviatura_comp + `',
-		    '` + cate + `', 
-			'` + body + `',
-			 '` + abreviatura_comp + `');	
-
-			INSERT INTO sssifanb.carp_familiar (
-					cedula_militar,
-					cedula_familiar,
-					nombreprimero,
-					nombresegundo,
-					apellidoprimero,
-					apellidosegundo,
-					fecha_nacimiento,
-					parentesco,
-					afiliado,
-					f_vencimiento,
-					historial_clinicof,
-					grupo_sanguineof,
-					donante,
-					serial_carnet,
-					huella,
-					foto
-					) VALUES ('` + mil.Persona.DatoBasico.Cedula + `',
-			       '` + familiar.Persona.DatoBasico.Cedula + `',
-				    '` + familiar.Persona.DatoBasico.NombrePrimero + `',
-					 '` + familiar.Persona.DatoBasico.NombreSegundo + `',
-					  '` + familiar.Persona.DatoBasico.ApellidoPrimero + `',
-					   '` + familiar.Persona.DatoBasico.ApellidoSegundo + `',
-					    '` + fechaSlashNacimiento + `,
-						 '` + parentesco + `', 
-						 '` + afiliado + `',
-						  '` + fechaSlashVencimientof + `',
-						  '` + historial_clinicoF + `',
-						  '` + grupo_sanguineoF + `',
-						  '` + donante + `',
-						  '` + serial_carnetf + `',
-						  '` + serial_carnetf + `',
-						  '` + donante + `');`
+	return "'" + s + "'"
 }
 
 func obtenerPensionados() string {
