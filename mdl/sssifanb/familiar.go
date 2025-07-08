@@ -99,7 +99,7 @@ func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 }
 
 // Actualizar Actualizando en MONGO
-func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
+/*func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 
 	id := f.Persona.DatoBasico.Cedula
 	familiar := make(map[string]interface{})
@@ -195,6 +195,63 @@ func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 		}
 	}
 	go ActualizarMysqlFullText(UpsertMysqlFTFamiliar(famActual))
+
+	return
+}*/
+func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
+	id := f.Persona.DatoBasico.Cedula
+	familiar := make(map[string]interface{})
+	familiar["familiar.$.persona"] = f.Persona
+
+	a, _, _ := f.Persona.DatoBasico.FechaDefuncion.Date()
+	if a > 1900 {
+		f.Benficio = false
+	}
+
+	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
+
+	// Obtener el militar padre antes de las actualizaciones
+	mOriginal, err := consultarMongo(f.DocumentoPadre)
+	if err != nil {
+		log.Println("Error obteniendo militar padre:", err)
+		return
+	}
+
+	if f.ID != id {
+		fmt.Println("Cambio de Cedula de un familiar: ", id)
+		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": f.ID}, bson.M{"$set": familiar})
+	} else {
+		_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id}, bson.M{"$set": familiar})
+	}
+	if err != nil {
+		log.Println("Cedula: " + id + " -> " + err.Error())
+		return
+	}
+
+	// Resto de las actualizaciones...
+	fechaafiliacion := make(map[string]interface{})
+	fechaafiliacion["familiar.$.fechaafiliacion"] = time.Now()
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": fechaafiliacion})
+	if err != nil {
+		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+	}
+
+	// ... (mantener todas las demás actualizaciones existentes)
+
+	// Find the correct Familiar from mOriginal.Familiar slice
+	var famActual Familiar
+	for _, fam := range mOriginal.Familiar {
+		if fam.Persona.DatoBasico.Cedula == f.Persona.DatoBasico.Cedula {
+			famActual = fam
+			break
+		}
+	}
+
+	// Actualizar MySQL con los datos del militar padre
+	go ActualizarMysqlFullText(UpsertMysqlFTFamiliar(famActual, mOriginal))
+
+	go f.ActualizarPorReduccion(mOriginal.Grado.Abreviatura, mOriginal.Componente.Abreviatura)
+	go f.ActualizarCuentaBancaria(usuario)
 
 	return
 }
