@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -370,7 +371,7 @@ func InsertarMilitarSAMANSN(militar Militar) string {
 }
 
 // UpsertMysqlFT inserta o actualiza un registro de Militar en la base de datos MySQL
-func UpsertMysqlFT(mil Militar, fam Familiar) []string {
+/*func UpsertMysqlFT(mil Militar, fam Familiar) []string {
 
 	// Mapa de códigos de color de cabello a descripciones
 	colorCabelloMap := map[string]string{
@@ -482,7 +483,7 @@ func UpsertMysqlFT(mil Militar, fam Familiar) []string {
 		if t.IsZero() {
 			return "NULL"
 		}
-		return "'" + t.Format("2006-01-02") + "'"
+		return "'" + t.Format("02-01-2006") + "'"
 	}
 
 	// Preparación de datos esenciales
@@ -524,12 +525,12 @@ func UpsertMysqlFT(mil Militar, fam Familiar) []string {
         cedula, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo,
         grado, fecha_vencimiento, serial_carnet, codigo_comp, cabello,
         historial_clinico, grupo_sanguineo, estatura, ojos, color_piel,
-        componente, categoria, huella, foto, QR
+        componente, categoria, huella, foto, QR, firma
     ) VALUES (
         '%s', %s, %s, %s, %s,
         %s, %s, %s, %s, %s,
         %s, %s, %s, %s, %s,
-        %s, %s, %s, %s, %s
+        %s, %s, %s, %s, %s, %s
     ) ON DUPLICATE KEY UPDATE
         nombreprimero = COALESCE(VALUES(nombreprimero), nombreprimero),
         nombresegundo = COALESCE(VALUES(nombresegundo), nombresegundo),
@@ -537,7 +538,7 @@ func UpsertMysqlFT(mil Militar, fam Familiar) []string {
         apellidosegundo = COALESCE(VALUES(apellidosegundo), apellidosegundo),
         grado = COALESCE(VALUES(grado), grado),
         fecha_vencimiento = COALESCE(VALUES(fecha_vencimiento), fecha_vencimiento),
-        serial_carnet = COALESCE(VALUES(serial_carnet), serial_carnet),
+		serial_carnet = VALUES(serial_carnet),
         codigo_comp = COALESCE(VALUES(codigo_comp), codigo_comp),
         cabello = COALESCE(VALUES(cabello), cabello),
         historial_clinico = COALESCE(VALUES(historial_clinico), historial_clinico),
@@ -549,7 +550,8 @@ func UpsertMysqlFT(mil Militar, fam Familiar) []string {
         categoria = COALESCE(VALUES(categoria), categoria),
         huella = COALESCE(VALUES(huella), huella),
         foto = COALESCE(VALUES(foto), foto),
-		QR = COALESCE(VALUES (QR))`,
+		QR = COALESCE(VALUES (QR), QR),
+		firma = COALESCE(VALUES (firma), firma)`,
 		datos.cedula,
 		wrapValue(datos.nombre1),
 		wrapValue(datos.nombre2),
@@ -570,6 +572,7 @@ func UpsertMysqlFT(mil Militar, fam Familiar) []string {
 		wrapValue(""),
 		wrapValue(""),
 		wrapValue(""),
+		wrapValue(""),
 	)
 
 	// Limpieza de espacios y nueva línea
@@ -582,6 +585,274 @@ func UpsertMysqlFT(mil Militar, fam Familiar) []string {
 
 	queries = append(queries, queryMilitar)
 	return queries
+}*/
+func UpsertMysqlFT(mil Militar, fam Familiar) []string {
+	// Mapa de códigos de color de cabello a descripciones
+	colorCabelloMap := map[string]string{
+		"BA": "BLANCO",
+		"MA": "MARRON",
+		"CA": "CASTAÑO",
+		"AM": "AMARILLO",
+		"AZ": "AZUL",
+		"VI": "VIOLETA",
+		"CV": "CALVO",
+		"GR": "GRIS",
+		"NE": "NEGRO",
+	}
+
+	// Mapa de códigos de color de ojos a descripciones
+	colorOjosMap := map[string]string{
+		"CA": "CASTAÑO",
+		"PA": "PARDO",
+		"AM": "ÁMBAR",
+		"AV": "AVELLANA",
+		"VE": "VERDE",
+		"AZ": "AZUL",
+		"GR": "GRIS",
+		"NE": "NEGRO",
+		"MA": "MARRÓN",
+	}
+
+	// Mapa de códigos de color de piel a descripciones
+	colorPielMap := map[string]string{
+		"NE": "NEGRA",
+		"TR": "TRIGUEÑA",
+		"BL": "BLANCA",
+		"CA": "CANELA",
+		"MO": "MORENA",
+		"RO": "ROSADA",
+	}
+
+	componenteMap := map[string]string{
+		"EJ": "EJB",
+		"AR": "ARB",
+		"AV": "AMB",
+		"GN": "GNB",
+		"MI": "MIL",
+	}
+
+	// Obtener descripciones de los mapas
+	descCabello := getMappedValue(mil.Persona.DatoFisionomico.ColorCabello, colorCabelloMap)
+	descOjos := getMappedValue(mil.Persona.DatoFisionomico.ColorOjos, colorOjosMap)
+	descPiel := getMappedValue(mil.Persona.DatoFisionomico.ColorPiel, colorPielMap)
+	abrevComponente := getMappedValue(mil.Componente.Abreviatura, componenteMap)
+
+	// Log de datos de entrada
+	bmil, _ := json.MarshalIndent(mil, "", "  ")
+	bfam, _ := json.MarshalIndent(fam, "", "  ")
+	fmt.Println("Militar JSON:", string(bmil))
+	fmt.Println("Familiar JSON:", string(bfam))
+
+	var queries []string
+
+	// Validación básica de datos requeridos
+	if mil.Persona.DatoBasico.Cedula == "" {
+		log.Println("Error: Cédula vacía - no se puede realizar la operación")
+		return queries
+	}
+
+	// Preparación de datos
+	datos := prepareData(mil, descCabello, descOjos, descPiel, abrevComponente)
+
+	// Construcción de la query
+	queryMilitar := buildUpsertQuery(datos)
+	queries = append(queries, queryMilitar)
+
+	return queries
+}
+
+// Función auxiliar para obtener valores mapeados
+func getMappedValue(code string, mapping map[string]string) string {
+	if code == "" {
+		return ""
+	}
+	if desc, ok := mapping[code]; ok {
+		return desc
+	}
+	return code
+}
+
+// Función auxiliar para preparar los datos
+func prepareData(mil Militar, descCabello, descOjos, descPiel, abrevComponente string) struct {
+	cedula, nombre1, nombre2, apellido1, apellido2  string
+	grado, serial, codigoComp, cabello, histClinico string
+	grupoSanguineo, estatura, ojos, colorPiel       string
+	abrevComp, categoria                            string
+	fechaVencimiento                                string
+} {
+	return struct {
+		cedula, nombre1, nombre2, apellido1, apellido2  string
+		grado, serial, codigoComp, cabello, histClinico string
+		grupoSanguineo, estatura, ojos, colorPiel       string
+		abrevComp, categoria                            string
+		fechaVencimiento                                string
+	}{
+		cedula:           escape(mil.Persona.DatoBasico.Cedula),
+		nombre1:          escape(strings.TrimSpace(mil.Persona.DatoBasico.NombrePrimero)),
+		nombre2:          escape(strings.TrimSpace(mil.Persona.DatoBasico.NombreSegundo)),
+		apellido1:        escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero)),
+		apellido2:        escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoSegundo)),
+		grado:            escape(mil.Grado.Descripcion),
+		serial:           getSerial(mil.TIM.Serial),
+		codigoComp:       escape(mil.CodigoComponente),
+		cabello:          escape(descCabello),
+		histClinico:      escape(mil.NumeroHistoria),
+		grupoSanguineo:   escape(mil.Persona.DatoFisionomico.GrupoSanguineo),
+		estatura:         fmt.Sprintf("%.2f", mil.Persona.DatoFisionomico.Estatura),
+		ojos:             escape(descOjos),
+		colorPiel:        escape(descPiel),
+		abrevComp:        escape(abrevComponente),
+		categoria:        escape(obtenerCategoria(mil.Categoria)),
+		fechaVencimiento: formatDateForMySQL(mil.TIM.FechaVencimiento),
+	}
+}
+
+// Función auxiliar para formatear fecha
+func formatDateForMySQL(t time.Time) string {
+	if t.IsZero() {
+		return "NULL"
+	}
+	return "'" + t.Format("02-01-2006") + "'"
+}
+
+// Función auxiliar para manejar el serial
+func getSerial(serial string) string {
+	s := strings.TrimSpace(serial)
+	if s == "" {
+		return "NULL"
+	}
+	return escape(s)
+}
+
+// Función auxiliar para escapar strings
+func escape(s string) string {
+	if s == "" {
+		return ""
+	}
+	return strings.ReplaceAll(s, "'", "''")
+}
+
+// Función auxiliar para envolver valores
+
+// Función auxiliar para construir la query de upsert
+func buildUpsertQuery(datos struct {
+	cedula, nombre1, nombre2, apellido1, apellido2  string
+	grado, serial, codigoComp, cabello, histClinico string
+	grupoSanguineo, estatura, ojos, colorPiel       string
+	abrevComp, categoria                            string
+	fechaVencimiento                                string
+}) string {
+	/*query := fmt.Sprintf(`
+	    INSERT INTO sssifanb.carp_militar (
+	        cedula, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo,
+	        grado, fecha_vencimiento, serial_carnet, codigo_comp, cabello,
+	        historial_clinico, grupo_sanguineo, estatura, ojos, color_piel,
+	        componente, categoria, huella, foto, QR, firma
+	    ) VALUES (
+	        '%s', %s, %s, %s, %s,
+	        %s, %s, %s, %s, %s,
+	        %s, %s, %s, %s, %s,
+	        %s, %s, %s, %s, %s, %s
+	    ) ON DUPLICATE KEY UPDATE
+	        nombreprimero = VALUES(nombreprimero),
+	        nombresegundo = VALUES(nombresegundo),
+	        apellidoprimero = VALUES(apellidoprimero),
+	        apellidosegundo = VALUES(apellidosegundo),
+	        grado = VALUES(grado),
+	        fecha_vencimiento = VALUES(fecha_vencimiento),
+	        serial_carnet = VALUES(serial_carnet),
+	        codigo_comp = VALUES(codigo_comp),
+	        cabello = VALUES(cabello),
+	        historial_clinico = VALUES(historial_clinico),
+	        grupo_sanguineo = VALUES(grupo_sanguineo),
+	        estatura = VALUES(estatura),
+	        ojos = VALUES(ojos),
+	        color_piel = VALUES(color_piel),
+	        componente = VALUES(componente),
+	        categoria = VALUES(categoria),
+	        huella = VALUES(huella),
+	        foto = VALUES(foto),
+	        QR = VALUES(QR),
+	        firma = VALUES(firma)`,
+			datos.cedula,
+			wrapValue(datos.nombre1),
+			wrapValue(datos.nombre2),
+			wrapValue(datos.apellido1),
+			wrapValue(datos.apellido2),
+			wrapValue(datos.grado),
+			datos.fechaVencimiento,
+			wrapValue(datos.serial),
+			wrapValue(datos.codigoComp),
+			wrapValue(datos.cabello),
+			wrapValue(datos.histClinico),
+			wrapValue(datos.grupoSanguineo),
+			datos.estatura,
+			wrapValue(datos.ojos),
+			wrapValue(datos.colorPiel),
+			wrapValue(datos.abrevComp),
+			wrapValue(datos.categoria),
+			wrapValue(""),
+			wrapValue(""),
+			wrapValue(""),
+			wrapValue(""),
+		)*/
+	// Construcción de la query corregida
+	query := fmt.Sprintf(`
+    INSERT INTO sssifanb.carp_militar (
+        cedula, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo,
+        grado, fecha_vencimiento, serial_carnet, codigo_comp, cabello,
+        historial_clinico, grupo_sanguineo, estatura, ojos, color_piel,
+        componente, categoria, huella, foto, QR, firma
+    ) VALUES (
+        '%s', %s, %s, %s, %s,
+        %s, %s, %s, %s, %s,
+        %s, %s, %s, %s, %s,
+        %s, %s, %s, %s, %s, %s
+    ) ON DUPLICATE KEY UPDATE
+        nombreprimero = IF(VALUES(serial_carnet) != serial_carnet, VALUES(nombreprimero), nombreprimero),
+        nombresegundo = IF(VALUES(serial_carnet) != serial_carnet, VALUES(nombresegundo), nombresegundo),
+        apellidoprimero = IF(VALUES(serial_carnet) != serial_carnet, VALUES(apellidoprimero), apellidoprimero),
+        apellidosegundo = IF(VALUES(serial_carnet) != serial_carnet, VALUES(apellidosegundo), apellidosegundo),
+        grado = IF(VALUES(serial_carnet) != serial_carnet, VALUES(grado), grado),
+        fecha_vencimiento = IF(VALUES(serial_carnet) != serial_carnet, VALUES(fecha_vencimiento), fecha_vencimiento),
+        serial_carnet = IF(VALUES(serial_carnet) != serial_carnet, VALUES(serial_carnet), serial_carnet),
+        codigo_comp = IF(VALUES(serial_carnet) != serial_carnet, VALUES(codigo_comp), codigo_comp),
+        cabello = IF(VALUES(serial_carnet) != serial_carnet, VALUES(cabello), cabello),
+        historial_clinico = IF(VALUES(serial_carnet) != serial_carnet, VALUES(historial_clinico), historial_clinico),
+        grupo_sanguineo = IF(VALUES(serial_carnet) != serial_carnet, VALUES(grupo_sanguineo), grupo_sanguineo),
+        estatura = IF(VALUES(serial_carnet) != serial_carnet, VALUES(estatura), estatura),
+        ojos = IF(VALUES(serial_carnet) != serial_carnet, VALUES(ojos), ojos),
+        color_piel = IF(VALUES(serial_carnet) != serial_carnet, VALUES(color_piel), color_piel),
+        componente = IF(VALUES(serial_carnet) != serial_carnet, VALUES(componente), componente),
+        categoria = IF(VALUES(serial_carnet) != serial_carnet, VALUES(categoria), categoria),
+        huella = IF(VALUES(serial_carnet) != serial_carnet, VALUES(huella), huella),
+        foto = IF(VALUES(serial_carnet) != serial_carnet, VALUES(foto), foto),
+        QR = IF(VALUES(serial_carnet) != serial_carnet, VALUES(QR), QR),
+        firma = IF(VALUES(serial_carnet) != serial_carnet, VALUES(firma), firma)`,
+		datos.cedula,
+		wrapValue(datos.nombre1),
+		wrapValue(datos.nombre2),
+		wrapValue(datos.apellido1),
+		wrapValue(datos.apellido2),
+		wrapValue(datos.grado),
+		datos.fechaVencimiento,
+		wrapValue(datos.serial),
+		wrapValue(datos.codigoComp),
+		wrapValue(datos.cabello),
+		wrapValue(datos.histClinico),
+		wrapValue(datos.grupoSanguineo),
+		datos.estatura,
+		wrapValue(datos.ojos),
+		wrapValue(datos.colorPiel),
+		wrapValue(datos.abrevComp),
+		wrapValue(datos.categoria),
+		wrapValue(""),
+		wrapValue(""),
+		wrapValue(""),
+		wrapValue(""),
+	)
+	// Limpieza de la query
+	return strings.NewReplacer("\n", " ", "\t", "", "  ", " ").Replace(strings.TrimSpace(query))
 }
 
 /* func UpsertMysqlFTFamiliar(fam Familiar) []string {
@@ -678,50 +949,27 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
 		return queries
 	}
 
-	// Mapa de abreviaturas de componentes (ya en mayúsculas)
-	componenteMap := map[string]string{
-		"EJ": "EJB",
-		"AR": "ARB",
-		"AV": "AMB",
-		"GN": "GNB",
-		"MI": "MIL",
-	}
-
-	// Preparación de datos
-	fechaNacimiento := fam.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
-	parentesco := strings.ToUpper(obtenerParentesco(fam.Parentesco, fam.Persona.DatoBasico.Sexo))
-
-	// Obtener datos del militar para el campo afiliado (en mayúsculas)
-	var abrevComponente string
-	if mil.Componente.Abreviatura != "" {
-		abrevUpper := strings.ToUpper(mil.Componente.Abreviatura)
-		if abrev, ok := componenteMap[abrevUpper]; ok {
-			abrevComponente = abrev
-		} else {
-			abrevComponente = abrevUpper
-		}
-	}
-
-	// Construir campo afiliado (todo en mayúsculas)
-	afiliado := fmt.Sprintf("%s %s %s %s",
-		abrevComponente,
-		escape(mil.Persona.DatoBasico.Cedula),
+	// Construir campo afiliado
+	afiliado := fmt.Sprintf("%s - %s %s CI:%s",
+		strings.ToUpper(mil.Grado.Abreviatura),
 		escape(strings.TrimSpace(mil.Persona.DatoBasico.NombrePrimero)),
-		escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero)))
+		escape(strings.TrimSpace(mil.Persona.DatoBasico.ApellidoPrimero)),
+		escape(mil.Persona.DatoBasico.Cedula))
 
-	// Preparar fecha de vencimiento
+	// Preparar fechas
+	fechaNacimiento := fam.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
 	fechaVencimiento := fam.TIF.FechaVencimiento.Format("2006-01-02")
 	if fam.TIF.FechaVencimiento.IsZero() {
 		fechaVencimiento = time.Now().AddDate(1, 0, 0).Format("2006-01-02")
 	}
 
-	// Determinar valor de donante ("SI" o "NO")
-	donanteValue := "'NO'" // Valor por defecto entre comillas
+	// Determinar valor de donante
+	donanteValue := "'NO'"
 	if strings.ToUpper(fam.Donante) == "S" {
 		donanteValue = "'SI'"
 	}
 
-	// Query UPSERT con todos los valores en mayúsculas
+	// Query UPSERT corregida
 	query := fmt.Sprintf(`
     INSERT INTO sssifanb.carp_familiar (
         id, cedula_familiar, cedula_militar, nombreprimerof, apellidoprimerof,
@@ -729,13 +977,11 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
         historial_clinicof, grupo_sanguineof, donante, serial_carnet,
         huella, foto, QRF
     ) VALUES (
-        1, '%s', '%s', '%s', '%s',
+        0, '%s', '%s', '%s', '%s',
         '%s', '%s', '%s', '%s',
         '%s', '%s', %s, '%s',
         '%s', '%s', '%s'
     ) ON DUPLICATE KEY UPDATE
-        cedula_familiar = VALUES(cedula_familiar),
-        cedula_militar = VALUES(cedula_militar),
         nombreprimerof = VALUES(nombreprimerof),
         apellidoprimerof = VALUES(apellidoprimerof),
         fecha_nacimiento = VALUES(fecha_nacimiento),
@@ -747,20 +993,20 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
         donante = VALUES(donante),
         serial_carnet = VALUES(serial_carnet),
         huella = VALUES(huella),
-        foto = VALUES(foto)
-		QRF = VALUES(QRF)`,
+        foto = VALUES(foto),
+        QRF = VALUES(QRF)`,
 		escape(fam.Persona.DatoBasico.Cedula),
 		escape(fam.DocumentoPadre),
 		escape(strings.TrimSpace(fam.Persona.DatoBasico.NombrePrimero)),
 		escape(strings.TrimSpace(fam.Persona.DatoBasico.ApellidoPrimero)),
 		fechaNacimiento,
-		escape(parentesco),
+		escape(strings.ToUpper(obtenerParentesco(fam.Parentesco, fam.Persona.DatoBasico.Sexo))),
 		escape(afiliado),
 		fechaVencimiento,
 		escape(fam.HistoriaMedica),
 		escape(fam.Persona.DatoFisionomico.GrupoSanguineo),
-		donanteValue, // Ahora es 'SI' o 'NO' entre comillas
-		escape(fam.TIF.Serial),
+		donanteValue,
+		escape(fam.TIF.Serial), // CORRECCIÓN: Usar Serial en lugar de ID
 		escape(fam.TIF.ID),
 		escape("FOTO_"),
 		escape("HTTPS:APPS/="),
@@ -803,7 +1049,7 @@ func obtenerPensionados() string {
 	WHERE
 	-- pdm.fchultimoascenso = '//' '2759874' "15236250"
 	codnip='18554859'
-  AND
+    AND
 	pen.estpencod = 'ACT'
 	AND
 	pen.razestpencod ='INI'
