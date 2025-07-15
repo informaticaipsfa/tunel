@@ -1010,9 +1010,9 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
 		escape(fam.Persona.DatoFisionomico.GrupoSanguineo),
 		donanteValue,
 		escape(fam.TIF.Serial), // CORRECCIÓN: Usar Serial en lugar de ID
-		escape(""),
-		escape(""),
-		escape(""),
+		wrapValue(""),
+		wrapValue(""),
+		wrapValue(""),
 	)
 
 	query = strings.Join(strings.Fields(query), " ")
