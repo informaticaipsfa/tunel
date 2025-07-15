@@ -712,7 +712,7 @@ func formatDateForMySQL(t time.Time) string {
 	if t.IsZero() {
 		return "NULL"
 	}
-	return "'" + t.Format("2006-01-02") + "'"
+	return "'" + t.Format("2006-02-01") + "'"
 }
 
 // Función auxiliar para manejar el serial
