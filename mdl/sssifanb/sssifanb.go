@@ -654,8 +654,8 @@ func UpsertMysqlFT(mil Militar, fam Familiar) []string {
 	// Preparación de datos
 	datos := prepareData(mil, descCabello, descOjos, descPiel, abrevComponente)
 
-	// Construcción de la query
-	queryMilitar := buildUpsertQuery(datos)
+	// Construcción de la query con la expresión QR
+	queryMilitar := buildUpsertQuery(datos, mil.Persona.DatoBasico.Cedula)
 	queries = append(queries, queryMilitar)
 
 	return queries
@@ -741,7 +741,10 @@ func buildUpsertQuery(datos struct {
 	grupoSanguineo, estatura, ojos, colorPiel       string
 	abrevComp, categoria                            string
 	fechaVencimiento                                string
-}) string {
+}, cedula string) string {
+	// Generar la expresión QR
+	qrExpression := fmt.Sprintf("CONCAT('https://apps.ipsfa.gob.ve/app/#/certificado/', MD5(CONCAT('CI-','%s')))", cedula)
+
 	/*query := fmt.Sprintf(`
 	    INSERT INTO sssifanb.carp_militar (
 	        cedula, nombreprimero, nombresegundo, apellidoprimero, apellidosegundo,
@@ -848,7 +851,7 @@ func buildUpsertQuery(datos struct {
 		wrapValue(datos.categoria),
 		wrapValue(""),
 		wrapValue(""),
-		wrapValue(""),
+		qrExpression,
 		wrapValue(""),
 	)
 	// Limpieza de la query
@@ -1007,9 +1010,9 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
 		escape(fam.Persona.DatoFisionomico.GrupoSanguineo),
 		donanteValue,
 		escape(fam.TIF.Serial), // CORRECCIÓN: Usar Serial en lugar de ID
-		escape(fam.TIF.ID),
-		escape("FOTO_"),
-		escape("HTTPS:APPS/="),
+		escape(""),
+		escape(""),
+		escape(""),
 	)
 
 	query = strings.Join(strings.Fields(query), " ")
