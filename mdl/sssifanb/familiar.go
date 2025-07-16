@@ -199,6 +199,7 @@ func (f *Familiar) MGOActualizar() (jSon []byte, err error) {
 	return
 }*/
 func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
+
 	id := f.Persona.DatoBasico.Cedula
 	familiar := make(map[string]interface{})
 	familiar["familiar.$.persona"] = f.Persona
@@ -211,6 +212,7 @@ func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 	c := sys.MGOSession.DB(sys.CBASE).C(sys.CMILITAR)
 
 	// Obtener el militar padre antes de las actualizaciones
+
 	mOriginal, err := consultarMongo(f.DocumentoPadre)
 	if err != nil {
 		log.Println("Error obteniendo militar padre:", err)
@@ -234,6 +236,58 @@ func (f *Familiar) Actualizar(usuario string) (jSon []byte, err error) {
 	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": fechaafiliacion})
 	if err != nil {
 		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+	}
+	parentesco := make(map[string]interface{})
+	parentesco["familiar.$.parentesco"] = f.Parentesco
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": parentesco})
+	if err != nil {
+		fmt.Println("Incluyendo parentesco eRR Cedula: " + id + " -> " + err.Error())
+	}
+
+	beneficio := make(map[string]interface{})
+	beneficio["familiar.$.beneficio"] = f.Benficio
+	_, err = c.UpdateAll(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": beneficio})
+	if err != nil {
+		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+	}
+	historia := make(map[string]interface{})
+	historia["familiar.$.historiamedica"] = f.HistoriaMedica
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": historia})
+	if err != nil {
+		fmt.Println("eRR Cedula: " + id + " -> " + err.Error())
+	}
+	donante := make(map[string]interface{})
+	donante["familiar.$.donante"] = f.Donante
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": donante})
+	if err != nil {
+		fmt.Println("Donante (Cedula): " + id + " -> " + err.Error())
+	}
+
+	documentopadre := make(map[string]interface{})
+	documentopadre["familiar.$.documentopadre"] = f.DocumentoPadre
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": documentopadre})
+	if err != nil {
+		fmt.Println("Parentesco (Cedula): " + id + " -> " + err.Error())
+	}
+
+	condicion := make(map[string]interface{})
+	condicion["familiar.$.condicion"] = f.Condicion
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": condicion})
+	if err != nil {
+		fmt.Println("Condicion (Cedula): " + id + " -> " + err.Error())
+	}
+
+	derecho := make(map[string]interface{})
+	derecho["familiar.$.pprestaciones"] = f.PorcentajePrestaciones
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": derecho})
+	if err != nil {
+		fmt.Println("Condicion (Cedula): " + id + " -> " + err.Error())
+	}
+	estudia := make(map[string]interface{})
+	estudia["familiar.$.estudia"] = f.Estudia
+	err = c.Update(bson.M{"familiar.persona.datobasico.cedula": id, "id": f.DocumentoPadre}, bson.M{"$set": estudia})
+	if err != nil {
+		fmt.Println("Estudia (Cedula): " + id + " -> " + err.Error())
 	}
 
 	// ... (mantener todas las demás actualizaciones existentes)
