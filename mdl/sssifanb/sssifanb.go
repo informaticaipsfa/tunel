@@ -712,7 +712,7 @@ func formatDateForMySQL(t time.Time) string {
 	if t.IsZero() {
 		return "NULL"
 	}
-	return "'" + t.Format("2006-02-01") + "'"
+	return "'" + t.Format("02-01-2006") + "'"
 }
 
 // Función auxiliar para manejar el serial
@@ -960,10 +960,10 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
 		escape(mil.Persona.DatoBasico.Cedula))
 
 	// Preparar fechas
-	fechaNacimiento := fam.Persona.DatoBasico.FechaNacimiento.Format("2006-01-02")
-	fechaVencimiento := fam.TIF.FechaVencimiento.Format("2006-01-02")
+	fechaNacimiento := fam.Persona.DatoBasico.FechaNacimiento.Format("02-01-2006")
+	fechaVencimiento := fam.TIF.FechaVencimiento.Format("02-01-2006")
 	if fam.TIF.FechaVencimiento.IsZero() {
-		fechaVencimiento = time.Now().AddDate(1, 0, 0).Format("2006-01-02")
+		fechaVencimiento = time.Now().AddDate(1, 0, 0).Format("02-01-2006")
 	}
 
 	// Determinar valor de donante
@@ -983,7 +983,7 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
         0, '%s', '%s', '%s', '%s',
         '%s', '%s', '%s', '%s',
         '%s', '%s', %s, '%s',
-        '%s', '%s', '%s'
+        %s, %s, %s
     ) ON DUPLICATE KEY UPDATE
         nombreprimerof = VALUES(nombreprimerof),
         apellidoprimerof = VALUES(apellidoprimerof),
