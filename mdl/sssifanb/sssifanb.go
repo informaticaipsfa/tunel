@@ -726,7 +726,7 @@ func obtenerCategoriaCp(categoria string, situacion string) (cate string) {
 		break
 	}
 
-	if situacion != "ACT"{
+	if situacion != "ACT" {
 		cate = "RESERVA ACTIVA"
 	}
 	return
@@ -985,7 +985,7 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
 		escape(mil.Persona.DatoBasico.Cedula))
 
 	// Preparar fechas
-	fechaNacimiento := fam.Persona.DatoBasico.FechaNacimiento.Format("02-01-2006")
+	fechaNacimiento := fam.Persona.DatoBasico.FechaNacimiento.In(time.UTC).Format("02-01-2006")
 	fechaVencimiento := fam.TIF.FechaVencimiento.Format("02-01-2006")
 	if fam.TIF.FechaVencimiento.IsZero() {
 		fechaVencimiento = time.Now().AddDate(1, 0, 0).Format("02-01-2006")
