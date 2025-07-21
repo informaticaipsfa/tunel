@@ -702,9 +702,34 @@ func prepareData(mil Militar, descCabello, descOjos, descPiel, abrevComponente s
 		ojos:             escape(descOjos),
 		colorPiel:        escape(descPiel),
 		abrevComp:        escape(abrevComponente),
-		categoria:        escape(obtenerCategoria(mil.Categoria)),
+		categoria:        escape(obtenerCategoriaCp(mil.Categoria, mil.Situacion)),
 		fechaVencimiento: formatDateForMySQL(mil.TIM.FechaVencimiento),
 	}
+}
+
+// Función auxiliar para obtener la categoría para insertar en MySQL (CARDPRESO)
+func obtenerCategoriaCp(categoria string, situacion string) (cate string) {
+	switch categoria {
+	case "EFE":
+		cate = "EFECTIVO"
+		break
+	case "TRP":
+		cate = "TROPA"
+		break
+	case "RES":
+		cate = "RESERVA"
+		break
+	case "ASI":
+		cate = "ASIMILADO"
+		break
+	default:
+		break
+	}
+
+	if situacion != "ACT"{
+		cate = "RESERVA ACTIVA"
+	}
+	return
 }
 
 // Función auxiliar para formatear fecha
