@@ -1028,7 +1028,7 @@ func UpsertMysqlFTFamiliar(fam Familiar, mil Militar) []string {
 		escape(strings.TrimSpace(fam.Persona.DatoBasico.NombrePrimero)),
 		escape(strings.TrimSpace(fam.Persona.DatoBasico.ApellidoPrimero)),
 		fechaNacimiento,
-		escape(strings.ToUpper(obtenerParentesco(fam.Parentesco, fam.Persona.DatoBasico.Sexo))),
+		escape(strings.ToUpper(obtenerParentescoCP(fam.Parentesco, fam.Persona.DatoBasico.Sexo, mil.Situacion))),
 		escape(afiliado),
 		fechaVencimiento,
 		escape(fam.HistoriaMedica),
@@ -1052,6 +1052,46 @@ func wrapValue(s string) string {
 		return "NULL"
 	}
 	return "'" + s + "'"
+}
+
+// Función auxiliar para obtener el parentesco para CardPreso
+func obtenerParentescoCP(parentesco string, sexo string, situacionMil string) (pare string) {
+	switch parentesco {
+	case "HJ":
+		pare = "HIJO"
+		if sexo == "F" {
+			pare = "HIJA"
+		}
+		break
+	case "PD":
+		pare = "PADRE"
+		if sexo == "F" {
+			pare = "MADRE"
+		}
+		break
+	case "EA":
+		pare = "ESPOSO"
+		if sexo == "F" {
+			pare = "ESPOSA"
+		}
+
+		if situacionMil == "FCP"{
+			pare = "VIUDO"
+			if sexo == "F" {
+				pare = "VIUDA"
+			}
+		}
+		break
+	case "VI":
+		pare = "VIUDO"
+		if sexo == "F" {
+			pare = "VIUDA"
+		}
+		break
+	default:
+		break
+	}
+	return
 }
 
 func obtenerPensionados() string {
